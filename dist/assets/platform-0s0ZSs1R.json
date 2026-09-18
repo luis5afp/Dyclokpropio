@@ -1,0 +1,35 @@
+{
+  "code": 0,
+  "data": [
+    { "value": "other", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/other.png" },
+    { "value": "facebook.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/facebook.com.png" },
+    { "value": "amazon.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/amazon.com.png" },
+    { "value": "linkedin.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/linkedin.com.png" },
+    { "value": "x.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/x.com.png" },
+    { "value": "paypal.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/paypal.com.png" },
+    {
+      "value": "accounts.google.com",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/accounts.google.com.png"
+    },
+    { "value": "vinted.fr", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/vinted.fr.png" },
+    { "value": "discord.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/discord.com.png" },
+    { "value": "aliexpress.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/aliexpress.com.png" },
+    { "value": "youtube.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/youtube.com.png" },
+    { "value": "ebay.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/ebay.com.png" },
+    { "value": "mail.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/mail.com.png" },
+    { "value": "stripe.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/stripe.com.png" },
+    { "value": "payoneer.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/payoneer.com.png" },
+    { "value": "lazada.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/lazada.com.png" },
+    { "value": "shopify.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/shopify.com.png" },
+    { "value": "shoplineapp.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/shoplineapp.com.png" },
+    { "value": "walmart.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/walmart.com.png" },
+    { "value": "wish.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/wish.com.png" },
+    { "value": "shopee.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/shopee.com.png" },
+    { "value": "etsy.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/etsy.com.png" },
+    { "value": "dhgate.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/dhgate.com.png" },
+    { "value": "alibaba.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/alibaba.com.png" },
+    { "value": "tiktok.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/tiktok.com.png" },
+    { "value": "instagram.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/instagram.com.png" },
+    { "value": "whatsapp.com", "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/platform/whatsapp.com.png" }
+  ]
+}

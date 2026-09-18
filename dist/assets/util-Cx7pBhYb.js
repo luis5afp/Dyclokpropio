@@ -1,0 +1,1 @@
+const e=()=>{const e=document.querySelector(".crawl-container-list");e&&e.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"})},o=()=>{const e=document.querySelector("#ai-crawler");e&&e.scrollIntoView({behavior:"smooth",block:"start",inline:"nearest"})};export{e as a,o as s};

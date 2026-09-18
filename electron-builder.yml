@@ -1,0 +1,34 @@
+appId: com.dyclokpropio.desktop
+productName: DICloak
+artifactName: Dyclokpropio_${version}_${os}_${arch}.${ext}
+asar: true
+asarUnpack:
+  - dist-electron/worker/**
+  - dist/assets/sync/**
+directories:
+  output: release
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+  - node_modules/**/*
+extraResources:
+  - from: plugins
+    to: plugins
+  - from: SourceData
+    to: SourceData
+  - from: vendor
+    to: vendor
+  - from: resources/electron
+    to: electron
+  - from: resources/elevate.exe
+    to: elevate.exe
+win:
+  icon: application.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

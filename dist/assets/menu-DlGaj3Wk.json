@@ -1,0 +1,523 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "id": "1",
+      "code": "Home",
+      "path": "/:any(.*)*",
+      "name": "home",
+      "component": "/home/index",
+      "meta": {
+        "icon": "HomeFilled",
+        "title": "menu.home",
+        "isLink": "",
+        "isHide": true,
+        "isFull": false,
+        "isAffix": false,
+        "isNProgress": true,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "id": "3",
+      "code": "ENVIRONMENT_LIST",
+      "path": "/environment/envList",
+      "name": "environmentList",
+      "component": "/environment/envList",
+      "isWebRoute": true,
+      "meta": {
+        "icon": "icon-env-management",
+        "title": "menu.env.envList",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true,
+        "isNProgress": true,
+        "isWebRoute": true,
+        "isMain": true
+      }
+    },
+    {
+      "id": "6",
+      "code": ["GET_PROXY", "PROXY_SOFT", "PROXY_SOFT_INFO", "IP_RESOURCE"],
+      "path": "/proxy",
+      "name": "proxy",
+      "component": "/proxy/proxyManagement",
+      "isWebRoute": true,
+      "meta": {
+        "icon": "icon-proxy-management",
+        "title": "menu.proxy.top",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isNProgress": true,
+        "isMain": true,
+        "isKeepAlive": false
+      },
+      "children": [
+        {
+          "id": "7",
+          "code": "GET_PROXY",
+          "path": "/proxy/batchCreateProxy",
+          "name": "batchCreateProxy",
+          "component": "/proxy/components/batchCreateProxy",
+          "isWebRoute": true,
+          "meta": {
+            "title": "env.env.req.batchCreate",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "code": ["TEAM_EXTENSIONS", "EXTENSIONS_MARKET"],
+      "path": "/expansion",
+      "name": "expansion",
+      "component": "/expansion/expansionList",
+      "isWebRoute": true,
+      "meta": {
+        "isDot": true,
+        "icon": "icon-expansioncenter",
+        "title": "menu.expansion.top",
+        "isLink": "",
+        "isHide": false,
+        "isNProgress": true,
+        "isFull": false,
+        "isAffix": false,
+        "isMain": true,
+        "isKeepAlive": false,
+        "isWebRoute": true
+      }
+    },
+    {
+      "id": "4",
+      "code": "LIST_GROUP",
+      "path": "/environment/groupList",
+      "name": "environmentGroup",
+      "component": "/environment/groupList",
+      "isWebRoute": true,
+      "meta": {
+        "icon": "icon-Proxies",
+        "title": "menu.env.groupList",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isNProgress": true,
+        "isKeepAlive": false,
+        "isMain": true
+      }
+    },
+    {
+      "id": "5",
+      "code": "RECYCLING_BIN",
+      "path": "/environment/envTrash",
+      "name": "environmentTrash",
+      "component": "/environment/envTrash",
+      "isWebRoute": true,
+      "meta": {
+        "icon": "icon-trash",
+        "title": "menu.env.envTrash",
+        "isLink": "",
+        "isHide": true,
+        "isFull": false,
+        "isAffix": false,
+        "isNProgress": true,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "id": "main-app--store",
+      "code": "APP_MARKETPLACE",
+      "path": "/application",
+      "name": "application",
+      "component": "",
+      "openType": "APP_STORE",
+      "isWebRoute": true,
+      "meta": {
+        "isDot": true,
+        "icon": "icon-shop",
+        "title": "menu.appMarketplace",
+        "isLink": "",
+        "isHide": true,
+        "isFull": false,
+        "isAffix": false,
+        "isNProgress": true,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "id": "2",
+      "code": "ENVIRONMENTAL_MANAGEMENT",
+      "path": "/automation",
+      "name": "automation",
+      "redirect": "/synchronizer/index",
+      "meta": {
+        "icon": "icon-env-management",
+        "title": "menu.auto",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isNProgress": true,
+        "isKeepAlive": false,
+        "isGroup": true
+      },
+      "children": [
+        {
+          "id": "15",
+          "code": "SYNCHRONIZER",
+          "path": "/synchronizer",
+          "name": "synchronizer",
+          "component": "/synchronizer/index",
+          "isWebRoute": true,
+          "meta": {
+            "icon": "icon-synchronizer1",
+            "title": "sync.tip1",
+            "tagType": "info",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false,
+            "isNProgress": true
+          },
+          "children": [
+            {
+              "id": "15",
+              "code": "SYNCHRONIZER",
+              "path": "/synchronizer/help",
+              "name": "synchronizerHelp",
+              "component": "/synchronizer/components/childwindow",
+              "meta": {
+                "title": "sync.tip2",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": false,
+                "isNProgress": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "14",
+          "code": "RPA_MANAGE",
+          "path": "/rpa",
+          "name": "rpa",
+          "redirect": "/rpa/taskManage",
+          "isWebRoute": true,
+          "meta": {
+            "icon": "icon-rpa",
+            "title": "menu.rpa.taskManage",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false,
+            "isNProgress": true
+          },
+          "children": [
+            {
+              "id": "15",
+              "code": "RPA_MARKET",
+              "path": "/rpa/market",
+              "name": "rpaMarket",
+              "component": "/rpa/market/index",
+              "isWebRoute": true,
+              "meta": {
+                "isDot": true,
+                "icon": "icon-rpamarket",
+                "title": "menu.rpa.createRpa",
+                "tag": "Free",
+                "tagType": "info",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": false,
+                "isNProgress": true,
+                "isWebRoute": true
+              },
+              "children": [
+                {
+                  "id": "30",
+                  "code": "RPA_MARKET",
+                  "path": "/rpa/rpaDetails",
+                  "name": "rpaDetails",
+                  "component": "/rpa/market/RpaDetails",
+                  "isWebRoute": true,
+                  "meta": {
+                    "title": "rpa2.RPADetails",
+                    "isLink": "",
+                    "isHide": true,
+                    "isFull": false,
+                    "isNProgress": true,
+                    "isAffix": false,
+                    "isKeepAlive": false,
+                    "isWebRoute": true
+                  }
+                },
+                {
+                  "id": "31",
+                  "code": "RPA_MARKET",
+                  "path": "/rpa/rpaTaskEdit",
+                  "name": "rpaTaskEdit",
+                  "component": "/rpa/market/RpaTaskEdit",
+                  "isWebRoute": true,
+                  "meta": {
+                    "title": "rpa2.RPADetails",
+                    "isLink": "",
+                    "isHide": true,
+                    "isFull": false,
+                    "isNProgress": true,
+                    "isAffix": false,
+                    "isKeepAlive": false,
+                    "isWebRoute": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "16",
+              "code": "RPA_TASK_MANAGE",
+              "path": "/rpa/taskManage",
+              "name": "taskManage",
+              "component": "/rpa/taskList",
+              "isWebRoute": true,
+              "meta": {
+                "icon": "icon-taskrecord",
+                "title": "menu.rpa.taskLogs",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": false,
+                "isWebRoute": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "16",
+          "code": "AI_CRWLER_hidden",
+          "path": "/crawl",
+          "name": "crawl",
+          "isWebRoute": true,
+          "component": "/crawl/index",
+          "meta": {
+            "icon": "icon-aicrawler",
+            "title": "menu.crawl",
+            "isLink": "",
+            "isNProgress": true,
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false,
+            "isWebRoute": true,
+            "tagType": "newStyle",
+            "tag": "Beta"
+          }
+        },
+        {
+          "id": "15",
+          "code": "OPEN_API",
+          "path": "/openapi",
+          "name": "openapi",
+          "component": "/openapi/index",
+          "isWebRoute": true,
+          "meta": {
+            "isDot": true,
+            "icon": "icon-openapi",
+            "title": "menu.openapi.top",
+            "isLink": "",
+            "isNProgress": true,
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false,
+            "isWebRoute": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "code": "",
+      "path": "/team",
+      "name": "team",
+      "redirect": "/plan/planList",
+      "isWebRoute": true,
+      "meta": {
+        "title": "header.orgName",
+        "isLink": "",
+        "isHide": false,
+        "isNProgress": true,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false,
+        "isGroup": true
+      },
+      "children": [
+        {
+          "id": "11",
+          "code": ["VIEW_ORDER_RECORDS"],
+          "path": "/plan/planList",
+          "name": "plan",
+          "component": "/plan/planList",
+          "isWebRoute": true,
+          "meta": {
+            "icon": "icon-cost-center",
+            "title": "menu.plan.top",
+            "isLink": "",
+            "isHide": false,
+            "isNProgress": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false,
+            "isMain": true
+          }
+        },
+        {
+          "id": "8",
+          "code": "TEAM_MANAGEMENT",
+          "path": "/organization",
+          "name": "organization",
+          "redirect": "/organization/memberList",
+          "meta": {
+            "icon": "icon-team-management",
+            "title": "menu.org.top",
+            "isLink": "",
+            "isHide": false,
+            "isNProgress": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          },
+          "children": [
+            {
+              "id": "9",
+              "code": "MANAGE_MEMBERS",
+              "path": "/organization/member",
+              "name": "member",
+              "component": "/organization/memberList",
+              "authority": ["SUPER_ADMIN", "ADMIN", "MANAGER"],
+              "isWebRoute": true,
+              "meta": {
+                "title": "menu.org.memberList",
+                "icon": "icon-members",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isNProgress": true,
+                "isAffix": false,
+                "isKeepAlive": false
+              }
+            },
+            {
+              "id": "10",
+              "code": "MEMBER_GROUPING",
+              "path": "/system/role",
+              "name": "role",
+              "component": "/system/roleList",
+              "authority": ["SUPER_ADMIN", "ADMIN", "MANAGER"],
+              "isWebRoute": true,
+              "meta": {
+                "icon": "icon-groups",
+                "title": "menu.org.roleList",
+                "isLink": "",
+                "isNProgress": true,
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": false
+              }
+            },
+            {
+              "id": "10",
+              "code": "OPERATION_LOG",
+              "path": "/organization/logs",
+              "name": "logs",
+              "component": "/organization/logs",
+              "isWebRoute": true,
+              "meta": {
+                "icon": "icon-a-operationlog",
+                "title": "menu.org.operationLog",
+                "isNProgress": true,
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": false,
+                "isWebRoute": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "14",
+          "code": "GLOBAL_SETTING",
+          "path": "/setting",
+          "name": "setting",
+          "component": "/setting/index",
+          "isWebRoute": true,
+          "meta": {
+            "icon": "icon-frame",
+            "title": "setting.globalConfig",
+            "isLink": "",
+            "isNProgress": true,
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": false
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "13",
+      "code": "PERSONAL_INFO",
+      "path": "/personalInfo",
+      "name": "personalInfo",
+      "isWebRoute": true,
+      "component": "/personalInfo/index",
+      "meta": {
+        "title": "setting.personalConfig",
+        "isLink": "",
+        "isNProgress": true,
+        "isHide": true,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false
+      }
+    },
+    {
+      "id": "15",
+      "code": "REFERRAL",
+      "path": "/referral",
+      "name": "referral",
+      "isWebRoute": true,
+      "component": "/referral/index",
+      "meta": {
+        "title": "menu.referral",
+        "isLink": "",
+        "isNProgress": true,
+        "isHide": true,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": false,
+        "isMain": true,
+        "icon": "icon-referral",
+        "afterHtmlStr": "<i class=\"iconfont icon-goldcoins tw-float-right tw-text-warning\"></i>"
+      }
+    }
+  ],
+  "msg": "成功"
+}

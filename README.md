@@ -1,42 +1,66 @@
-# Dyclokpropio
+# Dyclokpropio - proyecto recuperado
 
-Aplicación de escritorio para **Windows x64**.
+Esta carpeta fue reconstruida desde el instalador `Dyclokpropio_30.0.0_win_x64.exe`.
 
-## Descarga
+## Qué se pudo recuperar
 
-Las versiones publicadas se distribuyen desde la sección **Releases** de este repositorio:
+- Aplicación Electron empaquetada originalmente con Electron **31.7.7**.
+- `package.json` original y una copia intacta en `package.original.json`.
+- Código compilado de Electron en `dist-electron/`.
+- Interfaz compilada de Vue/Vite en `dist/`.
+- Worker desempaquetado en `dist-electron/worker/`.
+- `DicSyncService.exe`, `plugins/`, `SourceData/`, `vendor/ffmpeg` y recursos auxiliares necesarios por la aplicación.
+- Configuración inicial `electron-builder.yml` para volver a empaquetar una versión de Windows x64.
 
-https://github.com/luis5afp/Dyclokpropio/releases
+## Importante
 
-### Versión actual
+Esto **no es el proyecto fuente original**. El instalador contiene código ya compilado/ofuscado y no incluye los `.vue`, `.ts` o configuración de desarrollo originales. Aun así, esta recuperación conserva la aplicación y permite estudiar/modificar los archivos compilados. Para mantenimiento serio, lo ideal es conseguir el repositorio fuente original y usar esta carpeta como referencia.
 
-- **Versión:** 30.0.0
-- **Plataforma:** Windows x64
-- **Archivo:** `Dyclokpropio_30.0.0_win_x64.exe`
-- **Tamaño:** 179,944,192 bytes (~171.6 MiB)
+## Ejecutar como proyecto recuperado
 
-## Verificación de integridad
+En Windows, dentro de esta carpeta:
 
-SHA-256 del ejecutable:
+```powershell
+npm install
+npm start
+```
+
+El `package.json` recuperado fue ampliado con Electron 31.7.7 y electron-builder para facilitar el arranque y empaquetado. El archivo `package.original.json` conserva exactamente los metadatos extraídos del `app.asar`.
+
+## Generar instalador de Windows
+
+```powershell
+npm install
+npm run build:win
+```
+
+El resultado se escribirá en `release/`. La configuración de `electron-builder.yml` es una reconstrucción inicial basada en la estructura observada del instalador original; puede requerir ajustes si alguna ruta está codificada internamente.
+
+## Integridad del instalador de origen
+
+SHA-256:
 
 ```text
 e29f761cce9a744d00dd1ccf82a29209a2f42c07b32c5567054419d08651dfde
 ```
 
-En Windows puedes comprobarlo con PowerShell:
+## Estructura
 
-```powershell
-Get-FileHash .\Dyclokpropio_30.0.0_win_x64.exe -Algorithm SHA256
-```
+- `dist-electron/`: proceso principal, preload, sincronizador y worker.
+- `dist/`: interfaz de usuario compilada y recursos.
+- `plugins/`: recursos/plugins distribuidos con la aplicación.
+- `SourceData/`: plantilla/datos de navegador incluidos en el instalador.
+- `vendor/`: utilidades externas incluidas, como FFmpeg.
+- `resources/`: recursos auxiliares de Electron.
+- `package.original.json`: paquete original sin cambios.
+- `package.json`: paquete preparado para ejecutar/reconstruir.
 
-El resultado debe coincidir exactamente con el SHA-256 publicado arriba.
+## Recomendación para futuras mejoras
 
-## Instalación
+1. Conservar esta recuperación sin modificar en una rama o etiqueta.
+2. Hacer los cambios en otra rama.
+3. Si aparece el código fuente original, migrar las mejoras a ese código y dejar de editar los bundles compilados.
 
-1. Descarga `Dyclokpropio_30.0.0_win_x64.exe` desde **Releases**.
-2. Verifica el SHA-256 si deseas comprobar la integridad del archivo.
-3. Ejecuta el archivo en Windows.
+## Copia para GitHub
 
-## Releases
-
-Los ejecutables no se almacenan directamente en el historial Git del repositorio. Se publican como archivos adjuntos de cada **GitHub Release**.
+Esta variante `source-only` omite archivos de runtime grandes y `SourceData`. Consulta `RUNTIME_FILES_REQUIRED.md`. Para subirla al repositorio desde Windows puedes ejecutar `SUBIR_A_GITHUB.ps1` después de tener Git instalado y haber iniciado sesión en GitHub.
