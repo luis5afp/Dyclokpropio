@@ -51,6 +51,25 @@ function extractRouteLikeStrings(text) {
   return uniq(out).sort().slice(0, 2000);
 }
 
+function extractDirectIpcCalls(text) {
+  const out = [];
+  const re = /ipcRenderer\.(invoke|send|sendSync|on|once|removeListener)\(\s*(['"])([^'"]+)\2/g;
+  for (const match of text.matchAll(re)) {
+    out.push({ method: match[1], channel: match[3], offset: match.index || 0 });
+  }
+  return out;
+}
+
+function extractChannelLikeStrings(text) {
+  const out = [];
+  const re = /(['"])([a-z][a-z0-9]*(?:[-:][a-z0-9_]+){1,8})\1/g;
+  for (const match of text.matchAll(re)) {
+    const value = match[2];
+    if (value.length <= 100 && !value.startsWith('http')) out.push(value);
+  }
+  return uniq(out).sort();
+}
+
 function findTokenContexts(file, text, tokens) {
   const entries = [];
   for (const token of tokens) {
@@ -95,6 +114,8 @@ for (const file of mainFiles) {
       app: (text.match(/\bapp\b/g) || []).length,
     },
     ipcContexts: findTokenContexts(file, text, ipcTokens),
+    directIpcCalls: extractDirectIpcCalls(text),
+    channelLikeStrings: extractChannelLikeStrings(text),
   });
 }
 
@@ -119,6 +140,8 @@ for (const file of rendererFiles) {
       DIC: (text.match(/\bDIC\b/g) || []).length,
     },
     ipcContexts: findTokenContexts(file, text, ipcTokens),
+    directIpcCalls: extractDirectIpcCalls(text),
+    channelLikeStrings: extractChannelLikeStrings(text),
   });
 }
 
@@ -177,6 +200,63 @@ fs.writeFileSync(
   JSON.stringify(routeSet, null, 2) + '\n',
 );
 
+const rendererIpc = {};
+for (const file of rendererSummary) {
+  for (const call of file.directIpcCalls || []) {
+    rendererIpc[call.channel] ||= {
+      channel: call.channel,
+      methods: {},
+      files: {},
+      count: 0,
+    };
+    rendererIpc[call.channel].methods[call.method] =
+      (rendererIpc[call.channel].methods[call.method] || 0) + 1;
+    rendererIpc[call.channel].files[file.file] =
+      (rendererIpc[call.channel].files[file.file] || 0) + 1;
+    rendererIpc[call.channel].count += 1;
+  }
+}
+
+const rendererIpcCatalog = Object.values(rendererIpc)
+  .sort((a, b) => a.channel.localeCompare(b.channel));
+
+fs.writeFileSync(
+  path.join(OUT_DIR, 'renderer-ipc-catalog.json'),
+  JSON.stringify(rendererIpcCatalog, null, 2) + '\n',
+);
+
+const allRendererChannels = uniq([
+  ...rendererIpcCatalog.map((x) => x.channel),
+  ...rendererSummary.flatMap((x) => x.channelLikeStrings || []),
+]).filter((value) => /^[a-z][a-z0-9]*(?:[-:][a-z0-9_]+)+$/.test(value));
+
+const crossProcessIpc = {};
+for (const channel of allRendererChannels) {
+  const locations = [];
+  for (const file of main) {
+    let from = 0;
+    let count = 0;
+    while (count < 20) {
+      const offset = read(file.file).indexOf(channel, from);
+      if (offset < 0) break;
+      const text = read(file.file);
+      locations.push({
+        file: file.file,
+        offset,
+        context: clip(text, offset, 650),
+      });
+      from = offset + channel.length;
+      count += 1;
+    }
+  }
+  if (locations.length) crossProcessIpc[channel] = locations;
+}
+
+fs.writeFileSync(
+  path.join(OUT_DIR, 'cross-process-ipc-map.json'),
+  JSON.stringify(crossProcessIpc, null, 2) + '\n',
+);
+
 const summary = [
   '# Automated recovery analysis',
   '',
@@ -186,6 +266,8 @@ const summary = [
   `- Renderer JS files summarized: ${rendererSummary.length}`,
   `- IPC channels mapped: ${Object.keys(ipcMap).length}`,
   `- Candidate route/path strings: ${routeSet.length}`,
+  `- Direct renderer IPC channels: ${rendererIpcCatalog.length}`,
+  `- Renderer channels also found in main bundle: ${Object.keys(crossProcessIpc).length}`,
   `- Primary main bundle: ${primaryMain?.file || 'not found'}`,
   `- Primary renderer bundle: ${primaryRenderer?.file || 'not found'}`,
   '',
