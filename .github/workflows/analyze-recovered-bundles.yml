@@ -11,7 +11,8 @@ on:
       - "src/preload/index.js"
       - "tools/analyze-recovered-bundles.js"
       - "tools/compare-preload-contract.js"
-      - "tools/deobfuscate-main-stage1.js"\n      - "tools/extract-main-ipc-handlers.js"
+      - "tools/deobfuscate-main-stage1.js"
+      - "tools/extract-main-ipc-handlers.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
