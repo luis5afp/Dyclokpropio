@@ -50,6 +50,13 @@ jobs:
           Set-Location source
           node tools/deobfuscate-main-stage1.js
 
+      - name: Format stage-one main bundle
+        shell: pwsh
+        run: |
+          Set-Location source
+          Copy-Item "reconstruction-work\main.stage1.js" "reconstruction-work\main.stage1.pretty.js" -Force
+          npx --yes prettier@3.3.3 --write "reconstruction-work\main.stage1.pretty.js"
+
       - name: Extract main IPC handlers
         shell: pwsh
         run: |
