@@ -8,6 +8,10 @@ on:
       - "tools/bootstrap-editable-runtime.js"
       - ".github/workflows/bootstrap-editable-runtime.yml"
 
+concurrency:
+  group: editable-runtime-bootstrap-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -56,4 +60,5 @@ jobs:
             exit 0
           }
           git commit -m "[reconstruction-bot] Bootstrap editable runtime source"
+          git pull --rebase origin reconstruction-source
           git push origin reconstruction-source
