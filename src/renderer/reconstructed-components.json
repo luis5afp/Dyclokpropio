@@ -30,6 +30,33 @@
       ],
       "confidence": "high",
       "status": "reconstructed"
+    },
+    {
+      "name": "TruncateText",
+      "source": "src/renderer/components/reconstructed/TruncateText.vue",
+      "compiledFiles": [
+        "dist/assets/TruncateText.vue_vue_type_script_setup_true_lang-wXc_gDkK.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "EnvironmentWarningNoticeBanner",
+      "source": "src/renderer/components/reconstructed/EnvironmentWarningNoticeBanner.vue",
+      "compiledFiles": [
+        "dist/assets/EnvironmentWarningNoticeBanner.vue_vue_type_script_setup_true_lang-CnmLlY1e.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "IpCountryFlag",
+      "source": "src/renderer/components/reconstructed/IpCountryFlag.vue",
+      "compiledFiles": [
+        "dist/assets/IpCountryFlag.vue_vue_type_script_setup_true_lang-DgLdnpgH.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
     }
   ]
 }
