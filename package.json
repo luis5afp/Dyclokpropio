@@ -103,7 +103,8 @@
     "start:reconstructed": "electron src/main/index.js",
     "verify:preload": "node tools/verify-preload-contract.js",
     "verify:main": "node tools/verify-main-wrapper.js",
-    "verify:reconstruction": "npm run verify:preload && npm run verify:main"
+    "verify:reconstruction": "npm run verify:preload && npm run verify:main",
+    "index:renderer": "node tools/build-renderer-recovery-index.js"
   },
   "devDependencies": {
     "electron": "31.7.7",
