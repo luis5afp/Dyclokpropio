@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T03:09:34.294Z",
+  "generatedAt": "2026-09-19T03:11:55.186Z",
   "source": "reconstruction-work/main.stage1.js",
   "symbols": {
     "fs": [
@@ -545,6 +545,26 @@
       {
         "kind": "assignment",
         "offset": 18211,
+        "likelyDeclaration": true,
+        "bytes": 2,
+        "expression": "{}",
+        "dependencies": []
+      }
+    ],
+    "_0x3533fc": [
+      {
+        "kind": "assignment",
+        "offset": 15131,
+        "likelyDeclaration": true,
+        "bytes": 2,
+        "expression": "{}",
+        "dependencies": []
+      }
+    ],
+    "_0x35bd54": [
+      {
+        "kind": "assignment",
+        "offset": 17979,
         "likelyDeclaration": true,
         "bytes": 2,
         "expression": "{}",
