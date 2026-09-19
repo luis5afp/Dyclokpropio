@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-local-proxy
+ * Method: handle
+ * Source offset: 3478051
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async()=>{const _0x2ce725=await dr(),_0x129e45={};_0x129e45[_0x4d2f2a('0x5d0c',0x2d50)]=!!_0x2ce725,_0x129e45[_0x4d2f2a('0x348a',_0x23c27c._0x3ebfaf)]=_0x2ce725||'';function _0x522f99(_0xb9a0aa,_0x226a18){return _0x270bd6(_0x226a18,_0xb9a0aa- -'0x451');}function _0x4d2f2a(_0x5c714d,_0x43c1ea){return _0x17aaf6(_0x5c714d,_0x43c1ea- -0x454);}return _0x129e45;}

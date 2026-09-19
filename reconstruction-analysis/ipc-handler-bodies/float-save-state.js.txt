@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: float-save-state
+ * Method: on
+ * Source offset: 2390825
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x16fd0a,_0x40fae2)=>{_0xe896c=_0x40fae2;}

@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: set-rpa-task-config
+ * Method: handle
+ * Source offset: 3538677
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async(_0x509792,_0x337335)=>yn[_0x794fa3(0x590d,'0x393d')+'Configmap'](_0x337335)

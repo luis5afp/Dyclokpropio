@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: set-process-env
+ * Method: on
+ * Source offset: 3545462
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async(_0x371757,{key:_0x3169e0,value:_0x1aa7ce})=>{const _0x1deb87={_0xf03257:'0x69'};function _0x48b024(_0x57c093,_0x230327){return _0x794fa3(_0x57c093,_0x230327-_0x1deb87._0xf03257);}process[_0x48b024(0x3bb9,_0x821233._0x5750fd)][_0x3169e0]=_0x1aa7ce;}

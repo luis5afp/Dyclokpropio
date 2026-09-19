@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: env-open-rule-check-cancel
+ * Method: on
+ * Source offset: 4895077
+ * This is analysis material, not yet a standalone runnable module.
+ */
+this[_0x470435(_0x45e22a._0x56fc6b,_0x45e22a._0x252d86)+'el']

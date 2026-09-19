@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-clear-text-content
+ * Method: handle
+ * Source offset: 2548252
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x4cd8e3,_0x4af117)=>yR(_0x4af117)

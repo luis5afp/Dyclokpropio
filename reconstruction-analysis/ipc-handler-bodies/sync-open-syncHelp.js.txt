@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-open-syncHelp
+ * Method: on
+ * Source offset: 2541267
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x327260,_0x1eaac1)=>{rR(_0x1eaac1);}

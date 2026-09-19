@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: kernel-delete-installed
+ * Method: handle
+ * Source offset: 2579791
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x4241d6,_0x3398dd)=>_0x248cc8[_0x384568(0x3c4d,'0x86c')+'alledKerne'+'l'](_0x3398dd)

@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: stop-memory-monitor
+ * Method: handle
+ * Source offset: 3546180
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async _0x47f4ec=>ok()

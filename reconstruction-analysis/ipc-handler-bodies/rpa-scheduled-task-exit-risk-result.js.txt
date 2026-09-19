@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: rpa-scheduled-task-exit-risk-result
+ * Method: on
+ * Source offset: 5278758
+ * This is analysis material, not yet a standalone runnable module.
+ */
+_0xe7d154

@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-expansion-version-from-expan-id
+ * Method: handle
+ * Source offset: 2353168
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async(_0x44d898,_0x1109fc)=>{function _0x310aa5(_0x3f64de,_0x51c795){return _0x5e82fa(_0x3f64de- -_0x508f02._0x5e0753,_0x51c795);}function _0xf017d3(_0x1a6d84,_0x20925c){return _0xa1ed2a(_0x20925c-0x338,_0x1a6d84);}try{return await TP(_0x1109fc);}catch(_0x3c3ca8){return S[_0xf017d3(-0x1bf1,'0xbc4')](_0xf017d3(_0x526326._0x3c7b49,0x5936)+'误：'+_0x3c3ca8),null;}}

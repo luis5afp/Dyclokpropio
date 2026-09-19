@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-all-display
+ * Method: handle
+ * Source offset: 3501592
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>x[_0x56ab91(-'0x1f91','0x33b')][_0x473d5a('0x3bdf',0x4a90)+'lays']()

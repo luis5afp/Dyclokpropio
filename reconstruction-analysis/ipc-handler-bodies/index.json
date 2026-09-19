@@ -1,0 +1,712 @@
+{
+  "generatedAt": "2026-09-19T03:01:06.561Z",
+  "source": "reconstruction-work/main.stage1.js",
+  "uniqueChannels": 77,
+  "registrations": 78,
+  "extracted": 78,
+  "failed": 0,
+  "handlers": [
+    {
+      "channel": "active-window",
+      "method": "on",
+      "offset": 3502504,
+      "channelExpression": "w_",
+      "handlerBytes": 924,
+      "file": "reconstruction-analysis/ipc-handler-bodies/active-window.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "auto-del-install-pack",
+      "method": "on",
+      "offset": 3496090,
+      "channelExpression": "h_",
+      "handlerBytes": 1446,
+      "file": "reconstruction-analysis/ipc-handler-bodies/auto-del-install-pack.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "change-language",
+      "method": "on",
+      "offset": 3503683,
+      "channelExpression": "Ad",
+      "handlerBytes": 537,
+      "file": "reconstruction-analysis/ipc-handler-bodies/change-language.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "check-local-expansion-md5",
+      "method": "handle",
+      "offset": 2368217,
+      "channelExpression": "ox",
+      "handlerBytes": 1494,
+      "file": "reconstruction-analysis/ipc-handler-bodies/check-local-expansion-md5.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "clear-electron-store",
+      "method": "on",
+      "offset": 3539636,
+      "channelExpression": "Xx",
+      "handlerBytes": 1706,
+      "file": "reconstruction-analysis/ipc-handler-bodies/clear-electron-store.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "close-all-win",
+      "method": "on",
+      "offset": 3539234,
+      "channelExpression": "F_",
+      "handlerBytes": 337,
+      "file": "reconstruction-analysis/ipc-handler-bodies/close-all-win.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "close-envs",
+      "method": "on",
+      "offset": 5471904,
+      "channelExpression": "e_",
+      "handlerBytes": 1730,
+      "file": "reconstruction-analysis/ipc-handler-bodies/close-envs.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "close-main-window",
+      "method": "on",
+      "offset": 5532581,
+      "channelExpression": "l_",
+      "handlerBytes": 1380,
+      "file": "reconstruction-analysis/ipc-handler-bodies/close-main-window.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "download-chrome-extension",
+      "method": "handle",
+      "offset": 2358480,
+      "channelExpression": "ZS",
+      "handlerBytes": 379,
+      "file": "reconstruction-analysis/ipc-handler-bodies/download-chrome-extension.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "electron-store-delete",
+      "method": "on",
+      "offset": 28816,
+      "channelExpression": "cx",
+      "handlerBytes": 444,
+      "file": "reconstruction-analysis/ipc-handler-bodies/electron-store-delete.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "electron-store-get",
+      "method": "on",
+      "offset": 27961,
+      "channelExpression": "ax",
+      "handlerBytes": 407,
+      "file": "reconstruction-analysis/ipc-handler-bodies/electron-store-get.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "electron-store-set",
+      "method": "on",
+      "offset": 28433,
+      "channelExpression": "ix",
+      "handlerBytes": 331,
+      "file": "reconstruction-analysis/ipc-handler-bodies/electron-store-set.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "env-open-rule-check-cancel",
+      "method": "on",
+      "offset": 4895077,
+      "channelExpression": "Vd",
+      "handlerBytes": 61,
+      "file": "reconstruction-analysis/ipc-handler-bodies/env-open-rule-check-cancel.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "env-open-rule-check-schedule",
+      "method": "on",
+      "offset": 4894928,
+      "channelExpression": "Ud",
+      "handlerBytes": 70,
+      "file": "reconstruction-analysis/ipc-handler-bodies/env-open-rule-check-schedule.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "float-close-window",
+      "method": "on",
+      "offset": 2390677,
+      "channelExpression": "Md",
+      "handlerBytes": 94,
+      "file": "reconstruction-analysis/ipc-handler-bodies/float-close-window.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "float-is-open",
+      "method": "on",
+      "offset": 2387460,
+      "channelExpression": "Dd",
+      "handlerBytes": 657,
+      "file": "reconstruction-analysis/ipc-handler-bodies/float-is-open.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "float-save-state",
+      "method": "on",
+      "offset": 2390825,
+      "channelExpression": "sx",
+      "handlerBytes": 44,
+      "file": "reconstruction-analysis/ipc-handler-bodies/float-save-state.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "float-set-size",
+      "method": "on",
+      "offset": 2388141,
+      "channelExpression": "Ld",
+      "handlerBytes": 1548,
+      "file": "reconstruction-analysis/ipc-handler-bodies/float-set-size.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-all-display",
+      "method": "handle",
+      "offset": 3501592,
+      "channelExpression": "b_",
+      "handlerBytes": 72,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-all-display.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-current-platform",
+      "method": "handle",
+      "offset": 3506378,
+      "channelExpression": "E_",
+      "handlerBytes": 39,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-current-platform.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-desktop-sources",
+      "method": "handle",
+      "offset": 3527028,
+      "channelExpression": "I_",
+      "handlerBytes": 1129,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-desktop-sources.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-device-info",
+      "method": "handle",
+      "offset": 3505712,
+      "channelExpression": "x_",
+      "handlerBytes": 316,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-device-info.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-download-app-list",
+      "method": "handle",
+      "offset": 2125637,
+      "channelExpression": "VS",
+      "handlerBytes": 68,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-download-app-list.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-expansion-version-from-expan-id",
+      "method": "handle",
+      "offset": 2353168,
+      "channelExpression": "Dx",
+      "handlerBytes": 366,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-expansion-version-from-expan-id.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-local-proxy",
+      "method": "handle",
+      "offset": 3478051,
+      "channelExpression": "i0",
+      "handlerBytes": 359,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-local-proxy.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-main-window-launch-preference",
+      "method": "handle",
+      "offset": 3910524,
+      "channelExpression": "lx",
+      "handlerBytes": 99,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-main-window-launch-preference.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-rpa-bearing-page",
+      "method": "handle",
+      "offset": 3538805,
+      "channelExpression": "D_",
+      "handlerBytes": 132,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-rpa-bearing-page.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-rpa-index-page",
+      "method": "handle",
+      "offset": 3539006,
+      "channelExpression": "L_",
+      "handlerBytes": 13,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-rpa-index-page.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-running-map",
+      "method": "handle",
+      "offset": 5287292,
+      "channelExpression": "Av",
+      "handlerBytes": 74,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-running-map.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "get-window-by-pid",
+      "method": "handle",
+      "offset": 3529478,
+      "channelExpression": "R_",
+      "handlerBytes": 3268,
+      "file": "reconstruction-analysis/ipc-handler-bodies/get-window-by-pid.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "heartbeat-activity-ping",
+      "method": "on",
+      "offset": 4486955,
+      "channelExpression": "gx",
+      "handlerBytes": 2,
+      "file": "reconstruction-analysis/ipc-handler-bodies/heartbeat-activity-ping.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "input-text-to-custom-windows",
+      "method": "handle",
+      "offset": 2573956,
+      "channelExpression": "SS",
+      "handlerBytes": 231,
+      "file": "reconstruction-analysis/ipc-handler-bodies/input-text-to-custom-windows.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "kernel-delete-installed",
+      "method": "handle",
+      "offset": 2579791,
+      "channelExpression": "AS",
+      "handlerBytes": 87,
+      "file": "reconstruction-analysis/ipc-handler-bodies/kernel-delete-installed.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "kernel-get-progress",
+      "method": "handle",
+      "offset": 2579508,
+      "channelExpression": "RS",
+      "handlerBytes": 56,
+      "file": "reconstruction-analysis/ipc-handler-bodies/kernel-get-progress.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "key-close-win",
+      "method": "on",
+      "offset": 3539143,
+      "channelExpression": "M_",
+      "handlerBytes": 39,
+      "file": "reconstruction-analysis/ipc-handler-bodies/key-close-win.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "limit-download-start",
+      "method": "on",
+      "offset": 2599218,
+      "channelExpression": "WS",
+      "handlerBytes": 4514,
+      "file": "reconstruction-analysis/ipc-handler-bodies/limit-download-start.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "open-app",
+      "method": "handle",
+      "offset": 3492556,
+      "channelExpression": "f_",
+      "handlerBytes": 1909,
+      "file": "reconstruction-analysis/ipc-handler-bodies/open-app.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "open-folder-path",
+      "method": "handle",
+      "offset": 5539109,
+      "channelExpression": "Gv",
+      "handlerBytes": 1144,
+      "file": "reconstruction-analysis/ipc-handler-bodies/open-folder-path.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "open-safari",
+      "method": "on",
+      "offset": 5508039,
+      "channelExpression": "c_",
+      "handlerBytes": 3612,
+      "file": "reconstruction-analysis/ipc-handler-bodies/open-safari.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "open-url",
+      "method": "on",
+      "offset": 5473742,
+      "channelExpression": "n_",
+      "handlerBytes": 1794,
+      "file": "reconstruction-analysis/ipc-handler-bodies/open-url.1.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "open-url",
+      "method": "on",
+      "offset": 5553366,
+      "channelExpression": "\"open-url\"",
+      "handlerBytes": 849,
+      "file": "reconstruction-analysis/ipc-handler-bodies/open-url.2.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "openapi-update-base-url",
+      "method": "on",
+      "offset": 3897651,
+      "channelExpression": "Rx",
+      "handlerBytes": 475,
+      "file": "reconstruction-analysis/ipc-handler-bodies/openapi-update-base-url.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "probe-gost-start",
+      "method": "handle",
+      "offset": 3558532,
+      "channelExpression": "P_",
+      "handlerBytes": 1734,
+      "file": "reconstruction-analysis/ipc-handler-bodies/probe-gost-start.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "quit-app",
+      "method": "on",
+      "offset": 3494974,
+      "channelExpression": "m_",
+      "handlerBytes": 298,
+      "file": "reconstruction-analysis/ipc-handler-bodies/quit-app.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "read-file",
+      "method": "handle",
+      "offset": 5545706,
+      "channelExpression": "Jv",
+      "handlerBytes": 883,
+      "file": "reconstruction-analysis/ipc-handler-bodies/read-file.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "rpa-scheduled-task-exit-risk-result",
+      "method": "on",
+      "offset": 5278758,
+      "channelExpression": "kd",
+      "handlerBytes": 9,
+      "file": "reconstruction-analysis/ipc-handler-bodies/rpa-scheduled-task-exit-risk-result.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "run-rpa",
+      "method": "on",
+      "offset": 5486885,
+      "channelExpression": "a_",
+      "handlerBytes": 18954,
+      "file": "reconstruction-analysis/ipc-handler-bodies/run-rpa.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "set-main-window-launch-preference",
+      "method": "handle",
+      "offset": 3910648,
+      "channelExpression": "ux",
+      "handlerBytes": 860,
+      "file": "reconstruction-analysis/ipc-handler-bodies/set-main-window-launch-preference.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "set-process-env",
+      "method": "on",
+      "offset": 3545462,
+      "channelExpression": "d0",
+      "handlerBytes": 254,
+      "file": "reconstruction-analysis/ipc-handler-bodies/set-process-env.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "set-rpa-task-config",
+      "method": "handle",
+      "offset": 3538677,
+      "channelExpression": "O_",
+      "handlerBytes": 81,
+      "file": "reconstruction-analysis/ipc-handler-bodies/set-rpa-task-config.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "set-user-plan",
+      "method": "on",
+      "offset": 387336,
+      "channelExpression": "fx",
+      "handlerBytes": 542,
+      "file": "reconstruction-analysis/ipc-handler-bodies/set-user-plan.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "start-memory-monitor",
+      "method": "handle",
+      "offset": 3546070,
+      "channelExpression": "B_",
+      "handlerBytes": 41,
+      "file": "reconstruction-analysis/ipc-handler-bodies/start-memory-monitor.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "stop-all-env",
+      "method": "on",
+      "offset": 5486296,
+      "channelExpression": "r_",
+      "handlerBytes": 550,
+      "file": "reconstruction-analysis/ipc-handler-bodies/stop-all-env.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "stop-env",
+      "method": "on",
+      "offset": 5473686,
+      "channelExpression": "t_",
+      "handlerBytes": 2,
+      "file": "reconstruction-analysis/ipc-handler-bodies/stop-env.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "stop-memory-monitor",
+      "method": "handle",
+      "offset": 3546180,
+      "channelExpression": "U_",
+      "handlerBytes": 21,
+      "file": "reconstruction-analysis/ipc-handler-bodies/stop-memory-monitor.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "stop-rpa",
+      "method": "on",
+      "offset": 5505859,
+      "channelExpression": "i_",
+      "handlerBytes": 2132,
+      "file": "reconstruction-analysis/ipc-handler-bodies/stop-rpa.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-active-win",
+      "method": "on",
+      "offset": 2542636,
+      "channelExpression": "H_",
+      "handlerBytes": 905,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-active-win.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-clear-text-content",
+      "method": "handle",
+      "offset": 2548252,
+      "channelExpression": "iS",
+      "handlerBytes": 36,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-clear-text-content.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-clipboard",
+      "method": "handle",
+      "offset": 2572241,
+      "channelExpression": "wS",
+      "handlerBytes": 479,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-clipboard.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-close-syncHelp",
+      "method": "on",
+      "offset": 2540692,
+      "channelExpression": "G_",
+      "handlerBytes": 510,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-close-syncHelp.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-data",
+      "method": "handle",
+      "offset": 2570020,
+      "channelExpression": "fS",
+      "handlerBytes": 58,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-data.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-lattice-layout",
+      "method": "handle",
+      "offset": 2543821,
+      "channelExpression": "X_",
+      "handlerBytes": 36,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-lattice-layout.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-open-syncHelp",
+      "method": "on",
+      "offset": 2541267,
+      "channelExpression": "q_",
+      "handlerBytes": 39,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-open-syncHelp.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-overlap-layout",
+      "method": "handle",
+      "offset": 2544725,
+      "channelExpression": "Q_",
+      "handlerBytes": 36,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-overlap-layout.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-request-permission",
+      "method": "on",
+      "offset": 2544904,
+      "channelExpression": "eS",
+      "handlerBytes": 2028,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-request-permission.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-send-text-more",
+      "method": "handle",
+      "offset": 2548588,
+      "channelExpression": "uS",
+      "handlerBytes": 103,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-send-text-more.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-start",
+      "method": "handle",
+      "offset": 2547508,
+      "channelExpression": "sS",
+      "handlerBytes": 519,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-start.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "sync-stop",
+      "method": "handle",
+      "offset": 2548083,
+      "channelExpression": "aS",
+      "handlerBytes": 100,
+      "file": "reconstruction-analysis/ipc-handler-bodies/sync-stop.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "synchronizer-store-change-to-child",
+      "method": "on",
+      "offset": 2541360,
+      "channelExpression": "Nd",
+      "handlerBytes": 556,
+      "file": "reconstruction-analysis/ipc-handler-bodies/synchronizer-store-change-to-child.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "synchronizer-store-change-to-parent",
+      "method": "on",
+      "offset": 2541968,
+      "channelExpression": "Od",
+      "handlerBytes": 614,
+      "file": "reconstruction-analysis/ipc-handler-bodies/synchronizer-store-change-to-parent.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "track-event",
+      "method": "on",
+      "offset": 386918,
+      "channelExpression": "dx",
+      "handlerBytes": 366,
+      "file": "reconstruction-analysis/ipc-handler-bodies/track-event.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "update-app",
+      "method": "on",
+      "offset": 2119747,
+      "channelExpression": "DS",
+      "handlerBytes": 1519,
+      "file": "reconstruction-analysis/ipc-handler-bodies/update-app.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "update-app-cancel-download",
+      "method": "on",
+      "offset": 2124852,
+      "channelExpression": "BS",
+      "handlerBytes": 357,
+      "file": "reconstruction-analysis/ipc-handler-bodies/update-app-cancel-download.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "update-app-patch-update",
+      "method": "on",
+      "offset": 2123167,
+      "channelExpression": "MS",
+      "handlerBytes": 361,
+      "file": "reconstruction-analysis/ipc-handler-bodies/update-app-patch-update.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "update-app-restart",
+      "method": "on",
+      "offset": 2125249,
+      "channelExpression": "US",
+      "handlerBytes": 334,
+      "file": "reconstruction-analysis/ipc-handler-bodies/update-app-restart.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "window-test",
+      "method": "handle",
+      "offset": 3533496,
+      "channelExpression": "k_",
+      "handlerBytes": 1388,
+      "file": "reconstruction-analysis/ipc-handler-bodies/window-test.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "write-app-log",
+      "method": "on",
+      "offset": 5470004,
+      "channelExpression": "r0",
+      "handlerBytes": 1342,
+      "file": "reconstruction-analysis/ipc-handler-bodies/write-app-log.js.txt",
+      "extracted": true
+    },
+    {
+      "channel": "write-rpa-log",
+      "method": "on",
+      "offset": 5471370,
+      "channelExpression": "h0",
+      "handlerBytes": 299,
+      "file": "reconstruction-analysis/ipc-handler-bodies/write-rpa-log.js.txt",
+      "extracted": true
+    }
+  ]
+}
