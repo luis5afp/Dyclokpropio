@@ -103,7 +103,7 @@
     "start:reconstructed": "electron src/main/index.js",
     "verify:preload": "node tools/verify-preload-contract.js",
     "verify:main": "node tools/verify-main-wrapper.js",
-    "verify:reconstruction": "npm run verify:preload && npm run verify:main && npm run verify:ipc-migration && npm run verify:window-preference && npm run verify:storage && npm run verify:storage-schema && npm run verify:device-info && npm run verify:reconstructed-vue",
+    "verify:reconstruction": "npm run verify:preload && npm run verify:main && npm run verify:ipc-migration && npm run verify:window-preference && npm run verify:window-preference-ipc && npm run verify:storage && npm run verify:storage-schema && npm run verify:store-capture && npm run verify:device-info && npm run verify:reconstructed-vue",
     "index:renderer": "node tools/build-renderer-recovery-index.js",
     "build:reconstructed:prepare": "node tools/build-reconstructed-runtime.js",
     "build:reconstructed:win": "node tools/build-reconstructed-runtime.js && electron-builder --config electron-builder.reconstructed.yml --win nsis --x64 --publish never",
@@ -112,7 +112,9 @@
     "verify:storage": "node tools/verify-storage-accessors.js",
     "verify:device-info": "node tools/verify-device-info.js",
     "verify:storage-schema": "node tools/verify-storage-schema.js",
-    "verify:reconstructed-vue": "node tools/verify-reconstructed-vue-components.js"
+    "verify:reconstructed-vue": "node tools/verify-reconstructed-vue-components.js",
+    "verify:store-capture": "node tools/verify-store-capture.js",
+    "verify:window-preference-ipc": "node tools/verify-window-preference-ipc.js"
   },
   "devDependencies": {
     "electron": "31.7.7",
