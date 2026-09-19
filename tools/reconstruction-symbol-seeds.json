@@ -1,0 +1,15 @@
+{
+  "note": "Symbols referenced by low-risk IPC handlers that need definition recovery before clean-room modularization.",
+  "symbols": [
+    "fs",
+    "Lh",
+    "b0",
+    "hp",
+    "Ei",
+    "Ve",
+    "x",
+    "_",
+    "v",
+    "_0x5bc46d"
+  ]
+}
