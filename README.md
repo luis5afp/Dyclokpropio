@@ -57,5 +57,6 @@ La reconstrucción sí está orientada a que la aplicación recuperada pueda edi
 
 ## Ramas
 
-- `main`: referencia estable del programa recuperado.
-- `reconstruction-source`: versión editable/recompilable y su tooling de validación.
+- `main`: versión final editable/recompilable y validada.
+- `recovered-runtime-stable`: referencia intacta del programa recuperado antes de promover la reconstrucción.
+- `reconstruction-source`: historial de trabajo de la reconstrucción, mantenido alineado con la entrega final.

@@ -84,7 +84,8 @@ The clean semantic rewrite under `src/main/` and `src/renderer/` can continue as
 
 ## Branch policy
 
-- `main`: recovered stable reference.
-- `reconstruction-source`: editable/rebuildable reconstruction and validation tooling.
+- `main`: final editable/rebuildable reconstruction.
+- `recovered-runtime-stable`: preserved recovered-runtime reference from before reconstruction promotion.
+- `reconstruction-source`: reconstruction history and validation branch, kept aligned with the final delivery.
 
-The histories have been synchronized: `reconstruction-source` contains the current `main` history while keeping the reconstructed work. Pull request #1 is mergeable, but `main` remains intentionally preserved as the stable recovered reference.
+Pull request #1 was merged after the final validation succeeded. The recovered reference remains available on `recovered-runtime-stable`, so promoting the reconstruction did not discard the original recovered state.
