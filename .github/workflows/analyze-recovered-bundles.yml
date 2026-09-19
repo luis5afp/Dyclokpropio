@@ -19,6 +19,7 @@ on:
       - "tools/trace-device-id-symbol.js"
       - "tools/index-pretty-main-symbols.js"
       - "tools/extract-electron-store-schemas.js"
+      - "tools/extract-electron-store-descriptor-mutations.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -89,6 +90,12 @@ jobs:
         run: |
           Set-Location source
           node tools/extract-electron-store-schemas.js
+
+      - name: Extract electron-store descriptor mutations
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-electron-store-descriptor-mutations.js
 
       - name: Trace recovered device ID algorithm
         shell: pwsh
