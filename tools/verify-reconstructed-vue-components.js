@@ -24,4 +24,10 @@ assert.match(radio, /emit\('change', value\)/);
 assert.match(radio, /text-color="var\(--primary-color\)"/);
 assert.match(radio, /fill="rgba\(255, 255, 255, 0\)"/);
 
+const progress = read('src/renderer/components/reconstructed/OpenProgressBar.vue');
+assert.match(progress, /Math\.ceil\(5 \* progress\)/);
+assert.match(progress, /v-for="block in 5"/);
+assert.match(progress, /block <= activeBlocks/);
+assert.match(progress, /#faa63a/);
+
 console.log('Reconstructed Vue component contracts: OK');
