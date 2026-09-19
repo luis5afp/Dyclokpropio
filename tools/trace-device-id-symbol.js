@@ -196,8 +196,14 @@ const cryptoProxy = new Proxy({}, {
   },
 });
 
-sandbox.Ve = osProxy;
-sandbox.lt = cryptoProxy;
+const traceSandbox = {
+  _0x28d9a9: sandbox._0x28d9a9,
+  _0x1acd6a: sandbox._0x1acd6a,
+  _0x4fa0: sandbox._0x4fa0,
+  Ve: osProxy,
+  lt: cryptoProxy,
+  console,
+};
 
 const hpCandidates = symbols.symbols?.hp || [];
 const hpExpression = hpCandidates[0]?.expression;
@@ -207,7 +213,7 @@ let hpEvaluationError = null;
 
 if (hpExpression) {
   try {
-    const fn = vm.runInNewContext('(' + hpExpression + ')', sandbox, {
+    const fn = vm.runInNewContext('(' + hpExpression + ')', traceSandbox, {
       timeout: 1000,
     });
     hpResult = fn();
