@@ -1,0 +1,104 @@
+{
+  "note": "Domain grouping reconstructed from observable channel names; not guaranteed to match original source module boundaries.",
+  "totalChannels": 75,
+  "groups": {
+    "app": [
+      "checker-resource-update",
+      "get-app-title",
+      "get-local-server-status",
+      "open-url",
+      "version-local-info"
+    ],
+    "crypto": [
+      "aes-128-decrypt",
+      "aes-128-decrypt-many",
+      "aes-128-encrypt",
+      "cert-pin-set"
+    ],
+    "deviceSystem": [
+      "get-current-platform",
+      "get-device-id",
+      "get-device-info",
+      "get-device-name",
+      "get-device-user-name",
+      "get-mac-address",
+      "get-system-idle-time",
+      "get-system-memory-info",
+      "start-memory-monitor",
+      "start-power-save-blocker",
+      "stop-memory-monitor",
+      "stop-power-save-blocker"
+    ],
+    "environmentProxy": [
+      "check-proxy-for-gost",
+      "clear-env-server-cache-for-indexed-db",
+      "clear-env-server-cache-for-local-storage",
+      "get-local-proxy",
+      "open-env-res",
+      "probe-gost-start",
+      "retry-detect-proxy",
+      "run-env",
+      "run-env-for-convert",
+      "set-process-env",
+      "stop-detect-proxy",
+      "stop-env",
+      "update-proxy-detector-config"
+    ],
+    "kernel": [
+      "kernel-cancel",
+      "kernel-cleanup-old",
+      "kernel-delete-installed",
+      "kernel-get-progress",
+      "kernel-install-requested",
+      "kernel-list-installed"
+    ],
+    "network": [
+      "get-network-identity",
+      "get-public-ip",
+      "http:log",
+      "network-probe"
+    ],
+    "process": [],
+    "rpa": [
+      "del-rpa-task-log",
+      "get-rpa-index-page",
+      "get-rpa-task-log",
+      "set-rpa-task-config",
+      "write-rpa-log"
+    ],
+    "storageFiles": [
+      "clear-electron-store",
+      "electron-store-delete",
+      "electron-store-get",
+      "electron-store-set",
+      "generate-sha256-hash",
+      "generate-sha256-hash-for-plugins",
+      "get-last-modified-time",
+      "read-json-file",
+      "user-save-file"
+    ],
+    "telemetry": [
+      "set-user-plan",
+      "track-event"
+    ],
+    "window": [
+      "active-window",
+      "close-all-win",
+      "get-all-displays",
+      "get-current-main-window-size",
+      "get-desktop-sources",
+      "get-main-window-launch-preference",
+      "get-window-by-pid",
+      "open-application-window",
+      "set-main-window-launch-preference",
+      "window-test"
+    ],
+    "other": [
+      "change-org-res",
+      "common-request-for-local-api-response",
+      "get-new-device-id",
+      "get-sha256-hash-folder",
+      "install-chrome-extension-for-open-api-response"
+    ]
+  }
+}
