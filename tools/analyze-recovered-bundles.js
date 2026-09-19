@@ -199,4 +199,4 @@ const summary = [
 
 fs.writeFileSync(path.join(OUT_DIR, 'README.md'), summary);
 
-console.log(summary);
+console.log(summary);\nconsole.log('Analysis schema version: 1');
