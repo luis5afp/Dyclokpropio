@@ -1,0 +1,68 @@
+import { am as s, aB as r, bc as t, bd as e } from "./index-BUIbb6Pa.js";
+function o(r, e) {
+  const o = [s.Http, s.Https, s.Socks5, s.Placeholder],
+    p = {
+      type: e.defaultType,
+      userName: "",
+      passwd: "",
+      host: "",
+      port: "",
+      remark: "",
+      proxyIpInfo: {},
+      ipAddrType: t.IPV4,
+    },
+    a = [
+      /^\s*(?<host>\[[^\]]+\]|[^:\s\{\}]+)\s*:\s*(?<port>\d+)\s*(?:\{(?<remark>[^\}]*)\}\s*)?$/,
+      /^\s*(?<host>\[[^\]]+\]|[^:\s\{\}]+)\s*:\s*(?<port>\d+)\s*:\s*(?<userName>[^:]+)\s*:\s*(?<passwd>[^\{]+)\s*(?:\{(?<remark>[^\}]*)\}\s*)?$/,
+      /^\s*(?<type>[a-zA-Z0-9]+):\/\/\s*(?<userName>[^:]+)\s*:\s*(?<passwd>[^@]+)\s*@\s*(?<host>\[[^\]]+\]|[^:\s\{\}]+)\s*:\s*(?<port>\d+)\s*(?:\{(?<remark>[^\}]*)\}\s*)?$/,
+      /^\s*(?<userName>[^:]+)\s*:\s*(?<passwd>[^@]+)\s*@\s*(?<host>\[[^\]]+\]|[^:\s\{\}]+)\s*:\s*(?<port>\d+)\s*(?:\{(?<remark>[^\}]*)\}\s*)?$/,
+      /^\s*(?<type>[a-zA-Z0-9]+):\/\/\s*(?<host>\[[^\]]+\]|[^:\s\{\}]+)\s*:\s*(?<port>\d+)\s*(?::\s*(?<userName>[^:]+)\s*:\s*(?<passwd>[^\{]+)\s*)?(?:\{(?<remark>[^\}]*)\}\s*)?$/,
+    ];
+  for (const u of a) {
+    const e = r.match(u);
+    if (e && e.groups) {
+      if (
+        (Object.keys(e.groups).forEach((s) => {
+          var r;
+          (null == (r = e.groups) ? void 0 : r[s]) &&
+            "remark" !== s &&
+            ((e.groups[s] = e.groups[s].trim()),
+            "type" === s && (e.groups[s] = e.groups[s].toUpperCase()));
+        }),
+        Object.assign(p, e.groups),
+        (p.type = p.type || s.Http),
+        !o.includes(p.type))
+      )
+        return null;
+      try {
+        const s = p.host || "",
+          r = String(s).trim(),
+          e = /^\[.*\]$/.test(r),
+          o = r
+            .replace(/^\[|\]$/g, "")
+            .split("%")[0]
+            .trim();
+        if (e && 0 === o.length) return null;
+        ((p.ipAddrType = e ? t.IPV6 : t.IPV4), (p.host = o));
+      } catch {}
+      return p;
+    }
+  }
+  return null;
+}
+const p = {
+    get [s.PARATURBO]() {
+      return r.t("enum.ProxyWay.IP_RESOURCE");
+    },
+    [s.IPFLY]: "IPFLY",
+    [s.S5PROXY]: "922S5",
+    [s.CHERRY_PROXY]: "CherryProxy",
+    [s.IPROYAL]: "IPRoyal",
+    [s.NETNUT]: "Netnut",
+    [s.NODE_MAVEN]: "NodeMaven",
+    get [s.COMMON]() {
+      return r.t("enum.ProxyType.COMMON");
+    },
+  },
+  a = (s) => e(s, p, r.t("ipResource.provider.custom"));
+export { p as T, a as g, o as p };

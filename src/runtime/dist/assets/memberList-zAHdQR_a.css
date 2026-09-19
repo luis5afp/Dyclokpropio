@@ -1,0 +1,28 @@
+@charset "UTF-8";
+.filter-form .el-form-item {
+  margin: 0 8px 16px 0 !important;
+}
+.footer-container[data-v-7e155d7f] {
+  padding: 10px 28px 10px 36px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.footer-container .selection-wrapper[data-v-7e155d7f] {
+  display: flex;
+  margin-right: 12px;
+}
+.footer-container .selection-wrapper .ellipse[data-v-7e155d7f] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 21px;
+  background-color: var(--el-component-bg-color);
+  color: #fff;
+  border-radius: 36px;
+  margin-right: 8px;
+}
+[data-v-7e155d7f] .lastLoginDateItem .el-form-item__label {
+  pointer-events: auto !important;
+}

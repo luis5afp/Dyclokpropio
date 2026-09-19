@@ -1,0 +1,733 @@
+import {
+  d as e,
+  v as t,
+  ad as a,
+  d_ as r,
+  W as l,
+  P as o,
+  e5 as s,
+  g as u,
+  r as i,
+  q as n,
+  c,
+  O as d,
+  t as w,
+  f as v,
+  X as p,
+  x as m,
+  ai as y,
+  h as x,
+  a as b,
+  F as g,
+  e as f,
+  b as h,
+  w as I,
+  z as _,
+  i as R,
+  C,
+  e6 as P,
+  o as k,
+} from "./index-BUIbb6Pa.js";
+import { s as T, e as S } from "./ipResourceMock-CCd7H3CQ.js";
+import { i as q } from "./ipResourceCatalog-CJEdeRbI.js";
+import {
+  c as j,
+  m as V,
+  a as F,
+  r as A,
+  b as E,
+} from "./ipResourcePayment-DW1eNDIC.js";
+import { _ as O } from "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import { _ as W } from "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import { _ as D } from "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import { _ as H } from "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+const U = {
+    class:
+      "tw-min-h-[560px] tw-rounded-[10px] tw-border tw-border-[var(--card-br-color)] tw-bg-[var(--card-bg-color)] tw-p-4 tw-shadow-[0_2px_10px_rgb(22_35_68_/_4%)] [&_.el-loading-mask]:tw-rounded-[10px] md:tw-p-6",
+  },
+  M = {
+    key: 1,
+    class: "tw-border-b tw-border-[var(--border-color-base)] tw-pb-5",
+  },
+  N = { class: "tw-text-xl tw-font-semibold tw-text-[var(--text-color-base)]" },
+  $ = { class: "tw-mt-1 tw-text-sm tw-text-[var(--text-color-light2)]" },
+  z = { class: "tw-grid tw-grid-cols-1 tw-gap-4 md:tw-grid-cols-[1fr_160px]" },
+  B = {
+    class:
+      "tw-flex tw-items-center tw-gap-2 tw-text-[15px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  K = {
+    class:
+      "tw-flex tw-items-center tw-gap-2 tw-text-[15px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  L = {
+    class:
+      "inventory-value tw-mt-3 tw-text-xl tw-font-semibold tw-text-[var(--text-color-base)] [&_.el-loading-mask]:!tw-bg-transparent",
+  },
+  X = {
+    class:
+      "tw-flex tw-items-center tw-gap-2 tw-text-[15px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  G = {
+    key: 1,
+    class:
+      "tw-flex tw-items-center tw-justify-between tw-rounded-lg tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-light1)] tw-px-4 tw-py-[14px] tw-text-[var(--text-color-base)]",
+  },
+  J = { class: "tw-inline-flex tw-items-center tw-gap-1" },
+  Q = {
+    class:
+      "tw-flex tw-items-center tw-gap-2 tw-text-[15px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  Y = {
+    class:
+      "tw-inline-flex tw-h-[22px] tw-w-[22px] tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--primary-color)] tw-text-xs tw-text-[var(--text-color-white)]",
+  },
+  Z = { class: "tw-mt-2 tw-grid tw-grid-cols-2 tw-gap-3 md:tw-grid-cols-3" },
+  ee = ["disabled", "onClick"],
+  te = { key: 0 },
+  ae = { key: 1 },
+  re = {
+    key: 2,
+    class:
+      "!tw-absolute !tw-right-[-1px] !tw-top-[-1px] !tw-flex !tw-h-5 !tw-w-5 !tw-items-center !tw-justify-center !tw-rounded-bl-lg !tw-rounded-tr-lg !tw-bg-[var(--primary-color)] !tw-text-[11px] !tw-text-[var(--text-color-white)]",
+  },
+  le = {
+    key: 2,
+    class: "tw-border-t tw-border-[var(--border-color-base)] tw-pt-5",
+  },
+  oe = {
+    class: "tw-text-sm tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  se = {
+    class:
+      "tw-mt-[10px] tw-grid tw-gap-[6px] tw-text-[13px] tw-leading-relaxed tw-text-[var(--text-color-light2)]",
+  },
+  ue = e({
+    __name: "StaticIpPurchase",
+    props: { embedded: { type: Boolean }, renewItem: {} },
+    emits: ["back", "success"],
+    setup(e, { emit: ue }) {
+      const ie = e,
+        ne = ue,
+        { t: ce } = t.useI18n(),
+        de = a(),
+        we = r.SOCKS5,
+        ve = [7, 30, 90],
+        pe = () => ({ ...s("static"), protocol: we }),
+        me = R(pe()),
+        ye = R(null),
+        xe = R(null),
+        be = R({ useWallet: !0, usePay: !0 }),
+        ge = R(!1),
+        fe = R(!1),
+        he = R(!1),
+        Ie = R(!1),
+        _e = R(!1),
+        Re = R(!1),
+        Ce = R(""),
+        Pe = R();
+      let ke,
+        Te,
+        Se = 0;
+      const qe = C(() => {
+          var e;
+          return null == (e = ye.value)
+            ? void 0
+            : e.durations.find((e) => e.id === me.value.durationId);
+        }),
+        je = C(() => {
+          var e;
+          const t = (null == (e = ye.value) ? void 0 : e.durations) || [];
+          if (ie.renewItem)
+            return t.map((e) => ({ days: e.days, duration: e }));
+          const a = new Set(ve);
+          return [
+            ...ve.map((e) => ({
+              days: e,
+              duration: t.find((t) => t.days === e),
+            })),
+            ...t
+              .filter((e) => !a.has(e.days))
+              .map((e) => ({ days: e.days, duration: e })),
+          ];
+        }),
+        Ve = C(() => {
+          const e = A(be.value);
+          if (!qe.value || void 0 === qe.value.version || !e) return;
+          if (be.value.usePay && !be.value.payType) return;
+          const t = {
+            businessType: ie.renewItem ? "STATIC_RENEWAL" : "STATIC_PURCHASE",
+            priceId: qe.value.id,
+            priceVersion: qe.value.version,
+            payMethod: e,
+            ...(be.value.usePay && be.value.payType
+              ? { payType: be.value.payType }
+              : {}),
+          };
+          return ie.renewItem
+            ? { ...t, resourceId: ie.renewItem.id }
+            : !Ie.value || !me.value.countryCode || me.value.quantity <= 0
+              ? void 0
+              : { ...t, protocol: we, quantity: me.value.quantity };
+        }),
+        Fe = async () => {
+          var e, t;
+          ge.value = !0;
+          try {
+            const t = ie.renewItem
+              ? await q.getStaticRenewCatalog(
+                  ie.renewItem.id,
+                  ie.renewItem.countryCode,
+                )
+              : await q.getStaticPurchaseCatalog();
+            if (((ye.value = t), !ie.renewItem && !me.value.countryCode)) {
+              const a = null == (e = t.countries[0]) ? void 0 : e.code;
+              if (a) return ((me.value.countryCode = a), void (await Ae(a)));
+            }
+            me.value.durationId || (me.value.durationId = P(t.durations));
+          } catch (a) {
+            (console.error("[ipResource] failed to load static catalog", {
+              resourceId: null == (t = ie.renewItem) ? void 0 : t.id,
+              error: a,
+            }),
+              (Ce.value = ce("ipResource.catalogFailed")));
+          } finally {
+            ge.value = !1;
+          }
+        };
+      async function Ae(e) {
+        var t, a;
+        const r = ++Se,
+          l = null == (t = qe.value) ? void 0 : t.days;
+        if (
+          ((Ie.value = !1),
+          (me.value.quantity = 1),
+          (xe.value = null),
+          ye.value && (ye.value = { ...ye.value, inventory: 0 }),
+          !e || !ye.value)
+        )
+          return (
+            ye.value && (ye.value = { ...ye.value, durations: [] }),
+            (fe.value = !1),
+            void (he.value = !1)
+          );
+        ((fe.value = !0), (he.value = !0), (Ce.value = ""));
+        try {
+          const [t, o] = await Promise.all([
+            q.getStaticInventory({ regionId: e }),
+            q.getStaticPurchaseDurations(e),
+          ]);
+          if (r !== Se || !ye.value) return;
+          ((ye.value = {
+            ...ye.value,
+            durations: o,
+            inventory: t.availableCount,
+          }),
+            (me.value.durationId =
+              (null == (a = o.find((e) => e.days === l)) ? void 0 : a.id) ||
+              P(o)),
+            (Ie.value = !0));
+        } catch (o) {
+          if (r !== Se) return;
+          (ye.value && (ye.value = { ...ye.value, durations: [] }),
+            console.error("[ipResource] failed to load static inventory", {
+              regionId: e,
+              error: o,
+            }),
+            (Ce.value = ce("ipResource.catalogFailed")));
+        } finally {
+          r === Se && ((fe.value = !1), (he.value = !1));
+        }
+      }
+      const Ee = async (e) => {
+          const t = Ve.value;
+          if (!t) throw new Error("Static IP resource order is not ready");
+          const a = await T(V(t, e));
+          return F(a);
+        },
+        Oe = async () => {
+          (await de.getWalletInfoFn().catch((e) => {
+            console.error("[ipResource] failed to refresh wallet info", e);
+          }),
+            ne("success"));
+        },
+        We = async () => {
+          var e;
+          const t = Ve.value;
+          if (t && xe.value) {
+            ((Ce.value = ""), (Re.value = !0));
+            try {
+              await (null == (e = Pe.value)
+                ? void 0
+                : e.acceptParams(j(t, xe.value, be.value), {
+                    submitOrder: Ee,
+                  }));
+            } catch (a) {
+              (console.error("[ipResource] failed to start static IP payment", {
+                request: t,
+                error: a,
+              }),
+                (Ce.value = ce("ipResource.submitFailed")));
+            } finally {
+              Re.value = !1;
+            }
+          }
+        };
+      return (
+        l(
+          [
+            () => me.value.countryCode,
+            () => me.value.quantity,
+            () => me.value.durationId,
+            () => Ie.value,
+            () => be.value.useWallet,
+            () => be.value.usePay,
+            () => be.value.payType,
+          ],
+          () => {
+            ((_e.value = !0),
+              ke && clearTimeout(ke),
+              (ke = setTimeout(() => {
+                (async () => {
+                  const e = Ve.value;
+                  if (!e)
+                    return (
+                      null == Te || Te.abort(),
+                      (Te = void 0),
+                      (_e.value = !1),
+                      void (xe.value = null)
+                    );
+                  null == Te || Te.abort();
+                  const t = new AbortController();
+                  ((Te = t), (_e.value = !0), (Ce.value = ""));
+                  try {
+                    const a = await S(e, t.signal);
+                    if (t.signal.aborted) return;
+                    xe.value = E(a);
+                  } catch (a) {
+                    if (a instanceof DOMException && "AbortError" === a.name)
+                      return;
+                    (console.error("[ipResource] failed to quote static IP", {
+                      proxyTypeId: me.value.proxyTypeId,
+                      error: a,
+                    }),
+                      (Ce.value = ce("ipResource.quoteFailed")));
+                  } finally {
+                    Te === t && ((Te = void 0), (_e.value = !1));
+                  }
+                })();
+              }, 300)));
+          },
+        ),
+        o(async () => {
+          if (ie.renewItem)
+            return (
+              (me.value = {
+                ...s(ie.renewItem.proxyTypeId),
+                countryCode: ie.renewItem.countryCode,
+                protocol: ie.renewItem.protocol,
+              }),
+              void (await Fe())
+            );
+          ((me.value = pe()), await Fe());
+        }),
+        u(() => {
+          ((Se += 1), ke && clearTimeout(ke), null == Te || Te.abort());
+        }),
+        (t, a) => {
+          var r;
+          const l = i("el-option"),
+            o = i("el-select"),
+            s = i("el-input-number"),
+            u = i("el-alert"),
+            R = n("loading");
+          return (
+            k(),
+            c(
+              "div",
+              {
+                class: d([
+                  "tw-mx-auto tw-grid tw-h-full tw-min-h-0 tw-w-full tw-grid-cols-1 tw-content-start tw-gap-5 tw-px-[6px] tw-pb-5 tw-pt-1 tw-text-[var(--text-color-base)] [scrollbar-gutter:stable] lg:tw-grid-cols-2 xl:tw-grid-cols-[minmax(0,1fr)_643px]",
+                  e.embedded ? "" : "tw-overflow-y-auto",
+                ]),
+              },
+              [
+                e.embedded
+                  ? p("", !0)
+                  : (k(),
+                    c(
+                      "button",
+                      {
+                        key: 0,
+                        type: "button",
+                        class:
+                          "tw-col-span-full tw-justify-self-start tw-border-0 tw-bg-transparent tw-p-0 tw-text-sm tw-text-[var(--primary-color)] hover:tw-text-[var(--primary-color-light1)]",
+                        onClick: a[0] || (a[0] = (e) => ne("back")),
+                      },
+                      " ← " + w(v(ce)("ipResource.backToStatic")),
+                      1,
+                    )),
+                m(
+                  (k(),
+                  c("section", U, [
+                    y(t.$slots, "purchase-type-tabs"),
+                    e.renewItem
+                      ? p("", !0)
+                      : (k(), x(W, { key: 0, class: "tw-mb-6" })),
+                    e.embedded
+                      ? p("", !0)
+                      : (k(),
+                        c("header", M, [
+                          b(
+                            "h2",
+                            N,
+                            w(
+                              e.renewItem
+                                ? v(ce)("ipResource.renewStaticIp")
+                                : v(ce)("ipResource.buyStaticIp"),
+                            ),
+                            1,
+                          ),
+                          b(
+                            "p",
+                            $,
+                            w(v(ce)("ipResource.staticPurchaseHint")),
+                            1,
+                          ),
+                        ])),
+                    b(
+                      "div",
+                      {
+                        class: d([
+                          "tw-space-y-5",
+                          e.embedded ? "" : "tw-mt-[22px]",
+                        ]),
+                      },
+                      [
+                        e.renewItem
+                          ? (k(),
+                            c("div", G, [
+                              b("span", null, w(e.renewItem.ip), 1),
+                              b("span", J, [
+                                b(
+                                  "span",
+                                  null,
+                                  w(e.renewItem.countryName) +
+                                    " · " +
+                                    w(e.renewItem.protocol),
+                                  1,
+                                ),
+                              ]),
+                            ]))
+                          : (k(),
+                            c(
+                              g,
+                              { key: 0 },
+                              [
+                                b("div", z, [
+                                  b("div", null, [
+                                    b("div", B, [
+                                      a[4] ||
+                                        (a[4] = b(
+                                          "span",
+                                          {
+                                            class:
+                                              "tw-inline-flex tw-h-[22px] tw-w-[22px] tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--primary-color)] tw-text-xs tw-text-[var(--text-color-white)]",
+                                          },
+                                          "1",
+                                          -1,
+                                        )),
+                                      f(w(v(ce)("ipResource.country")), 1),
+                                    ]),
+                                    h(
+                                      o,
+                                      {
+                                        modelValue: me.value.countryCode,
+                                        "onUpdate:modelValue":
+                                          a[1] ||
+                                          (a[1] = (e) =>
+                                            (me.value.countryCode = e)),
+                                        class: "tw-mt-2 tw-w-full",
+                                        filterable: "",
+                                        disabled: !ye.value,
+                                        placeholder: v(ce)("base.selectHolder"),
+                                        onChange: Ae,
+                                      },
+                                      {
+                                        default: I(() => {
+                                          var e;
+                                          return [
+                                            (k(!0),
+                                            c(
+                                              g,
+                                              null,
+                                              _(
+                                                (null == (e = ye.value)
+                                                  ? void 0
+                                                  : e.countries) || [],
+                                                (e) => (
+                                                  k(),
+                                                  x(
+                                                    l,
+                                                    {
+                                                      key: e.code,
+                                                      label: e.name,
+                                                      value: e.code,
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["label", "value"],
+                                                  )
+                                                ),
+                                              ),
+                                              128,
+                                            )),
+                                          ];
+                                        }),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["modelValue", "disabled", "placeholder"],
+                                    ),
+                                  ]),
+                                  b("div", null, [
+                                    b(
+                                      "div",
+                                      K,
+                                      w(v(ce)("ipResource.inventory")),
+                                      1,
+                                    ),
+                                    m(
+                                      (k(),
+                                      c("div", L, [
+                                        f(
+                                          w(
+                                            me.value.countryCode && Ie.value
+                                              ? ((null == (r = ye.value)
+                                                  ? void 0
+                                                  : r.inventory) ?? "--")
+                                              : "--",
+                                          ),
+                                          1,
+                                        ),
+                                      ])),
+                                      [[R, fe.value]],
+                                    ),
+                                  ]),
+                                ]),
+                                b("div", null, [
+                                  b("div", X, [
+                                    a[5] ||
+                                      (a[5] = b(
+                                        "span",
+                                        {
+                                          class:
+                                            "tw-inline-flex tw-h-[22px] tw-w-[22px] tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--primary-color)] tw-text-xs tw-text-[var(--text-color-white)]",
+                                        },
+                                        "2",
+                                        -1,
+                                      )),
+                                    f(w(v(ce)("ipResource.quantity")), 1),
+                                  ]),
+                                  h(
+                                    s,
+                                    {
+                                      modelValue: me.value.quantity,
+                                      "onUpdate:modelValue":
+                                        a[2] ||
+                                        (a[2] = (e) => (me.value.quantity = e)),
+                                      class:
+                                        "tw-mt-2 [&_.el-input__inner]:!tw-text-center",
+                                      min: 1,
+                                      disabled:
+                                        !ye.value ||
+                                        !me.value.countryCode ||
+                                        fe.value,
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue", "disabled"],
+                                  ),
+                                ]),
+                              ],
+                              64,
+                            )),
+                        b("div", null, [
+                          b("div", Q, [
+                            b("span", Y, w(e.renewItem ? "1" : "3"), 1),
+                            f(w(v(ce)("ipResource.duration")), 1),
+                          ]),
+                          b("div", Z, [
+                            (k(!0),
+                            c(
+                              g,
+                              null,
+                              _(je.value, (e) => {
+                                var t, a;
+                                return (
+                                  k(),
+                                  c(
+                                    "button",
+                                    {
+                                      key: e.days,
+                                      type: "button",
+                                      class: d([
+                                        "tw-relative tw-flex tw-min-h-[88px] tw-flex-col tw-items-center tw-justify-center tw-gap-2 tw-rounded-lg tw-border tw-border-[var(--card-br-color)] tw-bg-[var(--card-bg-color)] tw-px-[10px] tw-py-4 tw-text-[var(--text-color-base)] tw-transition-colors hover:tw-border-[var(--primary-color-light1)] hover:tw-bg-[var(--primary-color-light7)] [&>strong]:tw-text-base [&>span]:tw-text-[13px] [&>span]:tw-text-[var(--text-color-light2)]",
+                                        [
+                                          me.value.durationId ===
+                                          (null == (t = e.duration)
+                                            ? void 0
+                                            : t.id)
+                                            ? "tw-border-[var(--primary-color)] tw-bg-[var(--primary-color-light7)] tw-text-[var(--primary-color)] tw-shadow-[inset_0_0_0_1px_var(--primary-color)] [&>span]:tw-text-[var(--primary-color)]"
+                                            : "",
+                                          e.duration
+                                            ? he.value
+                                              ? "tw-cursor-wait"
+                                              : "tw-cursor-pointer"
+                                            : "tw-cursor-not-allowed tw-border-[var(--card-br-color)] tw-bg-[var(--bg-light1)] tw-text-[var(--text-color-light2)] tw-opacity-60 hover:tw-border-[var(--card-br-color)] hover:tw-bg-[var(--bg-light1)]",
+                                        ],
+                                      ]),
+                                      disabled: !e.duration || he.value,
+                                      onClick: (t) => {
+                                        var a;
+                                        return (me.value.durationId =
+                                          (null == (a = e.duration)
+                                            ? void 0
+                                            : a.id) || "");
+                                      },
+                                    },
+                                    [
+                                      b(
+                                        "strong",
+                                        null,
+                                        w(
+                                          v(ce)("ipResource.days", {
+                                            count: e.days,
+                                          }),
+                                        ),
+                                        1,
+                                      ),
+                                      e.duration && !he.value
+                                        ? (k(),
+                                          c(
+                                            "span",
+                                            te,
+                                            "$" +
+                                              w(
+                                                e.duration.unitPrice.toFixed(2),
+                                              ) +
+                                              " / IP",
+                                            1,
+                                          ))
+                                        : (k(), c("span", ae, "-- / IP")),
+                                      me.value.durationId ===
+                                      (null == (a = e.duration) ? void 0 : a.id)
+                                        ? (k(), c("span", re, "✓"))
+                                        : p("", !0),
+                                    ],
+                                    10,
+                                    ee,
+                                  )
+                                );
+                              }),
+                              128,
+                            )),
+                          ]),
+                        ]),
+                        e.renewItem || e.embedded
+                          ? p("", !0)
+                          : (k(),
+                            c("div", le, [
+                              b(
+                                "div",
+                                oe,
+                                w(v(ce)("ipResource.staticPurchaseTipsTitle")),
+                                1,
+                              ),
+                              b("div", se, [
+                                b(
+                                  "p",
+                                  null,
+                                  w(
+                                    v(ce)(
+                                      "ipResource.staticPurchaseAllocationTip",
+                                    ),
+                                  ),
+                                  1,
+                                ),
+                                b(
+                                  "p",
+                                  null,
+                                  w(v(ce)("ipResource.staticPurchaseViewTip")),
+                                  1,
+                                ),
+                              ]),
+                            ])),
+                      ],
+                      2,
+                    ),
+                    Ce.value
+                      ? (k(),
+                        x(
+                          u,
+                          {
+                            key: 2,
+                            class: "tw-mt-4",
+                            closable: !1,
+                            title: Ce.value,
+                            type: "error",
+                            "show-icon": "",
+                          },
+                          null,
+                          8,
+                          ["title"],
+                        ))
+                      : p("", !0),
+                  ])),
+                  [[R, ge.value]],
+                ),
+                h(
+                  H,
+                  {
+                    modelValue: be.value,
+                    "onUpdate:modelValue":
+                      a[3] || (a[3] = (e) => (be.value = e)),
+                    quote: xe.value,
+                    loading: _e.value,
+                    submitting: Re.value,
+                  },
+                  null,
+                  8,
+                  ["modelValue", "quote", "loading", "submitting"],
+                ),
+                h(
+                  D,
+                  {
+                    quote: xe.value,
+                    payment: be.value,
+                    loading: _e.value,
+                    submitting: Re.value,
+                    "success-hint": v(ce)(
+                      "ipResource.staticPaymentSuccessHint",
+                    ),
+                    onSubmit: We,
+                  },
+                  null,
+                  8,
+                  ["quote", "payment", "loading", "submitting", "success-hint"],
+                ),
+                h(
+                  O,
+                  { ref_key: "payDialogRef", ref: Pe, onConfirmPay: Oe },
+                  null,
+                  512,
+                ),
+              ],
+              2,
+            )
+          );
+        }
+      );
+    },
+  });
+export { ue as _ };

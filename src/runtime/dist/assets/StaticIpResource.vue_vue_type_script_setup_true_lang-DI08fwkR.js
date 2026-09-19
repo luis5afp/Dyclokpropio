@@ -1,0 +1,690 @@
+import {
+  d as e,
+  v as t,
+  be as a,
+  ah as l,
+  e2 as o,
+  P as r,
+  r as s,
+  q as i,
+  o as n,
+  c as u,
+  a as c,
+  F as w,
+  z as p,
+  t as d,
+  O as v,
+  f as b,
+  h as x,
+  w as g,
+  e as m,
+  X as h,
+  ji as R,
+  b as y,
+  x as f,
+  jn as _,
+  i as S,
+  C,
+  a3 as k,
+  jo as I,
+  at as E,
+  e3 as j,
+  jp as D,
+} from "./index-BUIbb6Pa.js";
+import { g as P, u as N, d as T } from "./ipResourceMock-CCd7H3CQ.js";
+import { E as A } from "./index-CLVJdR_V.js";
+import { _ as V } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import { _ as O } from "./IpResourceEmptyState.vue_vue_type_script_setup_true_lang-DneoJ3ks.js";
+const X = {
+    class:
+      "tw-flex tw-h-full tw-min-h-0 tw-flex-col tw-gap-3 tw-overflow-hidden tw-pb-3 tw-text-[var(--text-color-base)]",
+  },
+  z = {
+    class:
+      "tw-flex tw-min-h-[116px] tw-flex-wrap tw-items-center tw-justify-between tw-gap-4 tw-rounded-[10px] tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-base)] tw-px-[22px] tw-py-5 tw-shadow-[0_1px_3px_rgb(15_23_42_/_4%)]",
+  },
+  F = {
+    class:
+      "tw-grid tw-grid-cols-1 tw-divide-x tw-divide-[var(--border-color-base)] md:tw-grid-cols-3",
+  },
+  H = { class: "tw-text-[13px] tw-text-[var(--text-color-light2)]" },
+  L = { class: "tw-flex tw-items-center tw-gap-2" },
+  U = {
+    class:
+      "tw-flex tw-min-h-0 tw-flex-1 tw-flex-col tw-overflow-hidden tw-rounded-[10px] tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-base)] tw-shadow-[0_1px_3px_rgb(15_23_42_/_4%)]",
+  },
+  B = { class: "tw-border-b tw-border-[var(--border-color-base)] tw-p-4" },
+  G = { key: 1, class: "tw-min-h-0 tw-flex-1" },
+  K = { class: "tw-inline-flex tw-items-center tw-gap-1" },
+  q = {
+    key: 2,
+    class:
+      "tw-flex tw-min-h-0 tw-flex-1 tw-items-start tw-justify-center tw-px-4 tw-py-6 md:tw-items-center md:tw-px-6 md:tw-pb-6 md:tw-pt-[clamp(34px,7vh,76px)]",
+  },
+  M = {
+    key: 3,
+    class:
+      "tw-flex tw-flex-none tw-justify-end tw-border-t tw-border-[var(--border-color-base)] tw-px-4 tw-py-3",
+  },
+  Q = e({
+    __name: "StaticIpResource",
+    emits: ["purchase", "purchaseHistory", "renew"],
+    setup(e, { emit: Q }) {
+      const W = Q,
+        { t: J, locale: Y } = t.useI18n(),
+        Z = a(l.VIEW_ORDER_RECORDS),
+        $ = S(),
+        ee = S([]),
+        te = S(!1),
+        ae = S(""),
+        le = S(1),
+        oe = S(20),
+        re = S(0),
+        se = C(() => ({
+          pageNo: le.value,
+          pageSize: oe.value,
+          total: re.value,
+        })),
+        ie = E({ resourceStatus: null, autoRenew: null }),
+        ne = C(() => D.map((e) => ({ value: e, label: J(I(e).labelKey) }))),
+        ue = C(() => [
+          {
+            el: "select",
+            key: "resourceStatus",
+            label: J("ipResource.status"),
+            placeholder: J("ipResource.allStatuses"),
+            clearable: !0,
+            options: ne.value,
+          },
+          {
+            el: "select",
+            key: "autoRenew",
+            label: J("ipResource.autoRenew"),
+            placeholder: J("ipResource.autoRenew"),
+            clearable: !0,
+            isPackUp: !0,
+            options: [
+              { value: !0, label: J("ipResource.autoRenewEnabled") },
+              { value: !1, label: J("ipResource.autoRenewDisabled") },
+            ],
+          },
+        ]),
+        ce = C(() => [
+          J("ipResource.guidePurchaseStatic"),
+          J("ipResource.guideViewResources"),
+          J("ipResource.guideBind"),
+        ]),
+        we = C(() => {
+          var e, t, a;
+          return [
+            {
+              label: J("ipResource.available"),
+              value:
+                (null == (e = $.value) ? void 0 : e.availableCount) ?? "--",
+              color: "tw-text-[var(--success-color)]",
+            },
+            {
+              label: J("ipResource.expiringSoon"),
+              value:
+                (null == (t = $.value) ? void 0 : t.expiringSoonCount) ?? "--",
+              color: "tw-text-[var(--warning-color)]",
+            },
+            {
+              label: J("ipResource.expired"),
+              value: (null == (a = $.value) ? void 0 : a.expiredCount) ?? "--",
+              color: "tw-text-[var(--danger-color)]",
+            },
+          ];
+        }),
+        pe = (e) => ({
+          id: e.id,
+          proxyTypeId: e.staticType,
+          ip: e.ip,
+          countryCode: e.regionId,
+          countryName: j(e.regionName, Y.value),
+          protocol: e.protocol,
+          status: e.resourceStatus,
+          expireTime: e.expireTime,
+          remainingDays: e.remainingDays,
+          environmentCount: void 0,
+          autoRenew: e.autoRenew,
+        }),
+        de = async () => {
+          const e = (async () => {
+            try {
+              $.value = await T();
+            } catch (e) {
+              (($.value = void 0),
+                console.error(
+                  "[ipResource] failed to load static IP statistics",
+                  e,
+                ));
+            }
+          })();
+          ((te.value = !0), (ae.value = ""));
+          try {
+            const e = await P({
+              pageNo: le.value,
+              pageSize: oe.value,
+              resourceStatus: ie.resourceStatus || void 0,
+              autoRenew: ie.autoRenew ?? void 0,
+            });
+            ((ee.value = (e.list || []).map(pe)), (re.value = e.total || 0));
+          } catch (t) {
+            (console.error("[ipResource] failed to load static IP list", {
+              pageNo: le.value,
+              error: t,
+            }),
+              (ae.value = J("ipResource.loadFailed")));
+          } finally {
+            ((te.value = !1), await e);
+          }
+        },
+        ve = () => {
+          ((le.value = 1), de());
+        },
+        be = (e, t) => {
+          "resourceStatus" !== e
+            ? "autoRenew" === e &&
+              (ie.autoRenew = "boolean" == typeof t ? t : null)
+            : (ie.resourceStatus = D.find((e) => e === t) ?? null);
+        },
+        xe = (e) => {
+          ((le.value = e), de());
+        },
+        ge = (e) => {
+          ((oe.value = e), (le.value = 1), de());
+        },
+        me = [o.ALLOCATING, o.EXPIRED, o.UNAVAILABLE],
+        he = (e) => !me.includes(e.status),
+        Re = (e) => {
+          const { labelKey: t } = I(e);
+          return t ? J(t) : e || "--";
+        },
+        ye = (e) => {
+          const t = I(e).tone;
+          return "success" === t
+            ? "tw-border-[var(--el-color-success-light-7)] tw-bg-[var(--el-color-success-light-9)] tw-text-[var(--el-color-success)]"
+            : "warning" === t
+              ? "tw-border-[var(--el-color-warning-light-7)] tw-bg-[var(--el-color-warning-light-9)] tw-text-[var(--el-color-warning)]"
+              : "danger" === t
+                ? "tw-border-[var(--el-color-danger-light-7)] tw-bg-[var(--el-color-danger-light-9)] tw-text-[var(--el-color-danger)]"
+                : "tw-border-[var(--border-color-base)] tw-bg-[var(--bg-light7)] tw-text-[var(--text-color-light2)]";
+        },
+        fe = (e) =>
+          e.status === o.EXPIRED || e.remainingDays < 0
+            ? "tw-text-[var(--danger-color)]"
+            : e.status === o.EXPIRING_SOON
+              ? "tw-text-[var(--warning-color)]"
+              : "";
+      return (
+        r(() => {
+          de();
+        }),
+        (e, t) => {
+          var a;
+          const l = s("el-button"),
+            r = s("el-alert"),
+            S = s("el-table-column"),
+            C = s("el-icon"),
+            I = s("el-tooltip"),
+            E = s("el-switch"),
+            j = s("el-table"),
+            D = i("loading");
+          return (
+            n(),
+            u("div", X, [
+              c("section", z, [
+                c("div", F, [
+                  (n(!0),
+                  u(
+                    w,
+                    null,
+                    p(
+                      we.value,
+                      (e) => (
+                        n(),
+                        u(
+                          "div",
+                          {
+                            key: e.label,
+                            class: "tw-min-w-[150px] tw-px-6 first:tw-pl-0",
+                          },
+                          [
+                            c("div", H, d(e.label), 1),
+                            c(
+                              "div",
+                              {
+                                class: v([
+                                  "tw-mt-1 tw-text-3xl tw-font-semibold",
+                                  e.color,
+                                ]),
+                              },
+                              d(e.value),
+                              3,
+                            ),
+                          ],
+                        )
+                      ),
+                    ),
+                    128,
+                  )),
+                ]),
+                c("div", L, [
+                  b(Z)
+                    ? (n(),
+                      x(
+                        l,
+                        {
+                          key: 0,
+                          link: "",
+                          type: "primary",
+                          onClick: t[0] || (t[0] = (e) => W("purchaseHistory")),
+                        },
+                        {
+                          default: g(() => [
+                            m(d(b(J)("ipResource.purchaseHistory")), 1),
+                          ]),
+                          _: 1,
+                        },
+                      ))
+                    : h("", !0),
+                  b(Z)
+                    ? (n(),
+                      x(
+                        l,
+                        {
+                          key: 1,
+                          type: "primary",
+                          icon: b(R),
+                          onClick: t[1] || (t[1] = (e) => W("purchase")),
+                        },
+                        {
+                          default: g(() => [
+                            m(d(b(J)("ipResource.purchaseStaticIp")), 1),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["icon"],
+                      ))
+                    : h("", !0),
+                ]),
+              ]),
+              (null == (a = $.value) ? void 0 : a.expiringSoonCount)
+                ? (n(),
+                  x(
+                    r,
+                    {
+                      key: 0,
+                      closable: !0,
+                      title: b(J)("ipResource.expiringAlert", {
+                        count: $.value.expiringSoonCount,
+                      }),
+                      type: "warning",
+                      "show-icon": "",
+                    },
+                    null,
+                    8,
+                    ["title"],
+                  ))
+                : h("", !0),
+              c("section", U, [
+                c("div", B, [
+                  y(
+                    A,
+                    {
+                      class: "!tw-justify-end",
+                      "auto-search": !1,
+                      config: ue.value,
+                      "model-value": ie,
+                      onSearch: ve,
+                      "onField:change": be,
+                    },
+                    null,
+                    8,
+                    ["config", "model-value"],
+                  ),
+                ]),
+                ae.value
+                  ? (n(),
+                    x(
+                      r,
+                      {
+                        key: 0,
+                        class: "tw-mx-4 tw-mt-3",
+                        closable: !1,
+                        title: ae.value,
+                        type: "error",
+                        "show-icon": "",
+                      },
+                      null,
+                      8,
+                      ["title"],
+                    ))
+                  : h("", !0),
+                ee.value.length || te.value
+                  ? (n(),
+                    u("div", G, [
+                      f(
+                        (n(),
+                        x(
+                          j,
+                          {
+                            data: ee.value,
+                            class: "tw-text-[var(--text-color-base)]",
+                            height: "100%",
+                          },
+                          {
+                            default: g(() => [
+                              y(
+                                S,
+                                {
+                                  label: b(J)("ipResource.status"),
+                                  "min-width": "125",
+                                },
+                                {
+                                  default: g(({ row: e }) => [
+                                    c(
+                                      "span",
+                                      {
+                                        class: v([
+                                          "tw-inline-flex tw-min-h-[26px] tw-items-center tw-gap-[7px] tw-whitespace-nowrap tw-rounded-full tw-border tw-px-[10px] tw-py-[3px] tw-text-xs tw-font-medium tw-leading-[18px]",
+                                          ye(e.status),
+                                        ]),
+                                      },
+                                      [
+                                        t[3] ||
+                                          (t[3] = c(
+                                            "span",
+                                            {
+                                              class:
+                                                "tw-h-[6px] tw-w-[6px] tw-flex-none tw-rounded-full tw-bg-current tw-shadow-[0_0_0_3px_color-mix(in_srgb,currentColor_14%,transparent)]",
+                                            },
+                                            null,
+                                            -1,
+                                          )),
+                                        m(" " + d(Re(e.status)), 1),
+                                      ],
+                                      2,
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                {
+                                  prop: "ip",
+                                  label: b(J)("ipResource.ipAddress"),
+                                  "min-width": "150",
+                                },
+                                null,
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                {
+                                  label: b(J)("ipResource.location"),
+                                  "min-width": "170",
+                                },
+                                {
+                                  default: g(({ row: e }) => [
+                                    m(
+                                      d(
+                                        [e.countryName, e.region]
+                                          .filter(Boolean)
+                                          .join(" / ") || "--",
+                                      ),
+                                      1,
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                {
+                                  prop: "protocol",
+                                  label: b(J)("ipResource.protocol"),
+                                  "min-width": "100",
+                                },
+                                null,
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                {
+                                  prop: "expireTime",
+                                  label: b(J)("ipResource.expireTime"),
+                                  "min-width": "170",
+                                },
+                                {
+                                  default: g(({ row: e }) => [
+                                    c(
+                                      "span",
+                                      { class: v(fe(e)) },
+                                      d(e.expireTime || "--"),
+                                      3,
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                {
+                                  prop: "remainingDays",
+                                  label: b(J)("ipResource.remainingDays"),
+                                  "min-width": "110",
+                                },
+                                {
+                                  default: g(({ row: e }) => [
+                                    c(
+                                      "span",
+                                      { class: v(fe(e)) },
+                                      d(e.remainingDays),
+                                      3,
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                {
+                                  label: b(J)("ipResource.boundEnvironments"),
+                                  "min-width": "130",
+                                },
+                                {
+                                  default: g(({ row: e }) => [
+                                    m(d(e.environmentCount ?? "--"), 1),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                              y(
+                                S,
+                                { "min-width": "120" },
+                                {
+                                  header: g(() => [
+                                    c("span", K, [
+                                      m(
+                                        d(b(J)("ipResource.autoRenew")) + " ",
+                                        1,
+                                      ),
+                                      y(
+                                        I,
+                                        {
+                                          content: b(J)(
+                                            "ipResource.autoRenewTip",
+                                          ),
+                                          placement: "top",
+                                          "popper-class": "!tw-max-w-[320px]",
+                                        },
+                                        {
+                                          default: g(() => [
+                                            y(
+                                              C,
+                                              {
+                                                class:
+                                                  "tw-cursor-help tw-text-[var(--warning-color)]",
+                                              },
+                                              {
+                                                default: g(() => [y(b(_))]),
+                                                _: 1,
+                                              },
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["content"],
+                                      ),
+                                    ]),
+                                  ]),
+                                  default: g(({ row: e }) => [
+                                    y(
+                                      E,
+                                      {
+                                        modelValue: e.autoRenew,
+                                        "onUpdate:modelValue": (t) =>
+                                          (e.autoRenew = t),
+                                        disabled: !b(Z) || !he(e),
+                                        onChange: (t) =>
+                                          (async (e) => {
+                                            const t = e.autoRenew;
+                                            try {
+                                              const a = await N(e.id, t);
+                                              e.autoRenew = a.autoRenew;
+                                            } catch (a) {
+                                              ((e.autoRenew = !t),
+                                                console.error(
+                                                  "[ipResource] failed to update static IP auto renew",
+                                                  { id: e.id, error: a },
+                                                ),
+                                                k.error(
+                                                  J(
+                                                    "ipResource.autoRenewFailed",
+                                                  ),
+                                                ));
+                                            }
+                                          })(e),
+                                      },
+                                      null,
+                                      8,
+                                      [
+                                        "modelValue",
+                                        "onUpdate:modelValue",
+                                        "disabled",
+                                        "onChange",
+                                      ],
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                              ),
+                              y(
+                                S,
+                                {
+                                  label: b(J)("base.operation"),
+                                  fixed: "right",
+                                  "min-width": "100",
+                                },
+                                {
+                                  default: g(({ row: e }) => [
+                                    b(Z) && e.status !== b(o).EXPIRED
+                                      ? (n(),
+                                        x(
+                                          l,
+                                          {
+                                            key: 0,
+                                            link: "",
+                                            type: "primary",
+                                            disabled: !he(e),
+                                            onClick: (t) => W("renew", e),
+                                          },
+                                          {
+                                            default: g(() => [
+                                              m(d(b(J)("ipResource.renew")), 1),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["disabled", "onClick"],
+                                        ))
+                                      : h("", !0),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["data"],
+                        )),
+                        [[D, te.value]],
+                      ),
+                    ]))
+                  : (n(),
+                    u("div", q, [
+                      y(
+                        O,
+                        {
+                          title: b(J)("ipResource.emptyStatic"),
+                          description: b(J)("ipResource.emptyStaticHint"),
+                          "action-text": b(J)("ipResource.purchaseStaticIp"),
+                          "show-action": b(Z),
+                          steps: ce.value,
+                          onAction: t[2] || (t[2] = (e) => W("purchase")),
+                        },
+                        null,
+                        8,
+                        [
+                          "title",
+                          "description",
+                          "action-text",
+                          "show-action",
+                          "steps",
+                        ],
+                      ),
+                    ])),
+                ee.value.length
+                  ? (n(),
+                    u("div", M, [
+                      y(
+                        V,
+                        {
+                          pageable: se.value,
+                          handleCurrentChange: xe,
+                          handleSizeChange: ge,
+                        },
+                        null,
+                        8,
+                        ["pageable"],
+                      ),
+                    ]))
+                  : h("", !0),
+              ]),
+            ])
+          );
+        }
+      );
+    },
+  });
+export { Q as _ };

@@ -1,0 +1,139 @@
+import { _ as t } from "./newRpaProcessOptionsForm.vue_vue_type_script_setup_true_lang-BLtJw3M5.js";
+import {
+  d as e,
+  R as a,
+  Q as l,
+  v as s,
+  W as r,
+  r as o,
+  o as i,
+  c as n,
+  b as d,
+  w as p,
+  f as u,
+  a as c,
+  e as w,
+  t as x,
+  i as _,
+  C as m,
+} from "./index-BUIbb6Pa.js";
+import { _ as v } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+const f = { class: "tw-w-full" },
+  b = {
+    class:
+      "tw-px-[12px] tw-flex tw-items-center tw-py-[6px] tw-bg-[var(--dropdown-divided-br-color)] tw-rounded-[8px] tw-leading-[1.2] tw-text-[14px]",
+  },
+  g = {
+    class:
+      "tw-text-center tw-text-[var(--text-color-base)] tw-text-[16px] tw-mb-[12px]",
+  },
+  h = { class: "tw-text-[var(--text-color-light1)] tw-text-[14px]" },
+  k = e({
+    __name: "marketForm",
+    setup(e, { expose: k }) {
+      let y = _();
+      const { editCrawlerMarketCard: C } = a(l());
+      let { t: F } = s.useI18n();
+      const R = m(() => {
+        try {
+          return JSON.parse(C.value.data) || {};
+        } catch (t) {
+          return {};
+        }
+      });
+      function j() {
+        l().closeEditMarket();
+      }
+      return (
+        r(
+          () => C.value,
+          () => {
+            var t;
+            null == (t = y.value) || t.clearValidate();
+          },
+        ),
+        k({
+          handleSubmit: () => {
+            var t;
+            return null == (t = y.value) ? void 0 : t.handleSubmit();
+          },
+        }),
+        (e, a) => {
+          const l = o("CloseBold"),
+            s = o("el-icon"),
+            r = o("el-button"),
+            _ = o("el-form-item");
+          return (
+            i(),
+            n("div", f, [
+              d(
+                t,
+                {
+                  "label-position": "right",
+                  "label-width": "120px",
+                  class: "tw-w-full",
+                  "global-data": R.value,
+                  disabled: !1,
+                  ref_key: "NewRpaProcessOptionsFormRef",
+                  ref: y,
+                },
+                {
+                  extra: p(() => [
+                    d(
+                      _,
+                      { label: u(F)("crawler.template") },
+                      {
+                        default: p(() => [
+                          c("div", b, [
+                            w(x(u(C).name) + " ", 1),
+                            d(v, null, {
+                              content: p(() => [
+                                c(
+                                  "div",
+                                  g,
+                                  x(u(F)("crawler.template_details")),
+                                  1,
+                                ),
+                                c("div", h, x(u(C).detail), 1),
+                              ]),
+                              _: 1,
+                            }),
+                          ]),
+                          d(
+                            r,
+                            {
+                              type: "info",
+                              link: "",
+                              class: "tw-ml-[6px]",
+                              onClick: j,
+                            },
+                            {
+                              default: p(() => [
+                                d(
+                                  s,
+                                  { size: "16px" },
+                                  { default: p(() => [d(l)]), _: 1 },
+                                ),
+                              ]),
+                              _: 1,
+                            },
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    ),
+                  ]),
+                  _: 1,
+                },
+                8,
+                ["global-data"],
+              ),
+            ])
+          );
+        }
+      );
+    },
+  });
+export { k as _ };

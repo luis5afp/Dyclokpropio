@@ -1,0 +1,592 @@
+import {
+  eM as e,
+  eN as a,
+  d as l,
+  eO as t,
+  v as o,
+  at as r,
+  r as n,
+  q as i,
+  o as s,
+  c as u,
+  F as p,
+  b as v,
+  w as d,
+  x as m,
+  h as c,
+  f as _,
+  a as f,
+  t as g,
+  e as x,
+  O as h,
+  X as C,
+  aB as w,
+  i as y,
+  a3 as I,
+  eP as E,
+  eQ as F,
+  C as b,
+  a5 as T,
+  eR as O,
+  _ as U,
+} from "./index-BUIbb6Pa.js";
+import { E as N } from "./index-UZcsr-ei.js";
+import { E as V } from "./index-rtKG2tmD.js";
+import { _ as L } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import { t as R, e as S } from "./transformExcel-Cy_3yjj_.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+var X = 1 / 0;
+function M(a) {
+  return a
+    ? (a = e(a)) === X || a === -1 / 0
+      ? 17976931348623157e292 * (a < 0 ? -1 : 1)
+      : a == a
+        ? a
+        : 0
+    : 0 === a
+      ? a
+      : 0;
+}
+var q = Math.floor,
+  A = Math.random;
+var P = parseFloat,
+  D = Math.min,
+  k = Math.random;
+function j(e, l, t) {
+  if (
+    (t && "boolean" != typeof t && a(e, l, t) && (l = t = void 0),
+    void 0 === t &&
+      ("boolean" == typeof l
+        ? ((t = l), (l = void 0))
+        : "boolean" == typeof e && ((t = e), (e = void 0))),
+    void 0 === e && void 0 === l
+      ? ((e = 0), (l = 1))
+      : ((e = M(e)), void 0 === l ? ((l = e), (e = 0)) : (l = M(l))),
+    e > l)
+  ) {
+    var o = e;
+    ((e = l), (l = o));
+  }
+  if (t || e % 1 || l % 1) {
+    var r = k();
+    return D(e + r * (l - e + P("1e-" + ((r + "").length - 1))), l);
+  }
+  return (function (e, a) {
+    return e + q(A() * (a - e + 1));
+  })(e, l);
+}
+const Y = {
+    class:
+      "tw-text-[var(--text-color-light1)] tw-mb-[22px] tw-flex tw-justify-center tw-flex-auto tw-leading-[1.2]",
+  },
+  $ = {
+    class:
+      "loading-wrap tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-[100%]",
+  },
+  K = { class: "tw-mt-[20px] tw-w-[100%]" },
+  z = { class: "tw-mt-[40px]" },
+  B = { class: "tw-text-main" },
+  H = { style: { color: "var(--primary-color)" } },
+  G = { style: { color: "var(--danger-color)" } },
+  J = { class: "tw-flex-1 tw-h-0 min-table" },
+  Q = U(
+    l({
+      __name: "envBatchUpdate",
+      props: {
+        resultEnum: {
+          default: () => ({
+            SUCCESS: "--",
+            NOT_NAME: w.t("env.env.req.importCodeValue.NOT_NAME"),
+            ENV_NAME_LIMIT: w.t("env.env.req.importCodeValue.ENV_NAME_LIMIT"),
+            REPEAT_NAME: w.t("env.env.req.importCodeValue.REPEAT_NAME"),
+            NOT_GROUP: w.t("env.env.req.importCodeValue.NOT_GROUP"),
+            REMARK_LIMIT: w.t("env.env.req.importCodeValue.REMARK_LIMIT"),
+            FIX_UA: w.t("env.env.req.importCodeValue.FIX_UA"),
+            FIX_COOKIE: w.t("env.env.req.importCodeValue.FIX_COOKIE"),
+            FIX_ACCOUNT_FILL_COOKIE: w.t(
+              "env.env.req.importCodeValue.FIX_ACCOUNT_FILL_COOKIE",
+            ),
+            NOT_SELECT_PROXY: w.t(
+              "env.env.req.importCodeValue.NOT_SELECT_PROXY",
+            ),
+            FIX_PROXY_TYPE: w.t("env.env.req.importCodeValue.FIX_PROXY_TYPE"),
+            FIX_PROXY: w.t("env.env.req.importCodeValue.FIX_PROXY"),
+            FIX_IP_CHECK_TYPE: w.t(
+              "env.env.req.importCodeValue.FIX_IP_CHECK_TYPE",
+            ),
+            FIX_ACCOUNT_PLATFORM: w.t(
+              "env.env.req.importCodeValue.FIX_ACCOUNT_PLATFORM",
+            ),
+            FIX_URL: w.t("env.env.req.importCodeValue.FIX_URL"),
+            FIX_RESOLUTION: w.t("env.env.req.importCodeValue.FIX_RESOLUTION"),
+            ENV_ID_LIMIT: w.t("env.env.req.importCodeValue.ENV_ID_LIMIT"),
+            NOT_UA: w.t("env.env.req.importCodeValue.NOT_UA"),
+          }),
+        },
+        batchUpdateApi: { type: Function, default: t },
+        maxLength: { default: 0 },
+        uploadTips: { default: w.t("env.env.batchUpdateDialog.uploadTips") },
+        defaultLines: { default: 3 },
+        showDownloadBtn: { type: Boolean, default: !0 },
+        errorMessage: { default: "" },
+      },
+      emits: ["submit"],
+      setup(e, { expose: a, emit: l }) {
+        const { t: t } = o.useI18n(),
+          w = y(0),
+          U = y(0),
+          X = y(!1),
+          M = y(!1),
+          q = y(!1),
+          A = y(0),
+          P = y(0),
+          D = y();
+        let k,
+          Q = e;
+        const W = y(),
+          Z = l,
+          ee = y([]),
+          ae = y([]),
+          le = r({ pageNo: 1, pageSize: 50, total: 0 }),
+          te = r({ importFile: void 0 }),
+          oe = r({
+            importFile: [
+              {
+                required: !0,
+                message: t("env.env.req.fileHolder"),
+                trigger: "change",
+              },
+            ],
+          }),
+          re = async () => {
+            W.value.validate(async (e) => {
+              if (!e) return;
+              q.value = !0;
+              let { data: a } = await R(null == te ? void 0 : te.importFile),
+                l = a.filter((e) => e.length);
+              if (l.length - Q.defaultLines <= 0)
+                return (
+                  I.warning(t("setting.fileContentError")),
+                  void (q.value = !1)
+                );
+              if (Q.maxLength && l.length - Q.defaultLines > Q.maxLength)
+                return (I.warning(Q.errorMessage), void (q.value = !1));
+              ((P.value = l.length - Q.defaultLines), (A.value = 0), de());
+              try {
+                let e = await Q.batchUpdateApi({ file: te.importFile });
+                ((w.value = e.success ?? 0),
+                  (U.value = e.error ?? 0),
+                  (ee.value = (null == e ? void 0 : e.errorList) ?? []),
+                  (le.total = (null == e ? void 0 : e.errorList.length) ?? 0),
+                  ie(),
+                  (X.value = !1),
+                  (M.value = !0));
+              } catch (o) {
+              } finally {
+                q.value = !1;
+              }
+            });
+          },
+          ne = () => {
+            let e = [
+              [
+                t("env.env.batchUpdateDialog.lineNumber"),
+                t("env.env.batchUpdateDialog.exportStatus"),
+                t("env.env.batchUpdateDialog.errorReason"),
+              ],
+            ];
+            (ee.value.forEach((a) => {
+              e.push([
+                (null == a ? void 0 : a.line) ?? "",
+                a.result === E.SUCCESS
+                  ? t("message.success")
+                  : t("proxy.proxy.import.fail"),
+                Q.resultEnum[a.result],
+              ]);
+            }),
+              S(e, "Batch Update results.xlsx"));
+          },
+          ie = () => {
+            ae.value = [];
+            let e = F(ee.value);
+            le.total = e.length;
+            const a = (le.pageNo - 1) * le.pageSize,
+              l = a + le.pageSize;
+            ae.value = e.slice(a, l);
+          },
+          se = (e) => {
+            ((le.pageNo = 1), (le.pageSize = e), ie());
+          },
+          ue = (e) => {
+            ((le.pageNo = e), ie());
+          },
+          pe = () => {
+            (Z("submit"), ve());
+          },
+          ve = () => {
+            var e;
+            ((ee.value = []),
+              (ae.value = []),
+              (le.pageNo = 1),
+              (le.pageSize = 50),
+              (le.total = 0),
+              (w.value = 0),
+              (U.value = 0),
+              (te.importFile = void 0),
+              (P.value = 0),
+              (A.value = 0),
+              clearInterval(k),
+              (q.value = !1),
+              null == (e = W.value) || e.resetFields(),
+              (M.value = !1),
+              (X.value = !1));
+          },
+          de = () => {
+            if (A.value < P.value - 1) {
+              A.value += 1;
+              const e = j(500, 700);
+              k = setTimeout(de, e);
+            } else (clearTimeout(k), (k = null));
+          },
+          me = b(() => [
+            {
+              prop: "line",
+              label: t("env.env.batchUpdateDialog.lineNumber"),
+              width: 80,
+            },
+            {
+              prop: "result",
+              label: t("env.env.batchUpdateDialog.exportStatus"),
+              render: ({ row: e }) =>
+                (null == e ? void 0 : e.result)
+                  ? T("div", {}, [
+                      T(
+                        O,
+                        { type: e.result === E.SUCCESS ? "primary" : "danger" },
+                        {
+                          default: () =>
+                            e.result === E.SUCCESS
+                              ? t("message.success")
+                              : t("proxy.proxy.import.fail"),
+                        },
+                      ),
+                    ])
+                  : T("span", "--"),
+            },
+            {
+              prop: "result",
+              label: t("env.env.batchUpdateDialog.errorReason"),
+              render: ({ row: e }) =>
+                e.result ? Q.resultEnum[e.result] : "--",
+            },
+          ]);
+        return (
+          a({
+            acceptParams: () => {
+              var e;
+              ((X.value = !0), null == (e = D.value) || e.delFile());
+            },
+          }),
+          (a, l) => {
+            const o = n("el-form-item"),
+              r = n("el-form"),
+              y = n("el-button"),
+              I = n("el-dialog"),
+              E = i("prevent-label-click"),
+              F = i("loading");
+            return (
+              s(),
+              u(
+                p,
+                null,
+                [
+                  v(
+                    I,
+                    {
+                      modelValue: X.value,
+                      "onUpdate:modelValue":
+                        l[1] || (l[1] = (e) => (X.value = e)),
+                      title: a.$t("env.env.batchUpdate"),
+                      "close-on-click-modal": !1,
+                      "close-on-press-escape": !1,
+                      "align-center": !0,
+                      close: ve,
+                      width: "550px",
+                    },
+                    {
+                      footer: d(() => [
+                        v(
+                          y,
+                          { type: "info", onClick: ve },
+                          {
+                            default: d(() => [x(g(a.$t("base.cancel")), 1)]),
+                            _: 1,
+                          },
+                        ),
+                        v(
+                          y,
+                          { type: "primary", onClick: re },
+                          {
+                            default: d(() => [x(g(a.$t("base.confirm")), 1)]),
+                            _: 1,
+                          },
+                        ),
+                      ]),
+                      default: d(() => [
+                        m(
+                          (s(),
+                          c(
+                            r,
+                            {
+                              ref_key: "ruleFormRef",
+                              ref: W,
+                              "label-position": "top",
+                              model: te,
+                              rules: oe,
+                            },
+                            {
+                              default: d(() => [
+                                v(
+                                  o,
+                                  {
+                                    label: _(t)(
+                                      "env.env.req.filesUpload.downloadTip7",
+                                    ),
+                                    prop: "importFile",
+                                  },
+                                  {
+                                    default: d(() => [
+                                      v(
+                                        N,
+                                        {
+                                          ref_key: "uploadRef",
+                                          ref: D,
+                                          fileData: te.importFile,
+                                          "onUpdate:fileData":
+                                            l[0] ||
+                                            (l[0] = (e) => (te.importFile = e)),
+                                          accept: ["xlsx", "xls"],
+                                          fileSize: 5,
+                                          class: "tw-w-[100%]",
+                                        },
+                                        {
+                                          "top-module": d(() => [
+                                            f("div", Y, g(e.uploadTips), 1),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["fileData"],
+                                      ),
+                                    ]),
+                                    _: 1,
+                                  },
+                                  8,
+                                  ["label"],
+                                ),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["model", "rules"],
+                          )),
+                          [[E]],
+                        ),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["modelValue", "title"],
+                  ),
+                  v(
+                    I,
+                    {
+                      modelValue: q.value,
+                      "onUpdate:modelValue":
+                        l[2] || (l[2] = (e) => (q.value = e)),
+                      "close-on-press-escape": !1,
+                      "close-on-click-modal": !1,
+                      "align-center": !0,
+                      width: "300px",
+                      "modal-class": "loading-dialog",
+                    },
+                    {
+                      default: d(() => [
+                        f("div", $, [
+                          m(f("div", K, null, 512), [[F, q.value]]),
+                          f("span", z, [
+                            x(
+                              g(_(t)("proxy.proxy.import.importing")) + " (",
+                              1,
+                            ),
+                            f("span", B, g(A.value), 1),
+                            x(
+                              " /" +
+                                g(P.value) +
+                                "), " +
+                                g(_(t)("proxy.proxy.import.pleaseWait")),
+                              1,
+                            ),
+                          ]),
+                        ]),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["modelValue"],
+                  ),
+                  v(
+                    I,
+                    {
+                      modelValue: M.value,
+                      "onUpdate:modelValue":
+                        l[3] || (l[3] = (e) => (M.value = e)),
+                      title: a.$t("proxy.proxy.list.updateResult"),
+                      width: ae.value.length ? "700px" : "400px",
+                      "close-on-click-modal": !1,
+                      "close-on-press-escape": !1,
+                      "align-center": !0,
+                      "modal-class": "result-dialog",
+                    },
+                    {
+                      footer: d(() => [
+                        v(
+                          y,
+                          {
+                            type: "info",
+                            onClick: pe,
+                            class:
+                              "tw-min-w-[200px] !tw-ml-[0px] !tw-flex-none",
+                          },
+                          {
+                            default: d(() => [
+                              x(g(a.$t("env.env.req.close")), 1),
+                            ]),
+                            _: 1,
+                          },
+                        ),
+                      ]),
+                      default: d(() => [
+                        f(
+                          "div",
+                          {
+                            class: h([
+                              "table-wrap",
+                              "tw-flex tw-flex-col",
+                              ae.value.length ? "tw-max-h-[70vh]" : "tw-h-auto",
+                            ]),
+                          },
+                          [
+                            f(
+                              "div",
+                              {
+                                class: h(
+                                  (ae.value.length, "result-header b-flex"),
+                                ),
+                              },
+                              [
+                                f("div", null, [
+                                  x(g(a.$t("message.success")) + " ", 1),
+                                  f("span", H, g(w.value), 1),
+                                  x(
+                                    " " +
+                                      g(a.$t("proxy.proxy.import.item")) +
+                                      "，" +
+                                      g(a.$t("proxy.proxy.import.fail")) +
+                                      " ",
+                                    1,
+                                  ),
+                                  f("span", G, g(U.value), 1),
+                                  x(
+                                    " " + g(a.$t("proxy.proxy.import.item")),
+                                    1,
+                                  ),
+                                ]),
+                                ae.value.length && e.showDownloadBtn
+                                  ? (s(),
+                                    c(
+                                      y,
+                                      {
+                                        key: 0,
+                                        type: "primary",
+                                        link: "",
+                                        onClick: ne,
+                                      },
+                                      {
+                                        default: d(() => [
+                                          x(
+                                            g(
+                                              a.$t(
+                                                "env.env.batchUpdateDialog.downloadResult",
+                                              ),
+                                            ),
+                                            1,
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                    ))
+                                  : C("", !0),
+                              ],
+                              2,
+                            ),
+                            f("div", J, [
+                              ae.value.length
+                                ? (s(),
+                                  c(
+                                    V,
+                                    {
+                                      key: 0,
+                                      list: ae.value,
+                                      columns: me.value,
+                                      showFilterSlot: !1,
+                                    },
+                                    {
+                                      pagination: d(() => [
+                                        ae.value
+                                          ? (s(),
+                                            c(
+                                              L,
+                                              {
+                                                key: 0,
+                                                "pager-count": 2,
+                                                pageable: le,
+                                                handleSizeChange: se,
+                                                handleCurrentChange: ue,
+                                              },
+                                              null,
+                                              8,
+                                              ["pageable"],
+                                            ))
+                                          : C("", !0),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["list", "columns"],
+                                  ))
+                                : C("", !0),
+                            ]),
+                          ],
+                          2,
+                        ),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["modelValue", "title", "width"],
+                  ),
+                ],
+                64,
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-001243d8"]],
+  );
+export { Q as default };

@@ -1,0 +1,579 @@
+import {
+  d as e,
+  v as t,
+  r,
+  q as a,
+  o as l,
+  h as n,
+  w as o,
+  a as s,
+  t as i,
+  f as u,
+  b as p,
+  X as m,
+  x as d,
+  O as c,
+  c as w,
+  F as v,
+  z as _,
+  e as b,
+  i as x,
+  C as h,
+  a3 as f,
+} from "./index-BUIbb6Pa.js";
+import { _ as g } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+const y = "09:00",
+  G = "18:00",
+  T = "Asia/Singapore",
+  V = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+function A(e) {
+  return {
+    envGroupId: e.id,
+    envGroupName: e.name,
+    restricted: !1,
+    startTime: y,
+    endTime: G,
+    timezone: T,
+  };
+}
+function D(e, t) {
+  const r = new Map(t.map((e) => [e.envGroupId, e]));
+  return e.map((e) => {
+    const t = r.get(e.id);
+    return t ? { ...t, envGroupName: e.name } : A(e);
+  });
+}
+function q(e, t) {
+  const r = new Map(t.map((e) => [e.envGroupId, e]));
+  return e.map((e) => {
+    const t = r.get(e.id);
+    return t
+      ? {
+          envGroupId: e.id,
+          envGroupName: e.name,
+          restricted: t.openEnvRule,
+          startTime: t.startTime || y,
+          endTime: t.endTime || G,
+          timezone: t.timeZone || T,
+        }
+      : A(e);
+  });
+}
+function z(e) {
+  return e.allEnvGroup
+    ? { openEnvRule: !1, openRule: [] }
+    : e.isEdit && !e.ruleInfoLoaded
+      ? { openEnvRule: !0 === e.detailOpenEnvRule, openRule: [] }
+      : (function (e) {
+          const t = e.some((e) => e.restricted);
+          return {
+            openEnvRule: t,
+            openRule: t
+              ? e.map((e) => ({
+                  envGroupId: e.envGroupId,
+                  openEnvRule: e.restricted,
+                  ...(e.restricted
+                    ? {
+                        timeZone: e.timezone,
+                        startTime: e.startTime,
+                        endTime: e.endTime,
+                      }
+                    : {}),
+                }))
+              : [],
+          };
+        })(e.rules);
+}
+const k = {
+    class:
+      "tw-flex tw-items-center tw-justify-center tw-gap-[6px] tw-pr-[24px] tw-text-[18px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  R = { class: "tw-flex tw-flex-col tw-gap-[16px]" },
+  E = { class: "tw-flex tw-items-center tw-justify-between tw-gap-[16px]" },
+  H = { class: "tw-text-[13px] tw-text-[var(--text-color-light1)]" },
+  U = { class: "tw-min-w-0 tw-truncate" },
+  I = { key: 0, class: "tw-flex tw-items-center tw-gap-[8px]" },
+  L = { key: 1, class: "tw-text-[13px] tw-text-[var(--text-color-light1)]" },
+  N = { key: 1, class: "tw-text-[13px] tw-text-[var(--text-color-light1)]" },
+  C = "tw-flex tw-min-h-[52px] tw-items-center",
+  j =
+    "!tw-h-[32px] !tw-w-[104px] !tw-border-0 !tw-bg-transparent !tw-shadow-none [&_.el-input__wrapper]:!tw-flex [&_.el-input__wrapper]:!tw-h-[32px] [&_.el-input__wrapper]:!tw-items-center [&_.el-input__wrapper]:!tw-border [&_.el-input__wrapper]:!tw-border-solid [&_.el-input__wrapper]:!tw-border-transparent [&_.el-input__wrapper:hover]:!tw-border-[var(--primary-color)] [&_.el-input__wrapper.is-focus]:!tw-border-[var(--primary-color)] [&_.el-input__wrapper]:!tw-shadow-none [&_.el-input__wrapper:hover]:!tw-shadow-none [&_.el-input__wrapper.is-focus]:!tw-shadow-none [&_.el-input__wrapper]:!tw-bg-transparent [&_.el-input__wrapper:hover]:!tw-bg-transparent [&_.el-input__wrapper.is-focus]:!tw-bg-transparent [&_.el-input__wrapper]:!tw-px-[10px] [&_.el-input__inner]:!tw-h-[32px] [&_.el-input__inner]:!tw-leading-[32px] [&_.el-input__inner]:!tw-bg-transparent",
+  O = e({
+    __name: "MemberEnvGroupDailyAccessDialog",
+    props: { rules: {}, timezoneOptions: {} },
+    emits: ["confirm"],
+    setup(e, { expose: y, emit: G }) {
+      const T = e,
+        A = G,
+        { t: D } = t.useI18n(),
+        q = x(!1),
+        z = x(""),
+        O = x([]),
+        F = x(!1),
+        M = x(!1),
+        S = /^([01]\d|2[0-3]):([0-5]\d)$/,
+        Z = Array.from({ length: 24 }, (e, t) => t),
+        $ = Array.from({ length: 60 }, (e, t) => t),
+        X = (e) => {
+          const t = S.exec(e);
+          return t ? { hour: Number(t[1]), minute: Number(t[2]) } : null;
+        },
+        B = h(() => {
+          const e = z.value.trim().toLocaleLowerCase();
+          return e
+            ? O.value.filter((t) =>
+                t.envGroupName.toLocaleLowerCase().includes(e),
+              )
+            : O.value;
+        }),
+        J = h(() => O.value.filter((e) => e.restricted).length),
+        K = h(() => D("org.member.req.envGroupDailyAccessDescription")),
+        P = () => {
+          const e = O.value.find(
+            (e) =>
+              !(function (e) {
+                return (
+                  !e.restricted ||
+                  (!!(e.timezone && V.test(e.startTime) && V.test(e.endTime)) &&
+                    e.startTime < e.endTime)
+                );
+              })(e),
+          );
+          e
+            ? f.warning(
+                D("org.member.req.envGroupDailyAccessValidation", {
+                  name: e.envGroupName,
+                }),
+              )
+            : (A(
+                "confirm",
+                O.value.map((e) => ({ ...e })),
+              ),
+              (q.value = !1));
+        };
+      return (
+        y({
+          open: () => {
+            ((z.value = ""),
+              (F.value = !1),
+              (M.value = !1),
+              (O.value = T.rules.map((e) => ({ ...e }))),
+              (q.value = !0));
+          },
+          setLoading: (e) => {
+            F.value = e;
+          },
+          setLoadFailed: (e) => {
+            M.value = e;
+          },
+          replaceRules: (e) => {
+            O.value = e.map((e) => ({ ...e }));
+          },
+        }),
+        (t, x) => {
+          const h = r("el-input"),
+            f = r("el-alert"),
+            y = r("el-table-column"),
+            G = r("el-switch"),
+            T = r("el-time-picker"),
+            V = r("el-option"),
+            A = r("el-select"),
+            S = r("el-table"),
+            Q = r("el-button"),
+            W = r("el-dialog"),
+            Y = a("loading");
+          return (
+            l(),
+            n(
+              W,
+              {
+                modelValue: q.value,
+                "onUpdate:modelValue": x[2] || (x[2] = (e) => (q.value = e)),
+                "append-to-body": "",
+                "align-center": "",
+                width: "min(920px, calc(100vw - 48px))",
+                "close-on-click-modal": !1,
+                "destroy-on-close": "",
+              },
+              {
+                header: o(() => [
+                  s("div", k, [
+                    s(
+                      "span",
+                      null,
+                      i(u(D)("org.member.req.envGroupDailyAccessTitle")),
+                      1,
+                    ),
+                    p(
+                      g,
+                      {
+                        content: K.value,
+                        iconClass:
+                          "tw-text-[15px] !tw-text-[var(--text-color-light1)] hover:!tw-text-[var(--primary-color)]",
+                      },
+                      null,
+                      8,
+                      ["content"],
+                    ),
+                  ]),
+                ]),
+                footer: o(() => [
+                  p(
+                    Q,
+                    {
+                      type: "info",
+                      onClick: x[1] || (x[1] = (e) => (q.value = !1)),
+                    },
+                    { default: o(() => [b(i(u(D)("base.cancel")), 1)]), _: 1 },
+                  ),
+                  p(
+                    Q,
+                    {
+                      type: "primary",
+                      disabled: F.value || M.value,
+                      onClick: P,
+                    },
+                    { default: o(() => [b(i(u(D)("base.confirm")), 1)]), _: 1 },
+                    8,
+                    ["disabled"],
+                  ),
+                ]),
+                default: o(() => [
+                  s("div", R, [
+                    s("div", E, [
+                      s(
+                        "span",
+                        H,
+                        i(
+                          u(D)("org.member.req.envGroupDailyAccessSummary", {
+                            restricted: J.value,
+                            total: O.value.length,
+                          }),
+                        ),
+                        1,
+                      ),
+                      p(
+                        h,
+                        {
+                          modelValue: z.value,
+                          "onUpdate:modelValue":
+                            x[0] || (x[0] = (e) => (z.value = e)),
+                          clearable: "",
+                          class: "tw-w-[260px] tw-shrink-0",
+                          placeholder: u(D)(
+                            "org.member.req.envGroupDailyAccessSearch",
+                          ),
+                        },
+                        null,
+                        8,
+                        ["modelValue", "placeholder"],
+                      ),
+                    ]),
+                    M.value
+                      ? (l(),
+                        n(
+                          f,
+                          {
+                            key: 0,
+                            title: u(D)(
+                              "org.member.req.envGroupDailyAccessLoadFailed",
+                            ),
+                            type: "error",
+                            closable: !1,
+                            "show-icon": "",
+                          },
+                          null,
+                          8,
+                          ["title"],
+                        ))
+                      : m("", !0),
+                    d(
+                      (l(),
+                      n(
+                        S,
+                        {
+                          data: B.value,
+                          height: "360",
+                          "row-key": "envGroupId",
+                          "row-class-name": "!tw-h-[64px]",
+                          border: "",
+                          "empty-text": u(D)(
+                            "org.member.req.envGroupDailyAccessEmpty",
+                          ),
+                        },
+                        {
+                          default: o(() => [
+                            p(
+                              y,
+                              {
+                                label: u(D)(
+                                  "org.member.req.envGroupDailyAccessGroup",
+                                ),
+                                "min-width": "180",
+                                "show-overflow-tooltip": "",
+                              },
+                              {
+                                default: o(({ row: e }) => [
+                                  s("div", { class: c(C) }, [
+                                    s("span", U, i(e.envGroupName), 1),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            p(
+                              y,
+                              {
+                                label: u(D)(
+                                  "org.member.req.envGroupDailyAccessRestriction",
+                                ),
+                                width: "130",
+                              },
+                              {
+                                default: o(({ row: e }) => [
+                                  s("div", { class: c(C) }, [
+                                    p(
+                                      G,
+                                      {
+                                        modelValue: e.restricted,
+                                        "onUpdate:modelValue": (t) =>
+                                          (e.restricted = t),
+                                        "aria-label": u(D)(
+                                          "org.member.req.envGroupDailyAccessRestriction",
+                                        ),
+                                      },
+                                      null,
+                                      8,
+                                      [
+                                        "modelValue",
+                                        "onUpdate:modelValue",
+                                        "aria-label",
+                                      ],
+                                    ),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            p(
+                              y,
+                              {
+                                label: u(D)(
+                                  "org.member.req.envGroupDailyAccessDailyTime",
+                                ),
+                                "min-width": "260",
+                              },
+                              {
+                                default: o(({ row: e }) => [
+                                  s("div", { class: c(C) }, [
+                                    e.restricted
+                                      ? (l(),
+                                        w("div", I, [
+                                          p(
+                                            T,
+                                            {
+                                              modelValue: e.startTime,
+                                              "onUpdate:modelValue": (t) =>
+                                                (e.startTime = t),
+                                              format: "HH:mm",
+                                              "value-format": "HH:mm",
+                                              clearable: !1,
+                                              editable: !1,
+                                              "disabled-hours": () =>
+                                                ((e) => {
+                                                  const t = X(e.endTime);
+                                                  return t
+                                                    ? Z.filter(
+                                                        (e) =>
+                                                          e > t.hour ||
+                                                          (e === t.hour &&
+                                                            0 === t.minute),
+                                                      )
+                                                    : [];
+                                                })(e),
+                                              "disabled-minutes": (t) =>
+                                                ((e, t) => {
+                                                  const r = X(e.endTime);
+                                                  return r
+                                                    ? t > r.hour
+                                                      ? $
+                                                      : t !== r.hour
+                                                        ? []
+                                                        : $.filter(
+                                                            (e) =>
+                                                              e >= r.minute,
+                                                          )
+                                                    : [];
+                                                })(e, t),
+                                              class: c(j),
+                                              size: "small",
+                                            },
+                                            null,
+                                            8,
+                                            [
+                                              "modelValue",
+                                              "onUpdate:modelValue",
+                                              "disabled-hours",
+                                              "disabled-minutes",
+                                            ],
+                                          ),
+                                          x[3] ||
+                                            (x[3] = s(
+                                              "span",
+                                              {
+                                                class:
+                                                  "tw-text-[var(--text-color-light1)]",
+                                              },
+                                              "—",
+                                              -1,
+                                            )),
+                                          p(
+                                            T,
+                                            {
+                                              modelValue: e.endTime,
+                                              "onUpdate:modelValue": (t) =>
+                                                (e.endTime = t),
+                                              format: "HH:mm",
+                                              "value-format": "HH:mm",
+                                              clearable: !1,
+                                              editable: !1,
+                                              "disabled-hours": () =>
+                                                ((e) => {
+                                                  const t = X(e.startTime);
+                                                  return t
+                                                    ? Z.filter(
+                                                        (e) =>
+                                                          e < t.hour ||
+                                                          (e === t.hour &&
+                                                            59 === t.minute),
+                                                      )
+                                                    : [];
+                                                })(e),
+                                              "disabled-minutes": (t) =>
+                                                ((e, t) => {
+                                                  const r = X(e.startTime);
+                                                  return r
+                                                    ? t < r.hour
+                                                      ? $
+                                                      : t !== r.hour
+                                                        ? []
+                                                        : $.filter(
+                                                            (e) =>
+                                                              e <= r.minute,
+                                                          )
+                                                    : [];
+                                                })(e, t),
+                                              class: c(j),
+                                              size: "small",
+                                            },
+                                            null,
+                                            8,
+                                            [
+                                              "modelValue",
+                                              "onUpdate:modelValue",
+                                              "disabled-hours",
+                                              "disabled-minutes",
+                                            ],
+                                          ),
+                                        ]))
+                                      : (l(), w("span", L, "—")),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            p(
+                              y,
+                              {
+                                label: u(D)(
+                                  "org.member.req.envGroupDailyAccessTimezone",
+                                ),
+                                "min-width": "240",
+                              },
+                              {
+                                default: o(({ row: t }) => [
+                                  s("div", { class: c(C) }, [
+                                    t.restricted
+                                      ? (l(),
+                                        n(
+                                          A,
+                                          {
+                                            key: 0,
+                                            modelValue: t.timezone,
+                                            "onUpdate:modelValue": (e) =>
+                                              (t.timezone = e),
+                                            filterable: "",
+                                            placeholder: u(D)(
+                                              "org.member.req.envGroupDailyAccessTimezoneHolder",
+                                            ),
+                                          },
+                                          {
+                                            default: o(() => [
+                                              (l(!0),
+                                              w(
+                                                v,
+                                                null,
+                                                _(
+                                                  e.timezoneOptions,
+                                                  (e) => (
+                                                    l(),
+                                                    n(
+                                                      V,
+                                                      {
+                                                        key: e.value,
+                                                        label: e.label,
+                                                        value: e.value,
+                                                      },
+                                                      null,
+                                                      8,
+                                                      ["label", "value"],
+                                                    )
+                                                  ),
+                                                ),
+                                                128,
+                                              )),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          [
+                                            "modelValue",
+                                            "onUpdate:modelValue",
+                                            "placeholder",
+                                          ],
+                                        ))
+                                      : (l(), w("span", N, "—")),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["data", "empty-text"],
+                      )),
+                      [[Y, F.value]],
+                    ),
+                  ]),
+                ]),
+                _: 1,
+              },
+              8,
+              ["modelValue"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { O as _, z as b, q as m, D as s };

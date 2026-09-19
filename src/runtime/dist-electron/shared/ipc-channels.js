@@ -1,0 +1,53 @@
+"use strict";
+
+/**
+ * IPC channel names recovered from dist-electron/preload/index.js.
+ * Keep this file as the single source of truth while the legacy bundle is
+ * gradually replaced by maintainable modules.
+ */
+module.exports = Object.freeze({
+  OPEN_URL: "open-url",
+  GET_LOCAL_SERVER_STATUS: "get-local-server-status",
+  VERSION_LOCAL_INFO: "version-local-info",
+  GET_MAIN_WINDOW_LAUNCH_PREFERENCE: "get-main-window-launch-preference",
+  SET_MAIN_WINDOW_LAUNCH_PREFERENCE: "set-main-window-launch-preference",
+  GET_CURRENT_MAIN_WINDOW_SIZE: "get-current-main-window-size",
+  GET_DEVICE_ID: "get-device-id",
+  GET_NEW_DEVICE_ID: "get-new-device-id",
+  GET_DEVICE_NAME: "get-device-name",
+  GET_DEVICE_USER_NAME: "get-device-user-name",
+  ACTIVE_WINDOW: "active-window",
+  GET_ALL_DISPLAYS: "get-all-displays",
+  TRACK_EVENT: "track-event",
+  SET_USER_PLAN: "set-user-plan",
+  CLEAR_ELECTRON_STORE: "clear-electron-store",
+  ELECTRON_STORE_GET: "electron-store-get",
+  ELECTRON_STORE_SET: "electron-store-set",
+  ELECTRON_STORE_DELETE: "electron-store-delete",
+  STOP_ENV: "stop-env",
+  RUN_ENV: "run-env",
+  GET_CURRENT_PLATFORM: "get-current-platform",
+  GET_DESKTOP_SOURCES: "get-desktop-sources",
+  GET_WINDOW_BY_PID: "get-window-by-pid",
+  WINDOW_TEST: "window-test",
+  DEL_RPA_TASK_LOG: "del-rpa-task-log",
+  GET_RPA_TASK_LOG: "get-rpa-task-log",
+  SET_RPA_TASK_CONFIG: "set-rpa-task-config",
+  GET_RPA_INDEX_PAGE: "get-rpa-index-page",
+  OPEN_APPLICATION_WINDOW: "open-application-window",
+  CLOSE_ALL_WIN: "close-all-win",
+  AES_128_ENCRYPT: "aes-128-encrypt",
+  AES_128_DECRYPT: "aes-128-decrypt",
+  AES_128_DECRYPT_MANY: "aes-128-decrypt-many",
+  GET_PUBLIC_IP: "get-public-ip",
+  GET_APP_TITLE: "get-app-title",
+  KERNEL_INSTALL_REQUESTED: "kernel-install-requested",
+  KERNEL_LIST_INSTALLED: "kernel-list-installed",
+  KERNEL_GET_PROGRESS: "kernel-get-progress",
+  KERNEL_CANCEL: "kernel-cancel",
+  KERNEL_DELETE_INSTALLED: "kernel-delete-installed",
+  KERNEL_CLEANUP_OLD: "kernel-cleanup-old",
+  GET_MAC_ADDRESS: "get-mac-address",
+  GET_SYSTEM_IDLE_TIME: "get-system-idle-time",
+  SET_PROCESS_ENV: "set-process-env",
+});

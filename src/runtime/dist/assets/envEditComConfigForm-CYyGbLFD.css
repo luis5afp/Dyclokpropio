@@ -1,0 +1,22 @@
+.data-async-content .el-form-item__content {
+  display: unset;
+}
+.data-async-content .el-form-item__content > div {
+  margin-bottom: 16px;
+}
+.data-async-content .el-form-item__content .data-async {
+  width: 100%;
+  padding: 24px;
+  border-radius: 8px;
+  background: var(--table-tr-bg-color);
+  box-sizing: border-box;
+}
+.data-async-content .el-form-item__content .data-async > p {
+  font-size: 14px;
+  line-height: 14px;
+  color: var(--text-color-light1);
+  margin-bottom: 18px;
+}
+.config-tips {
+  color: var(--text-color-light1);
+}

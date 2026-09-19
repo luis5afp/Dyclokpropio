@@ -1,0 +1,2373 @@
+import {
+  d as e,
+  v as l,
+  G as a,
+  R as t,
+  ad as n,
+  aW as o,
+  i,
+  P as s,
+  D as u,
+  V as r,
+  dc as d,
+  W as p,
+  r as v,
+  o as c,
+  c as m,
+  h as f,
+  f as b,
+  X as g,
+  dd as w,
+  w as y,
+  b as x,
+  cu as k,
+  a as V,
+  e as C,
+  t as h,
+  F as T,
+  c2 as _,
+  z as S,
+  de as E,
+  df as L,
+  dg as O,
+  dh as B,
+  ct as A,
+  aq as $,
+  di as R,
+  cs as I,
+  cr as U,
+  cq as D,
+  cm as N,
+  cn as W,
+  cx as G,
+  O as q,
+  dj as P,
+  cp as M,
+  C as j,
+  dk as F,
+  d7 as H,
+  bN as z,
+  dl as Y,
+  dm as X,
+  dn as J,
+  a3 as K,
+  dp as Q,
+  dq as Z,
+  ac as ee,
+  I as le,
+  _ as ae,
+} from "./index-BUIbb6Pa.js";
+import te from "./expansionDefaulAvatar-BAAgU78a.js";
+import ne from "./CustomRadioGroup-Dk-imFdD.js";
+import { C as oe } from "./index-C6tOf3zW.js";
+import { g as ie } from "./system-DtbAsiCM.js";
+import { _ as se } from "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import { _ as ue } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import { _ as re } from "./fixedUrlsFormItem.vue_vue_type_script_setup_true_lang-J-frhu2d.js";
+import de from "./oneWaySync-C7I0Josw.js";
+import pe from "./accessLimitCard-CVpkvN01.js";
+const ve = "" + new URL("videoReplaceTip-DsqEtvhh.jpg", import.meta.url).href,
+  ce = { class: "envV2-input-layout" },
+  me = { class: "envV2-input-layout" },
+  fe = { key: 0, class: "data-async !tw-mt-[8px]" },
+  be = { class: "envV2-input-layout" },
+  ge = { key: 0, class: "data-async !tw-mt-[7px]" },
+  we = { class: "tw-max-w-full tw-whitespace-pre-wrap tw-leading-[1.5]" },
+  ye = {
+    key: 1,
+    class: "tw-w-full tw-h-[1px] tw-my-[10px] tw-bg-[var(--border-color-base)]",
+  },
+  xe = { class: "envV2-input-layout" },
+  ke = { class: "envV2-input-layout" },
+  Ve = { class: "envV2-input-layout" },
+  Ce = {
+    class:
+      "tw-rounded-[8px] tw-bg-[var(--card-base-bg-color)] tw-p-[20px] tw-w-full",
+  },
+  he = { class: "tw-flex tw-items-center" },
+  Te = {
+    class: "tw-pl-2 tip tw-leading-[1] tw-text-[var(--text-color-light1)]",
+  },
+  _e = { key: 0 },
+  Se = { key: 0, class: "upload-btn tw-w-fit" },
+  Ee = { class: "tip !tw-mb-[0px] tw-text-[var(--text-color-light1)]" },
+  Le = { key: 1, class: "bookmark-wrap tw-mt-[10px]" },
+  Oe = { class: "header" },
+  Be = { class: "tw-truncate" },
+  Ae = { class: "content" },
+  $e = { class: "type" },
+  Re = { key: 2, class: "type tw-mb-[10px]" },
+  Ie = { class: "envV2-input-layout" },
+  Ue = { class: "envV2-input-layout" },
+  De = {
+    class:
+      "tw-rounded-[8px] tw-bg-[var(--card-base-bg-color)] tw-p-[20px] tw-w-full",
+  },
+  Ne = { class: "s-flex tw-gap-x-5 !tw-items-start" },
+  We = { class: "tw-whitespace-nowrap" },
+  Ge = { class: "s-flex tw-gap-x-1" },
+  qe = { class: "sle tw-w-[100%] tw-inline-block tw-py-[1px]" },
+  Pe = { key: 0 },
+  Me = { class: "tw-px-[8px] tw-py-[6px] tw-border-b tw-border-subText" },
+  je = { class: "tw-w-[200px] tw-overflow-x-hidden" },
+  Fe = { class: "tw-grid tw-grid-cols-1 tw-gap-y-2 tw-px-[8px] tw-py-[6px]" },
+  He = {
+    class:
+      "tw-w-[26px] tw-h-[26px] tw-mr-2 tw-rounded-[5px] tw-overflow-hidden tw-flex-shrink-0",
+  },
+  ze = ["src"],
+  Ye = { class: "tw-text-black tw-opacity-90 tw-text-[14px] tw-break-all" },
+  Xe = { class: "tw-line-clamp-1" },
+  Je = { class: "tw-line-clamp-1 tw-text-[12px]" },
+  Ke = { key: 1 },
+  Qe = { class: "config-tips tw-leading-[18px] tw-mt-[8px]" },
+  Ze = { class: "envV2-input-layout" },
+  el = { class: "tw-max-w-[220px]" },
+  ll = { class: "tw-text-textColor-700 tw-text-[13px] tw-whitespace-pre-line" },
+  al = ae(
+    e({
+      __name: "index",
+      props: {
+        modelValue: {},
+        isEdit: { type: Boolean, default: !1 },
+        isBatch: { type: Boolean, default: !1 },
+        isShare: { type: Boolean, default: !1 },
+        isUpdate: { type: Boolean },
+        isBulkImport: { type: Boolean, default: !1 },
+        isSingle: { type: Boolean },
+        batchData: {},
+        importData: {},
+        isShowUrl: { type: Boolean, default: !0 },
+        isShowAccount: { type: Boolean, default: !0 },
+        isBatchEdit: { type: Boolean, default: !1 },
+        isPreference: { type: Boolean, default: !1 },
+        disableBrowserConfigConfirm: { type: Boolean, default: !1 },
+        showItemArr: { default: () => Object.values(w) },
+      },
+      emits: ["checkStep"],
+      setup(e, { expose: ae, emit: al }) {
+        const { t: tl } = l.useI18n(),
+          nl = a(),
+          { planTooltipContentText: ol } = t(n()),
+          il = i(""),
+          sl = e,
+          { listingLinkAccounts: ul } = t(o());
+        let rl = i(sl.modelValue);
+        const dl = i(!1),
+          pl = { children: "children", label: "name" },
+          vl = i([]),
+          cl = () => {},
+          ml = (e) => {
+            0 === e && sl.modelValue.browserConfigOption;
+          },
+          fl = i([]),
+          bl = i([]),
+          gl = i([]),
+          wl = j(() =>
+            gl.value.filter((e) => {
+              var l;
+              return (
+                (null == (l = rl.value) ? void 0 : l.extensionsGroupId) === e.id
+              );
+            }),
+          ),
+          yl = j(() => {
+            var e, l, a;
+            return (
+              (null ==
+              (a =
+                null == (l = null == (e = wl.value) ? void 0 : e[0])
+                  ? void 0
+                  : l.extensionsList)
+                ? void 0
+                : a.length) || 0
+            );
+          }),
+          xl = j(() => {
+            var e, l;
+            let a =
+                null == (l = null == (e = wl.value) ? void 0 : e[0])
+                  ? void 0
+                  : l.extensionsList,
+              t = [],
+              n = [];
+            return (
+              null == a ||
+                a.forEach((e) => {
+                  e.status === P.ENABLED ? t.push(e) : n.push(e);
+                }),
+              (t = t.sort(
+                (e, l) =>
+                  new Date(l.createTime).getTime() -
+                  new Date(e.createTime).getTime(),
+              )),
+              (n = n.sort(
+                (e, l) =>
+                  new Date(l.createTime).getTime() -
+                  new Date(e.createTime).getTime(),
+              )),
+              [...t, ...n]
+            );
+          }),
+          kl = (e) => {
+            var l;
+            const a =
+              (null == (l = nl.orgConfigData.browserConfig)
+                ? void 0
+                : l.type) ?? 0;
+            if (e === R.disableShowPassword) return !L(O.BAN_PWD_VIEW, !1);
+            const t = !L(O.BROWSER_SETTINGS, !1) && e !== R.RestorePage,
+              n =
+                e === R.disableExpand &&
+                !!(a & I.expandSecurity) &&
+                !sl.isPreference;
+            return t || n;
+          },
+          Vl = (e) => {
+            var l;
+            const a =
+              (null == (l = nl.orgConfigData.browserConfig)
+                ? void 0
+                : l.type) ?? 0;
+            if (e === R.disableShowPassword) return L(O.BAN_PWD_VIEW, !1);
+            if (
+              e === R.disableExpand &&
+              a & I.expandSecurity &&
+              !sl.isPreference
+            )
+              return !1;
+            return L(O.BROWSER_SETTINGS, !1) || e === R.RestorePage;
+          },
+          Cl = (e) => {
+            var l;
+            const a =
+              (null == (l = nl.orgConfigData.browserConfig)
+                ? void 0
+                : l.type) ?? 0;
+            return e === R.disableExpand && a & I.expandSecurity
+              ? tl("expan.security.tip10")
+              : ol.value;
+          };
+        s(async () => {
+          const e = await u.api.getLocalVersionInfo();
+          var l, a;
+          ((il.value = "darwin" === e.platform ? "MACOS" : "WINDOWS"),
+            ((null == (l = nl.orgConfigData.browserConfig) ? void 0 : l.type) ??
+              0) & I.expandSecurity &&
+              !(null == (a = rl.value.browserConfigOption)
+                ? void 0
+                : a.includes(I.disableExpand)) &&
+              !sl.isPreference &&
+              (rl.value.browserConfigOption = [
+                ...(rl.value.browserConfigOption ?? []),
+                I.disableExpand,
+              ]),
+            ul.value.forEach((e) => {
+              vl.value.push({
+                value: e.value,
+                label:
+                  "other" === e.value
+                    ? tl("env.env.req.customPlatform")
+                    : e.value,
+                logo: e.logo,
+              });
+            }));
+        });
+        const hl = r.debounce(() => {
+          d({ all: !0, detail: !1 }).then((e) => {
+            var l, a, t;
+            ((gl.value = (null == e ? void 0 : e.list) ?? []),
+              sl.isEdit ||
+                (null == (l = rl.value) ? void 0 : l.extensionsGroupId) ||
+                (rl.value.extensionsGroupId =
+                  (null ==
+                  (t =
+                    null == (a = null == gl ? void 0 : gl.value)
+                      ? void 0
+                      : a.find((e) => e.isDefault))
+                    ? void 0
+                    : t.id) ?? ""));
+          });
+        }, 200);
+        (p(
+          () => [sl.isBatch, sl.isSingle, sl.isBulkImport],
+          () => {
+            var e, l;
+            (sl.isBatch
+              ? (rl.value = sl.batchData)
+              : sl.isBulkImport
+                ? (rl.value = sl.importData)
+                : ((null == (l = null == (e = sl.modelValue) ? void 0 : e.urls)
+                    ? void 0
+                    : l.length) || (sl.modelValue.urls = [""]),
+                  (rl.value = sl.modelValue)),
+              ee(() => hl()));
+          },
+          { immediate: !0 },
+        ),
+          p(
+            () => rl.value.dataType,
+            () => {
+              rl.value.dataType === _.CUSTOM &&
+                (fl.value.length ||
+                  (async () => {
+                    let e = await ie({ detail: !1, all: !0 });
+                    fl.value = e.list;
+                  })());
+            },
+            { immediate: !0 },
+          ),
+          p(
+            () => rl.value.browserConfigOption,
+            (e, l) => {
+              if (!l || sl.disableBrowserConfigConfirm) return;
+              const a = l.includes(I.disableDiskWrite),
+                t = null == e ? void 0 : e.includes(I.disableDiskWrite);
+              !a &&
+                t &&
+                le
+                  .confirm(
+                    tl("env.env.req.disableDiskWriteConfirm"),
+                    tl("env.env.shareDialog.operatorTips"),
+                    {
+                      confirmButtonText: tl("base.confirm"),
+                      cancelButtonText: tl("base.cancel"),
+                      type: "warning",
+                    },
+                  )
+                  .catch(() => {
+                    rl.value.browserConfigOption = e.filter(
+                      (e) => e !== I.disableDiskWrite,
+                    );
+                  });
+            },
+            { deep: !0 },
+          ));
+        let Tl = {
+          urls: [
+            {
+              validator: (e, l, a) => {
+                const t = null == l ? void 0 : l.every((e) => !e);
+                if (l && l.length && !t) {
+                  for (let e = 0; e < l.length; e++) {
+                    if (!l[e])
+                      return void a(new Error(tl("env.env.req.urlsRule")));
+                    if (
+                      l[e] &&
+                      !l[e].startsWith("http") &&
+                      !l[e].startsWith("chrome")
+                    )
+                      return void a(
+                        new Error(tl("env.env.req.urlsCorrectRule")),
+                      );
+                  }
+                  a();
+                } else a();
+              },
+              trigger: "blur",
+            },
+          ],
+          "bookmarkConfigVal.fileContent": [
+            {
+              validator: (e, l, a) => {
+                let t = rl.value.bookmarkConfigVal;
+                (console.log(t, "val"),
+                  t.type !== N.COVER || t.coverRule !== W.CLEAR
+                    ? 0 !== t.fileContent.length
+                      ? a()
+                      : a(new Error(tl("env.env.req.fileHolder")))
+                    : a());
+              },
+              trigger: "change",
+            },
+          ],
+          "accessLimitConfigVal.urlList": [
+            {
+              validator: (e, l, a) => {
+                let t = rl.value.accessLimitConfigVal;
+                if (t.status) {
+                  if (1 === t.type) {
+                    if (0 === t.quickSelectionOption.length && !t.urlList)
+                      return void a(new Error(tl("setting.accessLimitRules1")));
+                  } else if (2 === t.type && !t.urlList)
+                    return void a(new Error(tl("setting.accessLimitRules1")));
+                  a();
+                } else a();
+              },
+            },
+          ],
+        };
+        const _l = i(new Map()),
+          Sl = async (e) => {
+            var l, a;
+            if (e === G.BAN) rl.value.extensionsGroupId = "";
+            else {
+              ((rl.value.extensionsGroupId =
+                (null ==
+                (a =
+                  null == (l = null == gl ? void 0 : gl.value)
+                    ? void 0
+                    : l.find((e) => e.isDefault))
+                  ? void 0
+                  : a.id) ?? ""),
+                await z(250));
+              const e = document.querySelector(".envV2-expandGroup");
+              if (!e) return;
+              null == e ||
+                e.scrollIntoView({
+                  behavior: "smooth",
+                  block: "end",
+                  inline: "nearest",
+                });
+            }
+          },
+          El = () => {
+            u.isClient
+              ? u
+                  .invoke(X, {
+                    filters: [{ name: "HTML", extensions: ["html"] }],
+                  })
+                  .then((e) => {
+                    if ((console.log(e, "result"), e && e.length > 0)) {
+                      const l = e[0],
+                        a = ((e) => {
+                          var l;
+                          return (
+                            (null == (l = e.split("\\").pop())
+                              ? void 0
+                              : l.split("/").pop()) || ""
+                          );
+                        })(l);
+                      return (
+                        (rl.value.bookmarkConfigVal.fileName = a),
+                        u.invoke(J, l).then((e) => {
+                          if (e > 2097152)
+                            throw (
+                              K.warning(
+                                tl("proxy.proxy.import.fileSizeError", {
+                                  fileSize: 2,
+                                }),
+                              ),
+                              new Error("file too large")
+                            );
+                          return u
+                            .invoke(Q, l)
+                            .then((e) => ({ content: e, fileName: a }));
+                        })
+                      );
+                    }
+                    throw new Error("没有选择文件");
+                  })
+                  .then(({ content: e, fileName: l }) => {
+                    if (
+                      e.includes("<DL><p>") ||
+                      e.includes("<H1>Bookmarks</H1>")
+                    ) {
+                      const l = ((e) => {
+                        function l(e) {
+                          if ("A" === e.tagName)
+                            return {
+                              type: "url",
+                              name: e.textContent,
+                              url: e.getAttribute("href"),
+                              icon: e.getAttribute("icon") || "",
+                              date_added: "",
+                              date_last_used: "",
+                              id: Z(),
+                              meta_info: { power_bookmark_meta: "" },
+                            };
+                          if ("H3" === e.tagName) {
+                            const l = {
+                              type: "folder",
+                              name: e.textContent,
+                              children: [],
+                            };
+                            let t = e.nextElementSibling;
+                            return (
+                              t && "DL" === t.tagName && (l.children = a(t)),
+                              l
+                            );
+                          }
+                          return "DT" === e.tagName
+                            ? l(e.firstElementChild)
+                            : null;
+                        }
+                        function a(e) {
+                          return Array.from(e.children).map(l).filter(Boolean);
+                        }
+                        return a(
+                          new DOMParser()
+                            .parseFromString(e, "text/html")
+                            .querySelector("DL"),
+                        );
+                      })(e);
+                      (0 === l.length && K.error(tl("setting.fileFormatError")),
+                        (rl.value.bookmarkConfigVal.fileContent = ((e) => {
+                          const l = [
+                            {
+                              type: "folder",
+                              name: tl("setting.bookmarksBar"),
+                              children: [],
+                            },
+                            {
+                              type: "folder",
+                              name: tl("setting.otherBookmarks"),
+                              children: [],
+                            },
+                          ];
+                          return (
+                            e.forEach((e) => {
+                              var a, t;
+                              "folder" === e.type
+                                ? (l[0].children = e.children || [])
+                                : "url" === e.type &&
+                                  (null ==
+                                    (t =
+                                      null == (a = l[1])
+                                        ? void 0
+                                        : a.children) ||
+                                    t.push(e));
+                            }),
+                            l
+                          );
+                        })(l)),
+                        console.log(rl.value.bookmarkConfigVal.fileContent));
+                    } else
+                      (console.log("这不是一个有效的书签文件"),
+                        K.warning(tl("setting.uploadFileFormatError")));
+                  })
+                  .catch((e) => {
+                    console.log("处理文件时出错: " + e.message);
+                  })
+              : Y();
+          },
+          Ll = () => {
+            ((rl.value.bookmarkConfigVal.fileName = ""),
+              (rl.value.bookmarkConfigVal.fileContent = []));
+          };
+        return (
+          s(() => {
+            const e = sl.modelValue.urls;
+            e &&
+              (null == e ? void 0 : e.length) > 1 &&
+              ((sl.modelValue.urls = e.slice(0, 1)), (bl.value = e.slice(1)));
+          }),
+          ae({
+            mergeURLs: () => {
+              rl.value.urls = [
+                ...(rl.value.urls || []),
+                ...bl.value.filter((e) => e),
+              ];
+            },
+            addAccount: () => {
+              var e;
+              rl.value &&
+                (rl.value.accountList || (rl.value.accountList = []),
+                (null == (e = rl.value.accountList) ? void 0 : e.length) >= 10
+                  ? H(tl("env.env.req.addAccountLimit", { N: 10 }))
+                  : rl.value.accountList.push({
+                      platform: void 0,
+                      url: void 0,
+                      userName: void 0,
+                      passwd: void 0,
+                      remark: void 0,
+                    }));
+            },
+            urlsRules: Tl,
+            validateUrlsList: async () => {
+              let e = [];
+              return (
+                _l.value.forEach((l) => {
+                  l && e.push(null == l ? void 0 : l.validate());
+                }),
+                Promise.all(e)
+              );
+            },
+          }),
+          (l, a) => {
+            var t, n, o, i, s, u, r, d, p, j, H;
+            const z = v("el-radio-button"),
+              Y = v("el-form-item"),
+              X = v("el-tooltip"),
+              J = v("el-checkbox-group"),
+              K = v("el-switch"),
+              Q = v("el-button"),
+              Z = v("el-tree"),
+              ee = v("el-radio"),
+              le = v("el-radio-group"),
+              ae = v("el-option"),
+              ie = v("el-select"),
+              al = v("el-scrollbar"),
+              nl = v("el-dropdown");
+            return (
+              c(),
+              m("div", null, [
+                e.isBatchEdit
+                  ? g("", !0)
+                  : (c(),
+                    f(
+                      re,
+                      {
+                        key: 0,
+                        modelValue: b(rl).fixedUrls,
+                        "onUpdate:modelValue":
+                          a[0] || (a[0] = (e) => (b(rl).fixedUrls = e)),
+                      },
+                      null,
+                      8,
+                      ["modelValue"],
+                    )),
+                (
+                  null == (t = e.showItemArr)
+                    ? void 0
+                    : t.includes(b(w).RestoreUrlType)
+                )
+                  ? (c(),
+                    f(
+                      Y,
+                      { key: 1, label: l.$t("envV2.tip6") },
+                      {
+                        label: y(() => [
+                          V("div", ce, [
+                            V("div", null, [
+                              C(h(l.$t("envV2.tip6")) + " ", 1),
+                              x(
+                                se,
+                                { text: l.$t("envV2.fixedUrlsTip2") },
+                                null,
+                                8,
+                                ["text"],
+                              ),
+                            ]),
+                          ]),
+                        ]),
+                        default: y(() => [
+                          x(
+                            ne,
+                            {
+                              modelValue: b(rl).restoreUrlType,
+                              "onUpdate:modelValue":
+                                a[1] ||
+                                (a[1] = (e) => (b(rl).restoreUrlType = e)),
+                              onChange: ml,
+                            },
+                            {
+                              default: y(() => [
+                                x(
+                                  z,
+                                  {
+                                    label: l.$t("setting.globalConfig"),
+                                    value: b(k).GLOBAL,
+                                  },
+                                  null,
+                                  8,
+                                  ["label", "value"],
+                                ),
+                                x(
+                                  z,
+                                  {
+                                    label: l.$t("envV2.tip7"),
+                                    value: b(k).RESTORE,
+                                  },
+                                  null,
+                                  8,
+                                  ["label", "value"],
+                                ),
+                                x(
+                                  z,
+                                  {
+                                    label: l.$t("envV2.tip8"),
+                                    value: b(k).NOT_RESTORE,
+                                  },
+                                  null,
+                                  8,
+                                  ["label", "value"],
+                                ),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    ))
+                  : g("", !0),
+                e.isBatch || e.isSingle || e.isBulkImport
+                  ? (c(),
+                    m(
+                      T,
+                      { key: 2 },
+                      [
+                        (
+                          null == (n = e.showItemArr)
+                            ? void 0
+                            : n.includes(b(w).DataAsync)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              { key: 0, class: "data-async-content-1" },
+                              {
+                                label: y(() => [
+                                  V("div", me, [
+                                    V("div", null, [
+                                      C(
+                                        h(l.$t("env.env.req.dataAsync")) + " ",
+                                        1,
+                                      ),
+                                      x(
+                                        se,
+                                        { text: l.$t("envV2.tip27") },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  V("div", null, [
+                                    x(
+                                      ne,
+                                      {
+                                        modelValue: b(rl).dataType,
+                                        "onUpdate:modelValue":
+                                          a[2] ||
+                                          (a[2] = (e) => (b(rl).dataType = e)),
+                                      },
+                                      {
+                                        default: y(() => [
+                                          x(
+                                            z,
+                                            {
+                                              label: l.$t(
+                                                "setting.globalConfig",
+                                              ),
+                                              value: b(_).GLOBAL,
+                                            },
+                                            null,
+                                            8,
+                                            ["label", "value"],
+                                          ),
+                                          x(
+                                            z,
+                                            {
+                                              label: l.$t("env.env.req.custom"),
+                                              value: b(_).CUSTOM,
+                                            },
+                                            null,
+                                            8,
+                                            ["label", "value"],
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["modelValue"],
+                                    ),
+                                  ]),
+                                  b(rl).dataType === b(_).CUSTOM
+                                    ? (c(),
+                                      m("div", fe, [
+                                        V(
+                                          "p",
+                                          null,
+                                          h(l.$t("env.env.req.dataAsyncTips")),
+                                          1,
+                                        ),
+                                        x(
+                                          J,
+                                          {
+                                            modelValue: b(rl).dataConfigOption,
+                                            "onUpdate:modelValue":
+                                              a[3] ||
+                                              (a[3] = (e) =>
+                                                (b(rl).dataConfigOption = e)),
+                                          },
+                                          {
+                                            default: y(() => [
+                                              (c(!0),
+                                              m(
+                                                T,
+                                                null,
+                                                S(
+                                                  b(E),
+                                                  (e, a) => (
+                                                    c(),
+                                                    f(
+                                                      X,
+                                                      {
+                                                        key: e,
+                                                        content: b(ol),
+                                                        disabled:
+                                                          e === b(E).Cookie ||
+                                                          b(L)(
+                                                            b(O)
+                                                              .CLOUD_DATA_SYNC,
+                                                            !1,
+                                                          ),
+                                                        placement: "top",
+                                                      },
+                                                      {
+                                                        default: y(() => [
+                                                          x(
+                                                            b(B),
+                                                            {
+                                                              onChange: (l) =>
+                                                                (function (
+                                                                  e,
+                                                                  l,
+                                                                ) {
+                                                                  l ==
+                                                                    E.Extensions &&
+                                                                    e &&
+                                                                    F(() => {
+                                                                      rl.value.dataConfigOption =
+                                                                        rl.value.dataConfigOption.filter(
+                                                                          (e) =>
+                                                                            e !==
+                                                                            A.Extensions,
+                                                                        );
+                                                                    });
+                                                                })(l, e),
+                                                              disabled:
+                                                                !b(L)(
+                                                                  b(O)
+                                                                    .CLOUD_DATA_SYNC,
+                                                                  !1,
+                                                                ) &&
+                                                                e !==
+                                                                  b(E).Cookie,
+                                                              label: l.$t(e),
+                                                              value: b(A)[a],
+                                                            },
+                                                            {
+                                                              default: y(() => [
+                                                                V("div", null, [
+                                                                  C(
+                                                                    h(
+                                                                      b(tl)(e),
+                                                                    ) + " ",
+                                                                    1,
+                                                                  ),
+                                                                  e ===
+                                                                  b(E)
+                                                                    .Extensions
+                                                                    ? (c(),
+                                                                      f(
+                                                                        ue,
+                                                                        {
+                                                                          key: 0,
+                                                                          content:
+                                                                            b(
+                                                                              tl,
+                                                                            )(
+                                                                              "env.env.req.sync_warning",
+                                                                            ),
+                                                                          "icon-class":
+                                                                            "tw-align-bottom tw-ml-[4px]",
+                                                                          icon: "icon-tips",
+                                                                        },
+                                                                        null,
+                                                                        8,
+                                                                        [
+                                                                          "content",
+                                                                        ],
+                                                                      ))
+                                                                    : g("", !0),
+                                                                ]),
+                                                              ]),
+                                                              _: 2,
+                                                            },
+                                                            1032,
+                                                            [
+                                                              "onChange",
+                                                              "disabled",
+                                                              "label",
+                                                              "value",
+                                                            ],
+                                                          ),
+                                                        ]),
+                                                        _: 2,
+                                                      },
+                                                      1032,
+                                                      ["content", "disabled"],
+                                                    )
+                                                  ),
+                                                ),
+                                                128,
+                                              )),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["modelValue"],
+                                        ),
+                                        x(
+                                          de,
+                                          {
+                                            modelValue: b(rl),
+                                            "onUpdate:modelValue":
+                                              a[4] ||
+                                              (a[4] = (e) =>
+                                                $(rl)
+                                                  ? (rl.value = e)
+                                                  : (rl = e)),
+                                            roleList: fl.value,
+                                            canUse: b(L)(
+                                              b(O).CLOUD_DATA_SYNC,
+                                              !1,
+                                            ),
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "roleList", "canUse"],
+                                        ),
+                                      ]))
+                                    : g("", !0),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (o = e.showItemArr)
+                            ? void 0
+                            : o.includes(b(w).ClearLocalData)
+                        )
+                          ? (c(),
+                            f(
+                              oe,
+                              {
+                                key: 1,
+                                modelValue: b(rl),
+                                "onUpdate:modelValue":
+                                  a[5] ||
+                                  (a[5] = (e) =>
+                                    $(rl) ? (rl.value = e) : (rl = e)),
+                              },
+                              null,
+                              8,
+                              ["modelValue"],
+                            ))
+                          : g("", !0),
+                        (
+                          null == (i = e.showItemArr)
+                            ? void 0
+                            : i.includes(b(w).BrowserSettings)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              { key: 2, class: "data-async-content-1" },
+                              {
+                                label: y(() => [
+                                  V("div", be, [
+                                    V("div", null, [
+                                      C(
+                                        h(l.$t("env.env.req.browserSettings")) +
+                                          " ",
+                                        1,
+                                      ),
+                                      x(
+                                        se,
+                                        { text: l.$t("envV2.tip28") },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    ne,
+                                    {
+                                      modelValue: b(rl).browserType,
+                                      "onUpdate:modelValue":
+                                        a[6] ||
+                                        (a[6] = (e) => (b(rl).browserType = e)),
+                                      onChange: cl,
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("setting.globalConfig"),
+                                            value: b(_).GLOBAL,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("env.env.req.custom"),
+                                            value: b(_).CUSTOM,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                  b(rl).browserType === b(_).CUSTOM
+                                    ? (c(),
+                                      m("div", ge, [
+                                        x(
+                                          J,
+                                          {
+                                            modelValue:
+                                              b(rl).browserConfigOption,
+                                            "onUpdate:modelValue":
+                                              a[7] ||
+                                              (a[7] = (e) =>
+                                                (b(rl).browserConfigOption =
+                                                  e)),
+                                          },
+                                          {
+                                            default: y(() => [
+                                              (c(!0),
+                                              m(
+                                                T,
+                                                null,
+                                                S(
+                                                  b(R),
+                                                  (e, a) => (
+                                                    c(),
+                                                    m(
+                                                      "div",
+                                                      {
+                                                        key: e,
+                                                        class:
+                                                          "browser-config-option-item tw-mb-[12px]",
+                                                      },
+                                                      [
+                                                        [
+                                                          b(R).ipCheckErr,
+                                                          b(R).RestorePage,
+                                                        ].includes(e)
+                                                          ? g("", !0)
+                                                          : (c(),
+                                                            f(
+                                                              X,
+                                                              {
+                                                                key: 0,
+                                                                content: Cl(e),
+                                                                disabled: Vl(e),
+                                                                placement:
+                                                                  "top",
+                                                              },
+                                                              {
+                                                                default: y(
+                                                                  () => [
+                                                                    [
+                                                                      b(R)
+                                                                        .disableDebugger,
+                                                                      b(R)
+                                                                        .expandSecurity,
+                                                                      b(R)
+                                                                        .disableChromeExtension,
+                                                                      b(R)
+                                                                        .disableShowPassword,
+                                                                    ].includes(
+                                                                      e,
+                                                                    )
+                                                                      ? g(
+                                                                          "",
+                                                                          !0,
+                                                                        )
+                                                                      : (c(),
+                                                                        f(
+                                                                          b(B),
+                                                                          {
+                                                                            key: 0,
+                                                                            disabled:
+                                                                              kl(
+                                                                                e,
+                                                                              ),
+                                                                            value:
+                                                                              b(
+                                                                                I,
+                                                                              )[
+                                                                                a
+                                                                              ],
+                                                                            class:
+                                                                              "tw-flex tw-items-center tw-w-fit",
+                                                                          },
+                                                                          {
+                                                                            default:
+                                                                              y(
+                                                                                () => [
+                                                                                  V(
+                                                                                    "p",
+                                                                                    we,
+                                                                                    h(
+                                                                                      l.$t(
+                                                                                        `env.env.req.${e}`,
+                                                                                      ),
+                                                                                    ),
+                                                                                    1,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            _: 2,
+                                                                          },
+                                                                          1032,
+                                                                          [
+                                                                            "disabled",
+                                                                            "value",
+                                                                          ],
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                                _: 2,
+                                                              },
+                                                              1032,
+                                                              [
+                                                                "content",
+                                                                "disabled",
+                                                              ],
+                                                            )),
+                                                        [
+                                                          b(R)
+                                                            .randomFingerprint,
+                                                          b(R).disablePassword,
+                                                        ].includes(e)
+                                                          ? (c(), m("div", ye))
+                                                          : g("", !0),
+                                                      ],
+                                                    )
+                                                  ),
+                                                ),
+                                                128,
+                                              )),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["modelValue"],
+                                        ),
+                                      ]))
+                                    : g("", !0),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (s = e.showItemArr)
+                            ? void 0
+                            : s.includes(b(w).EnvOverOpen)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              {
+                                key: 3,
+                                class: "data-async-content-1 !tw-mb-4",
+                              },
+                              {
+                                label: y(() => [
+                                  V("div", xe, [
+                                    V("div", null, [
+                                      C(
+                                        h(l.$t("setting.envOverOpen")) + " ",
+                                        1,
+                                      ),
+                                      x(
+                                        se,
+                                        { text: l.$t("envV2.tip29") },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    ne,
+                                    {
+                                      modelValue: b(rl).envMutilOpenType,
+                                      "onUpdate:modelValue":
+                                        a[8] ||
+                                        (a[8] = (e) =>
+                                          (b(rl).envMutilOpenType = e)),
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("setting.globalConfig"),
+                                            value: b(U).GLOBAL,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t(
+                                              "env.env.req.geoEnable",
+                                            ),
+                                            value: b(U).ALLOW,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("env.env.req.disable"),
+                                            value: b(U).BAN,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (u = e.showItemArr)
+                            ? void 0
+                            : u.includes(b(w).RemoteInspector)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              {
+                                key: 4,
+                                class: "data-async-content-1 !tw-mb-4",
+                              },
+                              {
+                                label: y(() => [
+                                  V("div", ke, [
+                                    V("div", null, [
+                                      C(
+                                        h(l.$t("setting.remoteInspector")) +
+                                          " ",
+                                        1,
+                                      ),
+                                      x(
+                                        se,
+                                        {
+                                          text: l.$t(
+                                            "setting.remoteInspectorTip",
+                                          ),
+                                        },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    ne,
+                                    {
+                                      "model-value": Object.values(
+                                        b(D),
+                                      ).includes(b(rl).remoteInspectorType)
+                                        ? b(rl).remoteInspectorType
+                                        : b(D).GLOBAL,
+                                      "onUpdate:modelValue":
+                                        a[9] ||
+                                        (a[9] = (e) =>
+                                          (b(rl).remoteInspectorType = e)),
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("setting.globalConfig"),
+                                            value: b(D).GLOBAL,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t(
+                                              "env.env.req.geoEnable",
+                                            ),
+                                            value: b(D).ALLOW,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("env.env.req.disable"),
+                                            value: b(D).BAN,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["model-value"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (r = e.showItemArr)
+                            ? void 0
+                            : r.includes(b(w).BookmarkConfig)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              {
+                                key: 5,
+                                class: "data-async-content-1 !tw-mb-4",
+                              },
+                              {
+                                label: y(() => [
+                                  V("div", Ve, [
+                                    V("div", null, [
+                                      C(
+                                        h(l.$t("setting.bookmarkConfig")) + " ",
+                                        1,
+                                      ),
+                                      x(
+                                        se,
+                                        { text: l.$t("envV2.bookmarkTip") },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    X,
+                                    {
+                                      content: b(ol),
+                                      disabled: b(L)(b(O).BROWSER_SETTINGS, !1),
+                                      placement: "top",
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          ne,
+                                          {
+                                            modelValue:
+                                              b(rl).bookmarkConfigVal
+                                                .bookmarkType,
+                                            "onUpdate:modelValue":
+                                              a[10] ||
+                                              (a[10] = (e) =>
+                                                (b(
+                                                  rl,
+                                                ).bookmarkConfigVal.bookmarkType =
+                                                  e)),
+                                            disabled: !b(L)(
+                                              b(O).BROWSER_SETTINGS,
+                                              !1,
+                                            ),
+                                          },
+                                          {
+                                            default: y(() => [
+                                              x(
+                                                z,
+                                                {
+                                                  label: l.$t(
+                                                    "setting.globalConfig",
+                                                  ),
+                                                  value: b(_).GLOBAL,
+                                                },
+                                                null,
+                                                8,
+                                                ["label", "value"],
+                                              ),
+                                              x(
+                                                z,
+                                                {
+                                                  label:
+                                                    l.$t("env.env.req.custom"),
+                                                  value: b(_).CUSTOM,
+                                                },
+                                                null,
+                                                8,
+                                                ["label", "value"],
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["modelValue", "disabled"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["content", "disabled"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        b(rl).bookmarkConfigVal.bookmarkType === b(_).CUSTOM
+                          ? (c(),
+                            f(
+                              Y,
+                              { key: 6 },
+                              {
+                                default: y(() => {
+                                  var e, t, n, o, i;
+                                  return [
+                                    V("div", Ce, [
+                                      V("div", he, [
+                                        x(
+                                          K,
+                                          {
+                                            modelValue:
+                                              b(rl).bookmarkConfigVal.status,
+                                            "onUpdate:modelValue":
+                                              a[11] ||
+                                              (a[11] = (e) =>
+                                                (b(
+                                                  rl,
+                                                ).bookmarkConfigVal.status =
+                                                  e)),
+                                            onChange: Ll,
+                                            disabled: !b(L)(
+                                              b(O).BROWSER_SETTINGS,
+                                              !1,
+                                            ),
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "disabled"],
+                                        ),
+                                        V(
+                                          "div",
+                                          Te,
+                                          h(l.$t("setting.bookmarkSwithTips")),
+                                          1,
+                                        ),
+                                      ]),
+                                      b(rl).bookmarkConfigVal.status
+                                        ? (c(),
+                                          m("div", _e, [
+                                            (
+                                              null ==
+                                              (t =
+                                                null == (e = b(rl))
+                                                  ? void 0
+                                                  : e.bookmarkConfigVal)
+                                                ? void 0
+                                                : t.fileContent.length
+                                            )
+                                              ? (c(),
+                                                m("div", Le, [
+                                                  V("div", Oe, [
+                                                    V(
+                                                      "span",
+                                                      Be,
+                                                      h(
+                                                        null == (n = b(rl))
+                                                          ? void 0
+                                                          : n.bookmarkConfigVal
+                                                              .fileName,
+                                                      ),
+                                                      1,
+                                                    ),
+                                                    x(
+                                                      Q,
+                                                      {
+                                                        link: "",
+                                                        type: "info",
+                                                        onClick: Ll,
+                                                      },
+                                                      {
+                                                        default: y(() => [
+                                                          ...(a[21] ||
+                                                            (a[21] = [
+                                                              V(
+                                                                "i",
+                                                                {
+                                                                  class:
+                                                                    "iconfont icon-fail",
+                                                                },
+                                                                null,
+                                                                -1,
+                                                              ),
+                                                            ])),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                    ),
+                                                  ]),
+                                                  V("div", Ae, [
+                                                    x(
+                                                      Z,
+                                                      {
+                                                        data:
+                                                          null ==
+                                                          (i =
+                                                            null == (o = b(rl))
+                                                              ? void 0
+                                                              : o.bookmarkConfigVal)
+                                                            ? void 0
+                                                            : i.fileContent,
+                                                        props: pl,
+                                                      },
+                                                      null,
+                                                      8,
+                                                      ["data"],
+                                                    ),
+                                                  ]),
+                                                ]))
+                                              : (c(),
+                                                m("div", Se, [
+                                                  x(
+                                                    Y,
+                                                    {
+                                                      prop: "bookmarkConfigVal.fileContent",
+                                                      class:
+                                                        "no-flex-item !tw-mb-[10px]",
+                                                    },
+                                                    {
+                                                      default: y(() => [
+                                                        x(
+                                                          Q,
+                                                          {
+                                                            class:
+                                                              "tw-mt-[15px] tw-mr-[10px]",
+                                                            type: "primary",
+                                                            plain: "",
+                                                            onClick: El,
+                                                            disabled: !b(L)(
+                                                              b(O)
+                                                                .BROWSER_SETTINGS,
+                                                              !1,
+                                                            ),
+                                                          },
+                                                          {
+                                                            default: y(() => [
+                                                              C(
+                                                                h(
+                                                                  l.$t(
+                                                                    "setting.uploadBtnText",
+                                                                  ),
+                                                                ),
+                                                                1,
+                                                              ),
+                                                            ]),
+                                                            _: 1,
+                                                          },
+                                                          8,
+                                                          ["disabled"],
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                  ),
+                                                  V(
+                                                    "p",
+                                                    Ee,
+                                                    h(
+                                                      l.$t(
+                                                        "setting.uploadFileFormat",
+                                                      ),
+                                                    ),
+                                                    1,
+                                                  ),
+                                                ])),
+                                            V("div", $e, [
+                                              V(
+                                                "span",
+                                                null,
+                                                h(
+                                                  l.$t(
+                                                    "setting.effectiveMethod",
+                                                  ),
+                                                ),
+                                                1,
+                                              ),
+                                              a[22] ||
+                                                (a[22] = V(
+                                                  "br",
+                                                  null,
+                                                  null,
+                                                  -1,
+                                                )),
+                                              x(
+                                                le,
+                                                {
+                                                  modelValue:
+                                                    b(rl).bookmarkConfigVal
+                                                      .type,
+                                                  "onUpdate:modelValue":
+                                                    a[12] ||
+                                                    (a[12] = (e) =>
+                                                      (b(
+                                                        rl,
+                                                      ).bookmarkConfigVal.type =
+                                                        e)),
+                                                  onChange:
+                                                    a[13] ||
+                                                    (a[13] = (e) =>
+                                                      (dl.value = !0)),
+                                                  disabled: !b(L)(
+                                                    b(O).BROWSER_SETTINGS,
+                                                    !1,
+                                                  ),
+                                                },
+                                                {
+                                                  default: y(() => [
+                                                    x(
+                                                      ee,
+                                                      { value: b(N).APPEND },
+                                                      {
+                                                        default: y(() => [
+                                                          C(
+                                                            h(
+                                                              l.$t(
+                                                                "setting.append",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      ["value"],
+                                                    ),
+                                                    x(
+                                                      ee,
+                                                      { value: b(N).COVER },
+                                                      {
+                                                        default: y(() => [
+                                                          C(
+                                                            h(
+                                                              l.$t(
+                                                                "env.env.batchRemark.cover",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      ["value"],
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                                8,
+                                                ["modelValue", "disabled"],
+                                              ),
+                                            ]),
+                                            b(rl).bookmarkConfigVal.type ===
+                                            b(N).COVER
+                                              ? (c(),
+                                                m("div", Re, [
+                                                  V(
+                                                    "span",
+                                                    null,
+                                                    h(
+                                                      l.$t(
+                                                        "setting.replaceRules",
+                                                      ),
+                                                    ),
+                                                    1,
+                                                  ),
+                                                  a[23] ||
+                                                    (a[23] = V(
+                                                      "br",
+                                                      null,
+                                                      null,
+                                                      -1,
+                                                    )),
+                                                  x(
+                                                    ie,
+                                                    {
+                                                      modelValue:
+                                                        b(rl).bookmarkConfigVal
+                                                          .coverRule,
+                                                      "onUpdate:modelValue":
+                                                        a[14] ||
+                                                        (a[14] = (e) =>
+                                                          (b(
+                                                            rl,
+                                                          ).bookmarkConfigVal.coverRule =
+                                                            e)),
+                                                      class: "tw-max-w-[500px]",
+                                                      onChange:
+                                                        a[15] ||
+                                                        (a[15] = (e) =>
+                                                          (dl.value = !0)),
+                                                      disabled: !b(L)(
+                                                        b(O).BROWSER_SETTINGS,
+                                                        !1,
+                                                      ),
+                                                    },
+                                                    {
+                                                      default: y(() => [
+                                                        x(
+                                                          ae,
+                                                          {
+                                                            label: b(tl)(
+                                                              "setting.bookmarksCover1",
+                                                            ),
+                                                            value: b(W).Cover,
+                                                          },
+                                                          null,
+                                                          8,
+                                                          ["label", "value"],
+                                                        ),
+                                                        x(
+                                                          ae,
+                                                          {
+                                                            label: b(tl)(
+                                                              "setting.bookmarksCover2",
+                                                            ),
+                                                            value: b(W).CLEAR,
+                                                          },
+                                                          null,
+                                                          8,
+                                                          ["label", "value"],
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    ["modelValue", "disabled"],
+                                                  ),
+                                                ]))
+                                              : g("", !0),
+                                          ]))
+                                        : g("", !0),
+                                    ]),
+                                  ];
+                                }),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (d = e.showItemArr)
+                            ? void 0
+                            : d.includes(b(w).AccessLimitConfig)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              {
+                                key: 7,
+                                class: "data-async-content-1 !tw-mb-4",
+                              },
+                              {
+                                label: y(() => [
+                                  V("div", Ie, [
+                                    V("div", null, [
+                                      C(
+                                        h(l.$t("setting.visitConfig")) + " ",
+                                        1,
+                                      ),
+                                      x(
+                                        se,
+                                        { text: l.$t("envV2.accessLimitTip") },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    X,
+                                    {
+                                      content: b(ol),
+                                      disabled: b(L)(b(O).BROWSER_SETTINGS, !1),
+                                      placement: "top",
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          ne,
+                                          {
+                                            modelValue:
+                                              b(rl).accessLimitConfigVal
+                                                .accessLimitType,
+                                            "onUpdate:modelValue":
+                                              a[16] ||
+                                              (a[16] = (e) =>
+                                                (b(
+                                                  rl,
+                                                ).accessLimitConfigVal.accessLimitType =
+                                                  e)),
+                                            disabled: !b(L)(
+                                              b(O).BROWSER_SETTINGS,
+                                              !1,
+                                            ),
+                                          },
+                                          {
+                                            default: y(() => [
+                                              x(
+                                                z,
+                                                {
+                                                  label: l.$t(
+                                                    "setting.globalConfig",
+                                                  ),
+                                                  value: b(_).GLOBAL,
+                                                },
+                                                null,
+                                                8,
+                                                ["label", "value"],
+                                              ),
+                                              x(
+                                                z,
+                                                {
+                                                  label:
+                                                    l.$t("env.env.req.custom"),
+                                                  value: b(_).CUSTOM,
+                                                },
+                                                null,
+                                                8,
+                                                ["label", "value"],
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["modelValue", "disabled"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["content", "disabled"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        b(rl).accessLimitConfigVal.accessLimitType ===
+                        b(_).CUSTOM
+                          ? (c(),
+                            f(
+                              Y,
+                              { key: 8, label: "" },
+                              {
+                                default: y(() => [
+                                  x(
+                                    pe,
+                                    {
+                                      modelValue: b(rl).accessLimitConfigVal,
+                                      "onUpdate:modelValue":
+                                        a[17] ||
+                                        (a[17] = (e) =>
+                                          (b(rl).accessLimitConfigVal = e)),
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (p = e.showItemArr)
+                            ? void 0
+                            : p.includes(b(w).ExtensionsType)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              { key: 9 },
+                              {
+                                label: y(() => [
+                                  V("div", Ue, [
+                                    V("div", null, [
+                                      C(h(l.$t("expan.tip24")) + " ", 1),
+                                      x(
+                                        se,
+                                        { text: l.$t("envV2.tip30") },
+                                        null,
+                                        8,
+                                        ["text"],
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    ne,
+                                    {
+                                      modelValue: b(rl).extensionsType,
+                                      "onUpdate:modelValue":
+                                        a[18] ||
+                                        (a[18] = (e) =>
+                                          (b(rl).extensionsType = e)),
+                                      onChange: Sl,
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("expan.tip25"),
+                                            value: b(G).ALLOW,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        x(
+                                          z,
+                                          {
+                                            label: l.$t("env.env.btnClose"),
+                                            value: b(G).BAN,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        b(rl).extensionsType === b(G).ALLOW &&
+                        (null == (j = e.showItemArr)
+                          ? void 0
+                          : j.includes(b(w).ExtensionsType))
+                          ? (c(),
+                            f(
+                              Y,
+                              {
+                                key: 10,
+                                class: "envV2-expandGroup tw-mt-[-16px]",
+                                label: " ",
+                              },
+                              {
+                                default: y(() => [
+                                  V("div", De, [
+                                    V("div", Ne, [
+                                      V("p", We, h(l.$t("expan.tip6")), 1),
+                                      V("div", null, [
+                                        x(
+                                          ie,
+                                          {
+                                            modelValue: b(rl).extensionsGroupId,
+                                            "onUpdate:modelValue":
+                                              a[19] ||
+                                              (a[19] = (e) =>
+                                                (b(rl).extensionsGroupId = e)),
+                                            placeholder: l.$t("expan.tip46"),
+                                          },
+                                          {
+                                            label: y(({ label: e }) => [
+                                              V("div", Ge, [
+                                                x(
+                                                  nl,
+                                                  { class: "tw-w-[100%]" },
+                                                  {
+                                                    dropdown: y(() => [
+                                                      yl.value
+                                                        ? (c(),
+                                                          m("div", Pe, [
+                                                            V(
+                                                              "div",
+                                                              Me,
+                                                              h(
+                                                                l.$t(
+                                                                  "expan.tip51",
+                                                                ),
+                                                              ),
+                                                              1,
+                                                            ),
+                                                            x(
+                                                              al,
+                                                              {
+                                                                "max-height":
+                                                                  "150px",
+                                                              },
+                                                              {
+                                                                default: y(
+                                                                  () => [
+                                                                    V(
+                                                                      "div",
+                                                                      je,
+                                                                      [
+                                                                        V(
+                                                                          "div",
+                                                                          Fe,
+                                                                          [
+                                                                            (c(
+                                                                              !0,
+                                                                            ),
+                                                                            m(
+                                                                              T,
+                                                                              null,
+                                                                              S(
+                                                                                xl.value,
+                                                                                (
+                                                                                  e,
+                                                                                ) => (
+                                                                                  c(),
+                                                                                  m(
+                                                                                    "div",
+                                                                                    {
+                                                                                      key: e.id,
+                                                                                      class:
+                                                                                        "s-flex",
+                                                                                    },
+                                                                                    [
+                                                                                      V(
+                                                                                        "span",
+                                                                                        {
+                                                                                          class:
+                                                                                            q(
+                                                                                              [
+                                                                                                {
+                                                                                                  "tw-bg-[var(--primary-color)]":
+                                                                                                    e.status ===
+                                                                                                    b(
+                                                                                                      P,
+                                                                                                    )
+                                                                                                      .ENABLED,
+                                                                                                  "tw-bg-subText":
+                                                                                                    e.status ===
+                                                                                                    b(
+                                                                                                      P,
+                                                                                                    )
+                                                                                                      .DISABLED,
+                                                                                                },
+                                                                                                "tw-w-[8px] tw-h-[8px] tw-rounded-full tw-flex-shrink-0 tw-mr-2",
+                                                                                              ],
+                                                                                            ),
+                                                                                        },
+                                                                                        null,
+                                                                                        2,
+                                                                                      ),
+                                                                                      V(
+                                                                                        "div",
+                                                                                        He,
+                                                                                        [
+                                                                                          e.iconUrl
+                                                                                            ? (c(),
+                                                                                              m(
+                                                                                                "img",
+                                                                                                {
+                                                                                                  key: 0,
+                                                                                                  src: e.iconUrl,
+                                                                                                  class:
+                                                                                                    "tw-w-full tw-h-full",
+                                                                                                },
+                                                                                                null,
+                                                                                                8,
+                                                                                                ze,
+                                                                                              ))
+                                                                                            : (c(),
+                                                                                              f(
+                                                                                                te,
+                                                                                                {
+                                                                                                  key: 1,
+                                                                                                },
+                                                                                              )),
+                                                                                        ],
+                                                                                      ),
+                                                                                      V(
+                                                                                        "p",
+                                                                                        Ye,
+                                                                                        [
+                                                                                          V(
+                                                                                            "span",
+                                                                                            Xe,
+                                                                                            h(
+                                                                                              e.extensionsName,
+                                                                                            ),
+                                                                                            1,
+                                                                                          ),
+                                                                                          V(
+                                                                                            "span",
+                                                                                            Je,
+                                                                                            h(
+                                                                                              e.extensionsIntroduce,
+                                                                                            ),
+                                                                                            1,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  )
+                                                                                ),
+                                                                              ),
+                                                                              128,
+                                                                            )),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                _: 1,
+                                                              },
+                                                            ),
+                                                          ]))
+                                                        : (c(),
+                                                          m(
+                                                            "div",
+                                                            Ke,
+                                                            h(
+                                                              l.$t(
+                                                                "expan.tip52",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          )),
+                                                    ]),
+                                                    default: y(() => [
+                                                      V("span", qe, h(e), 1),
+                                                    ]),
+                                                    _: 2,
+                                                  },
+                                                  1024,
+                                                ),
+                                              ]),
+                                            ]),
+                                            default: y(() => [
+                                              (c(!0),
+                                              m(
+                                                T,
+                                                null,
+                                                S(gl.value, (e) => {
+                                                  var a;
+                                                  return (
+                                                    c(),
+                                                    f(
+                                                      ae,
+                                                      {
+                                                        key: e.id,
+                                                        label:
+                                                          e.name +
+                                                          ` (${l.$t("expan.tip50", { number: null == (a = e.extensionsList) ? void 0 : a.length })})`,
+                                                        value: e.id,
+                                                      },
+                                                      null,
+                                                      8,
+                                                      ["label", "value"],
+                                                    )
+                                                  );
+                                                }),
+                                                128,
+                                              )),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["modelValue", "placeholder"],
+                                        ),
+                                        V(
+                                          "p",
+                                          Qe,
+                                          h(l.$t("expan.configTips")),
+                                          1,
+                                        ),
+                                      ]),
+                                    ]),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                        (
+                          null == (H = e.showItemArr)
+                            ? void 0
+                            : H.includes(b(w).SpoofingVideoType)
+                        )
+                          ? (c(),
+                            f(
+                              Y,
+                              {
+                                key: 11,
+                                class: "data-async-content-1 !tw-mb-4",
+                              },
+                              {
+                                label: y(() => [
+                                  V("div", Ze, [
+                                    V("div", null, [
+                                      C(
+                                        h(
+                                          l.$t("env.env.req.spoofingVideoType"),
+                                        ) + " ",
+                                        1,
+                                      ),
+                                      x(se, null, {
+                                        content: y(() => [
+                                          V("div", null, [
+                                            V("div", el, [
+                                              V(
+                                                "div",
+                                                ll,
+                                                h(
+                                                  l.$t(
+                                                    "env.env.req.spoofingVideoTypeTips",
+                                                  ) +
+                                                    l.$t(
+                                                      "env.env.req.spoofingVideoOperationTips",
+                                                    ),
+                                                ),
+                                                1,
+                                              ),
+                                              a[24] ||
+                                                (a[24] = V(
+                                                  "div",
+                                                  null,
+                                                  [
+                                                    V("img", {
+                                                      src: ve,
+                                                      alt: "operationTip",
+                                                      class: "tw-rounded",
+                                                    }),
+                                                  ],
+                                                  -1,
+                                                )),
+                                            ]),
+                                          ]),
+                                        ]),
+                                        _: 1,
+                                      }),
+                                    ]),
+                                  ]),
+                                ]),
+                                default: y(() => [
+                                  x(
+                                    X,
+                                    {
+                                      content: b(ol),
+                                      disabled: b(L)(b(O).BROWSER_SETTINGS, !1),
+                                      placement: "top",
+                                    },
+                                    {
+                                      default: y(() => [
+                                        x(
+                                          ne,
+                                          {
+                                            modelValue: b(rl).spoofingVideoType,
+                                            "onUpdate:modelValue":
+                                              a[20] ||
+                                              (a[20] = (e) =>
+                                                (b(rl).spoofingVideoType = e)),
+                                          },
+                                          {
+                                            default: y(() => [
+                                              x(
+                                                z,
+                                                {
+                                                  label:
+                                                    l.$t("env.env.req.enable"),
+                                                  disabled:
+                                                    "MACOS" === il.value ||
+                                                    !b(L)(
+                                                      b(O).BROWSER_SETTINGS,
+                                                      !1,
+                                                    ),
+                                                  value: b(M).ENABLE,
+                                                },
+                                                null,
+                                                8,
+                                                ["label", "disabled", "value"],
+                                              ),
+                                              x(
+                                                z,
+                                                {
+                                                  label: l.$t(
+                                                    "env.env.req.disable",
+                                                  ),
+                                                  disabled:
+                                                    "MACOS" === il.value ||
+                                                    !b(L)(
+                                                      b(O).BROWSER_SETTINGS,
+                                                      !1,
+                                                    ),
+                                                  value: b(M).DISABLE,
+                                                },
+                                                null,
+                                                8,
+                                                ["label", "disabled", "value"],
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["modelValue"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["content", "disabled"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : g("", !0),
+                      ],
+                      64,
+                    ))
+                  : g("", !0),
+              ])
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-9f23d0e3"]],
+  );
+export { al as default };

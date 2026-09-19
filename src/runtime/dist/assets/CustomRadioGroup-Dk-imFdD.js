@@ -1,0 +1,59 @@
+import {
+  d as a,
+  r as e,
+  o,
+  h as l,
+  aJ as t,
+  w as s,
+  ai as r,
+  C as u,
+  _ as d,
+} from "./index-BUIbb6Pa.js";
+const m = d(
+  a({
+    __name: "CustomRadioGroup",
+    props: { modelValue: { type: [String, Number, Boolean] } },
+    emits: ["update:modelValue", "change"],
+    setup(a, { emit: d }) {
+      const m = a,
+        n = d,
+        p = u({
+          get: () => m.modelValue,
+          set: (a) => n("update:modelValue", a),
+        }),
+        i = (a) => {
+          n("change", a);
+        };
+      return (a, u) => {
+        const d = e("el-radio-group");
+        return (
+          o(),
+          l(
+            d,
+            t(
+              {
+                class: "custom-el-radio-group",
+                modelValue: p.value,
+                "onUpdate:modelValue": u[0] || (u[0] = (a) => (p.value = a)),
+              },
+              a.$attrs,
+              {
+                onChange: i,
+                "text-color": "var(--primary-color)",
+                fill: "rgba(255, 255, 255, 0)",
+              },
+            ),
+            {
+              default: s(() => [r(a.$slots, "default", {}, void 0, !0)]),
+              _: 3,
+            },
+            16,
+            ["modelValue"],
+          )
+        );
+      };
+    },
+  }),
+  [["__scopeId", "data-v-15965b50"]],
+);
+export { m as default };

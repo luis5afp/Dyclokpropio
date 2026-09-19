@@ -1,0 +1,75 @@
+import {
+  d as a,
+  u as t,
+  r as e,
+  c as s,
+  a as n,
+  t as r,
+  b as l,
+  w as o,
+  e as i,
+  f as c,
+  o as u,
+  H as d,
+  _ as p,
+} from "./index-BUIbb6Pa.js";
+const m = "" + new URL("403-B16-l2qe.png", import.meta.url).href,
+  g = { class: "not-container" },
+  _ = { class: "not-detail" },
+  f = { class: "btn-container" },
+  h = p(
+    a({
+      __name: "403",
+      setup(a) {
+        const p = t(),
+          h = () => {
+            p.push(d);
+          };
+        return (a, t) => {
+          const d = e("el-button");
+          return (
+            u(),
+            s("div", g, [
+              t[1] ||
+                (t[1] = n(
+                  "img",
+                  { src: m, class: "not-img", alt: "403" },
+                  null,
+                  -1,
+                )),
+              n("div", _, [
+                t[0] || (t[0] = n("h2", null, "403", -1)),
+                n("h4", null, r(a.$t("errorPage.hint403")) + "🙅‍♂️🙅‍♀️", 1),
+                n("div", f, [
+                  l(
+                    d,
+                    { type: "primary", onClick: c(p).back },
+                    {
+                      default: o(() => [
+                        i(r(a.$t("errorPage.lastPageBtn")), 1),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["onClick"],
+                  ),
+                  l(
+                    d,
+                    { type: "primary", onClick: h },
+                    {
+                      default: o(() => [
+                        i(r(a.$t("errorPage.homePageBtn")), 1),
+                      ]),
+                      _: 1,
+                    },
+                  ),
+                ]),
+              ]),
+            ])
+          );
+        };
+      },
+    }),
+    [["__scopeId", "data-v-89579e4a"]],
+  );
+export { h as default };

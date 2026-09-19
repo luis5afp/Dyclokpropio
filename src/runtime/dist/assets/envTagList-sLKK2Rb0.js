@@ -1,0 +1,370 @@
+import {
+  d as e,
+  R as a,
+  aQ as t,
+  v as l,
+  r as s,
+  q as n,
+  o,
+  c as i,
+  F as c,
+  b as r,
+  f as u,
+  w as g,
+  a as p,
+  x as d,
+  ah as v,
+  h as m,
+  e as f,
+  t as _,
+  aq as h,
+  X as w,
+  be as x,
+  i as y,
+  dy as T,
+  e8 as b,
+  aB as C,
+  e$ as E,
+  a1 as k,
+  a3 as N,
+  a5 as V,
+  dh as j,
+  _ as S,
+} from "./index-BUIbb6Pa.js";
+import { u as D } from "./useFetchTable-DUveM-tP.js";
+import { E as L } from "./index-rtKG2tmD.js";
+import { _ as z } from "./createEnvTag.vue_vue_type_script_setup_true_lang-DCN15S07.js";
+import { _ as A } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import { e as B } from "./asyncMessage-B3VVipK9.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+const G = { class: "tw-flex tw-flex-col tw-h-full" },
+  I = { class: "b-flex tw-mb-[10px]" },
+  M = { class: "min-table tw-flex tw-flex-1 tw-h-0" },
+  F = { class: "tw-truncate" },
+  P = { key: 0, class: "tw-flex tw-gap-2" },
+  R = { key: 1 },
+  q = S(
+    e({
+      __name: "envTagList",
+      setup(e, { expose: S }) {
+        const q = y(),
+          { envTagDeleteTipNoShow: J } = a(t());
+        let { t: U } = l.useI18n();
+        const { tagCodeColorMap: H } = T();
+        let K = y(""),
+          {
+            list: O,
+            fetchList: Q,
+            pagination: X,
+            onPaginationSizeChange: Z,
+            onPaginationCurrentChange: $,
+            onSearch: W,
+            loading: Y,
+          } = D({ fetch: async (e) => await b({ ...e, tagName: K.value }) });
+        const ee = y(!1),
+          ae = [
+            { label: U("env.tag.tag"), prop: "tagName" },
+            {
+              prop: "operation",
+              width: 150,
+              label: U("base.operation"),
+              fixed: "right",
+            },
+          ];
+        function te() {
+          var e;
+          null == (e = q.value) || e.open();
+        }
+        return (
+          S({
+            open: () => {
+              ((ee.value = !0), (K.value = ""), Q());
+            },
+          }),
+          (e, a) => {
+            const t = s("el-button"),
+              l = s("el-input"),
+              y = s("el-tag"),
+              T = s("el-dialog"),
+              b = n("auth"),
+              S = n("trim");
+            return (
+              o(),
+              i(
+                c,
+                null,
+                [
+                  r(
+                    T,
+                    {
+                      class:
+                        "tw-h-[80vh] tw-flex tw-flex-col env-tag-list-dialog",
+                      modelValue: ee.value,
+                      "onUpdate:modelValue":
+                        a[1] || (a[1] = (e) => (ee.value = e)),
+                      title: u(U)("env.tag.tagList"),
+                      width: "50%",
+                      "close-on-click-modal": !1,
+                      "align-center": "",
+                    },
+                    {
+                      default: g(() => [
+                        p("div", G, [
+                          p("div", I, [
+                            d(
+                              (o(),
+                              m(
+                                t,
+                                { type: "primary", onClick: te },
+                                {
+                                  default: g(() => [
+                                    f(_(u(U)("env.tag.createTag")), 1),
+                                  ]),
+                                  _: 1,
+                                },
+                              )),
+                              [[b, u(v).ENV_TAG_EDIT]],
+                            ),
+                            d(
+                              r(
+                                l,
+                                {
+                                  class: "tw-w-[200px]",
+                                  placeholder: u(U)("env.tag.tagName"),
+                                  modelValue: u(K),
+                                  "onUpdate:modelValue":
+                                    a[0] ||
+                                    (a[0] = (e) =>
+                                      h(K) ? (K.value = e) : (K = e)),
+                                  onBlur: u(W),
+                                },
+                                null,
+                                8,
+                                ["placeholder", "modelValue", "onBlur"],
+                              ),
+                              [[S]],
+                            ),
+                          ]),
+                          p("div", M, [
+                            r(
+                              L,
+                              {
+                                columns: ae,
+                                list: u(O),
+                                class: "env-tag-list",
+                                loading: u(Y),
+                              },
+                              {
+                                tagName: g(({ row: e }) => [
+                                  r(
+                                    y,
+                                    {
+                                      class:
+                                        "default-style tw-text-white tw-max-w-full",
+                                      color: u(H)[e.tagStyle],
+                                    },
+                                    {
+                                      default: g(() => [
+                                        p("div", F, _(e.tagName), 1),
+                                      ]),
+                                      _: 2,
+                                    },
+                                    1032,
+                                    ["color"],
+                                  ),
+                                ]),
+                                operation: g(({ row: e }) => [
+                                  u(x)(u(v).ENV_TAG_EDIT) ||
+                                  u(x)(u(v).ENV_TAG_DELETE)
+                                    ? (o(),
+                                      i("div", P, [
+                                        d(
+                                          (o(),
+                                          m(
+                                            t,
+                                            {
+                                              class:
+                                                "hover:!tw-text-[var(--primary-color)]",
+                                              type: "info",
+                                              onClick: (a) =>
+                                                (function (e) {
+                                                  var a;
+                                                  null == (a = q.value) ||
+                                                    a.open(e);
+                                                })(e),
+                                              link: "",
+                                            },
+                                            {
+                                              default: g(() => [
+                                                ...(a[2] ||
+                                                  (a[2] = [
+                                                    p(
+                                                      "i",
+                                                      {
+                                                        class:
+                                                          "iconfont icon-edit",
+                                                      },
+                                                      null,
+                                                      -1,
+                                                    ),
+                                                  ])),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["onClick"],
+                                          )),
+                                          [[b, u(v).ENV_TAG_EDIT]],
+                                        ),
+                                        d(
+                                          (o(),
+                                          m(
+                                            t,
+                                            {
+                                              class:
+                                                "hover:!tw-text-[var(--primary-color)]",
+                                              type: "info",
+                                              onClick: (a) =>
+                                                (async function (e) {
+                                                  J.value
+                                                    ? B(
+                                                        async () => {
+                                                          await E(e.id);
+                                                        },
+                                                        {
+                                                          successText:
+                                                            C.t(
+                                                              "base.delSuccess",
+                                                            ),
+                                                        },
+                                                      ).then(() => Q())
+                                                    : k({
+                                                        title: U(
+                                                          "env.tag.confirmDeleteTag",
+                                                        ),
+                                                        message: () =>
+                                                          V("div", {}, [
+                                                            V(
+                                                              "div",
+                                                              {
+                                                                class:
+                                                                  "tw-text-[var(--text-light1)]",
+                                                              },
+                                                              U(
+                                                                "env.tag.confirmEmptyTagTips2",
+                                                              ),
+                                                            ),
+                                                            V(
+                                                              j,
+                                                              {
+                                                                modelValue:
+                                                                  J.value,
+                                                                class:
+                                                                  "tw-text-[var(--text-color-light1)]",
+                                                                onChange(e) {
+                                                                  J.value = e;
+                                                                },
+                                                              },
+                                                              U(
+                                                                "rpaMarket.tip18",
+                                                              ),
+                                                            ),
+                                                          ]),
+                                                        confirmButtonText:
+                                                          U("base.confirm"),
+                                                        cancelButtonText:
+                                                          U("base.cancel"),
+                                                        confirmCb: async () => {
+                                                          (await E(e.id),
+                                                            N.success(
+                                                              U(
+                                                                "env.env.shareDialog.operatorSuccess",
+                                                              ),
+                                                            ),
+                                                            Q());
+                                                        },
+                                                      });
+                                                })(e),
+                                              link: "",
+                                            },
+                                            {
+                                              default: g(() => [
+                                                ...(a[3] ||
+                                                  (a[3] = [
+                                                    p(
+                                                      "i",
+                                                      {
+                                                        class:
+                                                          "iconfont icon-delete",
+                                                      },
+                                                      null,
+                                                      -1,
+                                                    ),
+                                                  ])),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["onClick"],
+                                          )),
+                                          [[b, u(v).ENV_TAG_DELETE]],
+                                        ),
+                                      ]))
+                                    : (o(), i("div", R, "--")),
+                                ]),
+                                pagination: g(() => [
+                                  u(O).length
+                                    ? (o(),
+                                      m(
+                                        A,
+                                        {
+                                          key: 0,
+                                          handleCurrentChange: u($),
+                                          handleSizeChange: u(Z),
+                                          "page-sizes": [10, 20, 50, 100],
+                                          pageable: u(X),
+                                        },
+                                        null,
+                                        8,
+                                        [
+                                          "handleCurrentChange",
+                                          "handleSizeChange",
+                                          "pageable",
+                                        ],
+                                      ))
+                                    : w("", !0),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["list", "loading"],
+                            ),
+                          ]),
+                        ]),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["modelValue", "title"],
+                  ),
+                  r(
+                    z,
+                    { ref_key: "createEnvTagRef", ref: q, onSuccess: u(Q) },
+                    null,
+                    8,
+                    ["onSuccess"],
+                  ),
+                ],
+                64,
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-22e78e2d"]],
+  );
+export { q as default };

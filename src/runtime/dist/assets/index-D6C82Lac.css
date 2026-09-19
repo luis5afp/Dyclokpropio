@@ -1,0 +1,17 @@
+.crawler-wrapper[data-v-f5d1897f]::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-color);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.crawler-wrapper[data-v-f5d1897f]::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-hover-color);
+}
+[data-v-f5d1897f] .el-tabs__header {
+  border-bottom: 1px solid var(--border-color-base);
+  margin-bottom: 24px;
+}
+[data-v-f5d1897f] .el-tabs__nav-scroll {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

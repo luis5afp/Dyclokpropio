@@ -1,0 +1,35 @@
+@charset "UTF-8";
+.org-dialog {
+  max-height: 90%;
+  margin-top: unset;
+  display: flex;
+  flex-direction: column;
+}
+.org-dialog .el-dialog__body {
+  flex: 1;
+  overflow: auto;
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar {
+  width: 6px;
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar-thumb {
+  background: var(--thumb-dark-color);
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar-thumb:hover {
+  background: var(--thumb-dark-color);
+}
+html.dark .el-form--label-top .el-form-item[data-v-8b22407b] {
+  margin-bottom: 20px !important;
+}
+[data-v-8b22407b] .el-form-item__content {
+  line-height: normal;
+}
+[data-v-8b22407b] .el-select .el-tag {
+  max-width: 140px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

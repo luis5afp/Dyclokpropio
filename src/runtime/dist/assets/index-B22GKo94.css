@@ -1,0 +1,24 @@
+.tokenLabel[data-v-63d07923]:before {
+  content: "*";
+  color: var(--danger-color);
+  margin-right: 4px;
+}
+.open-api-form[data-v-63d07923] .el-form-item__label {
+  padding-right: 30px;
+}
+.open-api-recommended-tag[data-v-63d07923] {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  color: var(--primary-color);
+  font-size: 12px;
+  line-height: 1;
+}
+.open-api-key-label[data-v-63d07923] {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}

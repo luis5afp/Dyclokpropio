@@ -1,0 +1,66 @@
+import {
+  d as e,
+  r as l,
+  o as a,
+  c as o,
+  b as n,
+  w as t,
+  f as u,
+  c2 as r,
+} from "./index-BUIbb6Pa.js";
+const s = e({
+  __name: "envBookmarkConfigItem",
+  props: { modelValue: {} },
+  setup: (e) => (e, s) => {
+    const m = l("el-radio-button"),
+      b = l("el-radio-group"),
+      i = l("el-form-item");
+    return (
+      a(),
+      o("div", null, [
+        n(
+          i,
+          { label: e.$t("env.env.req.bookmarkConfig") },
+          {
+            default: t(() => [
+              n(
+                b,
+                {
+                  modelValue: e.basicConfig.bookmarkConfig.type,
+                  "onUpdate:modelValue":
+                    s[0] ||
+                    (s[0] = (l) => (e.basicConfig.bookmarkConfig.type = l)),
+                },
+                {
+                  default: t(() => [
+                    n(
+                      m,
+                      { label: e.$t("env.env.req.global"), value: u(r).GLOBAL },
+                      null,
+                      8,
+                      ["label", "value"],
+                    ),
+                    n(
+                      m,
+                      { label: e.$t("env.env.req.custom"), value: u(r).CUSTOM },
+                      null,
+                      8,
+                      ["label", "value"],
+                    ),
+                  ]),
+                  _: 1,
+                },
+                8,
+                ["modelValue"],
+              ),
+            ]),
+            _: 1,
+          },
+          8,
+          ["label"],
+        ),
+      ])
+    );
+  },
+});
+export { s as default };

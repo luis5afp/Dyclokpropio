@@ -1,0 +1,528 @@
+import {
+  aU as e,
+  aV as a,
+  d as l,
+  v as t,
+  aW as n,
+  W as o,
+  i as s,
+  V as i,
+  P as d,
+  ag as c,
+  r,
+  o as u,
+  h as f,
+  aJ as y,
+  aX as p,
+  w as v,
+  a as k,
+  t as m,
+  b as h,
+  e as g,
+  c as b,
+  F as _,
+  z as S,
+  f as x,
+  y as w,
+  X as V,
+  C,
+  a3 as E,
+  D as z,
+  aY as D,
+  ac as P,
+  _ as O,
+} from "./index-BUIbb6Pa.js";
+import { S as I } from "./sortable.esm-DneA_jWz.js";
+const $ = new Set(Object.values(e)),
+  T = new Set([a.ProxyConfigured, a.EnvironmentStatus]),
+  U = [a.ProxyWay, a.ProxyHost, a.ExitIp],
+  L = [a.ProxyWay, a.ProxyHost],
+  j = new Set([a.ProxyConfigured, a.EnvironmentStatus]),
+  F = (e, a) => {
+    var l;
+    return (
+      !1 === (null == (l = e.find((e) => e.key === a)) ? void 0 : l.checked)
+    );
+  },
+  G = (e, l) => {
+    if (e.key === a.EnvironmentStatus) {
+      const e = L.some((e) => F(l, e)),
+        t = F(l, a.ExitIp);
+      if (e && t) return !1;
+    }
+    return T.has(e.key);
+  },
+  M = (a, l) => {
+    const t = a.filter((e) => $.has(e.key)),
+      n = new Set(t.map((e) => e.key)),
+      o = t.find((a) => a.key === e.Selection),
+      s = t.find((a) => a.key === e.Operation),
+      i = l.filter((e) => !$.has(e.key)),
+      d = ((e, a) => {
+        const l = new Set(a.map((e) => e.key));
+        return e.filter((e) => !l.has(e.key));
+      })(a, l)
+        .filter((e) => !n.has(e.key))
+        .map((e) => ({ ...e, checked: G(e, l) })),
+      c = ((e) => {
+        for (let a = e.length - 1; a >= 0; a -= 1) if (!e[a].freeze) return a;
+        return -1;
+      })(i),
+      r = [...i.slice(0, c + 1), ...d, ...i.slice(c + 1)]
+        .map((e) => {
+          const l = a.find((a) => a.key === e.key);
+          return l
+            ? Object.assign(l, {
+                ...e,
+                disabled: l.disabled,
+                freeze: l.freeze,
+                label: l.label,
+              })
+            : null;
+        })
+        .filter((e) => null !== e);
+    return (
+      o && ((o.checked = !0), r.unshift(o)),
+      s && ((s.checked = !0), r.push(s)),
+      A(r)
+    );
+  },
+  W = (e) => {
+    const l = A(e),
+      t = l.find((e) => e.key === a.EnvironmentStatus);
+    if (!1 !== (null == t ? void 0 : t.checked)) return l;
+    const n = l.map((e) => ({ ...e })),
+      o = new Map(n.map((e) => [e.key, e]));
+    let s = n.reduce((e, a) => Math.max(e, Number(a.id) || 0), 0) + 1;
+    return (
+      U.forEach((e) => {
+        const a = o.get(e);
+        if (a) return void (a.checked = !1);
+        const l = {
+          id: s++,
+          key: e,
+          label: "",
+          checked: !1,
+          disabled: !1,
+          freeze: !1,
+        };
+        (n.push(l), o.set(e, l));
+      }),
+      A(n)
+    );
+  },
+  A = (l) => {
+    const t = l.find((a) => a.key === e.Selection),
+      n = l.find((a) => a.key === e.Operation),
+      o = l.find((e) => e.key === a.ProxyConfigured),
+      s = l.find((e) => e.key === a.EnvironmentStatus),
+      i = new Set([e.Selection, e.Operation, ...j]);
+    return [
+      ...(t ? [t] : []),
+      ...l.filter((e) => !i.has(e.key)),
+      ...(o ? [o] : []),
+      ...(s ? [s] : []),
+      ...(n ? [n] : []),
+    ];
+  },
+  B = new Set([a.EnvironmentStatus, a.ProxyConfigured]),
+  H = new Set([a.ProxyConfigured]),
+  J = (e) => !!e && (e.checked || B.has(e.key)),
+  N = { class: "field-dialog__title" },
+  X = { class: "field-dialog__thead" },
+  q = { class: "field-dialog__panel" },
+  Y = { class: "field-dialog__sortable" },
+  K = { class: "sortable-box" },
+  Q = { key: 0, class: "field-dialog__locked" },
+  R = { class: "sortable-box" },
+  Z = { class: "field-dialog__footer" },
+  ee = O(
+    l({
+      __name: "TableFieldDialog",
+      props: {
+        modelValue: { type: Boolean, default: !1 },
+        fieldList: { default: () => [] },
+        isGlobal: { type: Boolean, default: !1 },
+        titleData: { default: () => [] },
+      },
+      emits: ["update:modelValue", "confirm"],
+      setup(l, { expose: O, emit: $ }) {
+        const { t: T } = t.useI18n(),
+          U = l,
+          L = n(),
+          j = $,
+          F = C({
+            get: () => U.modelValue,
+            set: (e) => {
+              j("update:modelValue", e);
+            },
+          });
+        o(
+          () => F.value,
+          () => {
+            F.value &&
+              (async function () {
+                await P();
+                const a = document.querySelector(".field-dialog__sortable");
+                if (!a) return;
+                ce && (ce.destroy && ce.destroy(), (ce = null));
+                ce = I.create(a, {
+                  animation: 150,
+                  handle: ".sortable-icon",
+                  filter: ".disabled",
+                  onEnd: (a) => {
+                    const { oldIndex: l, newIndex: t } = a;
+                    if (void 0 === l || void 0 === t) return;
+                    const n = i.cloneDeep(te.value),
+                      [o] = n.splice(l, 1);
+                    if (!o) return;
+                    n.splice(t, 0, o);
+                    const s = new Set(n.map((e) => e.key));
+                    let d = 0,
+                      c = ee.value.map((e) => {
+                        if (!s.has(e.key)) return e;
+                        const a = n[d];
+                        return ((d += 1), a);
+                      });
+                    c = A(c).filter((e) => !G.includes(e.key));
+                    let r = ee.value.find((a) => a.key == e.Selection),
+                      u = ee.value.find((a) => a.key == e.Operation);
+                    (r && ((r.checked = !0), c.unshift(r)),
+                      u && ((u.checked = !0), c.push(u)),
+                      (ee.value = A(c).map((e, a) => ({ ...e, id: a + 1 }))));
+                  },
+                  onMove: (e) => !e.related.classList.contains("disabled"),
+                });
+              })();
+          },
+          { immediate: !0 },
+        );
+        const G = Object.values(e),
+          B = s(!0),
+          J = s(!0),
+          ee = s(i.cloneDeep(U.fieldList)),
+          ae = new Set([a.EnvironmentStatus]),
+          le = (e) => !e.freeze && !H.has(e.key),
+          te = C(() => ee.value.filter((e) => le(e) && !ae.has(e.key))),
+          ne = C(() => ee.value.filter((e) => le(e) && ae.has(e.key))),
+          oe = () => {
+            const e = ee.value.filter((e) => !e.freeze && !H.has(e.key)),
+              a = e.every((e) => e.checked);
+            ((J.value = a), (B.value = !a));
+            for (let l = 0; l < e.length; l++) e[l].checked = !a;
+          },
+          se = () => {
+            const e = ee.value
+              .filter((e) => !e.freeze && !H.has(e.key))
+              .every((e) => e.checked);
+            ((J.value = !e), (B.value = e));
+          },
+          ie = s(!1),
+          de = async () => {
+            try {
+              ie.value = !0;
+              let l = A(i.cloneDeep(ee.value));
+              if (
+                !ee.value.some(
+                  (a) =>
+                    !a.freeze &&
+                    a.key !== e.Selection &&
+                    !H.has(a.key) &&
+                    a.checked,
+                )
+              )
+                return E.warning(T("components.dialog.selectOne"));
+              if (
+                (U.isGlobal ||
+                  z.isClient ||
+                  (l.push({
+                    checked: B.value,
+                    disabled: !1,
+                    freeze: !1,
+                    id: 7,
+                    key: a.ExitIp,
+                    label: T("proxy.proxy.list.ouputIP"),
+                  }),
+                  (l = A(l))),
+                (l = W(l)),
+                !U.isGlobal)
+              ) {
+                0 === (await D(JSON.stringify(l))).code &&
+                  (L.$state.parsedEnvTitle = l);
+              }
+              (console.log(l, "params"), (F.value = !1), j("confirm", l));
+            } finally {
+              ie.value = !1;
+            }
+          };
+        let ce = null;
+        async function re() {
+          try {
+            const e = U.isGlobal ? U.titleData : L.getEnvCustomTitleData;
+            ((ee.value = A(i.cloneDeep(U.fieldList))),
+              e.length > 0 &&
+                (ee.value = M(i.cloneDeep(U.fieldList), i.cloneDeep(e))),
+              (() => {
+                const e = ee.value
+                  .filter((e) => !e.freeze && !H.has(e.key))
+                  .every((e) => e.checked);
+                ((B.value = e), (J.value = !e));
+              })());
+          } catch {
+            j("update:modelValue", !1);
+          }
+        }
+        return (
+          d(() => {
+            re();
+          }),
+          c(() => {
+            ce && (ce.destroy && ce.destroy(), (ce = null));
+          }),
+          O({
+            updateEnvCustomTitleFn: async function () {
+              (await L.updateEnvCustomTitle(), await re());
+            },
+            changeFieldList: re,
+          }),
+          (e, l) => {
+            const t = r("el-checkbox"),
+              n = r("el-tooltip"),
+              o = r("el-button"),
+              s = r("el-dialog");
+            return (
+              u(),
+              f(
+                s,
+                y(
+                  {
+                    modelValue: F.value,
+                    "onUpdate:modelValue":
+                      l[3] || (l[3] = (e) => (F.value = e)),
+                  },
+                  e.$attrs,
+                  p(e.$attrs),
+                  {
+                    "destroy-on-close": "",
+                    "close-on-click-modal": !1,
+                    width: "600",
+                  },
+                ),
+                {
+                  header: v(() => [
+                    k("div", N, m(e.$t("components.dialog.listField")), 1),
+                  ]),
+                  footer: v(() => [
+                    k("div", Z, [
+                      h(
+                        o,
+                        {
+                          type: "info",
+                          onClick: l[2] || (l[2] = (e) => (F.value = !1)),
+                          class: "footer-btn",
+                        },
+                        {
+                          default: v(() => [g(m(e.$t("base.cancel")), 1)]),
+                          _: 1,
+                        },
+                      ),
+                      h(
+                        o,
+                        {
+                          type: "primary",
+                          onClick: de,
+                          loading: ie.value,
+                          class: "footer-btn",
+                          style: { "margin-left": "20px" },
+                        },
+                        {
+                          default: v(() => [g(m(e.$t("base.confirm")), 1)]),
+                          _: 1,
+                        },
+                        8,
+                        ["loading"],
+                      ),
+                    ]),
+                  ]),
+                  default: v(() => [
+                    k("div", X, [
+                      k(
+                        "span",
+                        null,
+                        m(e.$t("components.dialog.keyShowAndSort")),
+                        1,
+                      ),
+                      h(
+                        t,
+                        {
+                          modelValue: B.value,
+                          "onUpdate:modelValue":
+                            l[0] || (l[0] = (e) => (B.value = e)),
+                          onChange: oe,
+                        },
+                        {
+                          default: v(() => [
+                            g(m(e.$t("components.dialog.selectAll")), 1),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["modelValue"],
+                      ),
+                    ]),
+                    k("div", q, [
+                      k("div", Y, [
+                        (u(!0),
+                        b(
+                          _,
+                          null,
+                          S(
+                            te.value,
+                            (e) => (
+                              u(),
+                              b(
+                                "div",
+                                {
+                                  key: e.key,
+                                  style: { display: "flex", width: "100%" },
+                                  class: "sortable",
+                                },
+                                [
+                                  h(
+                                    t,
+                                    {
+                                      modelValue: e.checked,
+                                      "onUpdate:modelValue": (a) =>
+                                        (e.checked = a),
+                                      onChange: (e) => se(),
+                                    },
+                                    {
+                                      default: v(() => [
+                                        k("div", K, [
+                                          k("span", null, m(e.label), 1),
+                                        ]),
+                                      ]),
+                                      _: 2,
+                                    },
+                                    1032,
+                                    [
+                                      "modelValue",
+                                      "onUpdate:modelValue",
+                                      "onChange",
+                                    ],
+                                  ),
+                                  l[4] ||
+                                    (l[4] = k(
+                                      "i",
+                                      {
+                                        class:
+                                          "sortable-icon iconfont icon-sort",
+                                      },
+                                      null,
+                                      -1,
+                                    )),
+                                ],
+                              )
+                            ),
+                          ),
+                          128,
+                        )),
+                      ]),
+                      ne.value.length
+                        ? (u(),
+                          b("div", Q, [
+                            (u(!0),
+                            b(
+                              _,
+                              null,
+                              S(
+                                ne.value,
+                                (e) => (
+                                  u(),
+                                  b(
+                                    "div",
+                                    {
+                                      key: e.key,
+                                      style: { display: "flex", width: "100%" },
+                                      class:
+                                        "sortable field-dialog__locked-item",
+                                    },
+                                    [
+                                      h(
+                                        t,
+                                        {
+                                          modelValue: e.checked,
+                                          "onUpdate:modelValue": (a) =>
+                                            (e.checked = a),
+                                          onChange: (e) => se(),
+                                        },
+                                        {
+                                          default: v(() => [
+                                            k("div", R, [
+                                              k("span", null, m(e.label), 1),
+                                              e.key === x(a).EnvironmentStatus
+                                                ? (u(),
+                                                  f(
+                                                    n,
+                                                    {
+                                                      key: 0,
+                                                      content: x(T)(
+                                                        "components.dialog.environmentStatusVisibilityTip",
+                                                      ),
+                                                      placement: "top",
+                                                      "popper-class":
+                                                        "!tw-max-w-[260px]",
+                                                    },
+                                                    {
+                                                      default: v(() => [
+                                                        k("i", {
+                                                          class:
+                                                            "iconfont icon-help-circle1 field-dialog__tip-icon",
+                                                          onClick:
+                                                            l[1] ||
+                                                            (l[1] =
+                                                              w(() => {}, [
+                                                                "stop",
+                                                              ])),
+                                                        }),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    ["content"],
+                                                  ))
+                                                : V("", !0),
+                                            ]),
+                                          ]),
+                                          _: 2,
+                                        },
+                                        1032,
+                                        [
+                                          "modelValue",
+                                          "onUpdate:modelValue",
+                                          "onChange",
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ),
+                              ),
+                              128,
+                            )),
+                          ]))
+                        : V("", !0),
+                    ]),
+                  ]),
+                  _: 1,
+                },
+                16,
+                ["modelValue"],
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-d3f543f9"]],
+  );
+export { ee as T, W as a, H as i, A as n, M as r, J as s };

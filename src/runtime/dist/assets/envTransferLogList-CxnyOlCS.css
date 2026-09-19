@@ -1,0 +1,10 @@
+.env-transfer-log .table-extend .extends {
+  margin-bottom: 0;
+}
+.env-transfer-log .el-drawer__body {
+  display: flex;
+  flex-direction: column;
+}
+.env-transfer-log .el-drawer__footer {
+  text-align: left;
+}

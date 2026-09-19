@@ -1,0 +1,578 @@
+import { p as e, T as l } from "./proxyUtil-OnkkuXcX.js";
+import {
+  d as o,
+  v as a,
+  am as r,
+  V as n,
+  W as t,
+  al as i,
+  a5 as s,
+  ab as p,
+  $ as u,
+  D as d,
+  fC as c,
+  ac as v,
+  r as y,
+  q as f,
+  o as m,
+  h as x,
+  w as h,
+  x as b,
+  b as I,
+  f as w,
+  c as g,
+  a as k,
+  F as $,
+  e as C,
+  t as P,
+  i as S,
+  C as _,
+  jd as D,
+  bo as j,
+  je as L,
+  a3 as N,
+  jf as R,
+} from "./index-BUIbb6Pa.js";
+import { e as T } from "./country-flag.esm-Bg8BdAZu.js";
+import { E as W } from "./index-rtKG2tmD.js";
+const A = { key: 1, class: "tw-flex tw-flex-col tw-h-[60vh]" },
+  E = ["innerHTML"],
+  F = { class: "tw-flex-1 tw-h-[0]" },
+  U = o({
+    __name: "BatchDelProxyDlg",
+    emits: ["submit"],
+    setup(o, { expose: U, emit: V }) {
+      const { t: z } = a.useI18n(),
+        M = S(!1),
+        O = S(!1),
+        q = S(),
+        B = V,
+        H = S({ deleteReason: "" }),
+        J = S(!0),
+        G = S([]),
+        K = S(!1),
+        Q = S([]),
+        X = S({}),
+        Y = S([]),
+        Z = _(() =>
+          z("proxy.proxy.batchDel.confirmDelete", {
+            num: `<span class="tw-text-[var(--warning-color)] tw-px-[2px]">${Y.value.length}</span>`,
+          }),
+        ),
+        ee = {
+          deleteReason: [
+            { required: !0, message: z("rpa.task.req.enter"), trigger: "blur" },
+            {
+              validator: (l, o, a) => {
+                ((K.value = !1), (G.value = []));
+                let t = H.value.deleteReason
+                  .split("\n")
+                  .filter((e) => "" !== e.trim());
+                if (((H.value.deleteReason = t.join("\n")), t.length > 500))
+                  ((K.value = !1),
+                    a(new Error(z("proxy.proxy.batchCreate.batchCreateErr"))));
+                else {
+                  for (let [l, o] of t.entries()) {
+                    let t = e(o, { defaultType: r.Placeholder });
+                    if (!t)
+                      return (
+                        a(
+                          new Error(
+                            z("proxy.proxy.batchCreate.format_error", {
+                              num: l + 1,
+                            }),
+                          ),
+                        ),
+                        void (K.value = !1)
+                      );
+                    G.value.push(
+                      n.omit(t, ["remark", "ipAddrType", "proxyIpInfo"]),
+                    );
+                  }
+                  ((K.value = !0), a());
+                }
+              },
+              trigger: "blur",
+            },
+          ],
+        },
+        le = (e) => {
+          var l, o, a;
+          return `${null == (l = e.proxyIpInfo) ? void 0 : l.ip} ${null == (o = e.proxyIpInfo) ? void 0 : o.countryCode}-${null == (a = e.proxyIpInfo) ? void 0 : a.country}`;
+        },
+        oe = (e) => {
+          switch (X.value[e.id]) {
+            case D.Wait:
+              return "var(--btn-success-color)";
+            case D.Success:
+              return "var(--primary-color-light1)";
+            case D.Fail:
+              return "var(--danger-color-light1)";
+            default:
+              return "var(--text-color-light1)";
+          }
+        },
+        ae = (e) => {
+          var l, o, a, r, n, t, i, p;
+          return null !== (null == (l = e.proxyIpInfo) ? void 0 : l.connect) &&
+            e.proxyIpInfo
+            ? !1 !== (null == (o = e.proxyIpInfo) ? void 0 : o.connect) ||
+              (null == (a = e.proxyIpInfo) ? void 0 : a.ip)
+              ? [
+                  s("div", `${null == (r = e.proxyIpInfo) ? void 0 : r.ip}`),
+                  s("div", { class: "flx-align-center" }, [
+                    s(
+                      "div",
+                      {
+                        class: "country-box",
+                        key:
+                          null == (n = null == e ? void 0 : e.proxyIpInfo)
+                            ? void 0
+                            : n.ip,
+                      },
+                      s(T, {
+                        style: { transform: "scale(0.4)" },
+                        size: "small",
+                        country:
+                          null == (t = null == e ? void 0 : e.proxyIpInfo)
+                            ? void 0
+                            : t.countryCode,
+                      }),
+                    ),
+                    s(
+                      "div",
+                      { class: "tw-ml-[4px] sle" },
+                      `${null == (i = e.proxyIpInfo) ? void 0 : i.countryCode}-${null == (p = e.proxyIpInfo) ? void 0 : p.country}`,
+                    ),
+                  ]),
+                ]
+              : [s("span", "")]
+            : [s("span", "--")];
+        },
+        re = (e) => {
+          switch (X.value[e.id]) {
+            case D.NoCheck:
+              return "";
+            case D.Wait:
+              return s("div", { class: "s-flex" }, [
+                s(
+                  "div",
+                  {
+                    class:
+                      "c-flex tw-w-[14px] tw-h-[14px] tw-mr-1 tw-animate-spin",
+                  },
+                  [s(j)],
+                ),
+                z("proxy.proxy.list.status.ing"),
+              ]);
+            case D.Success:
+              return z("proxy.proxy.list.status.success");
+            case D.Fail:
+              return z("proxy.proxy.list.status.fail");
+            default:
+              return "";
+          }
+        };
+      async function ne() {
+        await q.value.validate();
+        let e = G.value.map(
+          (e) => (e.type === r.Placeholder && delete e.type, e),
+        );
+        try {
+          O.value = !0;
+          let l = await L({ proxyInfo: e });
+          (l.length
+            ? ((J.value = !1), (Y.value = l))
+            : N.warning(z("proxy.proxy.batchDel.noMatchProxy")),
+            console.log(l));
+        } finally {
+          O.value = !1;
+        }
+      }
+      function te() {
+        ((O.value = !0),
+          R({ ids: Y.value.map((e) => e.id), unbindEnv: !0 })
+            .then(() => {
+              (N.success(z("base.delSuccess")), B("submit"), (M.value = !1));
+            })
+            .finally(() => {
+              O.value = !1;
+            }));
+      }
+      t(Y, () => {
+        const e = {};
+        (Y.value.forEach((l) => {
+          var o;
+          switch (null == (o = l.proxyIpInfo) ? void 0 : o.connect) {
+            case null:
+              e[l.id] = D.NoCheck;
+              break;
+            case !0:
+              e[l.id] = D.Success;
+              break;
+            case !1:
+              e[l.id] = D.Fail;
+              break;
+            default:
+              e[l.id] = D.NoCheck;
+          }
+        }),
+          (X.value = e));
+      });
+      const ie = [
+        {
+          prop: "serialNum",
+          label: z("proxy.proxy.list.serialNum"),
+          fixed: "left",
+          minWidth: 80,
+        },
+        {
+          prop: "name",
+          label: z("proxy.proxy.list.info"),
+          minWidth: 250,
+          render: ({ row: e }) => {
+            var o, a, n, t;
+            const p = e.proxySoft === r.NONE ? e.type : l[e.proxySoft],
+              u = e.proxySettingType === i.FROM_API,
+              d = !(
+                e.host ||
+                (null == (o = null == e ? void 0 : e.proxyApiInfo)
+                  ? void 0
+                  : o.ip) ||
+                e.port ||
+                (null == (a = null == e ? void 0 : e.proxyApiInfo)
+                  ? void 0
+                  : a.port)
+              )
+                ? "--"
+                : `${e.host || (null == (n = null == e ? void 0 : e.proxyApiInfo) ? void 0 : n.ip)}:${e.port || (null == (t = null == e ? void 0 : e.proxyApiInfo) ? void 0 : t.port)}`;
+            return s("div", [
+              s(
+                "div",
+                { style: "overflow: hidden; text-overflow: ellipsis;" },
+                `${p}${u ? "[API]" : ""}://${d}`,
+              ),
+              s(
+                "div",
+                {
+                  style: {
+                    color: "var(--text-color-light1)",
+                    fontSize: "12px",
+                  },
+                },
+                `ID: ${e.id}`,
+              ),
+            ]);
+          },
+        },
+        {
+          prop: "environmentList",
+          label: z("proxy.proxy.list.env"),
+          minWidth: 150,
+          render: ({ row: e }) => {
+            var l;
+            if (!e.environmentList) return s("span", "--");
+            if (e.environmentList.length <= 2)
+              return s(
+                "div",
+                { class: "sle" },
+                null == (l = e.environmentList)
+                  ? void 0
+                  : l.map((e) => e.name || `--(${e.serialNum})`).join("、"),
+              );
+            {
+              const l = e.environmentList
+                  .slice(0, 2)
+                  .map((e) => e.name || `--(${e.serialNum})`)
+                  .join("、"),
+                o = e.environmentList
+                  .map(
+                    (e) =>
+                      `${e.name || "--"} (${z("env.group.resp.num")}：${e.serialNum})`,
+                  )
+                  .join("、");
+              return s("div", [
+                s(
+                  "div",
+                  s("div", { class: "sle" }, [
+                    l,
+                    z("base.etc", { N: e.environmentList.length }),
+                  ]),
+                ),
+                s(
+                  "div",
+                  s(
+                    p,
+                    {
+                      placement: "top",
+                      title: z("env.group.resp.envList"),
+                      width: "300",
+                      trigger: "click",
+                    },
+                    {
+                      reference: () =>
+                        s(
+                          u,
+                          { link: !0, type: "primary" },
+                          { default: () => z("base.view") },
+                        ),
+                      default: () =>
+                        s(
+                          "div",
+                          { class: "view-more-main" },
+                          { default: () => o },
+                        ),
+                    },
+                  ),
+                ),
+              ]);
+            }
+          },
+        },
+        { prop: "remark", label: z("base.remark"), minWidth: 150 },
+        d.isClient
+          ? {
+              prop: "ouputIp",
+              label: z("proxy.proxy.list.ouputIP"),
+              minWidth: 150,
+              showOverflowTooltip: !1,
+              render: ({ row: e }) => {
+                var l, o, a;
+                return (null == (l = e.proxyIpInfo) ? void 0 : l.checkTime)
+                  ? s(
+                      c,
+                      {
+                        content: `${(null == (o = e.proxyIpInfo) ? void 0 : o.ip) && le(e)} ${z("proxy.proxy.check.checkOn")} ${null == (a = e.proxyIpInfo) ? void 0 : a.checkTime}`,
+                        placement: "top",
+                      },
+                      [
+                        s("div", [
+                          s("div", ae(e)),
+                          s(
+                            "div",
+                            {
+                              style: {
+                                color: `${Q.value.includes(e.id) ? "var(--btn-success-color)" : oe(e)}`,
+                                fontSize: "12px",
+                              },
+                            },
+                            re(e),
+                          ),
+                        ]),
+                      ],
+                    )
+                  : s("div", [
+                      s("div", ae(e)),
+                      s(
+                        "div",
+                        { style: { color: `${oe(e)}`, fontSize: "12px" } },
+                        re(e),
+                      ),
+                    ]);
+              },
+            }
+          : {},
+      ];
+      return (
+        U({
+          openDlg() {
+            ((M.value = !0),
+              (J.value = !0),
+              v(() => {
+                var e;
+                (null == (e = q.value) || e.resetFields(),
+                  (H.value.deleteReason = ""));
+              }),
+              (Y.value = []));
+          },
+        }),
+        (e, l) => {
+          const o = y("el-input"),
+            a = y("el-form-item"),
+            r = y("el-form"),
+            n = y("el-dialog"),
+            t = f("prevent-label-click");
+          return (
+            m(),
+            x(
+              n,
+              {
+                title: J.value
+                  ? e.$t("env.env.batchDel")
+                  : e.$t("base.delConfirm"),
+                modelValue: M.value,
+                "onUpdate:modelValue": l[3] || (l[3] = (e) => (M.value = e)),
+                width: "700px",
+                "close-on-click-modal": !1,
+                "close-on-press-escape": !1,
+                "align-center": !0,
+              },
+              {
+                footer: h(() => [
+                  J.value
+                    ? (m(),
+                      g(
+                        $,
+                        { key: 0 },
+                        [
+                          I(
+                            w(u),
+                            {
+                              type: "info",
+                              onClick: l[1] || (l[1] = (e) => (M.value = !1)),
+                              disabled: O.value,
+                            },
+                            {
+                              default: h(() => [C(P(w(z)("base.cancel")), 1)]),
+                              _: 1,
+                            },
+                            8,
+                            ["disabled"],
+                          ),
+                          I(
+                            w(u),
+                            {
+                              loading: O.value,
+                              type: "primary",
+                              onClick: ne,
+                              disabled: !K.value,
+                            },
+                            {
+                              default: h(() => [C(P(w(z)("base.confirm")), 1)]),
+                              _: 1,
+                            },
+                            8,
+                            ["loading", "disabled"],
+                          ),
+                        ],
+                        64,
+                      ))
+                    : (m(),
+                      g(
+                        $,
+                        { key: 1 },
+                        [
+                          I(
+                            w(u),
+                            {
+                              type: "info",
+                              onClick: l[2] || (l[2] = (e) => (J.value = !0)),
+                              disabled: O.value,
+                            },
+                            {
+                              default: h(() => [
+                                C(P(w(z)("base.previousStep")), 1),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["disabled"],
+                          ),
+                          I(
+                            w(u),
+                            { loading: O.value, type: "danger", onClick: te },
+                            {
+                              default: h(() => [
+                                C(P(w(z)("base.confirmDelBtn")), 1),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["loading"],
+                          ),
+                        ],
+                        64,
+                      )),
+                ]),
+                default: h(() => [
+                  J.value
+                    ? b(
+                        (m(),
+                        x(
+                          r,
+                          {
+                            key: 0,
+                            model: H.value,
+                            ref_key: "formRef",
+                            ref: q,
+                            rules: ee,
+                          },
+                          {
+                            default: h(() => [
+                              I(
+                                a,
+                                {
+                                  label: w(z)(
+                                    "proxy.proxy.batchDel.inputProxy",
+                                  ),
+                                  prop: "deleteReason",
+                                },
+                                {
+                                  default: h(() => [
+                                    I(
+                                      o,
+                                      {
+                                        modelValue: H.value.deleteReason,
+                                        "onUpdate:modelValue":
+                                          l[0] ||
+                                          (l[0] = (e) =>
+                                            (H.value.deleteReason = e)),
+                                        type: "textarea",
+                                        rows: 15,
+                                        placeholder:
+                                          w(z)(
+                                            "proxy.proxy.batchDel.inputProxyPlaceholder",
+                                          ) +
+                                          "\n192.168.0.1:8000\n192.168.0.1:8000:Username:Password\nUsername:Password@192.168.0.1:8000\nhttp://192.168.0.1:8000:Username:Password\nsocks5://[2001:db2:2de:0:0:0:0:e12]:8000:Username:Password",
+                                        resize: "none",
+                                        disabled: O.value,
+                                      },
+                                      null,
+                                      8,
+                                      ["modelValue", "placeholder", "disabled"],
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["model"],
+                        )),
+                        [[t]],
+                      )
+                    : (m(),
+                      g("div", A, [
+                        k("div", { innerHTML: Z.value }, null, 8, E),
+                        k("div", F, [
+                          I(
+                            W,
+                            {
+                              ref: "eTableRef",
+                              conditionsSlot: !0,
+                              columns: ie,
+                              list: Y.value,
+                              selectedListShowFilter: !0,
+                            },
+                            null,
+                            8,
+                            ["list"],
+                          ),
+                        ]),
+                      ])),
+                ]),
+                _: 1,
+              },
+              8,
+              ["title", "modelValue"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { U as _ };

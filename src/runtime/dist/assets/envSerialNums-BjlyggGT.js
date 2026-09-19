@@ -1,0 +1,32 @@
+import {
+  d as s,
+  o as e,
+  c as a,
+  a as t,
+  t as n,
+  _ as r,
+} from "./index-BUIbb6Pa.js";
+const o = { class: "tw-flex tw-items-center" },
+  c = { class: "serialNums-wrapper" },
+  i = r(
+    s({
+      __name: "envSerialNums",
+      props: ["serialNums", "content"],
+      setup(s) {
+        const r = s;
+        return (i, p) => (
+          e(),
+          a("div", o, [
+            t(
+              "span",
+              c,
+              n(s.content ? s.content : r.serialNums.join(" , ")),
+              1,
+            ),
+          ])
+        );
+      },
+    }),
+    [["__scopeId", "data-v-1c3909be"]],
+  );
+export { i as default };

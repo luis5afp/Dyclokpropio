@@ -1,0 +1,741 @@
+import {
+  d as t,
+  v as e,
+  i as l,
+  P as r,
+  r as a,
+  o as i,
+  c as o,
+  a as n,
+  t as w,
+  f as p,
+  aW as s,
+  ev as d,
+  e as x,
+  F as f,
+  z as c,
+  b as u,
+  w as v,
+  O as m,
+  aq as b,
+  X as g,
+  C as _,
+  g6 as R,
+  _ as y,
+} from "./index-BUIbb6Pa.js";
+import { U as h, c as P } from "./referral-Dz-93Jvj.js";
+import k from "./ApplyForWithdrawalDlg-BY6kDPO6.js";
+import { _ as j } from "./inviteList.vue_vue_type_script_setup_true_lang-D1Z4d8bE.js";
+import "./index-rtKG2tmD.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+import "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import "./useFetchTable-DUveM-tP.js";
+const C = "" + new URL("referral-right-DLlokjQy.png", import.meta.url).href,
+  D = "" + new URL("referral-elm-C7ljD_gn.png", import.meta.url).href,
+  L = { key: 0, class: "tw-w-full" },
+  T = {
+    class:
+      "tw-min-h-[300px] tw-relative referral-main-bg d-lg:tw-px-[30px] tw-px-[20px] d-lg:tw-py-[20px] tw-py-[15px] tw-text-[var(--text-color-white)] tw-text-[14px]",
+  },
+  U = {
+    class: "d-2xl:tw-pr-[20%] d-xl:tw-pr-[20%] d-lg:tw-pr-[30%] tw-pr-[15%]",
+  },
+  $ = { class: "referral-title" },
+  F = { class: "referral-subtitle" },
+  I = {
+    class:
+      "tw-text-[12px] tw-px-[12px] tw-py-[4px] tw-border tw-border-[#ffffff1a] tw-bg-[#ffffff1a] tw-mt-[15px] tw-mb-[4px] tw-w-fit tw-rounded-[4px]",
+  },
+  H = {
+    class:
+      "tw-flex tw-flex-col tw-gap-[6px] d-2xl:tw-text-[14px] d-xl:tw-text-[14px] d-lg:tw-text-[14px] tw-text-[12px]",
+  },
+  M = ["innerHTML"],
+  N = {
+    class:
+      "tw-text-[12px] tw-px-[12px] tw-py-[4px] tw-border tw-border-[#ffffff1a] tw-bg-[#ffffff1a] tw-mt-[15px] tw-mb-[4px] tw-w-fit tw-rounded-[4px]",
+  },
+  W = {
+    class:
+      "tw-flex tw-flex-col tw-gap-[6px] d-2xl:tw-text-[14px] d-xl:tw-text-[14px] d-lg:tw-text-[14px] tw-text-[12px]",
+  },
+  z = {
+    class:
+      "tw-text-[12px] tw-px-[12px] tw-py-[4px] tw-border tw-border-[#ffffff1a] tw-bg-[#ffffff1a] tw-mt-[15px] tw-mb-[4px] tw-w-fit tw-rounded-[4px]",
+  },
+  A = {
+    class:
+      "tw-flex tw-flex-col tw-gap-[6px] d-2xl:tw-text-[14px] d-xl:tw-text-[14px] d-lg:tw-text-[14px] tw-text-[12px]",
+  },
+  B = {
+    class:
+      "tw-text-[12px] tw-px-[12px] tw-py-[4px] tw-border tw-border-[#ffffff1a] tw-bg-[#ffffff1a] tw-mt-[15px] tw-mb-[4px] tw-w-fit tw-rounded-[4px]",
+  },
+  E = {
+    class:
+      "tw-flex tw-flex-col tw-gap-[6px] d-2xl:tw-text-[14px] d-xl:tw-text-[14px] d-lg:tw-text-[14px] tw-text-[12px]",
+  },
+  O = { class: "tw-text-[#ffffff99] tw-text-[12px] tw-pt-[8px]" },
+  Z = {
+    class:
+      "tw-mt-[24px] tw-p-[16px] tw-bg-[--table-tr-bg-color] tw-rounded-[8px]",
+  },
+  q = { class: "tw-flex tw-items-center" },
+  J = { class: "tw-flex tw-gap-[32px] tw-mt-[16px] tw-w-full tw-flex-wrap" },
+  K = {
+    class:
+      "tw-rounded-tl-[8px] tw-w-max tw-bg-[var(--table-th-bg-color)] tw-rounded-bl-[8px] c-flex tw-px-[16px] tw-py-[12px] tw-border tw-border-[var(--dialog-border-color)]",
+  },
+  Q = {
+    class:
+      "tw-p-[12px] tw-truncate tw-flex-1 tw-border tw-border-[var(--dialog-border-color)] tw-border-l-0 tw-border-r-0",
+  },
+  S = { class: "tw-mt-[24px] tw-flex tw-items-end" },
+  V = { class: "tw-text-[var(--text-color-light6)]" },
+  X = { class: "tw-flex tw-items-center tw-mt-[8px]" },
+  Y = { class: "tw-pr-[4px]" },
+  G = {
+    class:
+      "tw-mt-[24px] 2xl:tw-w-[55%] xl:tw-w-[65%] lg:tw-w-[70%] tw-flex tw-gap-[24px]",
+  },
+  tt = { class: "tw-flex" },
+  et = {
+    class:
+      "tw-h-[32px] tw-w-[32px] tw-bg-[var(--text-color-light4)] tw-rounded-[50%] c-flex",
+  },
+  lt = { class: "tw-text-[var(--text-color-base)] tw-ml-[12px] tw-flex-1" },
+  rt = {
+    class:
+      "tw-flex tw-items-center tw-justify-between tw-text-[var(--text-color-base)] tw-w-[100%]",
+  },
+  at = {
+    class:
+      "tw-mr-[8px] tw-flex-1 tw-w-0 tw-break-all tw-truncate tw-min-w-[50px]",
+  },
+  it = { key: 0, class: "c-flex" },
+  ot = y(
+    t({
+      __name: "index",
+      setup(t) {
+        let { t: y, locale: ot } = e.useI18n();
+        const nt = l(!1);
+        let wt = l({
+            balance: 0,
+            cashbackDuration: 24,
+            cashbackRate: 10,
+            inviteCode: "",
+            status: h.Init,
+            inviteUrl: "",
+            userNum: 0,
+            inviteContent: ["", "", "", ""],
+          }),
+          pt = _(() => [
+            {
+              label: y("referral.promo_link"),
+              id: 4,
+              value: wt.value.inviteUrl,
+              icon: "icon-link",
+            },
+            {
+              label: y("referral.promo_code"),
+              id: 3,
+              value: wt.value.inviteCode,
+              icon: "icon-code",
+            },
+          ]),
+          st = _(() => [
+            {
+              label: y("referral.promo_rewards"),
+              id: 1,
+              value: "$" + wt.value.balance,
+              icon: "icon-reward",
+            },
+            {
+              label: y("referral.promo_user_count"),
+              id: 2,
+              value: wt.value.userNum,
+              icon: "icon-personal-data",
+            },
+          ]);
+        const dt = l();
+        let xt = l(!1);
+        const ft = l(),
+          ct = l(),
+          ut = _(
+            () =>
+              "6. " +
+              y("referral.promotionRewardPlan.participationRule6", {
+                url: `<span class='tw-text-[var(--warning-color-light7)]'>${y("referral.promotionRewardPlan.promotionLink")}</span>`,
+              }),
+          );
+        function vt() {
+          var t;
+          null == (t = ft.value) || t.openDlg(wt.value.balance);
+        }
+        async function mt() {
+          ((wt.value = await P()),
+            (wt.value.inviteContent[0] =
+              wt.value.inviteContent[0] + `: ${wt.value.inviteUrl}`));
+        }
+        function bt() {
+          var t;
+          null == (t = ct.value) || t.open();
+        }
+        function gt() {
+          R(wt.value.inviteContent.join("\n"));
+        }
+        return (
+          r(() => {
+            mt();
+          }),
+          (t, e) => {
+            const l = a("el-tooltip"),
+              r = a("el-button");
+            return nt.value
+              ? g("", !0)
+              : (i(),
+                o("div", L, [
+                  n("div", T, [
+                    n("div", U, [
+                      n(
+                        "div",
+                        $,
+                        w(p(y)("referral.promotionRewardPlan.title")),
+                        1,
+                      ),
+                      n(
+                        "img",
+                        {
+                          ref_key: "referralRightImg",
+                          ref: dt,
+                          src: C,
+                          class:
+                            "d-lg:tw-h-[95%] tw-h-[40%] tw-max-h-[380px] d-lg:tw-top-[50%] tw-top-[0px] d-lg:tw-translate-y-[-50%] tw-object-cover tw-absolute tw-right-[10px]",
+                        },
+                        null,
+                        512,
+                      ),
+                      e[1] ||
+                        (e[1] = n(
+                          "img",
+                          { class: "tw-h-[10px]", src: D },
+                          null,
+                          -1,
+                        )),
+                      n(
+                        "div",
+                        F,
+                        w(p(y)("referral.promotionRewardPlan.slogan")),
+                        1,
+                      ),
+                      n(
+                        "div",
+                        I,
+                        w(
+                          p(y)(
+                            "referral.promotionRewardPlan.participationRulesTitle",
+                          ),
+                        ),
+                        1,
+                      ),
+                      n("div", H, [
+                        n(
+                          "div",
+                          null,
+                          "1. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.participationRule1",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "2. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.participationRule2",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "3. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.participationRule3",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "4. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.participationRule4",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "5. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.participationRule5",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n("div", { innerHTML: ut.value }, null, 8, M),
+                      ]),
+                      n(
+                        "div",
+                        N,
+                        w(
+                          p(y)(
+                            "referral.promotionRewardPlan.rewardDescriptionTitle",
+                          ),
+                        ),
+                        1,
+                      ),
+                      n("div", W, [
+                        n(
+                          "div",
+                          null,
+                          "1. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.creationReward",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          " 2. " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.promotionReward",
+                                {
+                                  cashbackRate: p(wt).cashbackRate,
+                                  cashbackDuration: p(wt).cashbackDuration,
+                                },
+                              ) +
+                                (p(s)().openYearEndEvent
+                                  ? p(ot) == p(d).ZH
+                                    ? "。"
+                                    : ""
+                                  : p(y)(
+                                      "referral.promotionRewardPlan.promotionReward2",
+                                    )),
+                            ),
+                          1,
+                        ),
+                      ]),
+                      n(
+                        "div",
+                        z,
+                        w(p(y)("referral.promotionRewardPlan.engagementTitle")),
+                        1,
+                      ),
+                      n("div", A, [
+                        n(
+                          "div",
+                          null,
+                          w(
+                            p(y)("referral.promotionRewardPlan.engagementDesc"),
+                          ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "- " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.engagementPost",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "- " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.engagementVideo",
+                              ),
+                            ),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          "- " +
+                            w(
+                              p(y)(
+                                "referral.promotionRewardPlan.engagementTelegram",
+                              ),
+                            ),
+                          1,
+                        ),
+                      ]),
+                      n(
+                        "div",
+                        B,
+                        w(p(y)("referral.promotionRewardPlan.premiumTitle")),
+                        1,
+                      ),
+                      n("div", E, [
+                        n(
+                          "div",
+                          null,
+                          w(p(y)("referral.promotionRewardPlan.premiumDesc")),
+                          1,
+                        ),
+                        n(
+                          "div",
+                          null,
+                          w(p(y)("referral.promotionRewardPlan.premiumRule")),
+                          1,
+                        ),
+                      ]),
+                      n(
+                        "div",
+                        O,
+                        "*" + w(p(y)("referral.activity_rules_4")),
+                        1,
+                      ),
+                    ]),
+                  ]),
+                  n("div", Z, [
+                    n("div", q, [
+                      e[2] ||
+                        (e[2] = n(
+                          "div",
+                          {
+                            class:
+                              "tw-bg-[var(--bg-light6)] tw-mr-[8px] tw-w-[4px] tw-rounded-[16px] tw-h-[17px]",
+                          },
+                          null,
+                          -1,
+                        )),
+                      x(" " + w(p(y)("referral.invitation_method")), 1),
+                    ]),
+                    n("div", J, [
+                      (i(!0),
+                      o(
+                        f,
+                        null,
+                        c(
+                          p(pt),
+                          (t) => (
+                            i(),
+                            o(
+                              "div",
+                              {
+                                key: t.value,
+                                class:
+                                  "tw-flex tw-flex-1 tw-w-0 tw-items-center tw-text-[14px] tw-leading-[1] tw-text-[var(--text-color-light6)]",
+                              },
+                              [
+                                n("div", K, w(t.label), 1),
+                                u(
+                                  l,
+                                  {
+                                    content: t.value,
+                                    placement: "top",
+                                    disabled: 3 == t.id,
+                                  },
+                                  {
+                                    default: v(() => [
+                                      n("div", Q, w(t.value), 1),
+                                    ]),
+                                    _: 2,
+                                  },
+                                  1032,
+                                  ["content", "disabled"],
+                                ),
+                                u(
+                                  r,
+                                  {
+                                    class:
+                                      "tw-rounded-tl-[0] tw-w-max tw-rounded-bl-[0]",
+                                    type: "primary",
+                                    onClick: (e) => p(R)(t.value),
+                                  },
+                                  {
+                                    default: v(() => [
+                                      e[3] ||
+                                        (e[3] = n(
+                                          "i",
+                                          {
+                                            class:
+                                              "iconfont icon-copy tw-cursor-pointer tw-mr-[4px]",
+                                          },
+                                          null,
+                                          -1,
+                                        )),
+                                      x(" " + w(p(y)("openapi.tip18")), 1),
+                                    ]),
+                                    _: 1,
+                                  },
+                                  8,
+                                  ["onClick"],
+                                ),
+                              ],
+                            )
+                          ),
+                        ),
+                        128,
+                      )),
+                    ]),
+                    n("div", S, [
+                      n(
+                        "div",
+                        {
+                          class: m(
+                            `tw-w-[55%] tw-leading-[21px] tw-text-[14px] tw-text-[var(--info-color-light5)] ${!p(xt) && "tw-line-clamp-2"}`,
+                          ),
+                        },
+                        [
+                          n(
+                            "span",
+                            V,
+                            w(p(y)("referral.promo_material")) + "：",
+                            1,
+                          ),
+                          n("span", null, w(p(wt).inviteContent[0] ?? ""), 1),
+                        ],
+                        2,
+                      ),
+                    ]),
+                    n("div", X, [
+                      u(
+                        r,
+                        {
+                          link: "",
+                          onClick:
+                            e[0] ||
+                            (e[0] = (t) =>
+                              b(xt) ? (xt.value = !p(xt)) : (xt = !p(xt))),
+                        },
+                        {
+                          default: v(() => [
+                            n(
+                              "span",
+                              Y,
+                              w(p(xt) ? p(y)("base.fold") : p(y)("rpa2.more")),
+                              1,
+                            ),
+                            n(
+                              "i",
+                              {
+                                class: m(
+                                  `tw-text-[14px] iconfont icon-arrow tw-transition-all tw-duration-200 ${p(xt) && "tw-rotate-180"}`,
+                                ),
+                              },
+                              null,
+                              2,
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                      ),
+                      u(
+                        r,
+                        { link: "", onClick: gt },
+                        {
+                          default: v(() => [
+                            e[4] ||
+                              (e[4] = n(
+                                "i",
+                                {
+                                  class:
+                                    "iconfont icon-copy tw-cursor-pointer tw-mr-[4px]",
+                                },
+                                null,
+                                -1,
+                              )),
+                            x(w(p(y)("openapi.tip18")), 1),
+                          ]),
+                          _: 1,
+                        },
+                      ),
+                    ]),
+                  ]),
+                  n("div", G, [
+                    (i(!0),
+                    o(
+                      f,
+                      null,
+                      c(
+                        p(st),
+                        (t) => (
+                          i(),
+                          o(
+                            "div",
+                            {
+                              key: t.id,
+                              class:
+                                "tw-rounded-[8px] tw-flex tw-flex-col tw-justify-between tw-min-h-[140px] tw-bg-[var(--table-tr-bg-color)] tw-px-[24px] tw-pt-[24px] tw-pb-[28px] tw-flex-1",
+                            },
+                            [
+                              n("div", tt, [
+                                n("div", et, [
+                                  n(
+                                    "i",
+                                    {
+                                      class: m(
+                                        `iconfont ${t.icon} tw-text-[16px]`,
+                                      ),
+                                    },
+                                    null,
+                                    2,
+                                  ),
+                                ]),
+                                n("div", lt, w(t.label), 1),
+                              ]),
+                              n("div", rt, [
+                                n(
+                                  "div",
+                                  {
+                                    class: m(
+                                      ([1, 2].includes(t.id)
+                                        ? "tw-text-[20px]"
+                                        : "tw-text-[16px]") +
+                                        " tw-flex tw-w-inherit tw-items-center tw-justify-between",
+                                    ),
+                                  },
+                                  [
+                                    u(
+                                      l,
+                                      {
+                                        content: t.value,
+                                        placement: "top",
+                                        disabled: 2 == t.id,
+                                      },
+                                      {
+                                        default: v(() => [
+                                          n("div", at, w(t.value), 1),
+                                        ]),
+                                        _: 2,
+                                      },
+                                      1032,
+                                      ["content", "disabled"],
+                                    ),
+                                  ],
+                                  2,
+                                ),
+                                1 === t.id
+                                  ? (i(),
+                                    o("div", it, [
+                                      u(
+                                        r,
+                                        {
+                                          class: "tw-h-[32px]",
+                                          type: "primary",
+                                          plain: "",
+                                          onClick: bt,
+                                        },
+                                        {
+                                          default: v(() => [
+                                            x(w(p(y)("referral.details")), 1),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      ),
+                                      u(
+                                        l,
+                                        {
+                                          disabled:
+                                            p(wt).status !== p(h).Processing,
+                                          content: p(y)(
+                                            "referral.underReviewTip",
+                                          ),
+                                          "popper-class": "default",
+                                          placement: "top",
+                                          effect: "dark",
+                                        },
+                                        {
+                                          default: v(() => [
+                                            u(
+                                              r,
+                                              {
+                                                class: "tw-h-[32px]",
+                                                type: "primary",
+                                                onClick: vt,
+                                                disabled:
+                                                  p(wt).status ==
+                                                  p(h).Processing,
+                                              },
+                                              {
+                                                default: v(() => [
+                                                  x(
+                                                    w(
+                                                      p(wt).status ==
+                                                        p(h).Processing
+                                                        ? p(y)(
+                                                            "referral.underReview",
+                                                          )
+                                                        : p(y)(
+                                                            "referral.withdraw",
+                                                          ),
+                                                    ),
+                                                    1,
+                                                  ),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["disabled"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["disabled", "content"],
+                                      ),
+                                    ]))
+                                  : g("", !0),
+                              ]),
+                            ],
+                          )
+                        ),
+                      ),
+                      128,
+                    )),
+                  ]),
+                  e[5] || (e[5] = n("div", { class: "tw-text" }, null, -1)),
+                  u(
+                    k,
+                    {
+                      ref_key: "applyForWithdrawalDlgRef",
+                      ref: ft,
+                      onSubmit: mt,
+                    },
+                    null,
+                    512,
+                  ),
+                  u(j, { ref_key: "inviteListRef", ref: ct }, null, 512),
+                ]));
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-035107d4"]],
+  );
+export { ot as default };

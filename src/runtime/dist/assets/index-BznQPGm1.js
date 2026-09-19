@@ -1,0 +1,517 @@
+import {
+  d as e,
+  k5 as t,
+  m as s,
+  ag as n,
+  v as a,
+  fm as l,
+  G as i,
+  u as o,
+  P as r,
+  W as p,
+  r as c,
+  q as d,
+  x as u,
+  f as v,
+  o as m,
+  c as w,
+  a as y,
+  t as f,
+  e as x,
+  h as _,
+  w as g,
+  b as h,
+  lT as b,
+  $ as C,
+  X as k,
+  O as E,
+  i as j,
+  C as W,
+  cy as I,
+  a5 as $,
+  ab as L,
+  D as S,
+  E as N,
+  A as R,
+  _ as A,
+} from "./index-BUIbb6Pa.js";
+import { E as T } from "./index-rtKG2tmD.js";
+import { _ as O } from "./help.vue_vue_type_script_setup_true_lang-lgc_ht_L.js";
+import { s as K } from "./shortcutKeys-CjSiz9kE.js";
+import { _ as M } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+import "./windowOperation.vue_vue_type_script_setup_true_lang-CkUwFs8Z.js";
+import "./tipButton.vue_vue_type_script_setup_true_lang-D61jtuVu.js";
+import "./tabsAdmin.vue_vue_type_script_setup_true_lang-EtsjAh2M.js";
+import "./textAdmin-CobXPEx0.js";
+const q = { class: "tw-h-full tw-flex tw-gap-x-4" },
+  Y = { class: "env-list table-box tw-w-[60%] tw-rounded-[8px]" },
+  Z = {
+    class:
+      "tw-py-2 tw-px-6 s-flex tw-text-[14px] tw-w-full tw-bg-themeColor1 tw-rounded-[8px]",
+  },
+  z = { class: "s-flex tw-gap-x-2" },
+  D = { class: "tw-px-[10px] tw-bg-themeColor4 tw-rounded-full" },
+  H = { class: "tw-ml-[25px] s-flex" },
+  X = { class: "!tw-mx-1" },
+  B = { class: "!tw-ml-1" },
+  F = ["onClick"],
+  G = {
+    key: 0,
+    class: "tw-w-[40%] tw-h-full tw-bg-themeColor1 tw-rounded-[8px]",
+  },
+  J = A(
+    e({
+      __name: "index",
+      setup(e) {
+        const A = t(),
+          J = (e) => {
+            A.syncLoading = e;
+          };
+        (s.on("set-sync-loading", J),
+          n(() => {
+            s.off("set-sync-loading", J);
+          }));
+        const { t: P } = a.useI18n(),
+          Q = l();
+        i();
+        const U = j(),
+          V = (e) => {
+            let t = navigator.platform.toLowerCase(),
+              s = "";
+            if (
+              (t.includes("mac")
+                ? (t = "mac")
+                : t.includes("win") && (t = "win"),
+              1 === e && (s = K[t].syncStart),
+              2 === e && (s = K[t].syncStop),
+              3 === e && (s = K[t].syncRestart),
+              "mac" === t)
+            ) {
+              const e = s.split("+");
+              s = `⌘⇧${e.pop()}`;
+            }
+            return s;
+          },
+          ee = async () => {
+            (S.api.trackEvent({
+              type: R.SYNCHRONIZER_CLICK,
+              action: N.CLICK_START_SYNC,
+            }),
+              await A.startSync(!1, !1));
+          },
+          te = async () => {
+            await A.restart();
+          },
+          se = W(() => A.state && A.selectEnv.length > 1),
+          ne = W(() => (e) => A.state && A.selectEnv.includes(e)),
+          ae = W(() => (e) => A.mainEnvId === e),
+          le = o(),
+          ie = W(() => ({
+            text: P("sync.tip42"),
+            callback: () => {
+              le.push("/");
+            },
+          })),
+          oe = W(() => [
+            { type: "selection", selectable: () => !se.value },
+            {
+              prop: "serialNum",
+              label: P("env.env.resp.serialNum"),
+              minWidth: 80,
+              width: 80,
+              fixed: "left",
+            },
+            {
+              prop: "name",
+              minWidth: 150,
+              label: P("env.env.resp.name"),
+              showOverflowTooltip: !1,
+              render: ({ row: e }) => {
+                const t = {
+                  [I.Windows]: "icon-windows",
+                  [I.Mac]: "icon-mac",
+                  [I.Linux]: "icon-linux",
+                  [I.Android]: "icon-android",
+                  [I.Ios]: "icon-ios",
+                };
+                return $("div", null, [
+                  $("div", { class: "flx-align-center" }, [
+                    $("i", {
+                      class: `iconfont ${t[e.uaOs]} m-r-4`,
+                      style: { color: "var(--primary-color)" },
+                    }),
+                    $(
+                      L,
+                      {
+                        placement: "top",
+                        content: (null == e ? void 0 : e.name) ? e.name : "--",
+                        width: "unset",
+                        popperStyle: { textAlign: "center", maxWidth: "50%" },
+                      },
+                      {
+                        reference: () =>
+                          $(
+                            "div",
+                            { style: { maxWidth: "90%" }, class: "sle" },
+                            (null == e ? void 0 : e.name) ? e.name : "--",
+                          ),
+                      },
+                    ),
+                  ]),
+                ]);
+              },
+            },
+            { prop: "state", minWidth: 130, label: P("sync.tip8") },
+            { prop: "isMain", minWidth: 150, label: P("sync.tip5") },
+            {
+              prop: "remark",
+              label: P("base.remark"),
+              minWidth: 150,
+              render: ({ row: e }) =>
+                $("div", { class: "flx-align-center" }, [
+                  $(
+                    "div",
+                    { style: { maxWidth: "90%" }, class: "sle" },
+                    (null == e ? void 0 : e.remark)
+                      ? null == e
+                        ? void 0
+                        : e.remark
+                      : "--",
+                  ),
+                ]),
+            },
+            {
+              prop: "groupName",
+              minWidth: 150,
+              label: P("env.env.resp.groupName"),
+              render: ({ row: e }) => {
+                var t;
+                let s = $("span", "--");
+                if (e.groups)
+                  if (e.groups.length <= 2)
+                    s = $(
+                      "span",
+                      { style: "overflow: hidden; text-overflow: ellipsis;" },
+                      null == (t = e.groups)
+                        ? void 0
+                        : t.map((e) => e.name).join("、"),
+                    );
+                  else {
+                    const t = e.groups
+                        .slice(0, 2)
+                        .map((e) => e.name)
+                        .join("、"),
+                      n = e.groups.map((e) => e.name).join("、");
+                    s = $("div", { style: "overflow: hidden;" }, [
+                      $(
+                        "div",
+                        { style: "overflow: hidden; text-overflow: ellipsis;" },
+                        $("span", [t, P("base.etc", { N: e.groups.length })]),
+                      ),
+                      $(
+                        "div",
+                        $(
+                          L,
+                          {
+                            placement: "top",
+                            title: P("menu.env.groupList"),
+                            width: "300",
+                            trigger: "click",
+                          },
+                          {
+                            reference: () =>
+                              $(
+                                C,
+                                { link: !0, type: "primary" },
+                                { default: () => P("base.view") },
+                              ),
+                            default: () =>
+                              $(
+                                "div",
+                                { class: "view-more-main" },
+                                { default: () => n },
+                              ),
+                          },
+                        ),
+                      ),
+                    ]);
+                  }
+                else s = $("span", "--");
+                return s;
+              },
+            },
+            {
+              prop: "operation",
+              label: P("base.operation"),
+              fixed: "right",
+              width: "100px",
+            },
+          ]);
+        return (
+          r(async () => {
+            var e, t;
+            (null == (e = U.value) ||
+              e.watchSelectList(
+                (e) => {
+                  const t = e.map((e) => e.id),
+                    s = [];
+                  (Q.runningEnv.map((e) => {
+                    e.id && t.includes(e.id) && s.push(e.id);
+                  }),
+                    (A.selectEnv = s));
+                },
+                { deep: !0 },
+              ),
+              null == (t = U.value) || t.selectItem(A.selectEnv),
+              A.requestAccessibility());
+          }),
+          p(
+            () => Q.runningEnv,
+            () => {
+              var e;
+              0 === Q.runningEnv.length &&
+                (null == (e = U.value) || e.selectItem([]));
+            },
+            { deep: !0, immediate: !0 },
+          ),
+          (e, t) => {
+            const s = c("el-icon"),
+              n = c("el-switch"),
+              a = c("el-tooltip"),
+              l = d("loading");
+            return u(
+              (m(),
+              w("div", q, [
+                y("div", Y, [
+                  y("div", Z, [
+                    y("div", z, [
+                      y("span", D, f(v(A).selectEnv.length), 1),
+                      x(" " + f(e.$t("sync.tip4")), 1),
+                    ]),
+                    y("div", H, [
+                      v(A).state
+                        ? (m(),
+                          _(
+                            v(C),
+                            {
+                              key: 1,
+                              class: "!tw-px-2 s-flex",
+                              type: "danger",
+                              onClick:
+                                t[0] || (t[0] = (e) => v(A).stopSync(!1)),
+                            },
+                            {
+                              default: g(() => [
+                                t[1] ||
+                                  (t[1] = y(
+                                    "i",
+                                    {
+                                      class:
+                                        "iconfont icon-stopsync tw-text-[18px]",
+                                    },
+                                    null,
+                                    -1,
+                                  )),
+                                y("span", B, f(e.$t("sync.tip10")), 1),
+                                y("div", null, "(" + f(V(2)) + ")", 1),
+                              ]),
+                              _: 1,
+                            },
+                          ))
+                        : (m(),
+                          _(
+                            v(C),
+                            {
+                              key: 0,
+                              disabled: v(A).state || v(A).selectEnv.length < 2,
+                              class: "!tw-px-2 s-flex",
+                              type: "primary",
+                              onClick: ee,
+                            },
+                            {
+                              default: g(() => [
+                                h(
+                                  s,
+                                  { size: "20" },
+                                  { default: g(() => [h(v(b))]), _: 1 },
+                                ),
+                                y("span", X, f(e.$t("sync.tip3")), 1),
+                                y("div", null, "(" + f(V(1)) + ")", 1),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["disabled"],
+                          )),
+                      se.value
+                        ? (m(),
+                          _(
+                            v(C),
+                            {
+                              key: 2,
+                              class: "!tw-px-2 s-flex",
+                              type: "info",
+                              onClick: te,
+                            },
+                            {
+                              default: g(() => [
+                                t[2] ||
+                                  (t[2] = y(
+                                    "i",
+                                    {
+                                      class:
+                                        "iconfont icon-reset tw-mr-1 tw-text-[18px]",
+                                    },
+                                    null,
+                                    -1,
+                                  )),
+                                y("span", null, f(e.$t("sync.tip11")), 1),
+                                y("div", null, "(" + f(V(3)) + ")", 1),
+                              ]),
+                              _: 1,
+                            },
+                          ))
+                        : k("", !0),
+                      h(
+                        M,
+                        {
+                          iconClass: "tw-ml-[8px]",
+                          content: e.$t("sync.remoteInspectorRequired"),
+                        },
+                        null,
+                        8,
+                        ["content"],
+                      ),
+                    ]),
+                  ]),
+                  h(
+                    T,
+                    {
+                      ref_key: "eTableRef",
+                      ref: U,
+                      listErr: !1,
+                      columns: oe.value,
+                      "empty-btn-options": ie.value,
+                      "empty-text": e.$t("sync.tip41"),
+                      list: v(Q).runningEnv,
+                    },
+                    {
+                      state: g(({ row: t }) => [
+                        y(
+                          "div",
+                          {
+                            class: E([
+                              {
+                                "tw-bg-themeColor3": ne.value(t.id),
+                                "tw-bg-textColor-140": !ne.value(t.id),
+                              },
+                              "s-flex tw-pl-2 tw-pr-3 tw-py-0.5 tw-text-[13px] tw-w-fit tw-rounded-full c-flex",
+                            ]),
+                          },
+                          [
+                            y(
+                              "span",
+                              {
+                                class: E([
+                                  {
+                                    "tw-bg-main": ne.value(t.id),
+                                    "tw-bg-textColor-850": !ne.value(t.id),
+                                  },
+                                  "tw-w-[6px] tw-h-[6px] tw-bg-main tw-rounded-full tw-mr-[6px]",
+                                ]),
+                              },
+                              null,
+                              2,
+                            ),
+                            y(
+                              "span",
+                              { class: E({ "tw-text-main": ne.value(t.id) }) },
+                              f(
+                                ne.value(t.id)
+                                  ? e.$t("sync.tip7")
+                                  : e.$t("sync.tip6"),
+                              ),
+                              3,
+                            ),
+                          ],
+                          2,
+                        ),
+                      ]),
+                      isMain: g(({ row: e }) => [
+                        h(
+                          n,
+                          {
+                            "active-value": !ae.value(e.id),
+                            disabled: v(A).state,
+                            "inactive-value": ae.value(e.id),
+                            onChange: (t) => {
+                              return (
+                                (s = e.id),
+                                void (
+                                  A.state ||
+                                  (A.mainEnvId = A.mainEnvId === s ? "" : s)
+                                )
+                              );
+                              var s;
+                            },
+                          },
+                          null,
+                          8,
+                          [
+                            "active-value",
+                            "disabled",
+                            "inactive-value",
+                            "onChange",
+                          ],
+                        ),
+                      ]),
+                      operation: g(({ row: t }) => [
+                        h(
+                          a,
+                          { content: e.$t("sync.tip61") },
+                          {
+                            default: g(() => [
+                              y(
+                                "i",
+                                {
+                                  class:
+                                    "iconfont icon-display tw-cursor-pointer",
+                                  onClick: (e) => {
+                                    return ((s = t.id), void A.showWindows(s));
+                                    var s;
+                                  },
+                                },
+                                null,
+                                8,
+                                F,
+                              ),
+                            ]),
+                            _: 2,
+                          },
+                          1032,
+                          ["content"],
+                        ),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["columns", "empty-btn-options", "empty-text", "list"],
+                  ),
+                ]),
+                v(A).floatWindowState
+                  ? k("", !0)
+                  : (m(), w("div", G, [h(O, { "show-operation": !0 })])),
+              ])),
+              [[l, v(A).syncLoading]],
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-51bc8f03"]],
+  );
+export { J as default };

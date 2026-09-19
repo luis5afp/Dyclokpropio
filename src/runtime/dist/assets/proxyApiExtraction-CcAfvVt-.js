@@ -1,0 +1,513 @@
+import {
+  d as e,
+  i as l,
+  bQ as a,
+  am as t,
+  cR as o,
+  bS as r,
+  R as n,
+  aW as p,
+  v as s,
+  P as u,
+  r as i,
+  o as v,
+  c as d,
+  b as x,
+  f as c,
+  w as y,
+  F as m,
+  z as w,
+  h as b,
+  a as f,
+  t as _,
+  X as D,
+  e as k,
+  O as g,
+  ax as h,
+  C as V,
+  dH as I,
+  a3 as T,
+  bY as A,
+  _ as q,
+} from "./index-BUIbb6Pa.js";
+import { e as S, f as U } from "./proxyProviderAvailability-Dl68x0Bx.js";
+import { T as R } from "./proxyUtil-OnkkuXcX.js";
+import { _ as G } from "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import { _ as P } from "./ProxyGroupSelect.vue_vue_type_script_setup_true_lang-CTswbFOC.js";
+const $ = { class: "tw-pb-[24px]" },
+  j = { class: "tw-flex tw-items-center tw-gap-[4px]" },
+  E = { class: "tw-flex tw-items-center" },
+  M = { class: "tw-w-full" },
+  O = {
+    key: 0,
+    class:
+      "tw-text-[var(--el-disabled-text-color)] tw-mt-[12px] tw-bg-[var(--el-disabled-bg-color)] tw-border-[1px] tw-border-[var(--dialog-border-color)] tw-rounded-[8px]",
+  },
+  Y = { class: "tw-ml-[8px] tw-mt-[4px] tw-flex tw-items-center" },
+  z = q(
+    e({
+      __name: "proxyApiExtraction",
+      props: {
+        envData: {},
+        showRemark: { type: Boolean },
+        isEnvEdit: { type: Boolean },
+      },
+      setup(e) {
+        let q = e;
+        const z = l(a(r, [t.Ssh, t.NonUse, t.IPFLY, t.S5PROXY, ...o])),
+          { softProxyOptions: B } = n(p()),
+          C = V(() =>
+            S(U(B.value, q.envData.proxyType), q.envData.proxyType, (e) => ({
+              label: R[e] ?? e,
+              value: e,
+            })),
+          ),
+          F = l(a(I));
+        let { t: L } = s.useI18n(),
+          X = l({ response: "", success: !1 }),
+          H = l(!1),
+          N = l(!1);
+        async function Q() {
+          var e, l;
+          if (
+            !(null == (l = null == (e = q.envData) ? void 0 : e.proxyApiInfo)
+              ? void 0
+              : l.url)
+          )
+            return T.warning(L("env.env.req.input_extraction_link2"));
+          ((H.value = !0),
+            (N.value = !1),
+            (X.value = { response: "", success: !1 }));
+          let a = await A(q.envData, !0);
+          ((H.value = !1),
+            a && ((X.value = a), console.log(q.envData, X.value)));
+        }
+        return (
+          u(async () => {
+            !C.value.find((e) => e.value === q.envData.proxyType) &&
+              C.value[0] &&
+              (q.envData.proxyType = C.value[0].value);
+          }),
+          (l, a) => {
+            const t = i("el-option"),
+              o = i("el-select"),
+              r = i("el-form-item"),
+              n = i("TipIcon"),
+              p = i("el-input"),
+              s = i("el-switch"),
+              u = i("el-button");
+            return (
+              v(),
+              d("div", $, [
+                x(
+                  r,
+                  { label: c(L)("env.env.req.proxyProvider") },
+                  {
+                    default: y(() => [
+                      x(
+                        o,
+                        {
+                          modelValue: e.envData.proxyType,
+                          "onUpdate:modelValue":
+                            a[0] || (a[0] = (l) => (e.envData.proxyType = l)),
+                        },
+                        {
+                          default: y(() => [
+                            (v(!0),
+                            d(
+                              m,
+                              null,
+                              w(C.value, (e) => {
+                                var l;
+                                return (
+                                  v(),
+                                  b(
+                                    t,
+                                    {
+                                      key:
+                                        null == (l = e.value)
+                                          ? void 0
+                                          : l.toString(),
+                                      label: e.label,
+                                      value: e.value,
+                                    },
+                                    null,
+                                    8,
+                                    ["label", "value"],
+                                  )
+                                );
+                              }),
+                              128,
+                            )),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["modelValue"],
+                      ),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["label"],
+                ),
+                x(
+                  r,
+                  {
+                    class: "!tw-mb-[18px]",
+                    label: l.$t("proxy.proxy.list.proxyGroup"),
+                    prop: "proxyGroupId",
+                  },
+                  {
+                    label: y(() => [
+                      f("div", j, [
+                        f(
+                          "div",
+                          null,
+                          _(l.$t("proxy.proxy.list.proxyGroup")),
+                          1,
+                        ),
+                        x(
+                          n,
+                          { content: c(L)("proxy.proxy.list.proxyGroupTip") },
+                          null,
+                          8,
+                          ["content"],
+                        ),
+                      ]),
+                    ]),
+                    default: y(() => [
+                      x(
+                        P,
+                        {
+                          modelValue: e.envData.proxyGroupId,
+                          "onUpdate:modelValue":
+                            a[1] ||
+                            (a[1] = (l) => (e.envData.proxyGroupId = l)),
+                        },
+                        null,
+                        8,
+                        ["modelValue"],
+                      ),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["label"],
+                ),
+                e.showRemark
+                  ? (v(),
+                    b(
+                      r,
+                      {
+                        key: 0,
+                        label: l.$t("env.env.req.remark"),
+                        prop: "remark",
+                      },
+                      {
+                        default: y(() => [
+                          x(
+                            p,
+                            {
+                              modelValue: e.envData.remark,
+                              "onUpdate:modelValue":
+                                a[2] || (a[2] = (l) => (e.envData.remark = l)),
+                              modelModifiers: { trim: !0 },
+                              maxlength: 200,
+                              placeholder: l.$t("env.env.req.remark"),
+                              clearable: "",
+                              "show-word-limit": "",
+                            },
+                            null,
+                            8,
+                            ["modelValue", "placeholder"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    ))
+                  : D("", !0),
+                x(
+                  r,
+                  { label: c(L)("proxy.proxy.list.proxyType") },
+                  {
+                    default: y(() => [
+                      x(
+                        o,
+                        {
+                          modelValue: e.envData.proxyTypeSoft,
+                          "onUpdate:modelValue":
+                            a[3] ||
+                            (a[3] = (l) => (e.envData.proxyTypeSoft = l)),
+                        },
+                        {
+                          default: y(() => [
+                            (v(!0),
+                            d(
+                              m,
+                              null,
+                              w(z.value, (e) => {
+                                var l;
+                                return (
+                                  v(),
+                                  b(
+                                    t,
+                                    {
+                                      key:
+                                        null == (l = e.value)
+                                          ? void 0
+                                          : l.toString(),
+                                      label: e.label,
+                                      value: e.value,
+                                    },
+                                    null,
+                                    8,
+                                    ["label", "value"],
+                                  )
+                                );
+                              }),
+                              128,
+                            )),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["modelValue"],
+                      ),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["label"],
+                ),
+                e.envData.proxyApiInfo
+                  ? (v(),
+                    d(
+                      m,
+                      { key: 1 },
+                      [
+                        x(
+                          r,
+                          { label: c(L)("env.env.req.extract_method") },
+                          {
+                            default: y(() => [
+                              x(
+                                o,
+                                {
+                                  modelValue: e.envData.proxyApiInfo.ipMethod,
+                                  "onUpdate:modelValue":
+                                    a[4] ||
+                                    (a[4] = (l) =>
+                                      (e.envData.proxyApiInfo.ipMethod = l)),
+                                },
+                                {
+                                  default: y(() => [
+                                    (v(!0),
+                                    d(
+                                      m,
+                                      null,
+                                      w(F.value, (e) => {
+                                        var l;
+                                        return (
+                                          v(),
+                                          b(
+                                            t,
+                                            {
+                                              key:
+                                                null == (l = e.value)
+                                                  ? void 0
+                                                  : l.toString(),
+                                              label: c(L)(e.label),
+                                              value: e.value,
+                                            },
+                                            null,
+                                            8,
+                                            ["label", "value"],
+                                          )
+                                        );
+                                      }),
+                                      128,
+                                    )),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["modelValue"],
+                              ),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["label"],
+                        ),
+                        x(r, null, {
+                          label: y(() => [
+                            f("div", E, [
+                              k(
+                                _(c(L)("proxy.proxy.check.duplicate")) + " ",
+                                1,
+                              ),
+                              x(
+                                G,
+                                {
+                                  text: c(L)("proxy.proxy.check.duplicateTip"),
+                                },
+                                null,
+                                8,
+                                ["text"],
+                              ),
+                            ]),
+                          ]),
+                          default: y(() => [
+                            x(
+                              s,
+                              {
+                                modelValue:
+                                  e.envData.proxyApiInfo.checkDuplicate,
+                                "onUpdate:modelValue":
+                                  a[5] ||
+                                  (a[5] = (l) =>
+                                    (e.envData.proxyApiInfo.checkDuplicate =
+                                      l)),
+                              },
+                              null,
+                              8,
+                              ["modelValue"],
+                            ),
+                          ]),
+                          _: 1,
+                        }),
+                        x(
+                          r,
+                          {
+                            label: l.$t("env.env.req.extract_link"),
+                            prop: "proxyApiInfo.url",
+                          },
+                          {
+                            default: y(() => [
+                              x(
+                                p,
+                                {
+                                  modelValue: e.envData.proxyApiInfo.url,
+                                  "onUpdate:modelValue":
+                                    a[6] ||
+                                    (a[6] = (l) =>
+                                      (e.envData.proxyApiInfo.url = l)),
+                                  modelModifiers: { trim: !0 },
+                                  placeholder: c(L)("rpa.task.req.enter"),
+                                },
+                                null,
+                                8,
+                                ["modelValue", "placeholder"],
+                              ),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["label"],
+                        ),
+                      ],
+                      64,
+                    ))
+                  : D("", !0),
+                x(
+                  r,
+                  { label: "_" },
+                  {
+                    label: y(() => [
+                      ...(a[7] ||
+                        (a[7] = [
+                          f("div", { class: "tw-opacity-0" }, null, -1),
+                        ])),
+                    ]),
+                    default: y(() => [
+                      f("div", M, [
+                        x(
+                          u,
+                          {
+                            type: "primary",
+                            onClick: Q,
+                            plain: "",
+                            loading: c(H),
+                          },
+                          {
+                            default: y(() => [
+                              k(_(c(L)("env.env.req.test_extraction")), 1),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["loading"],
+                        ),
+                        c(X).response
+                          ? (v(),
+                            d("div", O, [
+                              f("div", Y, [
+                                f(
+                                  "div",
+                                  {
+                                    class: g(
+                                      `c-flex tw-w-[16px] tw-h-[16px] tw-rounded-[50%] ${c(X).success ? "tw-bg-[var(--primary-color-light2)]" : "tw-bg-[var(--warning-color)]"}  tw-text-[var(--primary-color)] tw-mt-[2px] tw-mr-[4px]`,
+                                    ),
+                                  },
+                                  [
+                                    f(
+                                      "i",
+                                      {
+                                        class: g(
+                                          `iconfont ${c(X).success ? "icon-check" : "icon-warning"}  tw-text-[14px] tw-text-black`,
+                                        ),
+                                      },
+                                      null,
+                                      2,
+                                    ),
+                                  ],
+                                  2,
+                                ),
+                                k(
+                                  " " +
+                                    _(c(L)("env.env.req.proxyTestRes") + ":"),
+                                  1,
+                                ),
+                              ]),
+                              x(
+                                p,
+                                {
+                                  class: "ip-textarea tw-w-full",
+                                  value: c(X).response,
+                                  type: "textarea",
+                                  autosize: { minRows: 2, maxRows: 5 },
+                                  disabled: "",
+                                },
+                                null,
+                                8,
+                                ["value"],
+                              ),
+                            ]))
+                          : D("", !0),
+                      ]),
+                    ]),
+                    _: 1,
+                  },
+                ),
+                f(
+                  "div",
+                  {
+                    class:
+                      "tw-text-red tw-flex tw-items-baseline tw-text-[var(--warning-color)] tw-leading-[1.5]",
+                    style: h({ paddingLeft: e.isEnvEdit ? "16px" : "" }),
+                  },
+                  _(c(L)("env.env.req.whitelist_notice")),
+                  5,
+                ),
+              ])
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-23c6998b"]],
+  );
+export { z as default };

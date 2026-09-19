@@ -1,0 +1,273 @@
+import {
+  d as e,
+  v as a,
+  R as l,
+  cP as u,
+  r as s,
+  q as t,
+  x as o,
+  o as d,
+  h as i,
+  w as v,
+  c,
+  F as n,
+  z as r,
+  a as p,
+  t as m,
+  y as f,
+  X as b,
+  f as x,
+  e as y,
+  b as w,
+  C as h,
+  i as k,
+  as as V,
+  e9 as _,
+  a3 as C,
+  ac as g,
+  ea as G,
+} from "./index-BUIbb6Pa.js";
+const S = { class: "b-flex tw-w-full" },
+  P = ["onClick"],
+  q = e({
+    __name: "ProxyGroupSelect",
+    props: { modelValue: {} },
+    emits: ["update:modelValue"],
+    setup(e, { emit: q }) {
+      const { t: z } = a.useI18n(),
+        { proxyGroupList: I } = l(u());
+      let N = e;
+      const U = q,
+        j = h({
+          get: () => N.modelValue,
+          set(e) {
+            U("update:modelValue", e);
+          },
+        }),
+        B = k(!1),
+        F = k(""),
+        H = k(!1),
+        L = () => {
+          B.value = !0;
+        },
+        R = async () => {
+          if (F.value) {
+            H.value = !0;
+            let [e, a] = await V(_(F.value || ""));
+            ((H.value = !1),
+              a &&
+                (C.success(z("org.member.createSuccess")),
+                (j.value = a.id),
+                I.value.push({
+                  label: a.proxyGroupName,
+                  value: a.id,
+                  default: !1,
+                })),
+              X());
+          }
+        },
+        X = () => {
+          ((F.value = ""), (B.value = !1));
+        };
+      async function $() {
+        var e;
+        if ((await g(), !I.value.find((e) => e.value === j.value))) {
+          H.value = !0;
+          let [a, l] = await V(_(j.value || ""));
+          if (((H.value = !1), a))
+            return void (j.value =
+              (null == (e = I.value[0]) ? void 0 : e.value) || "");
+          l &&
+            (C.success(z("org.member.createSuccess")),
+            (j.value = l.id),
+            I.value.push({
+              label: l.proxyGroupName,
+              value: l.id,
+              default: !1,
+            }));
+        }
+      }
+      function A(e) {}
+      return (e, a) => {
+        const l = s("el-button"),
+          u = s("el-input"),
+          h = s("el-option"),
+          k = s("el-select"),
+          _ = t("trim");
+        return o(
+          (d(),
+          i(
+            k,
+            {
+              modelValue: j.value,
+              "onUpdate:modelValue": a[1] || (a[1] = (e) => (j.value = e)),
+              filterable: "",
+              placeholder: e.$t("base.selectHolder"),
+              onChange: $,
+              onInput: A,
+              onBlur: X,
+              disabled: H.value,
+              "show-word-limit": "",
+              class: "proxy-group-select",
+            },
+            {
+              footer: v(() => [
+                B.value
+                  ? (d(),
+                    c(
+                      n,
+                      { key: 1 },
+                      [
+                        o(
+                          w(
+                            u,
+                            {
+                              modelValue: F.value,
+                              "onUpdate:modelValue":
+                                a[0] || (a[0] = (e) => (F.value = e)),
+                              class: "!tw-h-[30px] tw-mb-[8px]",
+                              placeholder: x(z)("rpa.task.req.enter"),
+                              size: "small",
+                              maxlength: 64,
+                              disabled: H.value,
+                            },
+                            null,
+                            8,
+                            ["modelValue", "placeholder", "disabled"],
+                          ),
+                          [[_]],
+                        ),
+                        w(
+                          l,
+                          {
+                            class: "tw-h-[30px]",
+                            type: "primary",
+                            onClick: R,
+                            disabled: H.value,
+                          },
+                          {
+                            default: v(() => [y(m(x(z)("base.confirm")), 1)]),
+                            _: 1,
+                          },
+                          8,
+                          ["disabled"],
+                        ),
+                        w(
+                          l,
+                          {
+                            class: "tw-h-[30px]",
+                            onClick: X,
+                            disabled: H.value,
+                          },
+                          {
+                            default: v(() => [y(m(x(z)("base.cancel")), 1)]),
+                            _: 1,
+                          },
+                          8,
+                          ["disabled"],
+                        ),
+                      ],
+                      64,
+                    ))
+                  : (d(),
+                    i(
+                      l,
+                      { key: 0, class: "tw-h-[30px]", onClick: L },
+                      {
+                        default: v(() => [
+                          y(m(x(z)("proxy.proxy.list.addProxyGroup")), 1),
+                        ]),
+                        _: 1,
+                      },
+                    )),
+              ]),
+              default: v(() => [
+                (d(!0),
+                c(
+                  n,
+                  null,
+                  r(
+                    x(I),
+                    (e) => (
+                      d(),
+                      i(
+                        h,
+                        { key: e.value, label: e.label, value: e.value },
+                        {
+                          default: v(() => [
+                            p("div", S, [
+                              p("span", null, m(e.label), 1),
+                              e.default || j.value === e.value
+                                ? b("", !0)
+                                : (d(),
+                                  i(
+                                    l,
+                                    {
+                                      key: 0,
+                                      class: "tw-mr-[-7px] tw-ml-[10px]",
+                                      type: "info",
+                                      link: "",
+                                    },
+                                    {
+                                      default: v(() => [
+                                        p(
+                                          "i",
+                                          {
+                                            class:
+                                              "iconfont icon-delete1 tw-text-[15px]",
+                                            onClick: f(
+                                              (a) =>
+                                                (async function (e) {
+                                                  var a;
+                                                  H.value = !0;
+                                                  let [l] = await V(G(e));
+                                                  (l ||
+                                                    ((I.value = I.value.filter(
+                                                      (a) => a.value !== e,
+                                                    )),
+                                                    C.success(
+                                                      z("base.delSuccess"),
+                                                    ),
+                                                    j.value === e &&
+                                                      (j.value =
+                                                        (null ==
+                                                        (a = I.value[0])
+                                                          ? void 0
+                                                          : a.value) || "")),
+                                                    (H.value = !1));
+                                                })(e.value),
+                                              ["stop"],
+                                            ),
+                                          },
+                                          null,
+                                          8,
+                                          P,
+                                        ),
+                                      ]),
+                                      _: 2,
+                                    },
+                                    1024,
+                                  )),
+                            ]),
+                          ]),
+                          _: 2,
+                        },
+                        1032,
+                        ["label", "value"],
+                      )
+                    ),
+                  ),
+                  128,
+                )),
+              ]),
+              _: 1,
+            },
+            8,
+            ["modelValue", "placeholder", "disabled"],
+          )),
+          [[_]],
+        );
+      };
+    },
+  });
+export { q as _ };

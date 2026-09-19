@@ -1,0 +1,555 @@
+import {
+  d as e,
+  v as a,
+  G as l,
+  W as t,
+  P as i,
+  ag as n,
+  m as o,
+  M as s,
+  o as r,
+  c as m,
+  b as d,
+  aj as u,
+  w as p,
+  h as c,
+  f as v,
+  $ as f,
+  a as b,
+  X as g,
+  i as w,
+  ib as h,
+  eU as y,
+  C as _,
+  af as x,
+  g1 as k,
+  I,
+  a5 as R,
+  b4 as C,
+  bL as L,
+  ck as j,
+  eX as E,
+  ad as S,
+  aL as T,
+  ab as M,
+} from "./index-BUIbb6Pa.js";
+import { d as P, e as N, g as G } from "./system-DtbAsiCM.js";
+import { E as B } from "./index-CLVJdR_V.js";
+import { E as F } from "./index-rtKG2tmD.js";
+import { T as O } from "./TableExtend-CdmYngu2.js";
+import { _ as A } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import { u as W } from "./useFetchTable-DUveM-tP.js";
+import { _ as U } from "./editRole.vue_vue_type_script_setup_true_name_editRole_lang-PqV-ZxPU.js";
+import { u as z } from "./useMemberSelectPagination-BLP_arcy.js";
+import D from "./nameIdCell-BWLr8c3b.js";
+import "./index.vue_vue_type_script_setup_true_lang-8hqXqXGq.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+const q = { class: "table-box" },
+  K = { class: "tw-mr-[-10px]" },
+  V = { key: 2 },
+  X = e({
+    __name: "roleList",
+    setup(e) {
+      const { t: X } = a.useI18n(),
+        Z = l(),
+        H = _(() => S().currentPlan),
+        {
+          options: J,
+          loading: Q,
+          loadInitial: $,
+          handlePopupScroll: Y,
+        } = z({ fetchPage: E }),
+        ee = w(),
+        ae = w(!1),
+        le = w([]),
+        te = w(!1),
+        ie = { show: !1, label: X("system.role.createBtn") },
+        ne = (e, a) => {
+          if (h.SuperAdmin === e) return !0;
+          if ([h.Admin, h.Operate].includes(e)) {
+            if (a) return !0;
+            if (Z.userInfo.authority === y.Manager) return !0;
+          }
+          return !1;
+        },
+        oe = w(""),
+        {
+          loading: se,
+          pagination: re,
+          filters: me,
+          list: de,
+          fetchList: ue,
+          onSearch: pe,
+          onPaginationSizeChange: ce,
+          onPaginationCurrentChange: ve,
+          onFiltersChangeByKey: fe,
+          listErr: be,
+        } = W({ fetch: (e) => ((e.detail = !0), G(e)), tableName: "roleList" }),
+        ge = w({});
+      t(
+        () => de.value,
+        () => {
+          var e;
+          null == (e = null == de ? void 0 : de.value) ||
+            e.forEach((e) => {
+              ge[e.id] = !1;
+            });
+        },
+      );
+      const we = (e) => {
+          if (!e || !e.length) return !1;
+          const a = Z.userInfo.memberId;
+          return !!e.find((e) => e.memberId === a);
+        },
+        he = _(() => [
+          {
+            el: "select",
+            key: "memberId",
+            label: "",
+            placeholder: X("system.role.req.memberId"),
+            filterable: !1,
+            clearable: !0,
+            options: J.value,
+            loading: Q.value,
+            getOptionsFn: $,
+            onPopupScroll: Y,
+          },
+          {
+            el: "inputGroup",
+            key: "inputGroup",
+            label: "",
+            width: "200px",
+            clearable: !0,
+            igOptions: [
+              { value: "name", label: X("system.role.req.name") },
+              { value: "remark", label: X("base.remark") },
+            ],
+          },
+        ]),
+        ye = () => {
+          ((me.name = void 0), (me.memberId = void 0), (me.remark = void 0));
+        },
+        _e = () => {
+          var e, a;
+          ((null == (e = null == H ? void 0 : H.value)
+            ? void 0
+            : e.timeLimit) ?? 0) < 0
+            ? x()
+            : null == (a = ee.value) ||
+              a.acceptParams({
+                title: "system.role.createTitle",
+                row: {
+                  name: void 0,
+                  moduleIds: [],
+                  remark: void 0,
+                  code: void 0,
+                  allowManage: !1,
+                  allowManageIds: ["all"],
+                },
+              });
+        },
+        xe = w(!1),
+        ke = _(() => [
+          {
+            prop: "name",
+            label: X("system.role.resp.name"),
+            fixed: "left",
+            minWidth: 170,
+            showOverflowTooltip: !1,
+            render: ({ row: e }) => R(D, { name: e.name, id: e.id }),
+          },
+          { prop: "remark", label: X("base.remark"), minWidth: 150 },
+          {
+            prop: "memberRoleList",
+            label: X("system.role.resp.memberId"),
+            minWidth: 150,
+            render: ({ row: e }) => {
+              var a;
+              if (!e.memberRoleList) return R("span", "--");
+              if (e.memberRoleList.length <= 2)
+                return R(
+                  "span",
+                  null == (a = e.memberRoleList)
+                    ? void 0
+                    : a.map((e) => e.memberName).join("、"),
+                );
+              {
+                const a = e.memberRoleList
+                    .slice(0, 2)
+                    .map((e) => e.memberName)
+                    .join("、"),
+                  l = e.memberRoleList.map((e) => e.memberName).join("、");
+                return R("div", [
+                  R(
+                    "div",
+                    R("span", [
+                      a,
+                      X("base.etc", { N: e.memberRoleList.length }),
+                    ]),
+                  ),
+                  R(
+                    "div",
+                    R(
+                      M,
+                      {
+                        placement: "top",
+                        title: X("system.role.resp.memberId"),
+                        width: "300",
+                        trigger: "click",
+                      },
+                      {
+                        reference: () =>
+                          R(
+                            f,
+                            { link: !0, type: "primary" },
+                            { default: () => X("base.view") },
+                          ),
+                        default: () =>
+                          R(
+                            "div",
+                            { class: "view-more-main" },
+                            { default: () => l },
+                          ),
+                      },
+                    ),
+                  ),
+                ]);
+              }
+            },
+          },
+          {
+            prop: "createTime",
+            label: X("base.createTime"),
+            minWidth: 120,
+            specialType: T.TIME,
+            isTimeZoneChange: !0,
+          },
+          {
+            prop: "operation",
+            label: X("base.operation"),
+            fixed: "right",
+            width: 110,
+          },
+        ]),
+        Ie = async (e) => {
+          var a;
+          k() ||
+            ((oe.value = ""),
+            (te.value = !!(null == (a = e.memberRoleList) ? void 0 : a.length)),
+            await (async (e) => {
+              let a = await G({ all: !0, detail: !1 });
+              le.value = a.list.filter((a) => a.id !== e);
+            })(e.id),
+            I({
+              title: "",
+              showConfirmButton: !1,
+              showCancelButton: !1,
+              customStyle: { padding: "10px 32px 0px 32px" },
+              message: () => Re(e),
+            }),
+            (ge.value[e.id] = !ge.value[e.id]));
+        };
+      (ue(),
+        (() => {
+          const e = Z.userInfo.authority;
+          e && [y.SuperAdmin, y.Admin].includes(e)
+            ? ((ae.value = !0), (ie.show = !0))
+            : ((ae.value = !1), (ie.show = !1));
+        })());
+      const Re = (e) =>
+        R("div", { class: "content-wrap" }, [
+          R(
+            "div",
+            {
+              class: "title flx-align-center tw-justify-center tw-text-[18px]",
+            },
+            [
+              R(
+                "span",
+                {
+                  class: [
+                    "tw-w-[18px]",
+                    "tw-h-[18px]",
+                    "c-flex",
+                    "tw-bg-[var(--warning-color)]",
+                    "tw-rounded-[50%]",
+                    "tw-mr-[5px]",
+                  ],
+                },
+                [R("i", { class: "iconfont icon-warning" })],
+              ),
+              R("span", {}, X("base.delTitle")),
+            ],
+          ),
+          R("div", { class: "!tw-m-[10px] !tw-my-[15px] tips-content" }, [
+            R("p", {}, X("system.role.delHint")),
+          ]),
+          te.value
+            ? R("div", { class: "c-flex" }, [
+                R("div", { class: "tw-mr-[5px]" }, [
+                  R(
+                    "span",
+                    { class: "tw-text-[var(--btn-danger-color)]" },
+                    "*",
+                  ),
+                  R("span", {}, X("menu.org.roleList")),
+                ]),
+                R(
+                  C,
+                  {
+                    class: "tw-flex-1",
+                    modelValue: oe.value,
+                    key: oe.value,
+                    "onUpdate:modelValue": (e) => (oe.value = e),
+                  },
+                  () =>
+                    le.value.map((e) =>
+                      R(
+                        L,
+                        { key: e.id, value: e.id.toString(), label: e.name },
+                        {},
+                      ),
+                    ),
+                ),
+              ])
+            : null,
+          R(
+            "div",
+            {
+              class: [
+                "btn-container",
+                "tw-flex",
+                "tw-justify-end",
+                "tw-mt-[20px]",
+              ],
+            },
+            [
+              R(
+                f,
+                {
+                  type: "info",
+                  onClick: () => {
+                    I.close();
+                  },
+                },
+                () => X("base.cancel"),
+              ),
+              R(
+                f,
+                {
+                  type: "danger",
+                  loading: xe.value,
+                  disabled: !oe.value && te.value,
+                  onClick: async () => {
+                    (await (async (e) => {
+                      var a;
+                      if (
+                        ((null == (a = null == H ? void 0 : H.value)
+                          ? void 0
+                          : a.timeLimit) ?? 0) < 0
+                      )
+                        x();
+                      else
+                        try {
+                          ((xe.value = !0),
+                            await N(e, oe.value),
+                            pe(),
+                            (ge.value[e] = !1));
+                        } finally {
+                          xe.value = !1;
+                        }
+                    })(e.id),
+                      I.close());
+                  },
+                },
+                () => X("base.IdentifyAndDel"),
+              ),
+            ],
+          ),
+        ]);
+      return (
+        i(() => {
+          o.on(s.BEGINNER_GUIDE, (e) => {
+            e === j.MEMBER_GROUP && _e();
+          });
+        }),
+        n(() => {
+          o.off(s.BEGINNER_GUIDE);
+        }),
+        (e, a) => (
+          r(),
+          m("div", q, [
+            d(
+              F,
+              {
+                list: v(de),
+                columns: ke.value,
+                loading: v(se),
+                onRefresh: v(ue),
+              },
+              u(
+                {
+                  extends: p(() => [
+                    b("div", K, [d(O, { createProps: ie, onOnCreate: _e })]),
+                  ]),
+                  filters: p(() => [
+                    d(
+                      B,
+                      {
+                        config: he.value,
+                        labelWidth: 80,
+                        "model-value": v(me),
+                        autoSearch: !1,
+                        listErr: v(be),
+                        onSearch: v(pe),
+                        onReset: ye,
+                        "onField:change": v(fe),
+                      },
+                      null,
+                      8,
+                      [
+                        "config",
+                        "model-value",
+                        "listErr",
+                        "onSearch",
+                        "onField:change",
+                      ],
+                    ),
+                  ]),
+                  pagination: p(() => [
+                    v(de).length
+                      ? (r(),
+                        c(
+                          A,
+                          {
+                            key: 0,
+                            pageable: v(re),
+                            handleSizeChange: v(ce),
+                            handleCurrentChange: v(ve),
+                          },
+                          null,
+                          8,
+                          [
+                            "pageable",
+                            "handleSizeChange",
+                            "handleCurrentChange",
+                          ],
+                        ))
+                      : g("", !0),
+                  ]),
+                  _: 2,
+                },
+                [
+                  ae.value
+                    ? {
+                        name: "operation",
+                        fn: p((e) => [
+                          ne(e.row.code, !1) || we(e.row.memberRoleList)
+                            ? g("", !0)
+                            : (r(),
+                              c(
+                                v(f),
+                                {
+                                  key: 0,
+                                  link: "",
+                                  type: "info",
+                                  onClick: (a) =>
+                                    (async (e) => {
+                                      var a, l;
+                                      if (
+                                        ((null ==
+                                        (a = null == H ? void 0 : H.value)
+                                          ? void 0
+                                          : a.timeLimit) ?? 0) < 0
+                                      )
+                                        return void x();
+                                      const t = await P(e);
+                                      null == (l = ee.value) ||
+                                        l.acceptParams({
+                                          title: "system.role.editTitle",
+                                          row: {
+                                            id: t.data.id,
+                                            name: t.data.name,
+                                            remark: t.data.remark,
+                                            moduleIds: t.data.moduleIds,
+                                            code: t.data.code,
+                                            allowManage: t.data.allowManage,
+                                            allowManageIds: t.data
+                                              .allowManageIds || ["all"],
+                                          },
+                                        });
+                                    })(e.row.id),
+                                },
+                                {
+                                  default: p(() => [
+                                    ...(a[0] ||
+                                      (a[0] = [
+                                        b(
+                                          "i",
+                                          { class: "iconfont icon-edit" },
+                                          null,
+                                          -1,
+                                        ),
+                                      ])),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["onClick"],
+                              )),
+                          ne(e.row.code, !0) || we(e.row.memberRoleList)
+                            ? g("", !0)
+                            : (r(),
+                              c(
+                                v(f),
+                                {
+                                  key: 1,
+                                  link: "",
+                                  type: "info",
+                                  onClick: (a) => Ie(e.row),
+                                },
+                                {
+                                  default: p(() => [
+                                    ...(a[1] ||
+                                      (a[1] = [
+                                        b(
+                                          "i",
+                                          { class: "iconfont icon-delete" },
+                                          null,
+                                          -1,
+                                        ),
+                                      ])),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["onClick"],
+                              )),
+                          ne(e.row.code, !1) || we(e.row.memberRoleList)
+                            ? (r(), m("span", V, "--"))
+                            : g("", !0),
+                        ]),
+                        key: "0",
+                      }
+                    : void 0,
+                ],
+              ),
+              1032,
+              ["list", "columns", "loading", "onRefresh"],
+            ),
+            d(
+              U,
+              { ref_key: "editRoleRef", ref: ee, onSubmit: v(pe) },
+              null,
+              8,
+              ["onSubmit"],
+            ),
+          ])
+        )
+      );
+    },
+  });
+export { X as default };

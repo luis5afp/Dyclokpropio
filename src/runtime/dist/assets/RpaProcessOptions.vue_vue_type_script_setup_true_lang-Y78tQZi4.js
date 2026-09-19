@@ -1,0 +1,315 @@
+import { _ as a } from "./RpaProcessOptionsForm.vue_vue_type_script_setup_true_lang-DUVd1wa2.js";
+import {
+  d as e,
+  v as t,
+  k1 as s,
+  G as l,
+  jW as i,
+  u as n,
+  V as o,
+  r,
+  o as p,
+  c,
+  b as u,
+  w as v,
+  a as d,
+  t as m,
+  h as f,
+  X as w,
+  e as _,
+  i as g,
+  dR as x,
+  D as b,
+  E as O,
+  A as k,
+  k2 as y,
+  a3 as C,
+  I as h,
+  a5 as D,
+  dh as R,
+  af as T,
+  dl as S,
+  a$ as I,
+  C as N,
+  ad as P,
+  s as M,
+  m as A,
+  jV as J,
+} from "./index-BUIbb6Pa.js";
+import { _ as L } from "./editRpaTask.vue_vue_type_style_index_0_lang-qriV8oII.js";
+const $ = { class: "tw-mb-[-15px]" },
+  F = { class: "tw-text-[15px] tw-text-subText tw-text-center tw-mb-4" },
+  V = { class: "tw-w-full tw-flex tw-flex-col tw-mt-[-16px]" },
+  j = { class: "s-flex tw-text-[14px] tw-mb-[15px]" },
+  U = { class: "tw-text-[var(--warning-color)]" },
+  E = { class: "tw-w-full b-flex" },
+  K = e({
+    __name: "RpaProcessOptions",
+    emits: ["fetchList"],
+    setup(e, { expose: K, emit: W }) {
+      const B = g(!1),
+        { t: H } = t.useI18n(),
+        { freeRpaCreateTip: G } = s(),
+        X = l(),
+        q = g(),
+        z = g(!1),
+        Q = g(),
+        Y = g(),
+        Z = g(),
+        aa = i(),
+        ea = n(),
+        ta = N(() => P().currentPlan),
+        sa = W,
+        la = () => {
+          B.value = !1;
+        },
+        ia = async (a, e) => {
+          var t, s;
+          (await G()) ||
+            (((null == (t = null == ta ? void 0 : ta.value)
+              ? void 0
+              : t.timeLimit) ?? 0) < 0
+              ? T()
+              : b.isClient
+                ? null == (s = Z.value) ||
+                  s.acceptParams(
+                    !1,
+                    {
+                      name: `RPA-Workflow-${I().format("MMDDHHmmss")}`,
+                      rpaWorkflowId: e,
+                    },
+                    "implement",
+                  )
+                : S());
+        },
+        na = o.debounce(async (a) => {
+          (await aa.getPendingTaskList(), null == a || a());
+        }, 500),
+        oa = async (a, e, t, s = !0, l = !0, i) => {
+          ((B.value = !1),
+            i &&
+              (M.state.rpaTaskManyMap[t] = {
+                isFirst: a,
+                envIds: e,
+                taskId: t,
+                isCarryOut: s,
+                isUpdate: l,
+                repeat: { ...i, count: i.count - 1 },
+              }),
+            l
+              ? await na(() => {
+                  s &&
+                    A.emit(J.RUN_RPA_TASK, {
+                      isFirst: a,
+                      envIds: e,
+                      taskId: t,
+                      repeat: i,
+                    });
+                })
+              : s &&
+                A.emit(J.RUN_RPA_TASK, {
+                  isFirst: a,
+                  envIds: e,
+                  taskId: t,
+                  repeat: i,
+                }),
+            ea.push({ name: "taskManage" }));
+        },
+        ra = () => {},
+        pa = () => {
+          var a;
+          null == (a = Y.value) ||
+            a.handleSubmit(async (a) => {
+              b.api.trackEvent({
+                type: k.RPA_CLICK,
+                action: O.CLICK_CONFIGURE_RPA_FLOW,
+              });
+              try {
+                z.value = !0;
+                let e = JSON.parse(JSON.stringify(Q.value));
+                e = { ...e, globalData: JSON.stringify(a) };
+                0 === (await y(q.value.id, JSON.stringify(e))).code &&
+                  (la(),
+                  sa("fetchList"),
+                  C.success(H("setting.SaveSuccess")),
+                  X.rpaOptionsTip
+                    ? X.rpaOptionsCreate
+                      ? await ia(0, q.value.id)
+                      : la()
+                    : h({
+                        title: H("env.env.shareDialog.operatorSuccess"),
+                        center: !0,
+                        customClass: "new-message-box",
+                        message: () =>
+                          D("div", [
+                            D("div", {}, H("rpaOptions.tip7")),
+                            D(R, {
+                              label: H("rpaMarket.tip18"),
+                              modelValue: X.rpaOptionsTip,
+                              class: "tw-mt-[10px]",
+                              onChange(a) {
+                                X.rpaOptionsTip = a;
+                              },
+                            }),
+                          ]),
+                        cancelButtonText: H("rpaMarket.tip11"),
+                        confirmButtonText: H("header.guide.createNow"),
+                        showCancelButton: !0,
+                        type: "success",
+                        closeOnClickModal: !1,
+                      })
+                        .then(() => {
+                          var a;
+                          (X.rpaOptionsTip && (X.rpaOptionsCreate = !0),
+                            ia(
+                              0,
+                              (null == (a = null == q ? void 0 : q.value)
+                                ? void 0
+                                : a.id) || "",
+                            ));
+                        })
+                        .catch(() => {
+                          (X.rpaOptionsTip && (X.rpaOptionsCreate = !1), la());
+                        }));
+              } finally {
+                z.value = !1;
+              }
+            });
+        };
+      return (
+        K({
+          receiveData: (a, e) => {
+            if (
+              (console.log(a, JSON.parse(e)),
+              (B.value = !0),
+              (q.value = a),
+              x(e))
+            ) {
+              const a = JSON.parse(e);
+              ((a.globalData = x(a.globalData)
+                ? JSON.parse(a.globalData)
+                : a.globalData),
+                (Q.value = a),
+                console.log(Q.value, "rpaData.value"));
+            }
+          },
+        }),
+        (e, t) => {
+          const s = r("el-scrollbar"),
+            l = r("el-button"),
+            i = r("el-dialog");
+          return (
+            p(),
+            c("div", null, [
+              u(
+                i,
+                {
+                  modelValue: B.value,
+                  "onUpdate:modelValue": t[0] || (t[0] = (a) => (B.value = a)),
+                  "align-center": !0,
+                  "before-close": la,
+                  "close-on-click-modal": !1,
+                  "close-on-press-escape": !1,
+                  "destroy-on-close": !0,
+                  width: "650px",
+                },
+                {
+                  title: v(() => [d("div", $, m(e.$t("rpaOptions.tip1")), 1)]),
+                  footer: v(() => [
+                    d("div", V, [
+                      d("div", j, [
+                        t[1] ||
+                          (t[1] = d(
+                            "span",
+                            {
+                              class: "icon-warn-wrap tw-mr-[8px] tw-mt-[-1px]",
+                            },
+                            [d("i", { class: "iconfont icon-warning" })],
+                            -1,
+                          )),
+                        d("span", U, m(e.$t("rpaOptions.tip2")), 1),
+                      ]),
+                      d("div", E, [
+                        u(
+                          l,
+                          { type: "info", class: "tw-w-full", onClick: la },
+                          {
+                            default: v(() => [_(m(e.$t("base.cancel")), 1)]),
+                            _: 1,
+                          },
+                        ),
+                        u(
+                          l,
+                          { class: "tw-w-full", type: "primary", onClick: pa },
+                          {
+                            default: v(() => [_(m(e.$t("base.confirm")), 1)]),
+                            _: 1,
+                          },
+                        ),
+                      ]),
+                    ]),
+                  ]),
+                  default: v(() => {
+                    var t;
+                    return [
+                      d(
+                        "h4",
+                        F,
+                        m(e.$t("rpaMarket.tip19")) +
+                          ": " +
+                          m(null == (t = q.value) ? void 0 : t.name),
+                        1,
+                      ),
+                      u(
+                        s,
+                        {
+                          class: "tw-pr-[15px]",
+                          "max-height": "calc(85vh - 240px)",
+                        },
+                        {
+                          default: v(() => [
+                            q.value && Q.value
+                              ? (p(),
+                                f(
+                                  a,
+                                  {
+                                    key: 0,
+                                    ref_key: "formRef",
+                                    ref: Y,
+                                    globalData: Q.value.globalData,
+                                    rpaData: q.value,
+                                  },
+                                  null,
+                                  8,
+                                  ["globalData", "rpaData"],
+                                ))
+                              : w("", !0),
+                          ]),
+                          _: 1,
+                        },
+                      ),
+                    ];
+                  }),
+                  _: 1,
+                },
+                8,
+                ["modelValue"],
+              ),
+              u(
+                L,
+                {
+                  ref_key: "editRpaTaskRef",
+                  ref: Z,
+                  onCancel: ra,
+                  onSubmit: oa,
+                },
+                null,
+                512,
+              ),
+            ])
+          );
+        }
+      );
+    },
+  });
+export { K as _ };

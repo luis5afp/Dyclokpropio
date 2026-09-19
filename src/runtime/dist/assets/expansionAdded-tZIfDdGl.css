@@ -1,0 +1,26 @@
+@charset "UTF-8";
+.expan-dialog {
+  max-height: 90%;
+  margin-top: unset;
+  display: flex;
+  flex-direction: column;
+}
+.expan-dialog .el-dialog__body {
+  flex: 1;
+  overflow: auto;
+}
+.expan-dialog .el-dialog__body::-webkit-scrollbar {
+  width: 6px;
+}
+.expan-dialog .el-dialog__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.expan-dialog .el-dialog__body::-webkit-scrollbar-thumb {
+  background: var(--thumb-dark-color);
+}
+.expan-dialog .el-dialog__body::-webkit-scrollbar-thumb:hover {
+  background: var(--thumb-dark-color);
+}
+.textarea-wrapper[data-v-c3544156] .el-textarea__inner {
+  min-height: 40px !important;
+}

@@ -1,0 +1,58 @@
+import {
+  d as t,
+  aK as e,
+  r as s,
+  f as a,
+  o,
+  h as n,
+  w as c,
+  a as p,
+  ai as i,
+  t as l,
+  c as r,
+} from "./index-BUIbb6Pa.js";
+const x = { class: "tw-max-w-[350px]" },
+  w = {
+    class:
+      "tw-text-[var(--tip-text-color)] tw-text-[13px] tw-whitespace-pre-line",
+  },
+  u = { key: 1, class: "tw-w-[20px]" },
+  d = t({
+    __name: "Tip",
+    props: { text: {} },
+    setup(t) {
+      const d = t,
+        m = e();
+      return (t, e) => {
+        const v = s("el-tooltip");
+        return d.text || a(m).content
+          ? (o(),
+            n(
+              v,
+              { key: 0, placement: "top" },
+              {
+                content: c(() => [
+                  i(t.$slots, "content", {}, () => [
+                    p("div", x, [p("div", w, l(d.text), 1)]),
+                  ]),
+                ]),
+                default: c(() => [
+                  e[0] ||
+                    (e[0] = p(
+                      "i",
+                      {
+                        class:
+                          "iconfont tw-align-bottom icon-help-circle1 tw-pl-[4px] tw-text-[18px] tw-text-subText tw-duration-300 hover:tw-text-black tw-cursor-pointer",
+                      },
+                      null,
+                      -1,
+                    )),
+                ]),
+                _: 3,
+              },
+            ))
+          : (o(), r("div", u));
+      };
+    },
+  });
+export { d as _ };

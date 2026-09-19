@@ -1,0 +1,35 @@
+.proxy-check-error[data-v-746f70e5] {
+  color: var(--danger-color);
+  font-size: 14px;
+  line-height: 19px;
+}
+.iconBox[data-v-746f70e5] {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--danger-color);
+  color: var(--text-color-base);
+  display: inline-flex;
+  justify-content: center;
+}
+.iconBox .iconfont[data-v-746f70e5] {
+  font-size: 14px;
+}
+.proxy-check[data-v-746f70e5] {
+  color: var(--primary-color);
+  margin-left: 10px;
+  font-size: 14px;
+  line-height: 19px;
+}
+.proxy-check > span[data-v-746f70e5] {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: var(--themeColor1);
+  display: inline-flex;
+  justify-content: center;
+}
+.proxy-check > span .iconfont[data-v-746f70e5] {
+  font-size: 14px;
+}

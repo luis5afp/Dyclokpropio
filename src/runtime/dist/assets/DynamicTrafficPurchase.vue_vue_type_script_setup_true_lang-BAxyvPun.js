@@ -1,0 +1,515 @@
+import {
+  d as t,
+  v as e,
+  ad as a,
+  W as r,
+  P as l,
+  g as o,
+  r as s,
+  q as i,
+  c,
+  O as n,
+  t as u,
+  f as w,
+  X as p,
+  x as d,
+  ai as v,
+  b as m,
+  a as x,
+  e as f,
+  F as b,
+  z as g,
+  w as y,
+  bs as _,
+  h,
+  i as P,
+  C as R,
+  o as k,
+} from "./index-BUIbb6Pa.js";
+import { d as T, s as C, e as j } from "./ipResourceMock-CCd7H3CQ.js";
+import { i as D } from "./ipResourceCatalog-CJEdeRbI.js";
+import {
+  c as G,
+  m as F,
+  a as I,
+  r as q,
+  b as B,
+} from "./ipResourcePayment-DW1eNDIC.js";
+import { _ as E } from "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import { _ as A } from "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import { _ as S } from "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import { _ as M } from "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+const O = async () => {
+    const t = await T();
+    return {
+      dynamicTrafficGb: t.dynamicRemainingFlowGb,
+      staticAvailableCount: t.availableCount,
+      staticExpiringCount: t.expiringSoonCount,
+      staticExpiredCount: t.expiredCount,
+    };
+  },
+  V = {
+    class:
+      "tw-min-h-[560px] tw-rounded-[10px] tw-border tw-border-[var(--card-br-color)] tw-bg-[var(--card-bg-color)] tw-p-4 tw-shadow-[0_2px_10px_rgb(22_35_68_/_4%)] [&_.el-loading-mask]:tw-rounded-[10px] md:tw-p-6",
+  },
+  W = {
+    key: 0,
+    class: "tw-border-b tw-border-[var(--border-color-base)] tw-pb-5",
+  },
+  H = { class: "tw-text-xl tw-font-semibold tw-text-[var(--text-color-base)]" },
+  N = { class: "tw-mt-1 tw-text-sm tw-text-[var(--text-color-light2)]" },
+  U = {
+    class:
+      "tw-flex tw-items-center tw-gap-2 tw-text-[15px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  $ = { class: "tw-mt-3 tw-grid tw-grid-cols-2 tw-gap-3 md:tw-grid-cols-4" },
+  z = ["onClick"],
+  X = {
+    class:
+      "tw-mt-6 tw-text-[13px] tw-leading-relaxed tw-text-[var(--text-color-light2)]",
+  },
+  Y = {
+    class:
+      "tw-mb-2 tw-flex tw-items-center tw-gap-[6px] tw-text-sm tw-font-semibold tw-text-[var(--text-color-base)] [&_.el-icon]:tw-text-[15px] [&_.el-icon]:tw-text-[var(--text-color-light2)]",
+  },
+  J = {
+    class:
+      "tw-flex tw-items-center tw-gap-2 tw-text-[15px] tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  K = {
+    class:
+      "tw-mt-3 tw-grid tw-grid-cols-1 tw-items-center tw-gap-4 tw-rounded-lg tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-light1)] tw-p-4 md:tw-grid-cols-[1fr_auto_1fr]",
+  },
+  L = {
+    class:
+      "tw-flex tw-flex-col tw-items-center tw-gap-2 tw-px-4 tw-py-2 tw-text-[var(--text-color-light2)] [&>strong]:tw-text-[22px] [&>strong]:tw-text-[var(--text-color-base)]",
+  },
+  Q = {
+    class:
+      "tw-flex tw-flex-col tw-items-center tw-gap-2 tw-px-4 tw-py-2 tw-text-[var(--text-color-light2)] [&>strong]:tw-text-[22px] [&>strong]:tw-text-[var(--text-color-base)]",
+  },
+  Z = t({
+    __name: "DynamicTrafficPurchase",
+    props: { embedded: { type: Boolean } },
+    emits: ["back", "success"],
+    setup(t, { emit: T }) {
+      const Z = T,
+        { t: tt } = e.useI18n(),
+        et = a(),
+        at = P(),
+        rt = P(),
+        lt = P(""),
+        ot = P(null),
+        st = P({ useWallet: !0, usePay: !0 }),
+        it = P(!1),
+        ct = P(!1),
+        nt = P(!1),
+        ut = P(""),
+        wt = P();
+      let pt, dt;
+      const vt = R(() => {
+          var t;
+          return null == (t = at.value)
+            ? void 0
+            : t.trafficPackages.find((t) => t.id === lt.value);
+        }),
+        mt = R(() => {
+          const t = q(st.value);
+          if (
+            vt.value &&
+            void 0 !== vt.value.version &&
+            t &&
+            (!st.value.usePay || st.value.payType)
+          )
+            return {
+              businessType: "DYNAMIC_PURCHASE",
+              priceId: vt.value.id,
+              priceVersion: vt.value.version,
+              payMethod: t,
+              ...(st.value.usePay && st.value.payType
+                ? { payType: st.value.payType }
+                : {}),
+            };
+        }),
+        xt = R(() => {
+          var t;
+          return (null == (t = vt.value) ? void 0 : t.trafficGb) || 0;
+        }),
+        ft = R(() => {
+          var t;
+          return void 0 ===
+            (null == (t = rt.value) ? void 0 : t.dynamicTrafficGb)
+            ? "--"
+            : (rt.value.dynamicTrafficGb + xt.value).toFixed(1);
+        }),
+        bt = async (t) => {
+          const e = mt.value;
+          if (!e) throw new Error("Dynamic IP resource order is not ready");
+          const a = await C(F(e, t));
+          return I(a);
+        },
+        gt = async () => {
+          (await et.getWalletInfoFn().catch((t) => {
+            console.error("[ipResource] failed to refresh wallet info", t);
+          }),
+            Z("success"));
+        },
+        yt = async () => {
+          var t;
+          const e = mt.value;
+          if (e && ot.value) {
+            ((ut.value = ""), (nt.value = !0));
+            try {
+              await (null == (t = wt.value)
+                ? void 0
+                : t.acceptParams(G(e, ot.value, st.value), {
+                    submitOrder: bt,
+                  }));
+            } catch (a) {
+              (console.error(
+                "[ipResource] failed to start dynamic traffic payment",
+                { request: e, error: a },
+              ),
+                (ut.value = tt("ipResource.submitFailed")));
+            } finally {
+              nt.value = !1;
+            }
+          }
+        };
+      return (
+        r(
+          [
+            lt,
+            () => st.value.useWallet,
+            () => st.value.usePay,
+            () => st.value.payType,
+          ],
+          () => {
+            ((ct.value = !0),
+              pt && clearTimeout(pt),
+              (pt = setTimeout(() => {
+                (async () => {
+                  const t = mt.value;
+                  if (!t)
+                    return (
+                      null == dt || dt.abort(),
+                      (dt = void 0),
+                      (ct.value = !1),
+                      void (ot.value = null)
+                    );
+                  null == dt || dt.abort();
+                  const e = new AbortController();
+                  ((dt = e), (ct.value = !0), (ut.value = ""));
+                  try {
+                    const a = await j(t, e.signal);
+                    if (e.signal.aborted) return;
+                    ot.value = B(a);
+                  } catch (a) {
+                    if (a instanceof DOMException && "AbortError" === a.name)
+                      return;
+                    (console.error(
+                      "[ipResource] failed to quote dynamic traffic",
+                      a,
+                    ),
+                      (ut.value = tt("ipResource.quoteFailed")));
+                  } finally {
+                    dt === e && ((dt = void 0), (ct.value = !1));
+                  }
+                })();
+              }, 300)));
+          },
+        ),
+        l(async () => {
+          it.value = !0;
+          try {
+            [at.value, rt.value] = await Promise.all([
+              D.getDynamicBaseCatalog(),
+              O(),
+            ]);
+            const t =
+              at.value.trafficPackages.find((t) => 10 === t.trafficGb) ||
+              at.value.trafficPackages[0];
+            lt.value = (null == t ? void 0 : t.id) || "";
+          } catch (t) {
+            (console.error(
+              "[ipResource] failed to load dynamic purchase data",
+              t,
+            ),
+              (ut.value = tt("ipResource.loadFailed")));
+          } finally {
+            it.value = !1;
+          }
+        }),
+        o(() => {
+          (pt && clearTimeout(pt), null == dt || dt.abort());
+        }),
+        (e, a) => {
+          var r, l;
+          const o = s("el-icon"),
+            P = s("el-alert"),
+            R = i("loading");
+          return (
+            k(),
+            c(
+              "div",
+              {
+                class: n([
+                  "tw-mx-auto tw-grid tw-h-full tw-min-h-0 tw-w-full tw-grid-cols-1 tw-content-start tw-gap-5 tw-px-[6px] tw-pb-5 tw-pt-1 tw-text-[var(--text-color-base)] [scrollbar-gutter:stable] lg:tw-grid-cols-2 xl:tw-grid-cols-[minmax(0,1fr)_643px]",
+                  t.embedded ? "" : "tw-overflow-y-auto",
+                ]),
+              },
+              [
+                t.embedded
+                  ? p("", !0)
+                  : (k(),
+                    c(
+                      "button",
+                      {
+                        key: 0,
+                        type: "button",
+                        class:
+                          "tw-col-span-full tw-justify-self-start tw-border-0 tw-bg-transparent tw-p-0 tw-text-sm tw-text-[var(--primary-color)] hover:tw-text-[var(--primary-color-light1)]",
+                        onClick: a[0] || (a[0] = (t) => Z("back")),
+                      },
+                      " ← " + u(w(tt)("ipResource.backToDynamic")),
+                      1,
+                    )),
+                d(
+                  (k(),
+                  c("section", V, [
+                    v(e.$slots, "purchase-type-tabs"),
+                    m(A, { class: "tw-mb-6" }),
+                    t.embedded
+                      ? p("", !0)
+                      : (k(),
+                        c("header", W, [
+                          x(
+                            "h2",
+                            H,
+                            u(w(tt)("ipResource.buyDynamicTraffic")),
+                            1,
+                          ),
+                          x(
+                            "p",
+                            N,
+                            u(w(tt)("ipResource.dynamicTrafficHint")),
+                            1,
+                          ),
+                        ])),
+                    x(
+                      "div",
+                      { class: n(t.embedded ? "" : "tw-mt-[22px]") },
+                      [
+                        x("div", U, [
+                          a[2] ||
+                            (a[2] = x(
+                              "span",
+                              {
+                                class:
+                                  "tw-inline-flex tw-h-[22px] tw-w-[22px] tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--primary-color)] tw-text-xs tw-text-[var(--text-color-white)]",
+                              },
+                              "1",
+                              -1,
+                            )),
+                          f(u(w(tt)("ipResource.selectTrafficPackage")), 1),
+                        ]),
+                        x("div", $, [
+                          (k(!0),
+                          c(
+                            b,
+                            null,
+                            g(
+                              (null == (r = at.value)
+                                ? void 0
+                                : r.trafficPackages) || [],
+                              (t) => (
+                                k(),
+                                c(
+                                  "button",
+                                  {
+                                    key: t.id,
+                                    type: "button",
+                                    class: n([
+                                      "tw-relative tw-flex tw-min-h-[88px] tw-cursor-pointer tw-flex-col tw-items-center tw-justify-center tw-gap-2 tw-rounded-lg tw-border tw-border-[var(--card-br-color)] tw-bg-[var(--card-bg-color)] tw-px-[10px] tw-py-4 tw-text-[var(--text-color-base)] tw-transition-colors hover:tw-border-[var(--primary-color-light1)] hover:tw-bg-[var(--primary-color-light7)] [&>strong]:tw-text-base [&>span]:tw-text-[13px] [&>span]:tw-text-[var(--text-color-light2)]",
+                                      lt.value === t.id
+                                        ? "tw-border-[var(--primary-color)] tw-bg-[var(--primary-color-light7)] tw-text-[var(--primary-color)] tw-shadow-[inset_0_0_0_1px_var(--primary-color)] [&>span]:tw-text-[var(--primary-color)]"
+                                        : "",
+                                    ]),
+                                    onClick: (e) => {
+                                      return ((a = t.id), void (lt.value = a));
+                                      var a;
+                                    },
+                                  },
+                                  [
+                                    x(
+                                      "strong",
+                                      null,
+                                      u(t.trafficGb) + " GB",
+                                      1,
+                                    ),
+                                    x(
+                                      "span",
+                                      null,
+                                      "$" + u(t.price.toFixed(2)),
+                                      1,
+                                    ),
+                                  ],
+                                  10,
+                                  z,
+                                )
+                              ),
+                            ),
+                            128,
+                          )),
+                        ]),
+                        x("div", X, [
+                          x("div", Y, [
+                            x(
+                              "span",
+                              null,
+                              u(
+                                w(tt)(
+                                  "ipResource.trafficPackageDescriptionTitle",
+                                ),
+                              ),
+                              1,
+                            ),
+                            m(o, null, { default: y(() => [m(w(_))]), _: 1 }),
+                          ]),
+                          x(
+                            "p",
+                            null,
+                            u(w(tt)("ipResource.trafficPackageDescription")),
+                            1,
+                          ),
+                        ]),
+                        a[5] ||
+                          (a[5] = x(
+                            "div",
+                            {
+                              class:
+                                "tw-my-6 tw-h-px tw-bg-[var(--border-color-base)]",
+                            },
+                            null,
+                            -1,
+                          )),
+                        x("div", J, [
+                          a[3] ||
+                            (a[3] = x(
+                              "span",
+                              {
+                                class:
+                                  "tw-inline-flex tw-h-[22px] tw-w-[22px] tw-items-center tw-justify-center tw-rounded-full tw-bg-[var(--primary-color)] tw-text-xs tw-text-[var(--text-color-white)]",
+                              },
+                              "2",
+                              -1,
+                            )),
+                          f(u(w(tt)("ipResource.balanceEstimate")), 1),
+                        ]),
+                        x("div", K, [
+                          x("div", L, [
+                            x(
+                              "span",
+                              null,
+                              u(w(tt)("ipResource.currentBalance")),
+                              1,
+                            ),
+                            x(
+                              "strong",
+                              null,
+                              u(
+                                (null == (l = rt.value)
+                                  ? void 0
+                                  : l.dynamicTrafficGb) ?? "--",
+                              ) + " GB",
+                              1,
+                            ),
+                          ]),
+                          a[4] ||
+                            (a[4] = x(
+                              "span",
+                              {
+                                class:
+                                  "tw-rotate-90 tw-text-[22px] tw-text-[var(--primary-color)] md:tw-rotate-0",
+                              },
+                              "→",
+                              -1,
+                            )),
+                          x("div", Q, [
+                            x(
+                              "span",
+                              null,
+                              u(w(tt)("ipResource.estimatedBalance")),
+                              1,
+                            ),
+                            x("strong", null, u(ft.value) + " GB", 1),
+                          ]),
+                        ]),
+                      ],
+                      2,
+                    ),
+                    ut.value
+                      ? (k(),
+                        h(
+                          P,
+                          {
+                            key: 1,
+                            class: "tw-mt-4",
+                            closable: !1,
+                            title: ut.value,
+                            type: "error",
+                            "show-icon": "",
+                          },
+                          null,
+                          8,
+                          ["title"],
+                        ))
+                      : p("", !0),
+                  ])),
+                  [[R, it.value]],
+                ),
+                m(
+                  M,
+                  {
+                    modelValue: st.value,
+                    "onUpdate:modelValue":
+                      a[1] || (a[1] = (t) => (st.value = t)),
+                    quote: ot.value,
+                    loading: ct.value,
+                    submitting: nt.value,
+                  },
+                  null,
+                  8,
+                  ["modelValue", "quote", "loading", "submitting"],
+                ),
+                m(
+                  S,
+                  {
+                    quote: ot.value,
+                    payment: st.value,
+                    loading: ct.value,
+                    submitting: nt.value,
+                    "success-hint": w(tt)(
+                      "ipResource.dynamicPaymentSuccessHint",
+                    ),
+                    onSubmit: yt,
+                  },
+                  null,
+                  8,
+                  ["quote", "payment", "loading", "submitting", "success-hint"],
+                ),
+                m(
+                  E,
+                  { ref_key: "payDialogRef", ref: wt, onConfirmPay: gt },
+                  null,
+                  512,
+                ),
+              ],
+              2,
+            )
+          );
+        }
+      );
+    },
+  });
+export { Z as _, O as g };

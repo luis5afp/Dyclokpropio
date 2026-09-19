@@ -1,0 +1,21 @@
+.custom-el-radio-group[data-v-15965b50] .el-radio-button.is-active {
+  position: relative;
+  z-index: 1;
+}
+.custom-el-radio-group[data-v-15965b50]
+  .el-radio-button.is-active
+  .el-radio-button__inner {
+  border-color: var(--primary-color) !important;
+}
+.custom-el-radio-group[data-v-15965b50]
+  .el-radio-button:not(:first-child)
+  .el-radio-button__inner {
+  margin-left: -1px;
+  border-left: 1px solid var(--dialog-border-color);
+}
+.custom-el-radio-group[data-v-15965b50]
+  .el-radio-button.is-active:not(:first-child)
+  .el-radio-button__inner {
+  border-left-color: var(--primary-color) !important;
+  box-shadow: none !important;
+}

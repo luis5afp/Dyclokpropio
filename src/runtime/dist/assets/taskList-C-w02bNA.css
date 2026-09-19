@@ -1,0 +1,13 @@
+.task-status {
+  display: flex;
+  align-items: center;
+}
+.task-status > span:first-child {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.task-status > span:last-child {
+  font-size: 14px;
+}

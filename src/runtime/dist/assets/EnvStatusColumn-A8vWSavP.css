@@ -1,0 +1,103 @@
+.env-status-column[data-v-50eefa67] {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  gap: 4px;
+}
+.status-icon[data-v-50eefa67] {
+  flex: 0 0 auto;
+  font-size: 20px;
+  cursor: pointer;
+}
+.status-main[data-v-50eefa67] {
+  flex: 1;
+  min-width: 0;
+  line-height: 16px;
+}
+.status-title[data-v-50eefa67],
+.status-sub[data-v-50eefa67] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-title[data-v-50eefa67] {
+  color: var(--text-color-base);
+  font-size: 14px;
+  font-weight: 500;
+}
+.status-progress-title[data-v-50eefa67] {
+  color: var(--primary-color);
+  font-size: 12px;
+  line-height: 15px;
+}
+.status-opening-progress[data-v-50eefa67] {
+  position: relative;
+  width: 100%;
+  height: 46px;
+  overflow: visible;
+}
+.status-progress-bar-row[data-v-50eefa67] {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  transform: translateY(-50%);
+}
+.status-progress-label[data-v-50eefa67] {
+  position: absolute;
+  top: calc(50% + 5px);
+  left: 50%;
+  max-width: 100%;
+  overflow: hidden;
+  color: #faa63a;
+  font-size: 12px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  transform: translate(-50%);
+  white-space: nowrap;
+}
+.status-sub[data-v-50eefa67] {
+  color: var(--text-color-light1);
+  font-size: 11px;
+}
+.status-location[data-v-50eefa67] {
+  display: flex;
+  align-items: center;
+}
+.status-flag[data-v-50eefa67] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 12px;
+  margin-right: 3px;
+  overflow: hidden;
+}
+.status-flag[data-v-50eefa67] .flag {
+  transform: scale(0.32);
+}
+.status-location-text[data-v-50eefa67] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-last-country[data-v-50eefa67] {
+  font-size: 10px;
+}
+.status-country-warning[data-v-50eefa67] {
+  color: var(--warning-color);
+}
+.status-actions[data-v-50eefa67] {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.status-actions[data-v-50eefa67] .el-button {
+  margin-left: 2px;
+  padding: 0;
+}
+.status-actions .iconfont[data-v-50eefa67] {
+  font-size: 16px;
+}

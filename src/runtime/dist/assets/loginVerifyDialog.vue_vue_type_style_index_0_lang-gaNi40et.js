@@ -1,0 +1,1133 @@
+import { _ as e } from "./verifyConfigDialog.vue_vue_type_style_index_0_lang-5RexhAzN.js";
+import {
+  d as l,
+  G as a,
+  v as t,
+  hm as o,
+  i as r,
+  V as i,
+  r as u,
+  q as s,
+  o as n,
+  c as v,
+  F as d,
+  b as c,
+  aq as m,
+  f as w,
+  w as p,
+  x as g,
+  h as f,
+  X as y,
+  a as b,
+  t as h,
+  z as V,
+  hn as _,
+  e as x,
+  C as k,
+  a3 as E,
+  N as I,
+  ho as q,
+  ga as T,
+  hp as C,
+  hq as D,
+  hr as U,
+  I as O,
+  hs as L,
+  ht as P,
+  hu as R,
+  hv as S,
+  at as B,
+  hw as A,
+} from "./index-BUIbb6Pa.js";
+import { _ as $ } from "./ResetPasswordDialog.vue_vue_type_script_setup_true_name_ResetPasswordDialog_lang-Ce8FZ9od.js";
+import { _ as j } from "./operationVerificationDialog.vue_vue_type_script_setup_true_lang-CFKmge30.js";
+const N = { class: "tw-flex" },
+  z = { class: "tw-text-[var(--text-color-light1)]" },
+  F = { class: "tw-w-full" },
+  Y = { class: "tw-flex tw-justify-between" },
+  M = ["onClick"],
+  H = { class: "tw-text-[var(--text-color-light1)]" },
+  J = { class: "tw-whitespace-normal" },
+  Q = { key: 2, class: "tw-mt-[10px] tw-mb-[10px]" },
+  G = { class: "tw-text-[var(--text-color-light1)]" },
+  X = { key: 0, class: "tw-text-[var(--warning-color)] tw-mt-[12px]" },
+  K = l({
+    __name: "loginVerifyDialog",
+    emits: ["submit"],
+    setup(l, { expose: K, emit: W }) {
+      let Z = a();
+      const { t: ee } = t.useI18n();
+      let le = r(!1);
+      const ae = r(),
+        te = {
+          id: "",
+          name: "",
+          passwd: "",
+          checkEmail: !1,
+          email: "",
+          check2fa: !1,
+          secret2fa: "",
+          everyLogin: !1,
+          interval: 7,
+          verifyCode: "",
+          loginValidate: !1,
+          googleAuthQr: "",
+          customInterval: 1,
+          checkLoginOut: !0,
+          loginOutTimeUnitType: o.DAY,
+          offline: !1,
+        },
+        oe = r({
+          title: "",
+          type: "resetPassword",
+          importantTips: !1,
+          row: i.cloneDeep(te),
+        }),
+        re = r(!1),
+        ie = r(!1),
+        ue = r(!1);
+      let se = r(!1),
+        ne = r(i.cloneDeep(oe.value.row)),
+        ve = r();
+      const de = r(!1),
+        ce = B({
+          passwd: [
+            {
+              validator: (e, l, a) => {
+                l
+                  ? A.test(l)
+                    ? a()
+                    : a(new Error(ee("login.formatError")))
+                  : a(new Error(ee("env.env.req.accountPasswdHolder")));
+              },
+            },
+          ],
+        }),
+        me = r(),
+        we = W,
+        pe = k(() => oe.value.type === C.RESET),
+        ge = k(() => oe.value.type === C.VERIFY);
+      function fe() {
+        le.value = !1;
+      }
+      async function ye() {
+        var e, l;
+        if (re.value) return;
+        if (JSON.stringify(oe.value.row) === JSON.stringify(ne.value))
+          return void (le.value = !1);
+        if (
+          oe.value.row.loginValidate &&
+          ge.value &&
+          !oe.value.row.check2fa &&
+          !oe.value.row.checkEmail
+        )
+          return void E({
+            message: ee("org.member.req.loginCheckSubmitErr"),
+            type: "warning",
+          });
+        if (pe.value)
+          try {
+            await (null == (e = me.value) ? void 0 : e.validate());
+          } catch (t) {
+            return;
+          }
+        re.value = !0;
+        let a = !1;
+        try {
+          de.value
+            ? null == (l = ve.value) || l.openDialog(oe.value.row.email, be)
+            : (await be(!1), (a = !0));
+        } finally {
+          await I(() => {
+            re.value = !1;
+          });
+        }
+        a && (le.value = !1);
+      }
+      async function be(e = !0) {
+        if (ge.value) {
+          let e = {
+            ...i.omit(oe.value.row, ["name", "passwd", "id", "googleAuthQr"]),
+          };
+          (0 === e.interval
+            ? ((e.interval = e.customInterval), delete e.customInterval)
+            : delete e.customInterval,
+            await (de.value ? L : P)(e, oe.value.row.id));
+        } else
+          pe.value &&
+            (await q({
+              memberId: oe.value.row.id,
+              passwd: T(oe.value.row.passwd),
+              offline: se.value,
+            }));
+        (we("submit"),
+          e && (le.value = !1),
+          pe.value
+            ? E({
+                message: ee("org.member.req.resetPasswordSuccess"),
+                type: "success",
+              })
+            : E.success(ee("setting.SaveSuccess")));
+      }
+      function he(e) {
+        oe.value.row = e;
+      }
+      const Ve = r(null);
+      function _e(e) {
+        de.value &&
+          (e && !Z.userInfo.isBindEmail
+            ? ((oe.value.row.checkEmail = !1),
+              O({
+                title: ee("org.loginVerify.tip15"),
+                message: ee("org.loginVerify.tip16"),
+                type: "warning",
+                center: !0,
+                confirmButtonText: ee("org.loginVerify.tip17"),
+                showCancelButton: !0,
+                cancelButtonText: ee("base.cancel"),
+              }).then(() => {
+                var e;
+                null == (e = Ve.value) || e.openDialog();
+              }))
+            : (oe.value.row.email = Z.userInfo.email));
+      }
+      function xe() {
+        de.value && (oe.value.row.email = Z.userInfo.email);
+      }
+      return (
+        K({
+          acceptParams: async function (e, l = !1) {
+            var a, t;
+            try {
+              ((de.value = l),
+                (ue.value = !1),
+                null == (a = me.value) || a.resetFields(),
+                (oe.value.row = i.cloneDeep(te)),
+                (le.value = !0),
+                (ie.value = !0),
+                (oe.value.title = e.title),
+                (oe.value.type = e.type));
+              const o = await Promise.allSettled([
+                e.type !== C.RESET
+                  ? ((t = e.row.id), de.value ? R(t) : S(t))
+                  : Promise.resolve(null),
+                e.type !== C.VERIFY
+                  ? D({ all: !0, userId: e.row.userId, loginStatus: U.ONLINE })
+                  : Promise.resolve(null),
+              ]);
+              if ("fulfilled" !== o[0].status || "fulfilled" !== o[1].status)
+                return void (ue.value = !0);
+              console.log(o, "resultsresults");
+              const r = "fulfilled" === o[0].status ? o[0].value : null,
+                u = "fulfilled" === o[1].status ? o[1].value : null,
+                s = ((null == u ? void 0 : u.list) ?? []).length >= 3,
+                n = { ...e.row, ...i.omitBy(r, i.isNil) };
+              (Object.assign(oe.value.row, n),
+                (null == n ? void 0 : n.interval) &&
+                  ![7, 30, 90].includes(null == n ? void 0 : n.interval) &&
+                  ((oe.value.row.customInterval =
+                    null == n ? void 0 : n.interval),
+                  (oe.value.row.interval = 0)),
+                (oe.value.importantTips = s),
+                (ne.value = i.cloneDeep(n)),
+                (se.value = !1));
+            } finally {
+              ie.value = !1;
+            }
+          },
+        }),
+        (l, a) => {
+          const t = u("el-input"),
+            r = u("el-form-item"),
+            k = u("el-switch"),
+            E = u("ArrowRight"),
+            I = u("el-icon"),
+            q = u("el-option"),
+            T = u("el-select"),
+            C = u("el-input-number"),
+            D = u("el-checkbox"),
+            U = u("el-radio"),
+            L = u("el-radio-group"),
+            P = u("el-form"),
+            R = u("el-button"),
+            S = u("el-dialog"),
+            B = s("loadingV2"),
+            A = s("prevent-label-click");
+          return (
+            n(),
+            v(
+              d,
+              null,
+              [
+                c(
+                  S,
+                  {
+                    modelValue: w(le),
+                    "onUpdate:modelValue":
+                      a[10] ||
+                      (a[10] = (e) => (m(le) ? (le.value = e) : (le = e))),
+                    "label-width": "auto",
+                    "label-position": "right",
+                    title: oe.value.title,
+                    width: "600px",
+                    "close-on-click-modal": !1,
+                    "close-on-press-escape": !1,
+                    "align-center": !0,
+                    "destroy-on-close": "",
+                    class: "loginVerify-dialog",
+                  },
+                  {
+                    footer: p(() => [
+                      c(
+                        R,
+                        { type: "info", onClick: fe },
+                        {
+                          default: p(() => [
+                            x(h((ge.value, w(ee)("base.cancel"))), 1),
+                          ]),
+                          _: 1,
+                        },
+                      ),
+                      c(
+                        R,
+                        {
+                          type: "primary",
+                          loading: re.value,
+                          disabled: ie.value || ue.value,
+                          onClick: ye,
+                        },
+                        {
+                          default: p(() => [x(h(w(ee)("base.confirm")), 1)]),
+                          _: 1,
+                        },
+                        8,
+                        ["loading", "disabled"],
+                      ),
+                    ]),
+                    default: p(() => [
+                      g(
+                        (n(),
+                        f(
+                          P,
+                          {
+                            "label-width": "auto",
+                            ref_key: "formRef",
+                            ref: me,
+                            rules: ce,
+                            "label-position": "right",
+                            model: oe.value.row,
+                            style: { "max-width": "600px" },
+                          },
+                          {
+                            default: p(() => [
+                              de.value
+                                ? y("", !0)
+                                : (n(),
+                                  f(
+                                    r,
+                                    {
+                                      key: 0,
+                                      label: w(ee)("org.member.req.name"),
+                                    },
+                                    {
+                                      default: p(() => [
+                                        g(
+                                          c(
+                                            t,
+                                            {
+                                              modelValue: oe.value.row.name,
+                                              "onUpdate:modelValue":
+                                                a[0] ||
+                                                (a[0] = (e) =>
+                                                  (oe.value.row.name = e)),
+                                              disabled: "",
+                                            },
+                                            null,
+                                            8,
+                                            ["modelValue"],
+                                          ),
+                                          [[B, ie.value]],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  )),
+                              ge.value
+                                ? (n(),
+                                  v(
+                                    d,
+                                    { key: 1 },
+                                    [
+                                      c(
+                                        r,
+                                        { label: w(ee)("rpa.task.list.onOff") },
+                                        {
+                                          default: p(() => [
+                                            g(
+                                              (n(),
+                                              v("div", N, [
+                                                c(
+                                                  k,
+                                                  {
+                                                    class: "tw-mr-[15px]",
+                                                    modelValue:
+                                                      oe.value.row
+                                                        .loginValidate,
+                                                    "onUpdate:modelValue":
+                                                      a[1] ||
+                                                      (a[1] = (e) =>
+                                                        (oe.value.row.loginValidate =
+                                                          e)),
+                                                  },
+                                                  null,
+                                                  8,
+                                                  ["modelValue"],
+                                                ),
+                                                b(
+                                                  "div",
+                                                  z,
+                                                  h(
+                                                    de.value
+                                                      ? w(ee)(
+                                                          "org.loginVerify.tip20",
+                                                        )
+                                                      : w(ee)(
+                                                          "org.member.openLoginCheckTip",
+                                                        ),
+                                                  ),
+                                                  1,
+                                                ),
+                                              ])),
+                                              [[B, ie.value]],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      oe.value.row.loginValidate
+                                        ? (n(),
+                                          v(
+                                            d,
+                                            { key: 0 },
+                                            [
+                                              c(
+                                                r,
+                                                {
+                                                  label: w(ee)(
+                                                    "org.member.req.verificationMode",
+                                                  ),
+                                                },
+                                                {
+                                                  default: p(() => [
+                                                    g(
+                                                      (n(),
+                                                      v("div", F, [
+                                                        (n(!0),
+                                                        v(
+                                                          d,
+                                                          null,
+                                                          V(
+                                                            w(_),
+                                                            (e) => (
+                                                              n(),
+                                                              v(
+                                                                "div",
+                                                                {
+                                                                  key: e,
+                                                                  class:
+                                                                    "tw-w-[100%] first:tw-mb-[16px] tw-h-fit tw-text-[14px] tw-px-[16px] tw-pt-[13px] tw-pb-[24px] tw-border tw-border-solid tw-border-[var(--dialog-border-color)] tw-rounded-[8px]",
+                                                                },
+                                                                [
+                                                                  b("div", Y, [
+                                                                    b(
+                                                                      "div",
+                                                                      null,
+                                                                      h(
+                                                                        w(ee)(
+                                                                          `org.member.${e}`,
+                                                                        ),
+                                                                      ),
+                                                                      1,
+                                                                    ),
+                                                                    de.value &&
+                                                                    e ===
+                                                                      w(_).EMAIL
+                                                                      ? (n(),
+                                                                        f(
+                                                                          k,
+                                                                          {
+                                                                            key: 0,
+                                                                            modelValue:
+                                                                              oe
+                                                                                .value
+                                                                                .row
+                                                                                .checkEmail,
+                                                                            "onUpdate:modelValue":
+                                                                              a[2] ||
+                                                                              (a[2] =
+                                                                                (
+                                                                                  e,
+                                                                                ) =>
+                                                                                  (oe.value.row.checkEmail =
+                                                                                    e)),
+                                                                            onChange:
+                                                                              _e,
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "modelValue",
+                                                                          ],
+                                                                        ))
+                                                                      : (n(),
+                                                                        v(
+                                                                          "div",
+                                                                          {
+                                                                            key: 1,
+                                                                            class:
+                                                                              "tw-cursor-pointer tw-text-[var(--primary-color)] tw-flex tw-items-center",
+                                                                            onClick:
+                                                                              (
+                                                                                l,
+                                                                              ) =>
+                                                                                (function (
+                                                                                  e,
+                                                                                ) {
+                                                                                  var l;
+                                                                                  if (
+                                                                                    !oe
+                                                                                      .value
+                                                                                      .row
+                                                                                      .verifyCode &&
+                                                                                    !Z
+                                                                                      .userInfo
+                                                                                      .isBindEmail &&
+                                                                                    de.value
+                                                                                  )
+                                                                                    return (
+                                                                                      (oe.value.row.checkEmail =
+                                                                                        !1),
+                                                                                      void O(
+                                                                                        {
+                                                                                          title:
+                                                                                            ee(
+                                                                                              "org.loginVerify.tip15",
+                                                                                            ),
+                                                                                          message:
+                                                                                            ee(
+                                                                                              "org.loginVerify.tip16",
+                                                                                            ),
+                                                                                          type: "warning",
+                                                                                          center:
+                                                                                            !0,
+                                                                                          confirmButtonText:
+                                                                                            ee(
+                                                                                              "org.loginVerify.tip17",
+                                                                                            ),
+                                                                                          showCancelButton:
+                                                                                            !0,
+                                                                                          cancelButtonText:
+                                                                                            ee(
+                                                                                              "base.cancel",
+                                                                                            ),
+                                                                                        },
+                                                                                      ).then(
+                                                                                        () => {
+                                                                                          var e;
+                                                                                          null ==
+                                                                                            (e =
+                                                                                              Ve.value) ||
+                                                                                            e.openDialog();
+                                                                                        },
+                                                                                      )
+                                                                                    );
+                                                                                  let a =
+                                                                                    i.cloneDeep(
+                                                                                      oe
+                                                                                        .value
+                                                                                        .row,
+                                                                                    );
+                                                                                  ((a.verifyCode =
+                                                                                    ""),
+                                                                                    null ==
+                                                                                      (l =
+                                                                                        ae.value) ||
+                                                                                      l.acceptParams(
+                                                                                        {
+                                                                                          title:
+                                                                                            ee(
+                                                                                              `org.member.${e}`,
+                                                                                            ),
+                                                                                          row: a,
+                                                                                          type: e,
+                                                                                        },
+                                                                                      ));
+                                                                                })(
+                                                                                  e,
+                                                                                ),
+                                                                          },
+                                                                          [
+                                                                            x(
+                                                                              h(
+                                                                                oe
+                                                                                  .value
+                                                                                  .row[
+                                                                                  e ===
+                                                                                  w(
+                                                                                    _,
+                                                                                  )
+                                                                                    .EMAIL
+                                                                                    ? "checkEmail"
+                                                                                    : "check2fa"
+                                                                                ]
+                                                                                  ? w(
+                                                                                      ee,
+                                                                                    )(
+                                                                                      "org.org.open",
+                                                                                    )
+                                                                                  : w(
+                                                                                      ee,
+                                                                                    )(
+                                                                                      "org.org.notOpen",
+                                                                                    ),
+                                                                              ),
+                                                                              1,
+                                                                            ),
+                                                                            c(
+                                                                              I,
+                                                                              {
+                                                                                size: "16",
+                                                                                class:
+                                                                                  "tw-ml-[2px]",
+                                                                              },
+                                                                              {
+                                                                                default:
+                                                                                  p(
+                                                                                    () => [
+                                                                                      c(
+                                                                                        E,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                _: 1,
+                                                                              },
+                                                                            ),
+                                                                          ],
+                                                                          8,
+                                                                          M,
+                                                                        )),
+                                                                  ]),
+                                                                  b(
+                                                                    "div",
+                                                                    H,
+                                                                    h(
+                                                                      w(ee)(
+                                                                        `org.member.${e}_tip`,
+                                                                      ),
+                                                                    ),
+                                                                    1,
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            ),
+                                                          ),
+                                                          128,
+                                                        )),
+                                                      ])),
+                                                      [[B, ie.value]],
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                                8,
+                                                ["label"],
+                                              ),
+                                              c(
+                                                r,
+                                                {
+                                                  label: w(ee)(
+                                                    "org.member.req.everyLogin",
+                                                  ),
+                                                  class: "!tw-mb-[16px]",
+                                                },
+                                                {
+                                                  default: p(() => [
+                                                    c(
+                                                      L,
+                                                      {
+                                                        modelValue:
+                                                          oe.value.row
+                                                            .everyLogin,
+                                                        "onUpdate:modelValue":
+                                                          a[7] ||
+                                                          (a[7] = (e) =>
+                                                            (oe.value.row.everyLogin =
+                                                              e)),
+                                                        onChange:
+                                                          a[8] ||
+                                                          (a[8] = (e) =>
+                                                            (oe.value.row.checkLoginOut =
+                                                              !1)),
+                                                      },
+                                                      {
+                                                        default: p(() => [
+                                                          c(
+                                                            U,
+                                                            {
+                                                              value: !1,
+                                                              size: "large",
+                                                              class:
+                                                                "!tw-h-fit tw-items-baseline",
+                                                            },
+                                                            {
+                                                              default: p(() => [
+                                                                b(
+                                                                  "div",
+                                                                  J,
+                                                                  h(
+                                                                    de.value
+                                                                      ? w(ee)(
+                                                                          "org.loginVerify.tip22",
+                                                                        )
+                                                                      : w(ee)(
+                                                                          "org.member.req.intervalTip",
+                                                                        ),
+                                                                  ),
+                                                                  1,
+                                                                ),
+                                                                b(
+                                                                  "div",
+                                                                  null,
+                                                                  h(
+                                                                    w(ee)(
+                                                                      "org.member.req.interval",
+                                                                    ),
+                                                                  ),
+                                                                  1,
+                                                                ),
+                                                                c(
+                                                                  T,
+                                                                  {
+                                                                    modelValue:
+                                                                      oe.value
+                                                                        .row
+                                                                        .interval,
+                                                                    "onUpdate:modelValue":
+                                                                      a[3] ||
+                                                                      (a[3] = (
+                                                                        e,
+                                                                      ) =>
+                                                                        (oe.value.row.interval =
+                                                                          e)),
+                                                                    class:
+                                                                      "tw-w-[100px]",
+                                                                  },
+                                                                  {
+                                                                    default: p(
+                                                                      () => [
+                                                                        c(
+                                                                          q,
+                                                                          {
+                                                                            value: 7,
+                                                                            label: `7 ${w(ee)("cost.plan.card.days")}`,
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "label",
+                                                                          ],
+                                                                        ),
+                                                                        c(
+                                                                          q,
+                                                                          {
+                                                                            value: 30,
+                                                                            label: `30 ${w(ee)("cost.plan.card.days")}`,
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "label",
+                                                                          ],
+                                                                        ),
+                                                                        c(
+                                                                          q,
+                                                                          {
+                                                                            value: 90,
+                                                                            label: `90 ${w(ee)("cost.plan.card.days")}`,
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "label",
+                                                                          ],
+                                                                        ),
+                                                                        c(
+                                                                          q,
+                                                                          {
+                                                                            value: 0,
+                                                                            label: `${w(ee)("env.env.req.custom")}`,
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "label",
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    _: 1,
+                                                                  },
+                                                                  8,
+                                                                  [
+                                                                    "modelValue",
+                                                                  ],
+                                                                ),
+                                                                0 ===
+                                                                oe.value.row
+                                                                  .interval
+                                                                  ? (n(),
+                                                                    f(
+                                                                      C,
+                                                                      {
+                                                                        key: 0,
+                                                                        modelValue:
+                                                                          oe
+                                                                            .value
+                                                                            .row
+                                                                            .customInterval,
+                                                                        "onUpdate:modelValue":
+                                                                          a[4] ||
+                                                                          (a[4] =
+                                                                            (
+                                                                              e,
+                                                                            ) =>
+                                                                              (oe.value.row.customInterval =
+                                                                                e)),
+                                                                        max: 168,
+                                                                        min: 1,
+                                                                        precision: 0,
+                                                                        "value-on-clear": 1,
+                                                                        "controls-position":
+                                                                          "right",
+                                                                        class:
+                                                                          "tw-w-[110px] tw-ml-[12px]",
+                                                                      },
+                                                                      null,
+                                                                      8,
+                                                                      [
+                                                                        "modelValue",
+                                                                      ],
+                                                                    ))
+                                                                  : y("", !0),
+                                                                0 ===
+                                                                oe.value.row
+                                                                  .interval
+                                                                  ? (n(),
+                                                                    f(
+                                                                      T,
+                                                                      {
+                                                                        key: 1,
+                                                                        modelValue:
+                                                                          oe
+                                                                            .value
+                                                                            .row
+                                                                            .loginOutTimeUnitType,
+                                                                        "onUpdate:modelValue":
+                                                                          a[5] ||
+                                                                          (a[5] =
+                                                                            (
+                                                                              e,
+                                                                            ) =>
+                                                                              (oe.value.row.loginOutTimeUnitType =
+                                                                                e)),
+                                                                        class:
+                                                                          "tw-w-[100px] tw-ml-[12px]",
+                                                                      },
+                                                                      {
+                                                                        default:
+                                                                          p(
+                                                                            () => [
+                                                                              c(
+                                                                                q,
+                                                                                {
+                                                                                  value:
+                                                                                    w(
+                                                                                      o,
+                                                                                    )
+                                                                                      .HOUR,
+                                                                                  label:
+                                                                                    w(
+                                                                                      ee,
+                                                                                    )(
+                                                                                      "cost.plan.card.hours",
+                                                                                    ),
+                                                                                },
+                                                                                null,
+                                                                                8,
+                                                                                [
+                                                                                  "value",
+                                                                                  "label",
+                                                                                ],
+                                                                              ),
+                                                                              c(
+                                                                                q,
+                                                                                {
+                                                                                  value:
+                                                                                    w(
+                                                                                      o,
+                                                                                    )
+                                                                                      .DAY,
+                                                                                  label:
+                                                                                    w(
+                                                                                      ee,
+                                                                                    )(
+                                                                                      "cost.plan.card.days",
+                                                                                    ),
+                                                                                },
+                                                                                null,
+                                                                                8,
+                                                                                [
+                                                                                  "value",
+                                                                                  "label",
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        _: 1,
+                                                                      },
+                                                                      8,
+                                                                      [
+                                                                        "modelValue",
+                                                                      ],
+                                                                    ))
+                                                                  : y("", !0),
+                                                                de.value
+                                                                  ? y("", !0)
+                                                                  : (n(),
+                                                                    v(
+                                                                      "div",
+                                                                      Q,
+                                                                      [
+                                                                        c(
+                                                                          D,
+                                                                          {
+                                                                            modelValue:
+                                                                              oe
+                                                                                .value
+                                                                                .row
+                                                                                .checkLoginOut,
+                                                                            "onUpdate:modelValue":
+                                                                              a[6] ||
+                                                                              (a[6] =
+                                                                                (
+                                                                                  e,
+                                                                                ) =>
+                                                                                  (oe.value.row.checkLoginOut =
+                                                                                    e)),
+                                                                            disabled:
+                                                                              oe
+                                                                                .value
+                                                                                .row
+                                                                                .everyLogin,
+                                                                          },
+                                                                          {
+                                                                            default:
+                                                                              p(
+                                                                                () => [
+                                                                                  x(
+                                                                                    h(
+                                                                                      w(
+                                                                                        ee,
+                                                                                      )(
+                                                                                        "org.member.req.checkLoginOut",
+                                                                                      ),
+                                                                                    ),
+                                                                                    1,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            _: 1,
+                                                                          },
+                                                                          8,
+                                                                          [
+                                                                            "modelValue",
+                                                                            "disabled",
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    )),
+                                                              ]),
+                                                              _: 1,
+                                                            },
+                                                          ),
+                                                          c(
+                                                            U,
+                                                            {
+                                                              value: !0,
+                                                              size: "large",
+                                                              class:
+                                                                "tw-whitespace-pre-wrap tw-leading-[1.1]",
+                                                            },
+                                                            {
+                                                              default: p(() => [
+                                                                x(
+                                                                  h(
+                                                                    de.value
+                                                                      ? w(ee)(
+                                                                          "org.loginVerify.tip23",
+                                                                        )
+                                                                      : w(ee)(
+                                                                          "org.member.req.interval2",
+                                                                        ),
+                                                                  ),
+                                                                  1,
+                                                                ),
+                                                              ]),
+                                                              _: 1,
+                                                            },
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      ["modelValue"],
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                                8,
+                                                ["label"],
+                                              ),
+                                            ],
+                                            64,
+                                          ))
+                                        : y("", !0),
+                                    ],
+                                    64,
+                                  ))
+                                : (n(),
+                                  v(
+                                    d,
+                                    { key: 2 },
+                                    [
+                                      c(
+                                        r,
+                                        {
+                                          class: "tw-mb-0",
+                                          label: w(ee)(
+                                            "org.member.req.newPassword",
+                                          ),
+                                          prop: "passwd",
+                                          required: "",
+                                        },
+                                        {
+                                          default: p(() => [
+                                            c(
+                                              t,
+                                              {
+                                                placeholder:
+                                                  w(ee)("rpa.task.req.enter"),
+                                                modelValue: oe.value.row.passwd,
+                                                "onUpdate:modelValue":
+                                                  a[9] ||
+                                                  (a[9] = (e) =>
+                                                    (oe.value.row.passwd = e)),
+                                                type: "password",
+                                                "show-password": "",
+                                              },
+                                              null,
+                                              8,
+                                              ["placeholder", "modelValue"],
+                                            ),
+                                            b(
+                                              "div",
+                                              G,
+                                              h(
+                                                w(ee)(
+                                                  "org.member.req.newPasswordTip",
+                                                ),
+                                              ),
+                                              1,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      c(
+                                        r,
+                                        { class: "tw-mb-0", label: " " },
+                                        {
+                                          default: p(() => [
+                                            oe.value.importantTips
+                                              ? (n(),
+                                                v(
+                                                  "div",
+                                                  X,
+                                                  h(
+                                                    w(ee)(
+                                                      "org.member.req.resetPasswdTip",
+                                                    ),
+                                                  ),
+                                                  1,
+                                                ))
+                                              : y("", !0),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      ),
+                                    ],
+                                    64,
+                                  )),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["rules", "model"],
+                        )),
+                        [[A]],
+                      ),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["modelValue", "title"],
+                ),
+                c(
+                  e,
+                  {
+                    isUser: de.value,
+                    ref_key: "verifyConfigDialogRef",
+                    ref: ae,
+                    onSubmit: he,
+                  },
+                  null,
+                  8,
+                  ["isUser"],
+                ),
+                c(
+                  $,
+                  { ref_key: "resetPasswordRef", ref: Ve, onSubmit: xe },
+                  null,
+                  512,
+                ),
+                c(
+                  j,
+                  { ref_key: "operationVerificationRef", ref: ve },
+                  null,
+                  512,
+                ),
+              ],
+              64,
+            )
+          );
+        }
+      );
+    },
+  });
+export { K as _ };

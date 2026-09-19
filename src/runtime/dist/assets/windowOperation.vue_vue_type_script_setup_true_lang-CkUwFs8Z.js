@@ -1,0 +1,437 @@
+import {
+  d as t,
+  v as s,
+  k5 as l,
+  r as a,
+  o as e,
+  c as i,
+  a as n,
+  t as o,
+  b as c,
+  w as p,
+  f as u,
+  e as d,
+  X as w,
+  F as r,
+  z as m,
+  h as y,
+  C as x,
+} from "./index-BUIbb6Pa.js";
+import { _ as v } from "./tipButton.vue_vue_type_script_setup_true_lang-D61jtuVu.js";
+const f = { class: "" },
+  g = { class: "tw-mt-6" },
+  h = { class: "tw-text-[14px]" },
+  b = { class: "b-flex tw-mt-3" },
+  $ = { class: "tw-mt-6" },
+  V = { class: "tw-text-[14px]" },
+  _ = { class: "b-flex tw-mt-3" },
+  A = { class: "tw-mt-6" },
+  O = { class: "tw-text-[14px]" },
+  L = { class: "tw-mt-3" },
+  C = { class: "s-flex tw-gap-x-2" },
+  U = { class: "tw-text-[14px] tw-text-subText" },
+  k = {
+    key: 0,
+    class:
+      "tw-mt-3 tw-px-[16px] tw-py-[18px] tw-bg-themeColor5 tw-w-full tw-rounded-[8px]",
+  },
+  X = { class: "tw-text-[13px] tw-mb-2" },
+  Y = { class: "tw-text-[13px]" },
+  I = { class: "b-flex tw-gap-x-4" },
+  P = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  S = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  j = { class: "tw-text-[13px] tw-mb-2" },
+  z = { class: "tw-text-[13px]" },
+  Q = { class: "b-flex tw-gap-x-4" },
+  W = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  B = { class: "tw-mr-1 tw-whitespace-nowrap" },
+  E = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  F = { class: "tw-mr-1 tw-whitespace-nowrap" },
+  T = { class: "tw-text-[13px] tw-mb-2" },
+  q = { class: "tw-text-[13px]" },
+  D = { class: "b-flex tw-gap-x-4" },
+  G = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  H = { class: "tw-mr-1 tw-whitespace-nowrap" },
+  J = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  K = { class: "tw-mr-1 tw-whitespace-nowrap" },
+  M = { class: "tw-text-[13px] tw-mb-2" },
+  N = { class: "tw-text-[13px]" },
+  R = { class: "b-flex tw-gap-x-4 tw-ml-5" },
+  Z = { class: "s-flex tw-gap-x-1 tw-my-2" },
+  tt = { class: "tw-ml-1 tw-whitespace-nowrap" },
+  st = { class: "tw-mt-3" },
+  lt = t({
+    __name: "windowOperation",
+    props: { setLoading: {} },
+    setup(t) {
+      const { t: lt } = s.useI18n(),
+        at = l(),
+        et = t,
+        it = x(() => at.state && at.selectEnv.length > 1),
+        nt = x(() => (t, s) => {
+          let l = "";
+          return (
+            t.detected &&
+              (l = t.internal
+                ? `${lt("sync.tip39")}${s + 1} (${t.bounds.width}*${t.bounds.height})`
+                : `${lt("sync.tip40")}${s + 1} (${t.bounds.width}*${t.bounds.height})`),
+            l
+          );
+        });
+      return (s, l) => {
+        const x = a("el-button"),
+          lt = a("el-switch"),
+          ot = a("el-input-number"),
+          ct = a("el-option"),
+          pt = a("el-select");
+        return (
+          e(),
+          i("div", f, [
+            n("div", g, [
+              n("h4", h, o(s.$t("sync.tip31")), 1),
+              n("div", b, [
+                c(v, null, {
+                  default: p(() => [
+                    c(
+                      x,
+                      {
+                        disabled: !it.value,
+                        class: "c-flex tw-w-full",
+                        plain: "",
+                        type: "primary",
+                        onClick:
+                          l[0] ||
+                          (l[0] = (t) =>
+                            u(at).syncUnifiedWinSize(et.setLoading)),
+                      },
+                      { default: p(() => [d(o(s.$t("sync.tip32")), 1)]), _: 1 },
+                      8,
+                      ["disabled"],
+                    ),
+                  ]),
+                  _: 1,
+                }),
+                c(v, null, {
+                  default: p(() => [
+                    c(
+                      x,
+                      {
+                        disabled: !it.value,
+                        class: "c-flex tw-w-full",
+                        plain: "",
+                        type: "primary",
+                        onClick:
+                          l[1] ||
+                          (l[1] = (t) =>
+                            u(at).syncShowSelectWins(et.setLoading)),
+                      },
+                      { default: p(() => [d(o(s.$t("sync.tip33")), 1)]), _: 1 },
+                      8,
+                      ["disabled"],
+                    ),
+                  ]),
+                  _: 1,
+                }),
+              ]),
+            ]),
+            n("div", $, [
+              n("h4", V, o(s.$t("sync.tip34")), 1),
+              n("div", _, [
+                c(v, null, {
+                  default: p(() => [
+                    c(
+                      x,
+                      {
+                        disabled: !it.value,
+                        class: "c-flex tw-w-full",
+                        plain: "",
+                        type: "primary",
+                        onClick:
+                          l[2] ||
+                          (l[2] = (s) => u(at).syncLatticeLayout(t.setLoading)),
+                      },
+                      { default: p(() => [d(o(s.$t("sync.tip35")), 1)]), _: 1 },
+                      8,
+                      ["disabled"],
+                    ),
+                  ]),
+                  _: 1,
+                }),
+                c(v, null, {
+                  default: p(() => [
+                    c(
+                      x,
+                      {
+                        disabled: !it.value,
+                        class: "c-flex tw-w-full",
+                        plain: "",
+                        type: "primary",
+                        onClick:
+                          l[3] ||
+                          (l[3] = (s) => u(at).syncOverlapLayout(t.setLoading)),
+                      },
+                      { default: p(() => [d(o(s.$t("sync.tip36")), 1)]), _: 1 },
+                      8,
+                      ["disabled"],
+                    ),
+                  ]),
+                  _: 1,
+                }),
+              ]),
+            ]),
+            n("div", A, [
+              n("h4", O, o(s.$t("sync.tip37")), 1),
+              n("div", L, [
+                n("div", C, [
+                  c(
+                    lt,
+                    {
+                      "active-value": !u(at).customArray,
+                      "inactive-value": u(at).customArray,
+                      onChange:
+                        l[4] ||
+                        (l[4] = (t) =>
+                          (u(at).customArray = !u(at).customArray)),
+                    },
+                    null,
+                    8,
+                    ["active-value", "inactive-value"],
+                  ),
+                  n(
+                    "span",
+                    U,
+                    o(
+                      u(at).customArray
+                        ? s.$t("sync.tip38")
+                        : s.$t("sync.tip43"),
+                    ),
+                    1,
+                  ),
+                ]),
+              ]),
+              u(at).customArray
+                ? (e(),
+                  i("div", k, [
+                    n("div", X, [
+                      n("h4", Y, o(s.$t("sync.tip44")) + " :", 1),
+                      n("div", I, [
+                        n("div", P, [
+                          l[14] ||
+                            (l[14] = n("span", { class: "tw-mr-1" }, "X", -1)),
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.x,
+                              "onUpdate:modelValue":
+                                l[5] ||
+                                (l[5] = (t) =>
+                                  (u(at).customArrayOptions.x = t)),
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                        n("div", S, [
+                          l[15] ||
+                            (l[15] = n("span", { class: "tw-mr-1" }, "Y", -1)),
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.y,
+                              "onUpdate:modelValue":
+                                l[6] ||
+                                (l[6] = (t) =>
+                                  (u(at).customArrayOptions.y = t)),
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                      ]),
+                    ]),
+                    n("div", j, [
+                      n("h4", z, o(s.$t("sync.tip45")) + " :", 1),
+                      n("div", Q, [
+                        n("div", W, [
+                          n("span", B, o(s.$t("sync.tip46")), 1),
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.width,
+                              "onUpdate:modelValue":
+                                l[7] ||
+                                (l[7] = (t) =>
+                                  (u(at).customArrayOptions.width = t)),
+                              min: 1,
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                        n("div", E, [
+                          n("span", F, o(s.$t("sync.tip47")), 1),
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.height,
+                              "onUpdate:modelValue":
+                                l[8] ||
+                                (l[8] = (t) =>
+                                  (u(at).customArrayOptions.height = t)),
+                              min: 1,
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                      ]),
+                    ]),
+                    n("div", T, [
+                      n("h4", q, o(s.$t("sync.tip51")) + " :", 1),
+                      n("div", D, [
+                        n("div", G, [
+                          n("span", H, o(s.$t("sync.tip46")), 1),
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.gapX,
+                              "onUpdate:modelValue":
+                                l[9] ||
+                                (l[9] = (t) =>
+                                  (u(at).customArrayOptions.gapX = t)),
+                              min: 1,
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                        n("div", J, [
+                          n("span", K, o(s.$t("sync.tip47")), 1),
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.gapY,
+                              "onUpdate:modelValue":
+                                l[10] ||
+                                (l[10] = (t) =>
+                                  (u(at).customArrayOptions.gapY = t)),
+                              min: 1,
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]),
+                      ]),
+                    ]),
+                    n("div", M, [
+                      n("h4", N, o(s.$t("sync.tip48")) + " :", 1),
+                      n("div", R, [
+                        n("div", Z, [
+                          c(
+                            ot,
+                            {
+                              modelValue: u(at).customArrayOptions.colQuantity,
+                              "onUpdate:modelValue":
+                                l[11] ||
+                                (l[11] = (t) =>
+                                  (u(at).customArrayOptions.colQuantity = t)),
+                              min: 1,
+                              class: "tw-w-full",
+                              "controls-position": "right",
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                          n("span", tt, o(s.$t("sync.tip49")), 1),
+                        ]),
+                      ]),
+                    ]),
+                    n("div", null, [
+                      c(v, null, {
+                        default: p(() => [
+                          c(
+                            x,
+                            {
+                              disabled: !it.value,
+                              class: "tw-w-full",
+                              type: "primary",
+                              onClick:
+                                l[12] ||
+                                (l[12] = (s) =>
+                                  u(at).syncCustomLayout(t.setLoading)),
+                            },
+                            {
+                              default: p(() => [d(o(s.$t("sync.tip50")), 1)]),
+                              _: 1,
+                            },
+                            8,
+                            ["disabled"],
+                          ),
+                        ]),
+                        _: 1,
+                      }),
+                    ]),
+                  ]))
+                : w("", !0),
+              n("div", st, [
+                c(
+                  pt,
+                  {
+                    modelValue: u(at).disPlayId,
+                    "onUpdate:modelValue":
+                      l[13] || (l[13] = (t) => (u(at).disPlayId = t)),
+                  },
+                  {
+                    default: p(() => [
+                      (e(!0),
+                      i(
+                        r,
+                        null,
+                        m(
+                          u(at).disPlays,
+                          (t, s) => (
+                            e(),
+                            y(
+                              ct,
+                              { key: t.id, label: nt.value(t, s), value: t.id },
+                              null,
+                              8,
+                              ["label", "value"],
+                            )
+                          ),
+                        ),
+                        128,
+                      )),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["modelValue"],
+                ),
+              ]),
+            ]),
+          ])
+        );
+      };
+    },
+  });
+export { lt as _ };

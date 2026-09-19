@@ -1,0 +1,161 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "value": "WECHAT_PAY",
+      "label": "WeChat",
+      "methods": "",
+      "currency": "CNY",
+      "payChannel": "WECHAT_PAY",
+      "tips": "0% + $0.00",
+      "logo": "https://tj-media.tjcid.com/static/payType/weChat.png"
+    },
+    {
+      "value": "ALIPAY_CN",
+      "label": "",
+      "methods": "alipaycn",
+      "currency": "CNY",
+      "payChannel": "AIRWALLEX",
+      "tips": "2.1% +  $1.00",
+      "logo": "https://tj-media.tjcid.com/static/payType/ALIPAY_CN.png"
+    },
+    {
+      "value": "ALIPAY_HK",
+      "label": "Alipay HK",
+      "methods": "alipayhk",
+      "currency": "HKD",
+      "payChannel": "AIRWALLEX",
+      "tips": "3.5% + $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Alipay.png"
+    },
+    {
+      "value": "VISA",
+      "label": "",
+      "methods": "card",
+      "currency": "USD",
+      "payChannel": "AIRWALLEX",
+      "tips": "6.0% + $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Visa.png"
+    },
+    {
+      "value": "APPLE_PAY",
+      "label": "Apple Pay",
+      "methods": "applepay",
+      "currency": "USD",
+      "payChannel": "AIRWALLEX",
+      "tips": "4.5% + 1.00$",
+      "logo": "https://tj-media.tjcid.com/static/payType/ApplePay.png"
+    },
+    {
+      "value": "GOOGLE_PAY",
+      "label": "Google Pay",
+      "methods": "googlepay",
+      "currency": "USD",
+      "payChannel": "AIRWALLEX",
+      "tips": "4.5% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/GooglePay.png"
+    },
+    {
+      "value": "GCASH",
+      "label": "G Cash",
+      "methods": "gcash",
+      "currency": "HKD",
+      "payChannel": "AIRWALLEX",
+      "tips": "4.0% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/GCash.png"
+    },
+    {
+      "value": "RABBIT_LINE_PAY",
+      "label": "",
+      "methods": "rabbit_line_pay",
+      "currency": "USD",
+      "payChannel": "AIRWALLEX",
+      "tips": "4.0% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/RabbitLinePay.png"
+    },
+    {
+      "value": "DANA",
+      "label": "DANA",
+      "methods": "dana",
+      "currency": "HKD",
+      "payChannel": "AIRWALLEX",
+      "tips": "4.0% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Dana.png"
+    },
+
+    {
+      "value": "BANK_CARD",
+      "label": "CARD(RUB)",
+      "methods": "",
+      "currency": "RUB",
+      "payChannel": "DUKPAY",
+      "tips": "6.0% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Card(RUB).png"
+    },
+    {
+      "value": "TINKOFF_PAY",
+      "label": "Tinkoff Pay",
+      "methods": "",
+      "currency": "RUB",
+      "payChannel": "DUKPAY",
+      "tips": "5.5% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Tinkoff.png"
+    },
+    {
+      "value": "HAI_PAY_PIX",
+      "label": "",
+      "methods": "",
+      "currency": "BRL",
+      "payChannel": "HAI_PAY",
+      "tips": "4.50% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Pix.png"
+    },
+    {
+      "value": "HAI_PAY_ZALO",
+      "label": "",
+      "methods": "",
+      "currency": "VND",
+      "payChannel": "HAI_PAY",
+      "tips": "4.00% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Zalopay.png"
+    },
+    {
+      "value": "HAI_PAY_MOMO",
+      "label": "MoMo",
+      "methods": "",
+      "currency": "VND",
+      "payChannel": "HAI_PAY",
+      "tips": "4.00% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Momo.png"
+    },
+    {
+      "value": "HAI_PAY_GDB_VCCB",
+      "label": "CARD(VND)",
+      "methods": "",
+      "currency": "VND",
+      "payChannel": "HAI_PAY",
+      "tips": "4.00% +  $1.00",
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Card(RUB).png"
+    },
+    {
+      "value": "USDT",
+      "label": "USDT",
+      "methods": "",
+      "currency": "",
+      "payChannel": "ACTYVE",
+      "tips": "2.0% +  $1.00",
+      "isVirtualCurrency": true,
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Usdt.png"
+    },
+    {
+      "value": "USDC",
+      "label": "USDC",
+      "z": "",
+      "currency": "",
+      "payChannel": "ACTYVE",
+      "tips": "2.0% +  $1.00",
+      "isVirtualCurrency": true,
+      "logo": "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/USDCoin.png"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+.loginVerify-dialog .el-radio.el-radio--large .el-radio__inner {
+  height: 16px;
+  width: 16px;
+  border-color: var(--text-color-light1);
+}
+.loginVerify-dialog .el-form-item--default .el-form-item__content {
+  line-height: 1.5;
+}

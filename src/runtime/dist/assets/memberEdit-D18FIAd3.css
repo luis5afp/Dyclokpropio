@@ -1,0 +1,39 @@
+@charset "UTF-8";
+.org-dialog {
+  max-height: 90%;
+  margin-top: unset;
+  display: flex;
+  flex-direction: column;
+}
+.org-dialog .el-dialog__body {
+  flex: 1;
+  overflow: auto;
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar {
+  width: 6px;
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar-thumb {
+  background: var(--thumb-dark-color);
+}
+.org-dialog .el-dialog__body::-webkit-scrollbar-thumb:hover {
+  background: var(--thumb-dark-color);
+}
+[data-v-20a10cfc] .el-select .el-tag {
+  max-width: 140px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html.dark .el-form--label-top .el-form-item[data-v-20a10cfc] {
+  margin-bottom: 20px !important;
+}
+.effective-time-date-picker
+  .el-picker-panel.el-date-range-picker[data-v-20a10cfc] {
+  width: 100%;
+}
+.effective-time-date-picker .el-picker-panel__footer[data-v-20a10cfc] {
+  background-color: transparent;
+}

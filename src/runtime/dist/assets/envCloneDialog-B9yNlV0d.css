@@ -1,0 +1,14 @@
+@charset "UTF-8";
+.clone-tips[data-v-1c674503] {
+  color: var(--text-color-light1);
+  line-height: 1.5em;
+}
+.no-flex .el-form-item__content[data-v-1c674503] {
+  display: unset;
+}
+[data-v-1c674503] .el-select .el-tag {
+  max-width: 140px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

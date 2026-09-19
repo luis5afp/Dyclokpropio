@@ -1,0 +1,16 @@
+import { _ as e } from "./ipResourceCard.vue_vue_type_script_setup_true_lang-BEgHaQcX.js";
+import "./index-BUIbb6Pa.js";
+import "./DynamicTrafficPurchase.vue_vue_type_script_setup_true_lang-BAxyvPun.js";
+import "./ipResourceMock-CCd7H3CQ.js";
+import "./ipResourceCatalog-CJEdeRbI.js";
+import "./ipResourcePayment-DW1eNDIC.js";
+import "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import "./browser-DEPKJqf2.js";
+import "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+import "./paySelect-CHLWtiLZ.js";
+import "./IpResourcePurchaseDialog.vue_vue_type_script_setup_true_lang-DcxcArWP.js";
+import "./envSegmentedTabs-B8OKb7JK.js";
+import "./StaticIpPurchase.vue_vue_type_script_setup_true_lang-Cjw6R1ER.js";
+export { e as default };

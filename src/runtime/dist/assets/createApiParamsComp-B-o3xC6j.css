@@ -1,0 +1,22 @@
+.e-table-container .table-extend {
+  margin: 0 !important;
+}
+.e-table-container .table-main {
+  border: 1px solid var(--border-color-base) !important;
+}
+.e-table-container .table-main .el-table .el-table__header th {
+  color: var(--table-header-color);
+  background: var(--el-fill-color-extra--high-light) !important;
+  border-bottom: none !important;
+}
+.e-table-container .table-main .el-table .el-table__row {
+  height: 70px;
+}
+.e-table-container
+  .table-main.card
+  .el-table--enable-row-hover
+  .el-table__body
+  tr:hover
+  > td.el-table__cell {
+  background-color: var(--border-color-base) !important;
+}

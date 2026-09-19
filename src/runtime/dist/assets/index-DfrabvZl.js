@@ -1,0 +1,164 @@
+import e from "./envSegmentedTabs-B8OKb7JK.js";
+import t from "./accountInfo-D158F1C6.js";
+import r from "./basicSetting-GkSM4U9T.js";
+import { E as s } from "./index-90lhaiW6.js";
+import {
+  d as p,
+  G as i,
+  v as _,
+  hQ as o,
+  i as u,
+  P as n,
+  o as a,
+  c as m,
+  b as c,
+  aq as l,
+  f as v,
+  w as y,
+  X as j,
+  C as g,
+  be as d,
+  ah as f,
+} from "./index-BUIbb6Pa.js";
+import x from "./envPreferences-CqnpQk93.js";
+import "./ResetPasswordDialog.vue_vue_type_script_setup_true_name_ResetPasswordDialog_lang-Ce8FZ9od.js";
+import "./realNameVerificationDlg-DTVh9pwh.js";
+import "./loginDeviceCard-D3aK8BRa.js";
+import "./country-flag.esm-Bg8BdAZu.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TruncateText.vue_vue_type_script_setup_true_lang-wXc_gDkK.js";
+import "./AccountSecurityConfig.vue_vue_type_script_setup_true_lang-Bd_fsFqO.js";
+import "./loginVerifyDialog.vue_vue_type_style_index_0_lang-gaNi40et.js";
+import "./verifyConfigDialog.vue_vue_type_style_index_0_lang-5RexhAzN.js";
+import "./browser-DEPKJqf2.js";
+import "./operationVerificationDialog.vue_vue_type_script_setup_true_lang-CFKmge30.js";
+import "./MainWindowStartupSetting.vue_vue_type_script_setup_true_lang-DYKQzjQJ.js";
+import "./CoreVersion.vue_vue_type_script_setup_true_lang-C1IKv2yI.js";
+import "./useEnvEdit-B6M5ajw7.js";
+import "./timezone-BMz8A6Hf.js";
+import "./index-C1USGHg9.js";
+import "./index-UZcsr-ei.js";
+import "./groupEdit.vue_vue_type_script_setup_true_name_envGroupEdit_lang-OORP_IuD.js";
+import "./BindAccount.vue_vue_type_script_setup_true_lang-ctBeT3Be.js";
+import "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import "./envEditProxyForm-BbH2PHWU.js";
+import "./proxyEditV2-PrFoTQ5r.js";
+import "./ipResourceMock-CCd7H3CQ.js";
+import "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import "./index.vue_vue_type_script_setup_true_lang-A7OAkZwm.js";
+import "./CustomRadioGroup-Dk-imFdD.js";
+import "./editProxySoftDlg.vue_vue_type_script_setup_true_lang-D9otwVyq.js";
+import "./proxySoftItem-B7tAwO_8.js";
+import "./envProxyItems-DIhzCyp-.js";
+import "./proxyCheckButton-qJacjpSf.js";
+import "./proxyUtil-OnkkuXcX.js";
+import "./envAutoInputProxy.vue_vue_type_script_setup_true_lang-CKSB7kpP.js";
+import "./proxyApiExtraction-CcAfvVt-.js";
+import "./proxyProviderAvailability-Dl68x0Bx.js";
+import "./ProxyGroupSelect.vue_vue_type_script_setup_true_lang-CTswbFOC.js";
+import "./envSerialNums-BjlyggGT.js";
+import "./ParaturboProxyConfig.vue_vue_type_script_setup_true_lang-DnrGQZKb.js";
+import "./DynamicProxyForm.vue_vue_type_script_setup_true_lang-BLDcp8Iw.js";
+import "./ipResourceCatalog-CJEdeRbI.js";
+import "./IpCountryFlag.vue_vue_type_script_setup_true_lang-DgLdnpgH.js";
+import "./IpResourceSelector.vue_vue_type_script_setup_true_lang-Dxuw76Sd.js";
+import "./DynamicTrafficGate.vue_vue_type_script_setup_true_lang-3aGxeuRD.js";
+import "./IpResourcePurchaseDialog.vue_vue_type_script_setup_true_lang-DcxcArWP.js";
+import "./DynamicTrafficPurchase.vue_vue_type_script_setup_true_lang-BAxyvPun.js";
+import "./ipResourcePayment-DW1eNDIC.js";
+import "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+import "./paySelect-CHLWtiLZ.js";
+import "./StaticIpPurchase.vue_vue_type_script_setup_true_lang-Cjw6R1ER.js";
+import "./TxtFilePreview.vue_vue_type_style_index_0_lang-BM2kh_uA.js";
+import "./index-rtKG2tmD.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+import "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import "./ImportInstructions.vue_vue_type_script_setup_true_lang-B6-YEbCB.js";
+import "./changEnvTagBtn-Ct3P2QWE.js";
+import "./common-_BPSz0Vp.js";
+import "./SocialMediaFileList-B9K8zyg5.js";
+import "./SocialAccountAssignmentDialog-BpJPUyF5.js";
+import "./index-Cl4ZyFim.js";
+import "./envAddAcceptLangDialog.vue_vue_type_script_setup_true_name_envAddAcceptLangDialog_lang-DdcOzUN-.js";
+import "./envEditFontDialog-BAmKs9Pq.js";
+import "./BrowserSelection-DT8JdE4_.js";
+import "./ua-CJ8LtZXg.js";
+import "./TlsCipherSuiteSelector.vue_vue_type_script_setup_true_lang-Bm0jmwwi.js";
+import "./index-BFrckwEl.js";
+import "./expansionDefaulAvatar-BAAgU78a.js";
+import "./index-C6tOf3zW.js";
+import "./system-DtbAsiCM.js";
+import "./fixedUrlsFormItem.vue_vue_type_script_setup_true_lang-J-frhu2d.js";
+import "./oneWaySync-C7I0Josw.js";
+import "./accessLimitCard-CVpkvN01.js";
+const w = {
+    class:
+      "tw-h-full tw-flex tw-flex-col tw-rounded-[8px] tw-p-[20px] tw-pt-[10px] tw-bg-[var(--bg-base)]",
+  },
+  I = { key: 0, class: "tw-flex-1 tw-min-h-0 tw-mt-[10px]" },
+  P = { key: 1, class: "tw-flex-1 tw-min-h-0 tw-mt-[10px]" },
+  S = { key: 2, class: "tw-flex-1 tw-min-h-0 tw-mt-[10px]" },
+  b = p({
+    __name: "index",
+    setup(p) {
+      let b = i(),
+        { t: D } = _.useI18n();
+      const h = o();
+      let A = u(4 === b.userInfo.type ? "basicSetting" : "accountInfo");
+      const C = g(() => [
+          ...(4 !== b.userInfo.type && b.token
+            ? [{ label: D("env.env.step.account"), value: "accountInfo" }]
+            : []),
+          { label: D("menu.setting.top"), value: "basicSetting" },
+          ...(d(f.CREATE_AN_ENVIRONMENT)
+            ? [
+                {
+                  label: D("setting.envPreferences.envPreferences"),
+                  value: "envPreferences",
+                },
+              ]
+            : []),
+        ]),
+        E = [
+          { name: D("userInfo.myInfo"), href: "#MyInfo" },
+          { name: D("userInfo.accountSecurity"), href: "#AccountSecurity" },
+        ];
+      return (
+        n(() => {
+          h.query.type && (A.value = h.query.type);
+        }),
+        (p, i) => (
+          a(),
+          m("div", w, [
+            c(
+              e,
+              {
+                modelValue: v(A),
+                "onUpdate:modelValue":
+                  i[0] || (i[0] = (e) => (l(A) ? (A.value = e) : (A = e))),
+                options: C.value,
+                class: "tw-mb-[4px] tw-self-start",
+              },
+              null,
+              8,
+              ["modelValue", "options"],
+            ),
+            "accountInfo" === v(A) && 4 !== v(b).userInfo.type && v(b).token
+              ? (a(),
+                m("div", I, [
+                  c(s, { stepArray: E }, { default: y(() => [c(t)]), _: 1 }),
+                ]))
+              : j("", !0),
+            "basicSetting" === v(A) ? (a(), m("div", P, [c(r)])) : j("", !0),
+            "envPreferences" === v(A) ? (a(), m("div", S, [c(x)])) : j("", !0),
+          ])
+        )
+      );
+    },
+  });
+export { b as default };

@@ -1,0 +1,226 @@
+import e from "./envSegmentedTabs-B8OKb7JK.js";
+import t from "./proxyList-9a1oI0QO.js";
+import r from "./proxySoftConfig-uwBz50gz.js";
+import {
+  d as s,
+  v as p,
+  hQ as _,
+  u as o,
+  G as u,
+  ah as i,
+  be as a,
+  i as n,
+  o as l,
+  c as m,
+  b as v,
+  h as c,
+  f as y,
+  Y as j,
+  X as g,
+  C as x,
+  jw as d,
+  hL as f,
+  hK as P,
+  _ as S,
+} from "./index-BUIbb6Pa.js";
+import h from "./resourcesList-DguZ9HxY.js";
+import { _ as R } from "./index.vue_vue_type_script_setup_true_lang-CyMd7A4L.js";
+import "./nameIdCell-BWLr8c3b.js";
+import "./useFetchTable-DUveM-tP.js";
+import "./useShortcut-Dh1tetgL.js";
+import "./proxyProviderAvailability-Dl68x0Bx.js";
+import "./proxyUtil-OnkkuXcX.js";
+import "./index-CLVJdR_V.js";
+import "./index.vue_vue_type_script_setup_true_lang-8hqXqXGq.js";
+import "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import "./TableExtend-CdmYngu2.js";
+import "./index-rtKG2tmD.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+import "./batchOperationBar.vue_vue_type_script_setup_true_lang-Dy5lyCwg.js";
+import "./envBatchUpdate-DzCHSa6X.js";
+import "./index-UZcsr-ei.js";
+import "./transformExcel-Cy_3yjj_.js";
+import "./introductionPage.vue_vue_type_script_setup_true_lang-EV8m1-T4.js";
+import "./country-flag.esm-Bg8BdAZu.js";
+import "./shortcutKeys-CjSiz9kE.js";
+import "./BatchDelProxyDlg.vue_vue_type_script_setup_true_lang-C-h_7VS6.js";
+import "./proxyEditV2-PrFoTQ5r.js";
+import "./ipResourceMock-CCd7H3CQ.js";
+import "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import "./index.vue_vue_type_script_setup_true_lang-A7OAkZwm.js";
+import "./CustomRadioGroup-Dk-imFdD.js";
+import "./editProxySoftDlg.vue_vue_type_script_setup_true_lang-D9otwVyq.js";
+import "./proxySoftItem-B7tAwO_8.js";
+import "./envProxyItems-DIhzCyp-.js";
+import "./proxyCheckButton-qJacjpSf.js";
+import "./envAutoInputProxy.vue_vue_type_script_setup_true_lang-CKSB7kpP.js";
+import "./proxyApiExtraction-CcAfvVt-.js";
+import "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import "./ProxyGroupSelect.vue_vue_type_script_setup_true_lang-CTswbFOC.js";
+import "./envSerialNums-BjlyggGT.js";
+import "./ParaturboProxyConfig.vue_vue_type_script_setup_true_lang-DnrGQZKb.js";
+import "./DynamicProxyForm.vue_vue_type_script_setup_true_lang-BLDcp8Iw.js";
+import "./ipResourceCatalog-CJEdeRbI.js";
+import "./IpCountryFlag.vue_vue_type_script_setup_true_lang-DgLdnpgH.js";
+import "./IpResourceSelector.vue_vue_type_script_setup_true_lang-Dxuw76Sd.js";
+import "./DynamicTrafficGate.vue_vue_type_script_setup_true_lang-3aGxeuRD.js";
+import "./IpResourcePurchaseDialog.vue_vue_type_script_setup_true_lang-DcxcArWP.js";
+import "./DynamicTrafficPurchase.vue_vue_type_script_setup_true_lang-BAxyvPun.js";
+import "./ipResourcePayment-DW1eNDIC.js";
+import "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import "./browser-DEPKJqf2.js";
+import "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+import "./paySelect-CHLWtiLZ.js";
+import "./StaticIpPurchase.vue_vue_type_script_setup_true_lang-Cjw6R1ER.js";
+import "./proxyImport.vue_vue_type_style_index_0_lang-iPTpCM4H.js";
+import "./asyncMessage-B3VVipK9.js";
+import "./index-90lhaiW6.js";
+import "./proxySoftContent.vue_vue_type_script_setup_true_lang-BH1G_AGZ.js";
+import "./CustomTooltip.vue_vue_type_script_setup_true_lang-DloSJz1y.js";
+import "./DynamicIpResource.vue_vue_type_script_setup_true_lang-Cc8KGxdj.js";
+import "./DynamicProxyDialog.vue_vue_type_script_setup_true_lang-PmDjw-OT.js";
+import "./DynamicIpEmptyGuide.vue_vue_type_script_setup_true_lang-CRlR0RGG.js";
+import "./StaticIpResource.vue_vue_type_script_setup_true_lang-DI08fwkR.js";
+import "./IpResourceEmptyState.vue_vue_type_script_setup_true_lang-DneoJ3ks.js";
+const I = { class: "tw-h-full tw-flex tw-flex-col proxy-management" },
+  O = { key: 0, class: "tw-flex-1 tw-min-h-0" },
+  T = S(
+    s({
+      __name: "proxyManagement",
+      setup(s) {
+        let { t: S } = p.useI18n();
+        const T = _(),
+          b = o(),
+          w = u(),
+          E = [
+            {
+              value: i.GET_PROXY,
+              label: S("menu.proxy.proxyList"),
+              isShowFn: () => a(i.GET_PROXY),
+              component: t,
+            },
+            {
+              value: i.IP_RESOURCE,
+              label: S("ipResource.tab"),
+              isShowFn: () => a(i.GET_PROXY),
+              component: R,
+            },
+            {
+              value: i.PROXY_SOFT,
+              label: S("env.env.req.dynamic_proxy"),
+              isShowFn: () => a(i.PROXY_SOFT),
+              component: r,
+            },
+            {
+              value: i.PROXY_SOFT_INFO,
+              label: S("menu.proxy.proxyResources"),
+              isShowFn: () => a(i.PROXY_SOFT_INFO),
+              component: h,
+            },
+          ],
+          F = new Map([
+            [i.GET_PROXY, "proxy-list"],
+            [i.PROXY_SOFT, "proxy-settings"],
+            [i.PROXY_SOFT_INFO, "proxy-resources"],
+            [i.IP_RESOURCE, "ip-resource"],
+          ]),
+          A = x(() => E.filter((e) => e.isShowFn())),
+          C = () => {
+            const e = w.userInfo.id,
+              t = w.userInfo.orgId;
+            return e && t ? `${e}:${t}` : "";
+          },
+          X = (e) => {
+            const t = C();
+            if (!t) return;
+            const r = d(f.PROXY_MANAGEMENT_TAB),
+              s = r && "object" == typeof r && !Array.isArray(r) ? r : {};
+            P(f.PROXY_MANAGEMENT_TAB, { ...s, [t]: e });
+          },
+          Y = n(
+            (() => {
+              var e, t;
+              const r = "string" == typeof T.query.tab ? T.query.tab : "",
+                s = E.find((e) => e.isShowFn() && F.get(e.value) === r);
+              if (s) return s.value;
+              const p = (() => {
+                const e = C();
+                if (!e) return "";
+                const t = d(f.PROXY_MANAGEMENT_TAB);
+                return (
+                  (t && "object" == typeof t && !Array.isArray(t) && t[e]) || ""
+                );
+              })();
+              return (
+                (null ==
+                (e = E.find((e) => e.isShowFn() && F.get(e.value) === p))
+                  ? void 0
+                  : e.value) ||
+                (null == (t = E.find((e) => e.isShowFn()))
+                  ? void 0
+                  : t.value) ||
+                E[0].value
+              );
+            })(),
+          ),
+          D = F.get(Y.value);
+        D && X(D);
+        const M = x(() => {
+            const e = E.find((e) => e.value === Y.value);
+            return null == e ? void 0 : e.component;
+          }),
+          G = async (e) => {
+            const t = e,
+              r = E.find((e) => e.value === t && e.isShowFn()),
+              s = r ? F.get(r.value) : void 0;
+            s &&
+              ((Y.value = r.value),
+              X(s),
+              T.query.tab !== s &&
+                (await b.replace({ query: { ...T.query, tab: s } })));
+          };
+        return (
+          w.setCreateCount(),
+          (t, r) => (
+            l(),
+            m("div", I, [
+              v(
+                e,
+                {
+                  "model-value": Y.value,
+                  options: A.value,
+                  class: "tw-mb-[2px] tw-self-start",
+                  onChange: G,
+                },
+                null,
+                8,
+                ["model-value", "options"],
+              ),
+              Y.value
+                ? (l(),
+                  m("div", O, [
+                    (l(),
+                    c(
+                      j(M.value),
+                      {
+                        onSwitchToParaturbo:
+                          r[0] || (r[0] = (e) => G(y(i).IP_RESOURCE)),
+                      },
+                      null,
+                      32,
+                    )),
+                  ]))
+                : g("", !0),
+            ])
+          )
+        );
+      },
+    }),
+    [["__scopeId", "data-v-541a8515"]],
+  );
+export { T as default };

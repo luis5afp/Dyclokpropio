@@ -1,0 +1,2133 @@
+import {
+  d as e,
+  G as a,
+  gz as l,
+  v as t,
+  gA as o,
+  gB as i,
+  i as n,
+  gC as d,
+  P as r,
+  W as s,
+  r as u,
+  q as p,
+  o as v,
+  c,
+  F as w,
+  b as x,
+  w as m,
+  x as g,
+  h as f,
+  f as b,
+  eZ as I,
+  e as h,
+  t as y,
+  X as U,
+  a as E,
+  gD as _,
+  dt as D,
+  bE as k,
+  y as R,
+  z as L,
+  O as T,
+  C as O,
+  gE as N,
+  D as G,
+  dl as H,
+  gF as C,
+  af as V,
+  c5 as S,
+  a3 as $,
+  E as A,
+  A as q,
+  gG as F,
+  gH as P,
+  gI as j,
+  gJ as B,
+  gK as z,
+  gL as M,
+  gM as J,
+  gN as K,
+  dj as W,
+  fe as X,
+  aW as Z,
+  gO as Q,
+  gP as Y,
+  gQ as ee,
+  gR as ae,
+  gS as le,
+  gT as te,
+  dc as oe,
+  g1 as ie,
+  gU as ne,
+  gV as de,
+  ad as re,
+  _ as se,
+} from "./index-BUIbb6Pa.js";
+import { _ as ue } from "./chrome-tool-B5CAdZMC.js";
+import { _ as pe } from "./editExpandGroup.vue_vue_type_script_setup_true_lang-B25t6R8t.js";
+import { g as ve } from "./system-DtbAsiCM.js";
+import ce from "./CustomRadioGroup-Dk-imFdD.js";
+import { s as we } from "./extensionArtifact-CQf81S97.js";
+const xe = { package: [".zip"], icon: [".png", ".jpg", ".jpeg"] };
+const me = {
+    key: 0,
+    class:
+      "tw-w-fit tw-max-w-full tw-px-3 tw-bg-[var(--card-br-color)] tw-bg-opacity-85 tw-py-1 tw-rounded-[5px] tw-text-black b-flex tw-border tw-border-[rgba(255,255,255,0.2)]",
+  },
+  ge = { class: "tw-line-clamp-1 tw-mr-2 tw-opacity-90 c-flex tw-gap-x-1.5" },
+  fe = {
+    class:
+      "tw-flex tw-min-h-[112px] tw-w-full tw-flex-col tw-items-center tw-justify-center tw-gap-1 tw-px-4 tw-py-5",
+  },
+  be = {
+    class: "tw-text-[13px] tw-leading-5 tw-text-[var(--primary-text-color)]",
+  },
+  Ie = { class: "tw-text-[12px] tw-leading-[18px] tw-text-subText" },
+  he = { key: 0, class: "b-flex tw-w-fit" },
+  ye = ["src"],
+  Ue = {
+    key: 1,
+    class: "tw-flex tw-w-full tw-flex-col tw-items-start tw-gap-2",
+  },
+  Ee = {
+    class:
+      "tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center tw-gap-1 tw-p-3",
+  },
+  _e = {
+    class:
+      "tw-text-center tw-text-[12px] tw-leading-[18px] tw-text-[var(--primary-text-color)]",
+  },
+  De = {
+    class:
+      "tw-max-w-full tw-whitespace-normal tw-break-words tw-text-[12px] tw-leading-[18px] tw-text-subText",
+  },
+  ke = ["innerHTML"],
+  Re = { class: "tw-w-[240px] tw-text-subText" },
+  Le = { class: "tw-mt-[-5px] tw-flex tw-items-center tw-text-subText" },
+  Te = { class: "tw-leading-[1]" },
+  Oe = { class: "s-flex tw-w-full tw-gap-x-2" },
+  Ne = { class: "tw-text-black tw-max-w-[300px]" },
+  Ge = { class: "tw-text-subText tw-leading-[1] tw-mt-[8px]" },
+  He = se(
+    e({
+      __name: "expansionAdded",
+      props: { getData: { type: Function }, updateExpandData: {} },
+      setup(e, { expose: se }) {
+        const He = a(),
+          { checkAndDownload: Ce, refreshSha256Hash: Ve } = l(),
+          Se = e,
+          { t: $e, locale: Ae } = t.useI18n(),
+          qe = O(() => re().currentPlan),
+          Fe = n(!1),
+          Pe = n(null),
+          je = n(),
+          Be = n([]),
+          ze = {
+            source: i.GOOGLE,
+            uniqueId: "",
+            downloadUrl: "",
+            iconUrl: "",
+            extensionsName: "",
+            md5Hash: "",
+            version: "",
+            originalUrl: "",
+            extensionsIntroduce: "",
+            extensionsGroupIds: [],
+            pinType: o.CUSTOMIZE_PIN,
+            browserHide: !1,
+            hideRoleId: ["all"],
+            enable: !1,
+          },
+          Me = n(JSON.parse(JSON.stringify(ze))),
+          Je = n(""),
+          Ke = n(""),
+          We = n(""),
+          Xe = n(""),
+          Ze = n(!0),
+          Qe = n([]),
+          Ye = O(() => {
+            var e;
+            const a = [{ label: $e("org.member.req.allGroup"), value: "all" }];
+            return (
+              null == (e = Qe.value) ||
+                e.map((e) => {
+                  a.push({ label: e.name, value: e.id });
+                }),
+              a
+            );
+          }),
+          ea = n({
+            originalUrl: [
+              { required: !0, message: $e("expan.tip59"), trigger: "blur" },
+              {
+                validator: async (e, a, l) => {
+                  a && d(a) && a.startsWith("http")
+                    ? l()
+                    : l(new Error($e("expan.tip27")));
+                },
+                trigger: ["blur", "change"],
+              },
+            ],
+            extensionsName: [
+              { required: !0, message: $e("expan.tip31"), trigger: "blur" },
+              {
+                validator: (e, a, l) => {
+                  a && "" === a.trim() ? l($e("expan.tip53")) : l();
+                },
+                trigger: "blur",
+              },
+            ],
+            downloadUrl: [
+              { required: !0, message: $e("expan.tip32"), trigger: "blur" },
+            ],
+            extensionsIntroduce: [
+              {
+                validator: (e, a, l) => {
+                  a && "" === a.trim() ? l($e("expan.tip53")) : l();
+                },
+                trigger: "blur",
+              },
+            ],
+            extensionsGroupIds: [
+              { required: !0, message: $e("expan.tip46"), trigger: "change" },
+            ],
+            hideRoleId: [
+              { required: !0, message: $e("org.member.req.roleIdHolder") },
+            ],
+          }),
+          aa = {
+            [o.CUSTOMIZE_PIN]: $e("expan.tip62"),
+            [o.PIN]: $e("expan.tip63"),
+            [o.UN_PIN]: $e("expan.tip64"),
+          },
+          la = O(() => Me.value.source === i.LOCAL),
+          ta = n(!1),
+          oa = n(null),
+          ia = n(null),
+          na = () => {
+            var e;
+            ((ta.value = !1),
+              Fe.value ||
+                (null == (e = Pe.value) || e.resetFields(),
+                (Je.value = ""),
+                (Me.value = JSON.parse(JSON.stringify(ze)))));
+          };
+        function da() {
+          Ze.value = !Ze.value;
+        }
+        const ra = (e) => {
+            "all" === e.at(-1)
+              ? (Me.value.hideRoleId = ["all"])
+              : e.includes("all") &&
+                e.length > 1 &&
+                (Me.value.hideRoleId = e.filter((e) => "all" !== e));
+          },
+          sa = (e, a) => {
+            "FILE_COUNT" !== e
+              ? "FILE_TYPE" !== e
+                ? $.warning(
+                    $e("expan.tip33", { size: 1 === a ? "100MB" : "1MB" }),
+                  )
+                : $.warning(
+                    $e(
+                      1 === a
+                        ? "expan.uploadPackageFormatError"
+                        : "expan.uploadIconFormatError",
+                    ),
+                  )
+              : $.warning($e("expan.uploadSingleFileOnly"));
+          },
+          ua = (e, a) => {
+            const l = (function (e, a) {
+              if (1 !== e.length) return "FILE_COUNT";
+              const [l] = e,
+                t = l.name.trim().toLowerCase();
+              if (!xe[a].some((e) => t.endsWith(e))) return "FILE_TYPE";
+              const o = "package" === a ? 104857600 : 1048576;
+              return l.size > o ? "FILE_SIZE" : null;
+            })(e, ((e) => (1 === e ? "package" : "icon"))(a));
+            return (l && sa(l, a), !l);
+          },
+          pa = (e) => (a) => !!ua([a], e),
+          va =
+            (e) =>
+            async ({ file: a }) => {
+              var l;
+              if (!ua([a], e)) throw new Error("上传文件校验失败");
+              const t = a,
+                o = t.path;
+              if (1 === e) Me.value.downloadUrl = o;
+              else {
+                const e = URL.createObjectURL(t);
+                if (!(await ba(e)))
+                  throw (
+                    (Xe.value = $e("expan.tip34")),
+                    URL.revokeObjectURL(e),
+                    new Error("图片比例不正确")
+                  );
+                ((Xe.value = ""),
+                  null == (l = ia.value) || l.clearFiles(),
+                  (Me.value.iconUrl = o),
+                  (Je.value = e));
+              }
+            },
+          ca = () => {
+            var e;
+            ((ta.value = !1),
+              null == (e = Pe.value) || e.resetFields(),
+              Se.getData(),
+              (Je.value = ""),
+              (Me.value = JSON.parse(JSON.stringify(ze))),
+              $.success(
+                (null == Se ? void 0 : Se.updateExpandData)
+                  ? $e("setting.SaveSuccess")
+                  : $e("expan.tip37"),
+              ));
+          },
+          wa = async () => {
+            var e;
+            if (N(G.isClient)) H();
+            else
+              try {
+                Fe.value = !0;
+                const a = await C();
+                if (
+                  ((null == (e = null == qe ? void 0 : qe.value)
+                    ? void 0
+                    : e.timeLimit) ?? 0) < 0 &&
+                  a.data.addPermission.hasNum >= 3
+                )
+                  return void V();
+                if (
+                  !Se.updateExpandData &&
+                  a.data.addPermission.hasNum >= a.data.addPermission.limitNum
+                ) {
+                  const e =
+                    a.data.addPermission.planType === S.Free
+                      ? $e("expan.tip42", {
+                          number: a.data.addPermission.limitNum,
+                        })
+                      : $e("expan.tip43");
+                  return void $.warning(e);
+                }
+                la.value
+                  ? await ma()
+                  : Me.value.source === i.GOOGLE
+                    ? await fa()
+                    : await xa();
+              } finally {
+                Fe.value = !1;
+              }
+          },
+          xa = async () => {
+            var e, a, l;
+            try {
+              if (
+                ((Fe.value = !0),
+                await Promise.all([
+                  null == (e = Pe.value)
+                    ? void 0
+                    : e.validateField("extensionsGroupIds"),
+                  null == (a = Pe.value)
+                    ? void 0
+                    : a.validateField("hideRoleId"),
+                ]),
+                !Se.updateExpandData)
+              )
+                return;
+              G.api.trackEvent({
+                type: q.OTHER_CLICK,
+                action: A.CLICK_ADD_EXTENSION,
+                params: {
+                  type: "dic",
+                  id:
+                    null == (l = Me.value.extensionsGroupIds)
+                      ? void 0
+                      : l.join(","),
+                },
+              });
+              0 ===
+                (
+                  await F(Se.updateExpandData.id, {
+                    source: Me.value.source,
+                    extensionsGroupIds: Me.value.extensionsGroupIds,
+                    pinType: Me.value.pinType,
+                    md5Hash: Se.updateExpandData.md5Hash,
+                    browserHide: Me.value.browserHide,
+                    hideRoleId: Me.value.hideRoleId,
+                  })
+                ).code && ca();
+            } catch (t) {
+              console.log(t);
+            }
+          },
+          ma = async () => {
+            var e, a, l, t, o, n, d, r, s, u, p;
+            try {
+              ((Fe.value = !0),
+                (We.value = ""),
+                await Promise.all([
+                  null == (e = Pe.value)
+                    ? void 0
+                    : e.validateField("extensionsName"),
+                  null == (a = Pe.value)
+                    ? void 0
+                    : a.validateField("downloadUrl"),
+                  null == (l = Pe.value)
+                    ? void 0
+                    : l.validateField("extensionsGroupIds"),
+                  null == (t = Pe.value)
+                    ? void 0
+                    : t.validateField("hideRoleId"),
+                ]));
+              const v =
+                !(null == (o = Me.value.downloadUrl)
+                  ? void 0
+                  : o.startsWith("http")) &&
+                Me.value.downloadUrl !==
+                  (null == (n = null == Se ? void 0 : Se.updateExpandData)
+                    ? void 0
+                    : n.downloadUrl);
+              if (
+                4 !==
+                (v
+                  ? await window.ipcRenderer.invoke(P, Me.value.downloadUrl)
+                  : 4)
+              )
+                return void (We.value = $e("expan.tip35"));
+              const c = async () =>
+                v
+                  ? await window.ipcRenderer.invoke(j, {
+                      filepath: Me.value.downloadUrl,
+                      additional: He.userInfo.orgId,
+                    })
+                  : Me.value.md5Hash;
+              if (Se.updateExpandData) {
+                const e = await window.ipcRenderer.invoke(
+                  B,
+                  Me.value.downloadUrl,
+                );
+                if (
+                  (console.log("[扩展重新上传] 版本号：", e, Se, Me.value),
+                  1 !== z(e, Me.value.version) && v)
+                )
+                  return void (We.value = $e("expan.security.tip2"));
+                const a = await c(),
+                  l = await M(a, i.LOCAL);
+                if (
+                  null == (d = null == l ? void 0 : l.data)
+                    ? void 0
+                    : d.downloadUrl
+                ) {
+                  const t = await window.ipcRenderer.invoke(J, {
+                      filepath: "",
+                      filename: a,
+                      logoPath: Me.value.iconUrl,
+                    }),
+                    o = {
+                      ...l.data,
+                      md5Hash: a,
+                      uniqueId: l.data.uniqueId ?? a,
+                      source: i.LOCAL,
+                      extensionsIntroduce: Me.value.extensionsIntroduce,
+                      iconUrl: t.iconUrl,
+                      extensionsName: Me.value.extensionsName,
+                      extensionsGroupIds: Me.value.extensionsGroupIds,
+                      pinType: Me.value.pinType,
+                      browserHide: Me.value.browserHide,
+                      hideRoleId: Me.value.hideRoleId,
+                    };
+                  e && (o.version = e);
+                  const n = await F(Se.updateExpandData.id, o);
+                  return void (await Ce(
+                    {
+                      expanId: o.uniqueId,
+                      source: Me.value.source,
+                      md5Hash: a,
+                      downloadUrl: o.downloadUrl,
+                      version: e,
+                    },
+                    async (e, a, l = !0) => {
+                      a && 0 === n.code
+                        ? (l ||
+                            (await K(Se.updateExpandData.id, {
+                              status: W.DISABLED,
+                            })),
+                          ca())
+                        : void 0 !== a &&
+                          X({
+                            title: $e("expan.tip56"),
+                            message: $e("expan.tip55"),
+                            duration: 5e3,
+                            type: "error",
+                          });
+                    },
+                  ));
+                }
+                const t = await window.ipcRenderer.invoke(J, {
+                  filepath: Me.value.downloadUrl,
+                  filename: a,
+                  logoPath: Me.value.iconUrl,
+                });
+                if (!t)
+                  return (
+                    $.error($e("expan.tip36")),
+                    void Z().initOssStsToken()
+                  );
+                const o = {
+                  source: Me.value.source,
+                  extensionsGroupIds: Me.value.extensionsGroupIds,
+                  downloadUrl: t.downloadUrl,
+                  iconUrl: t.iconUrl,
+                  md5Hash: a,
+                  uniqueId: a,
+                  extensionsName: Me.value.extensionsName,
+                  extensionsIntroduce: Me.value.extensionsIntroduce,
+                  status: W.DISABLED,
+                  pinType: Me.value.pinType,
+                  browserHide: Me.value.browserHide,
+                  hideRoleId: Me.value.hideRoleId,
+                };
+                e && (o.version = e);
+                const n = await F(Se.updateExpandData.id, o);
+                return void (await Ce(
+                  {
+                    expanId: o.uniqueId,
+                    source: Me.value.source,
+                    md5Hash: a,
+                    downloadUrl: t.downloadUrl,
+                    version: e,
+                  },
+                  async (e, a, l = !0) => {
+                    a && 0 === n.code
+                      ? (l ||
+                          (await K(Se.updateExpandData.id, {
+                            status: W.DISABLED,
+                          })),
+                        ca())
+                      : void 0 !== a &&
+                        X({
+                          title: $e("expan.tip56"),
+                          message: $e("expan.tip55"),
+                          duration: 5e3,
+                          type: "error",
+                        });
+                  },
+                  !0,
+                  we({ uploadedToOss: !!t.downloadUrl }),
+                ));
+              }
+              if (!Se.updateExpandData) {
+                const e = await c(),
+                  a = await M(e, i.LOCAL),
+                  l = await window.ipcRenderer.invoke(B, Me.value.downloadUrl);
+                if (
+                  (console.log("[扩展首次上传] 版本号：", l),
+                  null == (r = null == a ? void 0 : a.data)
+                    ? void 0
+                    : r.downloadUrl)
+                ) {
+                  const t = await window.ipcRenderer.invoke(J, {
+                      filepath: "",
+                      filename: e,
+                      logoPath: Me.value.iconUrl,
+                    }),
+                    o = await ga(
+                      {
+                        ...a.data,
+                        md5Hash: e,
+                        source: i.LOCAL,
+                        extensionsIntroduce: Me.value.extensionsIntroduce,
+                        iconUrl: t.iconUrl,
+                        extensionsName: Me.value.extensionsName,
+                        extensionsGroupIds: Me.value.extensionsGroupIds,
+                        pinType: Me.value.pinType,
+                        browserHide: Me.value.browserHide,
+                        hideRoleId: Me.value.hideRoleId,
+                        version: l,
+                      },
+                      !1,
+                      !1,
+                    );
+                  return void (await Ce(
+                    {
+                      expanId:
+                        null == (s = null == o ? void 0 : o.data)
+                          ? void 0
+                          : s.uniqueId,
+                      source: Me.value.source,
+                      md5Hash: e,
+                      downloadUrl: a.data.downloadUrl,
+                      version: l,
+                    },
+                    async (e, a, l = !0) => {
+                      var t;
+                      a && 0 === o.code
+                        ? (l ||
+                            (await K(
+                              null == (t = null == o ? void 0 : o.data)
+                                ? void 0
+                                : t.id,
+                              { status: W.DISABLED },
+                            )),
+                          ca())
+                        : void 0 !== a &&
+                          X({
+                            title: $e("expan.tip56"),
+                            message: $e("expan.tip55"),
+                            duration: 5e3,
+                            type: "error",
+                          });
+                    },
+                  ));
+                }
+                const t = await window.ipcRenderer.invoke(J, {
+                  filepath: Me.value.downloadUrl,
+                  filename: e,
+                  logoPath: Me.value.iconUrl,
+                });
+                if (!t)
+                  return (
+                    $.error($e("expan.tip36")),
+                    void Z().initOssStsToken()
+                  );
+                G.api.trackEvent({
+                  type: q.OTHER_CLICK,
+                  action: A.CLICK_ADD_EXTENSION,
+                  params: {
+                    type: "local",
+                    id:
+                      null == (u = Me.value.extensionsGroupIds)
+                        ? void 0
+                        : u.join(","),
+                  },
+                });
+                const o = await Q({
+                  source: Me.value.source,
+                  extensionsGroupIds: Me.value.extensionsGroupIds,
+                  downloadUrl: t.downloadUrl,
+                  iconUrl: t.iconUrl,
+                  md5Hash: e,
+                  uniqueId: e,
+                  extensionsName: Me.value.extensionsName,
+                  extensionsIntroduce: Me.value.extensionsIntroduce,
+                  status: Me.value.enable ? W.ENABLED : W.DISABLED,
+                  pinType: Me.value.pinType,
+                  browserHide: Me.value.browserHide,
+                  hideRoleId: Me.value.hideRoleId,
+                  version: l,
+                });
+                await Ce(
+                  {
+                    expanId:
+                      null == (p = null == o ? void 0 : o.data)
+                        ? void 0
+                        : p.uniqueId,
+                    source: Me.value.source,
+                    md5Hash: e,
+                    downloadUrl: t.downloadUrl,
+                    version: l,
+                  },
+                  (e, a) => {
+                    a && 0 === o.code
+                      ? ca()
+                      : void 0 !== a &&
+                        X({
+                          title: $e("expan.tip56"),
+                          message: $e("expan.tip55"),
+                          duration: 5e3,
+                          type: "error",
+                        });
+                  },
+                  !0,
+                  we({ uploadedToOss: !!t.downloadUrl }),
+                );
+              }
+            } finally {
+              Fe.value = !1;
+            }
+          },
+          ga = async (e, a = !1, l = !0, t = !1) => {
+            var o;
+            Object.keys(e).map((a) => {
+              const l = a;
+              !e[l] && delete e[l];
+            });
+            const i = await Q({
+              ...e,
+              status: Me.value.enable ? W.ENABLED : W.DISABLED,
+              pinType: Me.value.pinType,
+              browserHide: Me.value.browserHide,
+              hideRoleId: Me.value.hideRoleId,
+            });
+            if (0 === i.code) {
+              if (a) {
+                (await Ve({
+                  uniqueId: e.uniqueId,
+                  version: e.version,
+                  force: t,
+                })) ||
+                  (Me.value.enable &&
+                    (await K(
+                      null == (o = null == i ? void 0 : i.data) ? void 0 : o.id,
+                      { status: W.DISABLED },
+                    )));
+              }
+              l && ca();
+            }
+            return i;
+          },
+          fa = async () => {
+            var e, a, l, t, o;
+            try {
+              ((Fe.value = !0),
+                (Ke.value = ""),
+                await Promise.all([
+                  null == (e = Pe.value)
+                    ? void 0
+                    : e.validateField("originalUrl"),
+                  null == (a = Pe.value)
+                    ? void 0
+                    : a.validateField("extensionsGroupIds"),
+                  null == (l = Pe.value)
+                    ? void 0
+                    : l.validateField("hideRoleId"),
+                ]));
+              const n = d(Me.value.originalUrl);
+              if (!n) return;
+              if (Se.updateExpandData) {
+                return void (
+                  0 ===
+                    (
+                      await F(Se.updateExpandData.id, {
+                        ...Se.updateExpandData,
+                        extensionsGroupIds: Me.value.extensionsGroupIds,
+                        pinType: Me.value.pinType,
+                        browserHide: Me.value.browserHide,
+                        hideRoleId: Me.value.hideRoleId,
+                      })
+                    ).code && ca()
+                );
+              }
+              const r = await window.ipcRenderer.invoke(Y, n),
+                s = await ee(n);
+              if (null == s ? void 0 : s.data) {
+                const e = await (async (e, a, l, t) => {
+                  if (ie()) throw new Error("diffVersion err");
+                  const o = await window.ipcRenderer.invoke(le, {
+                    id: e,
+                    lang: Ae.value,
+                    url: Me.value.originalUrl,
+                  });
+                  if ("string" == typeof o || !1 === o) {
+                    const e = $e(
+                      "string" == typeof o && "ERR_BAD_REQUEST" !== o
+                        ? "expan.tip29"
+                        : "expan.tip28",
+                    );
+                    throw (
+                      X({
+                        title: $e("expan.tip40"),
+                        message: e,
+                        duration: 5e3,
+                        type: "error",
+                      }),
+                      new Error("diffVersion err")
+                    );
+                  }
+                  new URL(l).search = `?hl=${ne[Ae.value]}`;
+                  const i = await window.ipcRenderer.invoke(de, {
+                    id: e,
+                    lang: Ae.value,
+                  });
+                  if (!i)
+                    throw (
+                      X({
+                        title: $e("expan.tip40"),
+                        message: $e("expan.tip44"),
+                        duration: 5e3,
+                        type: "error",
+                      }),
+                      new Error("获取最新版本失败")
+                    );
+                  const n = await z(i.version, a);
+                  let d = !1;
+                  return (
+                    0 === n
+                      ? i.extensionsName !== t && (d = !0)
+                      : 1 === n && (d = !0),
+                    i.downloadUrl && delete i.downloadUrl,
+                    d ? i : void 0
+                  );
+                })(
+                  n,
+                  s.data.version,
+                  s.data.originalUrl,
+                  s.data.extensionsName,
+                );
+                if (
+                  (e &&
+                    ((s.data.extensionsName = e.extensionsName),
+                    (s.data.extensionsIntroduce = e.extensionsIntroduce),
+                    (s.data.originalUrl = e.originalUrl)),
+                  r === s.data.md5Hash)
+                )
+                  return void (await ga(
+                    {
+                      ...s.data,
+                      extensionsGroupIds: Me.value.extensionsGroupIds,
+                    },
+                    !0,
+                  ));
+                return void (
+                  (await window.ipcRenderer.invoke(ae, {
+                    url: s.data.downloadUrl,
+                    filename: s.data.uniqueId + ".zip",
+                    source: i.GOOGLE,
+                  })) &&
+                  ta.value &&
+                  (await ga(
+                    {
+                      ...s.data,
+                      extensionsGroupIds: Me.value.extensionsGroupIds,
+                    },
+                    !0,
+                  ))
+                );
+              }
+              const u = await window.ipcRenderer.invoke(le, {
+                id: n,
+                lang: Ae.value,
+                url: Me.value.originalUrl,
+              });
+              if ("string" == typeof u || !1 === u)
+                return void (Ke.value = $e(
+                  "string" == typeof u && "ERR_BAD_REQUEST" !== u
+                    ? "expan.tip29"
+                    : "expan.tip28",
+                ));
+              const p = await window.ipcRenderer.invoke(te, {
+                id: n,
+                lang: Ae.value,
+              });
+              if (
+                (G.api.trackEvent({
+                  type: q.OTHER_CLICK,
+                  action: A.CLICK_ADD_EXTENSION,
+                  params: {
+                    type: "google",
+                    id:
+                      null == (t = Me.value.extensionsGroupIds)
+                        ? void 0
+                        : t.join(","),
+                  },
+                }),
+                !(null == p ? void 0 : p.md5Hash))
+              )
+                return X({
+                  title: $e("expan.tip56"),
+                  message: $e("expan.tip55"),
+                  duration: 5e3,
+                  type: "error",
+                });
+              const v = await Q({
+                ...p,
+                source: Me.value.source,
+                extensionsGroupIds: Me.value.extensionsGroupIds,
+                status: Me.value.enable ? W.ENABLED : W.DISABLED,
+                pinType: Me.value.pinType,
+                browserHide: Me.value.browserHide,
+                hideRoleId: Me.value.hideRoleId,
+              });
+              if (0 === v.code) {
+                ((await Ve({
+                  uniqueId: n,
+                  version: p.version,
+                  force: we({ uploadedToOss: !!p.downloadUrl }),
+                })) ||
+                  (Me.value.enable &&
+                    K(
+                      null == (o = null == v ? void 0 : v.data) ? void 0 : o.id,
+                      { status: W.DISABLED },
+                    )),
+                  ca());
+              }
+            } finally {
+              Fe.value = !1;
+            }
+          },
+          ba = (e) =>
+            new Promise((a, l) => {
+              const t = new Image();
+              ((t.onload = function () {
+                this.naturalWidth === this.naturalHeight ? a(!0) : a(!1);
+              }),
+                (t.onerror = function () {
+                  l(new Error("Invalid image file"));
+                }),
+                (t.src = e));
+            }),
+          Ia = (e) => {
+            var a, l;
+            Fe.value ||
+              (1 === e
+                ? (null == (a = oa.value) || a.clearFiles(),
+                  (Me.value.downloadUrl = ""))
+                : (null == (l = ia.value) || l.clearFiles(),
+                  (Me.value.iconUrl = ""),
+                  (Je.value = ""),
+                  URL.revokeObjectURL(Je.value)));
+          },
+          ha = (e) => () => sa("FILE_COUNT", e);
+        (r(() => {}),
+          s(
+            () => [Se, ta.value],
+            ([e, a]) => {
+              var l;
+              if (a)
+                if (
+                  (a &&
+                    !Fe.value &&
+                    (null == (l = Pe.value) || l.resetFields(),
+                    (Je.value = "")),
+                  a &&
+                    "boolean" != typeof e &&
+                    (null == e ? void 0 : e.updateExpandData))
+                ) {
+                  ((Me.value.source = e.updateExpandData.source),
+                    (Me.value.pinType = e.updateExpandData.pinType),
+                    (Me.value.originalUrl = e.updateExpandData.originalUrl),
+                    (Me.value.browserHide =
+                      e.updateExpandData.browserHide ?? !1),
+                    (Me.value.hideRoleId = e.updateExpandData.hideRoleId ?? [
+                      "all",
+                    ]));
+                  const { groups: a, ...l } = e.updateExpandData;
+                  (Me.value.source === i.LOCAL &&
+                    ((Me.value = Object.assign(Me.value, l)),
+                    (Je.value = l.iconUrl
+                      ? `${l.iconUrl}?t=${Date.now()}`
+                      : "")),
+                    (Me.value.extensionsGroupIds =
+                      null == a ? void 0 : a.map((e) => e.id)));
+                } else Me.value = Object.assign(JSON.parse(JSON.stringify(ze)));
+            },
+            { immediate: !0, deep: !0 },
+          ));
+        const ya = () => {
+            var e;
+            null == (e = je.value) || e.acceptParams();
+          },
+          Ua = (e) => {
+            oe({ all: !0, detail: !1 }).then((a) => {
+              var l, t;
+              ((Be.value = a.list),
+                e &&
+                  !(null == Se ? void 0 : Se.updateExpandData) &&
+                  (Me.value.extensionsGroupIds = [
+                    (null ==
+                    (t =
+                      null == (l = null == a ? void 0 : a.list)
+                        ? void 0
+                        : l.find((e) => e.isDefault))
+                      ? void 0
+                      : t.id) ?? "",
+                  ]));
+            });
+          },
+          Ea = () => {
+            We.value = "";
+          };
+        return (
+          se({
+            acceptParams: () => {
+              (Ua(!0),
+                ve({ all: !0 }).then((e) => {
+                  Qe.value = e.list.filter((e) => "SUPER_ADMIN" !== e.code);
+                }),
+                (ta.value = !0),
+                (Ze.value = !0),
+                (Xe.value = ""));
+            },
+          }),
+          (a, l) => {
+            const t = u("el-radio-button"),
+              n = u("el-form-item"),
+              d = u("el-icon"),
+              r = u("el-button"),
+              s = u("el-input"),
+              O = u("el-option"),
+              N = u("el-select"),
+              G = u("ArrowDown"),
+              H = u("el-tooltip"),
+              C = u("el-switch"),
+              V = u("el-checkbox"),
+              S = u("el-dialog"),
+              $ = p("prevent-label-click");
+            return (
+              v(),
+              c(
+                w,
+                null,
+                [
+                  x(
+                    S,
+                    {
+                      modelValue: ta.value,
+                      "onUpdate:modelValue":
+                        l[13] || (l[13] = (e) => (ta.value = e)),
+                      "destroy-on-close": "",
+                      "before-close": na,
+                      "close-on-click-modal": !1,
+                      "close-on-press-escape": !1,
+                      title: e.updateExpandData
+                        ? a.$t("expan.tip60")
+                        : a.$t("expan.tip1"),
+                      "align-center": "",
+                      class: "expan-dialog",
+                      width: "650px",
+                      onClose: Ea,
+                    },
+                    {
+                      footer: m(() => [
+                        x(
+                          r,
+                          { type: "info", class: "tw-w-full", onClick: na },
+                          {
+                            default: m(() => [h(y(a.$t("base.cancel")), 1)]),
+                            _: 1,
+                          },
+                        ),
+                        x(
+                          r,
+                          {
+                            loading: Fe.value,
+                            class: "tw-w-full",
+                            type: "primary",
+                            onClick: wa,
+                          },
+                          {
+                            default: m(() => [h(y(a.$t("base.confirm")), 1)]),
+                            _: 1,
+                          },
+                          8,
+                          ["loading"],
+                        ),
+                      ]),
+                      default: m(() => [
+                        g(
+                          (v(),
+                          f(
+                            b(I),
+                            {
+                              ref_key: "formRef",
+                              ref: Pe,
+                              model: Me.value,
+                              rules: ea.value,
+                              "label-position": "right",
+                              "label-width": "auto",
+                            },
+                            {
+                              default: m(() => {
+                                var u, p;
+                                return [
+                                  (null == (u = e.updateExpandData)
+                                    ? void 0
+                                    : u.source) !== b(i).DICLOAK
+                                    ? (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 0,
+                                          label: a.$t("expan.tip12"),
+                                          prop: "source",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            x(
+                                              ce,
+                                              {
+                                                modelValue: Me.value.source,
+                                                "onUpdate:modelValue":
+                                                  l[0] ||
+                                                  (l[0] = (e) =>
+                                                    (Me.value.source = e)),
+                                                disabled: Fe.value,
+                                              },
+                                              {
+                                                default: m(() => {
+                                                  var l, o;
+                                                  return [
+                                                    x(
+                                                      t,
+                                                      {
+                                                        disabled:
+                                                          e.updateExpandData &&
+                                                          (null ==
+                                                          (l =
+                                                            e.updateExpandData)
+                                                            ? void 0
+                                                            : l.source) !==
+                                                            b(i).GOOGLE,
+                                                        value: b(i).GOOGLE,
+                                                      },
+                                                      {
+                                                        default: m(() => [
+                                                          h(
+                                                            y(
+                                                              a.$t(
+                                                                "expan.tip13",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      ["disabled", "value"],
+                                                    ),
+                                                    x(
+                                                      t,
+                                                      {
+                                                        disabled:
+                                                          e.updateExpandData &&
+                                                          (null ==
+                                                          (o =
+                                                            e.updateExpandData)
+                                                            ? void 0
+                                                            : o.source) !==
+                                                            b(i).LOCAL,
+                                                        value: b(i).LOCAL,
+                                                      },
+                                                      {
+                                                        default: m(() => [
+                                                          h(
+                                                            y(
+                                                              a.$t(
+                                                                "expan.tip14",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      ["disabled", "value"],
+                                                    ),
+                                                  ];
+                                                }),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue", "disabled"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ))
+                                    : U("", !0),
+                                  la.value
+                                    ? (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 1,
+                                          error: We.value,
+                                          label: a.$t("expan.tip14"),
+                                          prop: "downloadUrl",
+                                          required: "",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            Me.value.downloadUrl
+                                              ? (v(),
+                                                c("div", me, [
+                                                  E("div", ge, [
+                                                    l[15] ||
+                                                      (l[15] = E(
+                                                        "i",
+                                                        {
+                                                          class:
+                                                            "iconfont icon-installandupload tw-text-[17px]",
+                                                        },
+                                                        null,
+                                                        -1,
+                                                      )),
+                                                    h(
+                                                      " " +
+                                                        y(
+                                                          Me.value.downloadUrl
+                                                            .split("/")
+                                                            .at(-1),
+                                                        ),
+                                                      1,
+                                                    ),
+                                                  ]),
+                                                  x(
+                                                    r,
+                                                    {
+                                                      disabled: Fe.value,
+                                                      type: "text",
+                                                      onClick:
+                                                        l[1] ||
+                                                        (l[1] = (e) => Ia(1)),
+                                                    },
+                                                    {
+                                                      default: m(() => [
+                                                        x(
+                                                          d,
+                                                          {
+                                                            class:
+                                                              "tw-font-bold tw-ml-2",
+                                                          },
+                                                          {
+                                                            default: m(() => [
+                                                              x(b(_)),
+                                                            ]),
+                                                            _: 1,
+                                                          },
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    ["disabled"],
+                                                  ),
+                                                ]))
+                                              : (v(),
+                                                f(
+                                                  b(D),
+                                                  {
+                                                    key: 1,
+                                                    ref_key: "uploadRef",
+                                                    ref: oa,
+                                                    modelValue:
+                                                      Me.value.downloadUrl,
+                                                    "onUpdate:modelValue":
+                                                      l[2] ||
+                                                      (l[2] = (e) =>
+                                                        (Me.value.downloadUrl =
+                                                          e)),
+                                                    accept:
+                                                      ".zip,application/zip",
+                                                    "auto-upload": !0,
+                                                    "before-upload": pa(1),
+                                                    disabled: Fe.value,
+                                                    "http-request": va(1),
+                                                    limit: 1,
+                                                    "on-exceed": ha(1),
+                                                    "show-file-list": !1,
+                                                    class:
+                                                      "tw-w-full [&_.el-upload]:tw-w-full [&_.el-upload-dragger]:!tw-h-auto [&_.el-upload-dragger]:!tw-w-full [&_.el-upload-dragger]:!tw-rounded-[8px] [&_.el-upload-dragger]:!tw-border-[var(--border-color-light1)] [&_.el-upload-dragger]:!tw-bg-[var(--bg-light1)] [&_.el-upload-dragger]:!tw-p-0 [&_.el-upload-dragger.is-dragover]:!tw-border-[var(--primary-color)] [&_.el-upload-dragger.is-dragover]:!tw-bg-[var(--primary-color-light4)] [&_.el-upload-dragger:hover]:!tw-border-[var(--primary-color)]",
+                                                    drag: "",
+                                                  },
+                                                  {
+                                                    default: m(() => [
+                                                      E("div", fe, [
+                                                        x(
+                                                          d,
+                                                          {
+                                                            class:
+                                                              "tw-mb-1 tw-text-[28px] tw-text-[var(--primary-color)]",
+                                                          },
+                                                          {
+                                                            default: m(() => [
+                                                              x(b(k)),
+                                                            ]),
+                                                            _: 1,
+                                                          },
+                                                        ),
+                                                        E(
+                                                          "p",
+                                                          be,
+                                                          y(
+                                                            a.$t(
+                                                              "expan.uploadPackageDropTitle",
+                                                            ),
+                                                          ),
+                                                          1,
+                                                        ),
+                                                        E(
+                                                          "p",
+                                                          Ie,
+                                                          y(
+                                                            a.$t(
+                                                              "expan.uploadPackageDropHint",
+                                                            ),
+                                                          ),
+                                                          1,
+                                                        ),
+                                                      ]),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                  8,
+                                                  [
+                                                    "modelValue",
+                                                    "before-upload",
+                                                    "disabled",
+                                                    "http-request",
+                                                    "on-exceed",
+                                                  ],
+                                                )),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["error", "label"],
+                                      ))
+                                    : U("", !0),
+                                  la.value
+                                    ? (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 2,
+                                          label: a.$t("expan.tip2"),
+                                          prop: "extensionsName",
+                                          required: "",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            x(
+                                              s,
+                                              {
+                                                modelValue:
+                                                  Me.value.extensionsName,
+                                                "onUpdate:modelValue":
+                                                  l[3] ||
+                                                  (l[3] = (e) =>
+                                                    (Me.value.extensionsName =
+                                                      e)),
+                                                disabled: Fe.value,
+                                                placeholder:
+                                                  a.$t("expan.tip45"),
+                                                maxlength: "50",
+                                                "show-word-limit": "",
+                                              },
+                                              null,
+                                              8,
+                                              [
+                                                "modelValue",
+                                                "disabled",
+                                                "placeholder",
+                                              ],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ))
+                                    : U("", !0),
+                                  la.value
+                                    ? (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 3,
+                                          error: Xe.value,
+                                          label: a.$t("expan.tip17"),
+                                          prop: "iconUrl",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            Je.value
+                                              ? (v(),
+                                                c("div", he, [
+                                                  E(
+                                                    "img",
+                                                    {
+                                                      src: Je.value,
+                                                      class:
+                                                        "tw-h-[50px] tw-w-[50px] tw-rounded-[5px]",
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ye,
+                                                  ),
+                                                  x(
+                                                    r,
+                                                    {
+                                                      "aria-label":
+                                                        a.$t("base.del"),
+                                                      disabled: Fe.value,
+                                                      title: a.$t("base.del"),
+                                                      type: "text",
+                                                      onClick:
+                                                        l[4] ||
+                                                        (l[4] = R(
+                                                          (e) => Ia(2),
+                                                          ["stop"],
+                                                        )),
+                                                    },
+                                                    {
+                                                      default: m(() => [
+                                                        x(
+                                                          d,
+                                                          {
+                                                            class:
+                                                              "tw-font-bold tw-ml-2",
+                                                          },
+                                                          {
+                                                            default: m(() => [
+                                                              x(b(_)),
+                                                            ]),
+                                                            _: 1,
+                                                          },
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    [
+                                                      "aria-label",
+                                                      "disabled",
+                                                      "title",
+                                                    ],
+                                                  ),
+                                                ]))
+                                              : (v(),
+                                                c("div", Ue, [
+                                                  x(
+                                                    b(D),
+                                                    {
+                                                      ref_key: "iconUploadRef",
+                                                      ref: ia,
+                                                      modelValue:
+                                                        Me.value.iconUrl,
+                                                      "onUpdate:modelValue":
+                                                        l[5] ||
+                                                        (l[5] = (e) =>
+                                                          (Me.value.iconUrl =
+                                                            e)),
+                                                      accept:
+                                                        ".png,.jpg,.jpeg,image/png,image/jpeg",
+                                                      "auto-upload": !0,
+                                                      "before-upload": pa(2),
+                                                      disabled: Fe.value,
+                                                      "http-request": va(2),
+                                                      limit: 1,
+                                                      "on-exceed": ha(2),
+                                                      "show-file-list": !1,
+                                                      class:
+                                                        "tw-h-[120px] tw-w-[120px] [&_.el-upload]:tw-h-full [&_.el-upload]:tw-w-full [&_.el-upload-dragger]:!tw-h-[120px] [&_.el-upload-dragger]:!tw-w-[120px] [&_.el-upload-dragger]:!tw-rounded-[8px] [&_.el-upload-dragger]:!tw-border-[var(--border-color-light1)] [&_.el-upload-dragger]:!tw-bg-[var(--bg-light1)] [&_.el-upload-dragger]:!tw-p-0 [&_.el-upload-dragger.is-dragover]:!tw-border-[var(--primary-color)] [&_.el-upload-dragger.is-dragover]:!tw-bg-[var(--primary-color-light4)] [&_.el-upload-dragger:hover]:!tw-border-[var(--primary-color)]",
+                                                      drag: "",
+                                                    },
+                                                    {
+                                                      default: m(() => [
+                                                        E("div", Ee, [
+                                                          x(
+                                                            d,
+                                                            {
+                                                              class:
+                                                                "tw-mb-1 tw-text-[26px] tw-text-[var(--primary-color)]",
+                                                            },
+                                                            {
+                                                              default: m(() => [
+                                                                x(b(k)),
+                                                              ]),
+                                                              _: 1,
+                                                            },
+                                                          ),
+                                                          E(
+                                                            "p",
+                                                            _e,
+                                                            y(
+                                                              a.$t(
+                                                                "expan.uploadIconDropTitle",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          ),
+                                                        ]),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    [
+                                                      "modelValue",
+                                                      "before-upload",
+                                                      "disabled",
+                                                      "http-request",
+                                                      "on-exceed",
+                                                    ],
+                                                  ),
+                                                  E(
+                                                    "p",
+                                                    De,
+                                                    y(
+                                                      a.$t(
+                                                        "expan.uploadIconDropHint",
+                                                      ),
+                                                    ),
+                                                    1,
+                                                  ),
+                                                ])),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["error", "label"],
+                                      ))
+                                    : U("", !0),
+                                  la.value
+                                    ? (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 4,
+                                          label: a.$t("expan.tip19"),
+                                          prop: "extensionsIntroduce",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            x(
+                                              s,
+                                              {
+                                                modelValue:
+                                                  Me.value.extensionsIntroduce,
+                                                "onUpdate:modelValue":
+                                                  l[6] ||
+                                                  (l[6] = (e) =>
+                                                    (Me.value.extensionsIntroduce =
+                                                      e)),
+                                                disabled: Fe.value,
+                                                placeholder:
+                                                  a.$t("expan.tip20"),
+                                                rows: 4,
+                                                maxlength: "200",
+                                                resize: "none",
+                                                "show-word-limit": "",
+                                                type: "textarea",
+                                              },
+                                              null,
+                                              8,
+                                              [
+                                                "modelValue",
+                                                "disabled",
+                                                "placeholder",
+                                              ],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ))
+                                    : U("", !0),
+                                  la.value ||
+                                  (null == (p = e.updateExpandData)
+                                    ? void 0
+                                    : p.source) === b(i).DICLOAK
+                                    ? U("", !0)
+                                    : (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 5,
+                                          error: Ke.value,
+                                          label: a.$t("expan.tip21"),
+                                          prop: "originalUrl",
+                                          required: "",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            x(
+                                              s,
+                                              {
+                                                modelValue:
+                                                  Me.value.originalUrl,
+                                                "onUpdate:modelValue":
+                                                  l[7] ||
+                                                  (l[7] = (e) =>
+                                                    (Me.value.originalUrl = e)),
+                                                modelModifiers: { trim: !0 },
+                                                disabled:
+                                                  Fe.value ||
+                                                  e.updateExpandData,
+                                                placeholder:
+                                                  a.$t("expan.tip59"),
+                                                autosize: "",
+                                                class:
+                                                  "tw-break-all textarea-wrapper",
+                                                resize: "none",
+                                                type: "textarea",
+                                              },
+                                              null,
+                                              8,
+                                              [
+                                                "modelValue",
+                                                "disabled",
+                                                "placeholder",
+                                              ],
+                                            ),
+                                            E(
+                                              "p",
+                                              {
+                                                class:
+                                                  "tw-text-[12px] tw-leading-[18px] tw-mt-1 tw-text-subText tw-ml-1",
+                                                innerHTML: a.$t("expan.tip26"),
+                                              },
+                                              null,
+                                              8,
+                                              ke,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["error", "label"],
+                                      )),
+                                  x(
+                                    n,
+                                    {
+                                      label: a.$t("expan.tip6"),
+                                      prop: "extensionsGroupIds",
+                                    },
+                                    {
+                                      default: m(() => [
+                                        x(
+                                          N,
+                                          {
+                                            modelValue:
+                                              Me.value.extensionsGroupIds,
+                                            "onUpdate:modelValue":
+                                              l[8] ||
+                                              (l[8] = (e) =>
+                                                (Me.value.extensionsGroupIds =
+                                                  e)),
+                                            disabled: Fe.value,
+                                            "max-collapse-tags": 1,
+                                            placeholder: a.$t("expan.tip46"),
+                                            "collapse-tags": "",
+                                            "collapse-tags-tooltip": "",
+                                            filterable: "",
+                                            multiple: "",
+                                          },
+                                          {
+                                            footer: m(() => [
+                                              x(
+                                                r,
+                                                {
+                                                  link: "",
+                                                  type: "primary",
+                                                  onClick: ya,
+                                                },
+                                                {
+                                                  default: m(() => [
+                                                    l[16] ||
+                                                      (l[16] = E(
+                                                        "i",
+                                                        {
+                                                          class:
+                                                            "iconfont icon-plus tw-mr-[4px]",
+                                                        },
+                                                        null,
+                                                        -1,
+                                                      )),
+                                                    E(
+                                                      "span",
+                                                      null,
+                                                      y(
+                                                        a.$t(
+                                                          "expan.createExpandGroup",
+                                                        ),
+                                                      ),
+                                                      1,
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                              ),
+                                            ]),
+                                            default: m(() => [
+                                              (v(!0),
+                                              c(
+                                                w,
+                                                null,
+                                                L(
+                                                  Be.value,
+                                                  (e) => (
+                                                    v(),
+                                                    f(
+                                                      O,
+                                                      {
+                                                        key: e.id,
+                                                        label: e.name,
+                                                        value: e.id,
+                                                      },
+                                                      null,
+                                                      8,
+                                                      ["label", "value"],
+                                                    )
+                                                  ),
+                                                ),
+                                                128,
+                                              )),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          [
+                                            "modelValue",
+                                            "disabled",
+                                            "placeholder",
+                                          ],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ),
+                                  e.updateExpandData
+                                    ? U("", !0)
+                                    : (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 6,
+                                          label: "1",
+                                          class: "form-item-label-hidden",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            E(
+                                              "div",
+                                              {
+                                                class:
+                                                  "s-flex tw-cursor-pointer tw-gap-x-1 tw-text-main",
+                                                onClick: da,
+                                              },
+                                              [
+                                                E(
+                                                  "span",
+                                                  null,
+                                                  y(a.$t("menu.setting.top2")),
+                                                  1,
+                                                ),
+                                                E(
+                                                  "div",
+                                                  {
+                                                    class: T([
+                                                      [
+                                                        Ze.value
+                                                          ? ""
+                                                          : "tw-rotate-180",
+                                                      ],
+                                                      "tw-duration-300 c-flex",
+                                                    ]),
+                                                  },
+                                                  [
+                                                    x(d, null, {
+                                                      default: m(() => [x(G)]),
+                                                      _: 1,
+                                                    }),
+                                                  ],
+                                                  2,
+                                                ),
+                                              ],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      )),
+                                  !Ze.value || e.updateExpandData
+                                    ? (v(),
+                                      c(
+                                        w,
+                                        { key: 7 },
+                                        [
+                                          x(
+                                            n,
+                                            { prop: "pinType", required: "" },
+                                            {
+                                              label: m(() => [
+                                                E(
+                                                  "span",
+                                                  null,
+                                                  y(a.$t("expan.tip61")),
+                                                  1,
+                                                ),
+                                                x(
+                                                  H,
+                                                  {
+                                                    "show-arrow": !1,
+                                                    class: "box-item",
+                                                    effect: "dark",
+                                                    placement: "top-start",
+                                                  },
+                                                  {
+                                                    content: m(() => [
+                                                      E("div", Re, [
+                                                        E(
+                                                          "p",
+                                                          null,
+                                                          y(
+                                                            a.$t("expan.tip65"),
+                                                          ),
+                                                          1,
+                                                        ),
+                                                        l[17] ||
+                                                          (l[17] = E(
+                                                            "div",
+                                                            {
+                                                              class: "tw-mt-1",
+                                                            },
+                                                            [
+                                                              E("img", {
+                                                                src: ue,
+                                                              }),
+                                                            ],
+                                                            -1,
+                                                          )),
+                                                      ]),
+                                                    ]),
+                                                    default: m(() => [
+                                                      l[18] ||
+                                                        (l[18] = E(
+                                                          "i",
+                                                          {
+                                                            class:
+                                                              "iconfont icon-help-circle1 tw-text-[18px] tw-pl-[4px] tw-cursor-pointer",
+                                                          },
+                                                          null,
+                                                          -1,
+                                                        )),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                ),
+                                              ]),
+                                              default: m(() => [
+                                                x(
+                                                  N,
+                                                  {
+                                                    modelValue:
+                                                      Me.value.pinType,
+                                                    "onUpdate:modelValue":
+                                                      l[9] ||
+                                                      (l[9] = (e) =>
+                                                        (Me.value.pinType = e)),
+                                                    disabled: Fe.value,
+                                                  },
+                                                  {
+                                                    default: m(() => [
+                                                      (v(!0),
+                                                      c(
+                                                        w,
+                                                        null,
+                                                        L(
+                                                          b(o),
+                                                          (e) => (
+                                                            v(),
+                                                            f(
+                                                              O,
+                                                              {
+                                                                key: e,
+                                                                label: aa[e],
+                                                                value: e,
+                                                              },
+                                                              null,
+                                                              8,
+                                                              [
+                                                                "label",
+                                                                "value",
+                                                              ],
+                                                            )
+                                                          ),
+                                                        ),
+                                                        128,
+                                                      )),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                  8,
+                                                  ["modelValue", "disabled"],
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                          ),
+                                          x(
+                                            n,
+                                            {
+                                              label:
+                                                b($e)("expan.hideSettings"),
+                                              prop: "enable",
+                                            },
+                                            {
+                                              default: m(() => [
+                                                E("div", Le, [
+                                                  x(
+                                                    C,
+                                                    {
+                                                      modelValue:
+                                                        Me.value.browserHide,
+                                                      "onUpdate:modelValue":
+                                                        l[10] ||
+                                                        (l[10] = (e) =>
+                                                          (Me.value.browserHide =
+                                                            e)),
+                                                      class: "tw-mr-[5px]",
+                                                      size: "small",
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["modelValue"],
+                                                  ),
+                                                  E(
+                                                    "span",
+                                                    Te,
+                                                    y(
+                                                      b($e)("expan.enableHide"),
+                                                    ),
+                                                    1,
+                                                  ),
+                                                ]),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["label"],
+                                          ),
+                                          Me.value.browserHide
+                                            ? (v(),
+                                              f(
+                                                n,
+                                                {
+                                                  key: 0,
+                                                  label:
+                                                    a.$t("menu.org.roleList"),
+                                                  prop: "hideRoleId",
+                                                },
+                                                {
+                                                  default: m(() => [
+                                                    x(
+                                                      N,
+                                                      {
+                                                        modelValue:
+                                                          Me.value.hideRoleId,
+                                                        "onUpdate:modelValue":
+                                                          l[11] ||
+                                                          (l[11] = (e) =>
+                                                            (Me.value.hideRoleId =
+                                                              e)),
+                                                        "max-collapse-tags": 3,
+                                                        placeholder: a.$t(
+                                                          "setting.versionLimitTip12",
+                                                        ),
+                                                        clearable: "",
+                                                        "collapse-tags": "",
+                                                        "collapse-tags-tooltip":
+                                                          "",
+                                                        multiple: "",
+                                                        onChange: ra,
+                                                      },
+                                                      {
+                                                        default: m(() => [
+                                                          (v(!0),
+                                                          c(
+                                                            w,
+                                                            null,
+                                                            L(
+                                                              Ye.value,
+                                                              (e) => (
+                                                                v(),
+                                                                f(
+                                                                  O,
+                                                                  {
+                                                                    key: e.value,
+                                                                    label:
+                                                                      e.label,
+                                                                    value:
+                                                                      e.value,
+                                                                  },
+                                                                  {
+                                                                    default: m(
+                                                                      () => [
+                                                                        E(
+                                                                          "div",
+                                                                          Oe,
+                                                                          [
+                                                                            E(
+                                                                              "span",
+                                                                              null,
+                                                                              y(
+                                                                                e.label,
+                                                                              ),
+                                                                              1,
+                                                                            ),
+                                                                            "all" ===
+                                                                            e.value
+                                                                              ? (v(),
+                                                                                f(
+                                                                                  H,
+                                                                                  {
+                                                                                    key: 0,
+                                                                                    placement:
+                                                                                      "top",
+                                                                                  },
+                                                                                  {
+                                                                                    content:
+                                                                                      m(
+                                                                                        () => [
+                                                                                          E(
+                                                                                            "div",
+                                                                                            Ne,
+                                                                                            y(
+                                                                                              a.$t(
+                                                                                                "setting.versionLimitTip16",
+                                                                                              ),
+                                                                                            ),
+                                                                                            1,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    default:
+                                                                                      m(
+                                                                                        () => [
+                                                                                          l[19] ||
+                                                                                            (l[19] =
+                                                                                              E(
+                                                                                                "i",
+                                                                                                {
+                                                                                                  class:
+                                                                                                    "iconfont icon-help-circle1 tw-cursor-pointer",
+                                                                                                },
+                                                                                                null,
+                                                                                                -1,
+                                                                                              )),
+                                                                                        ],
+                                                                                      ),
+                                                                                    _: 1,
+                                                                                  },
+                                                                                ))
+                                                                              : U(
+                                                                                  "",
+                                                                                  !0,
+                                                                                ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    _: 2,
+                                                                  },
+                                                                  1032,
+                                                                  [
+                                                                    "label",
+                                                                    "value",
+                                                                  ],
+                                                                )
+                                                              ),
+                                                            ),
+                                                            128,
+                                                          )),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      [
+                                                        "modelValue",
+                                                        "placeholder",
+                                                      ],
+                                                    ),
+                                                    E(
+                                                      "div",
+                                                      Ge,
+                                                      y(
+                                                        b($e)(
+                                                          "expan.selectMembers",
+                                                        ),
+                                                      ),
+                                                      1,
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                                8,
+                                                ["label"],
+                                              ))
+                                            : U("", !0),
+                                        ],
+                                        64,
+                                      ))
+                                    : U("", !0),
+                                  e.updateExpandData
+                                    ? U("", !0)
+                                    : (v(),
+                                      f(
+                                        n,
+                                        {
+                                          key: 8,
+                                          label: "_",
+                                          prop: "enable",
+                                          class: "form-item-label-hidden",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            x(
+                                              V,
+                                              {
+                                                class: "tw-flex tw-items-start",
+                                                modelValue: Me.value.enable,
+                                                "onUpdate:modelValue":
+                                                  l[12] ||
+                                                  (l[12] = (e) =>
+                                                    (Me.value.enable = e)),
+                                              },
+                                              {
+                                                default: m(() => [
+                                                  h(y(a.$t("expan.tip73")), 1),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      )),
+                                ];
+                              }),
+                              _: 1,
+                            },
+                            8,
+                            ["model", "rules"],
+                          )),
+                          [[$]],
+                        ),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["modelValue", "title"],
+                  ),
+                  x(
+                    pe,
+                    {
+                      ref_key: "editExpandGroupRef",
+                      ref: je,
+                      onSubmit: l[14] || (l[14] = (e) => Ua(!1)),
+                    },
+                    null,
+                    512,
+                  ),
+                ],
+                64,
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-c3544156"]],
+  );
+export { He as default };

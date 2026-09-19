@@ -1,0 +1,27 @@
+.choose-plan-dialog {
+  height: 85vh;
+  max-height: 85vh;
+}
+.choose-plan-dialog .el-dialog__header {
+  padding: 0 32px !important;
+  margin: 30px 0 16px;
+  position: relative;
+}
+.choose-plan-dialog .el-dialog__header > span {
+  font-size: 18px;
+  line-height: 1em;
+  color: var(--text-color-base);
+  text-align: center;
+}
+.choose-plan-dialog .el-dialog__header i {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  transform: translateY(-50%);
+  font-size: 24px;
+  cursor: pointer;
+}
+.choose-plan-dialog .el-dialog__body {
+  height: calc(100% - 80px);
+  overflow: hidden;
+}

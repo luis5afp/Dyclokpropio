@@ -1,0 +1,379 @@
+import {
+  d as e,
+  G as l,
+  R as a,
+  i as t,
+  k5 as s,
+  v as n,
+  P as u,
+  r as o,
+  q as i,
+  o as d,
+  h as p,
+  w as r,
+  a as v,
+  x as c,
+  b as m,
+  t as f,
+  f as g,
+  c as w,
+  F as b,
+  z as y,
+  X as S,
+  k6 as V,
+  e as $,
+  C as h,
+  V as x,
+} from "./index-BUIbb6Pa.js";
+const R = { class: "tw-w-full tw-flex tw-flex-col tw-gap-y-2" },
+  L = { class: "tw-flex tw-items-center" },
+  _ = { class: "tw-leading-[1.2] tw-text-[var(--text-color-light1)]" },
+  k = { class: "tw-flex tw-items-center" },
+  I = { class: "tw-leading-[1.2] tw-text-[var(--text-color-light1)]" },
+  A = { class: "tw-pr-[4px]" },
+  C = { class: "tw-w-full b-flex" },
+  E = e({
+    __name: "RpaSetting",
+    setup(e, { expose: E }) {
+      const U = l(),
+        { rpaLocalConfig: P } = a(U),
+        M = t(!1),
+        T = t(U.rpaRunLimit),
+        D = s(),
+        { t: G } = n.useI18n(),
+        O = t({
+          latticeLayoutState: !1,
+          displayId: void 0,
+          rpaEnvRunMode: void 0,
+          preventAppSuspension: !0,
+        }),
+        W = h(() => (e, l) => {
+          let a = "";
+          return (
+            e.detected &&
+              (a = e.internal
+                ? `${G("sync.tip39")}${l + 1} (${e.bounds.width}*${e.bounds.height})`
+                : `${G("sync.tip40")}${l + 1} (${e.bounds.width}*${e.bounds.height})`),
+            a
+          );
+        });
+      function j() {
+        var e;
+        O.value.latticeLayoutState &&
+          !O.value.displayId &&
+          D.disPlays.length > 0 &&
+          (O.value.displayId = null == (e = D.disPlays[0]) ? void 0 : e.id);
+      }
+      u(() => {
+        D.getAllDisplays();
+      });
+      const q = () => {
+          ((M.value = !1), (T.value = U.rpaRunLimit));
+        },
+        z = () => {
+          ((U.rpaRunLimit = Number(T.value)),
+            (P.value = x.clone(O.value)),
+            (M.value = !1));
+        },
+        B = () => {
+          const e = T.value;
+          if (!/^\d+$/.test(e.toString()) && "" !== e.toString()) {
+            const l = +e.toString().replace(/[^\d]/g, "");
+            T.value = 0 === l ? 1 : l;
+          }
+        },
+        F = () => {
+          const e = T.value;
+          ((0 !== e && /^\d+$/.test(e.toString())) || (T.value = 3),
+            e > 100 ? (T.value = 100) : e < 1 && (T.value = 3));
+        };
+      return (
+        E({
+          open: () => {
+            ((M.value = !0), (O.value = U.getRpaLocalConfig()));
+          },
+        }),
+        (e, l) => {
+          const a = o("el-input"),
+            t = o("el-form-item"),
+            s = o("el-switch"),
+            n = o("el-option"),
+            u = o("el-select"),
+            h = o("el-form"),
+            x = o("el-button"),
+            E = o("el-dialog"),
+            U = i("prevent-label-click");
+          return (
+            d(),
+            p(
+              E,
+              {
+                modelValue: M.value,
+                "onUpdate:modelValue": l[5] || (l[5] = (e) => (M.value = e)),
+                "close-on-click-modal": !1,
+                "close-on-press-escape": !1,
+                title: e.$t("setting.rpaTaskSetting"),
+                width: "550",
+              },
+              {
+                footer: r(() => [
+                  v("div", C, [
+                    m(
+                      x,
+                      { class: "tw-w-full", type: "info", onClick: q },
+                      {
+                        default: r(() => [$(f(e.$t("base.cancel")), 1)]),
+                        _: 1,
+                      },
+                    ),
+                    m(
+                      x,
+                      { class: "tw-w-full", type: "primary", onClick: z },
+                      {
+                        default: r(() => [$(f(e.$t("base.confirm")), 1)]),
+                        _: 1,
+                      },
+                    ),
+                  ]),
+                ]),
+                default: r(() => [
+                  v("div", R, [
+                    c(
+                      (d(),
+                      p(
+                        h,
+                        { "label-position": "top" },
+                        {
+                          default: r(() => [
+                            m(
+                              t,
+                              { label: e.$t("setting.rpaRunLimitTip") },
+                              {
+                                default: r(() => [
+                                  m(
+                                    a,
+                                    {
+                                      modelValue: T.value,
+                                      "onUpdate:modelValue":
+                                        l[0] || (l[0] = (e) => (T.value = e)),
+                                      modelModifiers: { number: !0 },
+                                      placeholder: "1-100",
+                                      onBlur: F,
+                                      onInput: B,
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            m(
+                              t,
+                              {
+                                label: e.$t("rpa.setting.runWindowGridLayout"),
+                              },
+                              {
+                                default: r(() => [
+                                  v("div", L, [
+                                    m(
+                                      s,
+                                      {
+                                        class: "tw-mr-[8px]",
+                                        modelValue: O.value.latticeLayoutState,
+                                        "onUpdate:modelValue":
+                                          l[1] ||
+                                          (l[1] = (e) =>
+                                            (O.value.latticeLayoutState = e)),
+                                        onChange: j,
+                                      },
+                                      null,
+                                      8,
+                                      ["modelValue"],
+                                    ),
+                                    v(
+                                      "span",
+                                      _,
+                                      f(
+                                        g(G)(
+                                          "rpa.setting.runWindowGridLayoutDesc",
+                                        ),
+                                      ),
+                                      1,
+                                    ),
+                                  ]),
+                                  O.value.latticeLayoutState
+                                    ? (d(),
+                                      p(
+                                        u,
+                                        {
+                                          key: 0,
+                                          modelValue: O.value.displayId,
+                                          "onUpdate:modelValue":
+                                            l[2] ||
+                                            (l[2] = (e) =>
+                                              (O.value.displayId = e)),
+                                          placeholder:
+                                            g(G)("base.selectHolder"),
+                                          class: "tw-w-full tw-mt-2",
+                                        },
+                                        {
+                                          default: r(() => [
+                                            (d(!0),
+                                            w(
+                                              b,
+                                              null,
+                                              y(
+                                                g(D).disPlays,
+                                                (e, l) => (
+                                                  d(),
+                                                  p(
+                                                    n,
+                                                    {
+                                                      key: e.id,
+                                                      label: W.value(e, l),
+                                                      value: e.id,
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["label", "value"],
+                                                  )
+                                                ),
+                                              ),
+                                              128,
+                                            )),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["modelValue", "placeholder"],
+                                      ))
+                                    : S("", !0),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            m(
+                              t,
+                              {
+                                label: e.$t("rpa.setting.preventAppSuspension"),
+                              },
+                              {
+                                default: r(() => [
+                                  v("div", k, [
+                                    m(
+                                      s,
+                                      {
+                                        class: "tw-mr-[8px]",
+                                        modelValue:
+                                          O.value.preventAppSuspension,
+                                        "onUpdate:modelValue":
+                                          l[3] ||
+                                          (l[3] = (e) =>
+                                            (O.value.preventAppSuspension = e)),
+                                      },
+                                      null,
+                                      8,
+                                      ["modelValue"],
+                                    ),
+                                    v(
+                                      "span",
+                                      I,
+                                      f(
+                                        g(G)(
+                                          "rpa.setting.preventAppSuspensionDesc",
+                                        ),
+                                      ),
+                                      1,
+                                    ),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            m(
+                              t,
+                              { label: e.$t("rpa.setting.envRunSetting") },
+                              {
+                                label: r(() => [
+                                  v(
+                                    "span",
+                                    A,
+                                    f(g(G)("rpa.setting.envRunSetting")),
+                                    1,
+                                  ),
+                                ]),
+                                default: r(() => [
+                                  m(
+                                    u,
+                                    {
+                                      modelValue: O.value.rpaEnvRunMode,
+                                      "onUpdate:modelValue":
+                                        l[4] ||
+                                        (l[4] = (e) =>
+                                          (O.value.rpaEnvRunMode = e)),
+                                    },
+                                    {
+                                      default: r(() => [
+                                        m(
+                                          n,
+                                          {
+                                            label: g(G)(
+                                              "rpa.setting.skipIfEnvOpened",
+                                            ),
+                                            value: g(V).SKIP,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                        m(
+                                          n,
+                                          {
+                                            label: g(G)(
+                                              "rpa.setting.closeAndRunIfEnvOpened",
+                                            ),
+                                            value: g(V).RESTART,
+                                          },
+                                          null,
+                                          8,
+                                          ["label", "value"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                      )),
+                      [[U]],
+                    ),
+                  ]),
+                ]),
+                _: 1,
+              },
+              8,
+              ["modelValue", "title"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { E as _ };

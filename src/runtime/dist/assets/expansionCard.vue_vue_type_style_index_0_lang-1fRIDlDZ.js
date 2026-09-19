@@ -1,0 +1,930 @@
+import {
+  d as e,
+  v as t,
+  gz as n,
+  i as a,
+  r as i,
+  q as o,
+  o as l,
+  c as s,
+  F as r,
+  x as p,
+  h as u,
+  w as c,
+  f as d,
+  gA as w,
+  X as x,
+  a as f,
+  b as v,
+  e as m,
+  t as g,
+  gW as y,
+  gX as h,
+  gB as k,
+  dj as _,
+  C as b,
+  g1 as D,
+  gE as I,
+  D as U,
+  dl as E,
+  I as L,
+  gN as C,
+  fe as T,
+  a3 as A,
+  a1 as N,
+  gY as q,
+  gS as B,
+  gU as j,
+  gV as S,
+  gK as $,
+  gT as O,
+  gr as P,
+  gZ as R,
+} from "./index-BUIbb6Pa.js";
+import H from "./expansionDefaulAvatar-BAAgU78a.js";
+import { _ as G } from "./configExpandGroup.vue_vue_type_script_setup_true_lang-BFw61P8j.js";
+import { s as F } from "./extensionArtifact-CQf81S97.js";
+const V = "" + new URL("safety-icon-Dg7INoc4.svg", import.meta.url).href,
+  X = {
+    key: 0,
+    class:
+      "tw-flex tw-items-center tw-gap-[2px] tw-absolute tw-top-[-2px] tw-left-[-2px] tw-h-[17px] tw-bg-[var(--custom-tag-bg-color)] tw-px-[6px] tw-pt-[2px] tw-rounded-tr-[16px] tw-rounded-br-[16px]",
+  },
+  K = {
+    key: 0,
+    class:
+      "iconfont icon-eye-off tw-text-[14px] tw-text-[var(--custom-tag-text-color)]",
+  },
+  z = {
+    key: 1,
+    class:
+      "iconfont icon-totop tw-text-[14px] tw-text-[var(--custom-tag-text-color)]",
+  },
+  Q = { class: "!tw-flex !tw-justify-between tw-h-full tw-flex-col" },
+  W = { class: "tw-flex tw-justify-between tw-items-start" },
+  Y = { class: "tw-flex tw-gap-3" },
+  Z = {
+    class:
+      "tw-w-[54px] tw-pt-[4px] tw-mr-[4px] tw-relative tw-h-[54px] tw-object-fill tw-flex-shrink-0 tw-overflow-auto tw-rounded-[8px]",
+  },
+  J = {
+    class:
+      "tw-w-[50px] tw-h-[50px] tw-object-fill tw-flex-shrink-0 tw-overflow-auto tw-rounded-[8px]",
+  },
+  M = { key: 1, draggable: !1, class: "tw-w-full tw-h-full" },
+  ee = { class: "tw-text-[14px]" },
+  te = { class: "tw-font-medium tw-line-clamp-1 tw-break-all" },
+  ne = {
+    class:
+      "tw-text-subText tw-flex tw-items-center tw-mt-1 tw-text-[12px] tw-min-h-[18px] tw-font-extralight tw-line-clamp-1",
+  },
+  ae = { class: "tw-text-[var(--warning-color)] tw-px-[4px]" },
+  ie = {
+    class:
+      "tw-text-subText tw-font-medium tw-line-clamp-1 tw-break-all tw-text-[12px]",
+  },
+  oe = { class: "tw-max-w-[300px] tw-text-textColor-700" },
+  le = { class: "tw-line-clamp-3 tw-text-[12px] tw-text-subText tw-my-4" },
+  se = { class: "b-flex" },
+  re = {
+    class:
+      "tw-text-[14px] tw-text-textColor-700 s-flex tw-gap-x-1 tw-flex-wrap",
+  },
+  pe = e({
+    __name: "expansionCard",
+    props: {
+      info: {},
+      getData: { type: Function },
+      isDownloadList: {},
+      getIsDownloadList: { type: Function },
+      updateExpand: { type: Function },
+      expDicLatestList: {},
+      isOpenSafetyProtection: { type: Boolean },
+    },
+    setup(e) {
+      const pe = a(null),
+        ue = a(),
+        { locale: ce, t: de } = t.useI18n(),
+        { checkAndDownload: we, refreshSha256Hash: xe } = n(),
+        fe = a(!1),
+        ve = a(`${de("expan.tip41")}`),
+        me = a(!1),
+        ge = e;
+      async function ye(e, t, n = 9e4) {
+        let a;
+        const i = new Promise((e, i) => {
+          a = setTimeout(() => i(new Error(`${t} timeout`)), n);
+        });
+        try {
+          return await Promise.race([e, i]);
+        } finally {
+          a && clearTimeout(a);
+        }
+      }
+      async function he(e, t, n, a = 9e4) {
+        return ye(window.ipcRenderer.invoke(e, t), n, a);
+      }
+      const ke = b(() => {
+          if (ge.info.source === k.DICLOAK) {
+            let e = (ge.expDicLatestList || []).find(
+              (e) => e.uniqueId === ge.info.uniqueId,
+            );
+            return !!e && ($(e.version, ge.info.version) ?? 0) > 0;
+          }
+          return !1;
+        }),
+        _e = () => {
+          D() || ge.updateExpand(ge.info);
+        },
+        be = async () => {
+          var e, t;
+          if (D()) return;
+          if (I(U.isClient)) return void E();
+          let n = !1;
+          try {
+            me.value = !0;
+            const a =
+              (null == (e = null == ge ? void 0 : ge.info)
+                ? void 0
+                : e.status) === _.ENABLED
+                ? _.DISABLED
+                : _.ENABLED;
+            (a !== _.ENABLED &&
+              (await L.confirm(de("expan.tip49"), de("expan.tip48"), {
+                confirmButtonText: de("base.confirm"),
+                cancelButtonText: de("base.cancel"),
+                type: "warning",
+              }),
+              await C(
+                null == (t = null == ge ? void 0 : ge.info) ? void 0 : t.id,
+                { status: a },
+              ),
+              (n = !0),
+              (me.value = !1)),
+              a === _.ENABLED &&
+                (await we(
+                  {
+                    expanId: ge.info.uniqueId,
+                    source: ge.info.source,
+                    md5Hash: ge.info.md5Hash,
+                    downloadUrl: ge.info.downloadUrl,
+                    version: ge.info.version,
+                  },
+                  (e, t, i = !0) => {
+                    if (t) {
+                      if (!i)
+                        return (
+                          (n = !1),
+                          T({
+                            title: de("sync.tip68"),
+                            message: de("expan.security.tip14"),
+                            duration: 5e3,
+                            type: "error",
+                          }),
+                          void (me.value = !1)
+                        );
+                      setTimeout(async () => {
+                        var e;
+                        (await C(
+                          null == (e = null == ge ? void 0 : ge.info)
+                            ? void 0
+                            : e.id,
+                          { status: a },
+                        ),
+                          (n = !0),
+                          A.success(de("expan.tip58")),
+                          ge.getIsDownloadList(),
+                          ge.getData(),
+                          (me.value = !1));
+                      }, 500);
+                    } else
+                      void 0 !== t &&
+                        ((n = !1),
+                        T({
+                          title: de("expan.tip56"),
+                          message: de("expan.tip55"),
+                          duration: 5e3,
+                          type: "error",
+                        }),
+                        (me.value = !1));
+                  },
+                )));
+          } catch (a) {
+            ((n = !1), (me.value = !1));
+          } finally {
+            return n;
+          }
+        },
+        De = () => {
+          var e;
+          let t =
+            null == (e = null == ge ? void 0 : ge.info)
+              ? void 0
+              : e.originalUrl;
+          if (!t) return;
+          const n = new URL(t);
+          (n.searchParams.delete("hl"), U.api.openUrl(n.toString()));
+        },
+        Ie = () => {
+          N({
+            title: de("expan.tip38"),
+            message: de("expan.tip47"),
+            confirmCb: async () => {
+              var e;
+              (await q(
+                null == (e = null == ge ? void 0 : ge.info) ? void 0 : e.id,
+              ),
+                await ge.getData(),
+                A.success(de("base.delSuccess")));
+            },
+          });
+        },
+        Ue = async (e, t = !1, n = !1) => {
+          Object.keys(e).map((t) => {
+            const n = t;
+            !e[n] && delete e[n];
+          });
+          if (0 === (await R(ge.info.id, { ...ge.info, ...e })).code) {
+            if (t) {
+              if (
+                !(await xe({
+                  uniqueId: e.uniqueId,
+                  version: e.version,
+                  force: n,
+                }))
+              )
+                return (await C(ge.info.id, { status: _.DISABLED }), !1);
+            }
+            return (ge.getData(), !0);
+          }
+          return !1;
+        };
+      async function Ee() {
+        if (I(U.isClient)) E();
+        else if (ke.value) {
+          let t = (ge.expDicLatestList || []).find(
+            (e) => e.uniqueId === ge.info.uniqueId,
+          );
+          if ((console.log(t, "target"), t))
+            try {
+              ((fe.value = !0),
+                console.info(
+                  "[extension update] start dicloak extension update",
+                  {
+                    uniqueId: t.uniqueId,
+                    version: t.version,
+                    downloadUrl: t.downloadUrl,
+                  },
+                ));
+              let e = await ye(
+                we(
+                  {
+                    isUpdate: !0,
+                    expanId: t.uniqueId,
+                    source: t.source,
+                    md5Hash: t.md5Hash,
+                    downloadUrl: t.downloadUrl,
+                    version: t.version,
+                  },
+                  void 0,
+                  !1,
+                ),
+                "update dicloak extension",
+                18e4,
+              );
+              (T({
+                type: e ? "success" : "warning",
+                title: de("reset.tip"),
+                message: de(
+                  e ? "env.env.shareDialog.operatorSuccess" : "expan.tip40",
+                ),
+                duration: 3e3,
+              }),
+                e && (await Ue(t, !0)));
+            } catch (e) {
+              (console.error("[extension update] failed", e),
+                T({
+                  title: de("expan.tip40"),
+                  message: de("expan.tip55"),
+                  duration: 5e3,
+                  type: "error",
+                }));
+            } finally {
+              fe.value = !1;
+            }
+        } else await Le();
+      }
+      const Le = async () => {
+        var e;
+        if (!D())
+          try {
+            ((fe.value = !0), null == (e = pe.value) || e.handleClose());
+            const t = ge.info.uniqueId,
+              n = await he(
+                B,
+                { id: t, lang: ce.value, url: ge.info.originalUrl },
+                "check google extension network",
+              );
+            if ("string" == typeof n || !1 === n) {
+              const e = de(
+                "string" == typeof n && "ERR_BAD_REQUEST" !== n
+                  ? "expan.tip29"
+                  : "expan.tip28",
+              );
+              return void T({
+                title: de("expan.tip40"),
+                message: e,
+                duration: 5e3,
+                type: "error",
+              });
+            }
+            const a = ge.info.version,
+              i = ge.info.originalUrl;
+            new URL(i).search = `?hl=${j[ce.value]}`;
+            const o = await he(
+              S,
+              { id: t, lang: ce.value },
+              "get google extension detail",
+            );
+            if (!o)
+              return void T({
+                title: de("expan.tip40"),
+                message: de("expan.tip44"),
+                duration: 5e3,
+                type: "error",
+              });
+            const l = $(o.version, a);
+            let s = !1;
+            if (
+              (0 === l
+                ? o.extensionsName !== ge.info.extensionsName && (s = !0)
+                : 1 === l && (s = !0),
+              o.downloadUrl && delete o.downloadUrl,
+              delete o.iconUrl,
+              s)
+            ) {
+              const e = await he(
+                O,
+                { id: o.uniqueId, lang: ce.value },
+                "download google extension",
+              );
+              if (e) {
+                if (
+                  !(await Ue(
+                    { ...o, downloadUrl: e.downloadUrl, iconUrl: e.iconUrl },
+                    F({ uploadedToOss: !!e.downloadUrl }),
+                    !0,
+                  ))
+                )
+                  return void T({
+                    title: de("expan.tip40"),
+                    message: de("expan.tip55"),
+                    duration: 5e3,
+                    type: "error",
+                  });
+              }
+            }
+            T({
+              title: de("reset.tip"),
+              message: de(s ? "expan.tip37" : "expan.tip54"),
+              duration: 3e3,
+              type: "success",
+            });
+          } catch (t) {
+            (console.error("[extension update] failed", t),
+              T({
+                title: de("expan.tip40"),
+                message: de("expan.tip55"),
+                duration: 5e3,
+                type: "error",
+              }));
+          } finally {
+            fe.value = !1;
+          }
+      };
+      return (t, n) => {
+        const a = i("ThemeImage"),
+          b = i("el-tooltip"),
+          I = i("el-button"),
+          U = i("el-icon"),
+          E = i("el-dropdown-item"),
+          L = i("el-dropdown-menu"),
+          C = i("el-switch"),
+          T = i("el-card"),
+          A = o("img-placeholder"),
+          N = o("loading");
+        return (
+          l(),
+          s(
+            r,
+            null,
+            [
+              p(
+                (l(),
+                u(
+                  T,
+                  {
+                    "element-loading-text": ve.value,
+                    class:
+                      "!tw-rounded-[10px] expansionCard hover:tw-border-main tw-relative !tw-shadow-none",
+                  },
+                  {
+                    default: c(() => {
+                      var i, o, T;
+                      return [
+                        e.info.browserHide || e.info.pinType === d(w).PIN
+                          ? (l(),
+                            s("div", X, [
+                              e.info.browserHide ? (l(), s("i", K)) : x("", !0),
+                              e.info.pinType === d(w).PIN
+                                ? (l(), s("i", z))
+                                : x("", !0),
+                            ]))
+                          : x("", !0),
+                        f("div", Q, [
+                          f("div", null, [
+                            f("div", W, [
+                              f("div", Y, [
+                                f("div", Z, [
+                                  f("div", J, [
+                                    e.info.iconUrl
+                                      ? p((l(), s("img", M, null, 512)), [
+                                          [
+                                            A,
+                                            `${e.info.iconUrl}?t=${Date.now()}`,
+                                          ],
+                                        ])
+                                      : (l(), u(H, { key: 0 })),
+                                  ]),
+                                ]),
+                                f("div", ee, [
+                                  v(
+                                    b,
+                                    {
+                                      content: e.info.extensionsName,
+                                      placement: "top",
+                                      "popper-class": "!tw-max-w-[33%]",
+                                    },
+                                    {
+                                      default: c(() => [
+                                        f("div", te, [
+                                          e.isOpenSafetyProtection &&
+                                          e.info.sha256Hash
+                                            ? (l(),
+                                              u(
+                                                a,
+                                                {
+                                                  key: 0,
+                                                  src: d(V),
+                                                  class:
+                                                    "tw-w-[17px] tw-pb-[2px]",
+                                                },
+                                                null,
+                                                8,
+                                                ["src"],
+                                              ))
+                                            : x("", !0),
+                                          m(" " + g(e.info.extensionsName), 1),
+                                        ]),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["content"],
+                                  ),
+                                  f("div", ne, [
+                                    m(g(e.info.version) + " ", 1),
+                                    ke.value
+                                      ? (l(),
+                                        s(
+                                          r,
+                                          { key: 0 },
+                                          [
+                                            fe.value
+                                              ? (l(),
+                                                u(
+                                                  I,
+                                                  {
+                                                    key: 1,
+                                                    link: "",
+                                                    type: "primary",
+                                                  },
+                                                  {
+                                                    default: c(() => [
+                                                      ...(n[4] ||
+                                                        (n[4] = [
+                                                          f(
+                                                            "i",
+                                                            {
+                                                              class:
+                                                                "iconfont icon-opening dic-animate-spin tw-text-[var(--primary-color)]",
+                                                            },
+                                                            null,
+                                                            -1,
+                                                          ),
+                                                        ])),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                ))
+                                              : (l(),
+                                                s(
+                                                  r,
+                                                  { key: 0 },
+                                                  [
+                                                    f(
+                                                      "span",
+                                                      ae,
+                                                      "(" +
+                                                        g(
+                                                          d(de)(
+                                                            "expan.new_version",
+                                                          ),
+                                                        ) +
+                                                        ")",
+                                                      1,
+                                                    ),
+                                                    v(
+                                                      b,
+                                                      {
+                                                        placement: "top",
+                                                        content: d(de)(
+                                                          "expan.new_version_tip",
+                                                        ),
+                                                      },
+                                                      {
+                                                        default: c(() => [
+                                                          v(
+                                                            I,
+                                                            {
+                                                              link: "",
+                                                              type: "info",
+                                                              onClick: Ee,
+                                                            },
+                                                            {
+                                                              default: c(() => [
+                                                                ...(n[3] ||
+                                                                  (n[3] = [
+                                                                    f(
+                                                                      "i",
+                                                                      {
+                                                                        class:
+                                                                          "iconfont icon-refresh tw-text-[14px]",
+                                                                      },
+                                                                      null,
+                                                                      -1,
+                                                                    ),
+                                                                  ])),
+                                                              ]),
+                                                              _: 1,
+                                                            },
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                      8,
+                                                      ["content"],
+                                                    ),
+                                                  ],
+                                                  64,
+                                                )),
+                                          ],
+                                          64,
+                                        ))
+                                      : x("", !0),
+                                  ]),
+                                  v(
+                                    b,
+                                    {
+                                      content:
+                                        null ==
+                                        (T =
+                                          null ==
+                                          (o =
+                                            null == (i = e.info)
+                                              ? void 0
+                                              : i.groups)
+                                            ? void 0
+                                            : o.map((e) => e.name))
+                                          ? void 0
+                                          : T.join("、"),
+                                      placement: "top",
+                                      "popper-class": "!tw-max-w-[33%]",
+                                    },
+                                    {
+                                      default: c(() => {
+                                        var n, a, i;
+                                        return [
+                                          f(
+                                            "span",
+                                            ie,
+                                            g(t.$t("expan.group")) +
+                                              ": " +
+                                              g(
+                                                null ==
+                                                  (i =
+                                                    null ==
+                                                    (a =
+                                                      null == (n = e.info)
+                                                        ? void 0
+                                                        : n.groups)
+                                                      ? void 0
+                                                      : a.map((e) => e.name))
+                                                  ? void 0
+                                                  : i.join("、"),
+                                              ),
+                                            1,
+                                          ),
+                                        ];
+                                      }),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["content"],
+                                  ),
+                                ]),
+                              ]),
+                              v(
+                                d(y),
+                                {
+                                  ref_key: "dropdownRef",
+                                  ref: pe,
+                                  "hide-on-click": !1,
+                                  "popper-class": "expan-dropdown-item",
+                                },
+                                {
+                                  dropdown: c(() => [
+                                    v(L, null, {
+                                      default: c(() => [
+                                        e.info.source === d(k).GOOGLE
+                                          ? (l(),
+                                            u(
+                                              E,
+                                              { key: 0 },
+                                              {
+                                                default: c(() => [
+                                                  f(
+                                                    "div",
+                                                    {
+                                                      class:
+                                                        "s-flex tw-px-[20px] tw-py-[6px]",
+                                                      onClick: Ee,
+                                                    },
+                                                    [
+                                                      n[5] ||
+                                                        (n[5] = f(
+                                                          "i",
+                                                          {
+                                                            class:
+                                                              "iconfont tw-text-[16px] icon-refresh",
+                                                          },
+                                                          null,
+                                                          -1,
+                                                        )),
+                                                      f(
+                                                        "span",
+                                                        null,
+                                                        g(
+                                                          t.$t("update.update"),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ]),
+                                                _: 1,
+                                              },
+                                            ))
+                                          : x("", !0),
+                                        v(E, null, {
+                                          default: c(() => [
+                                            f(
+                                              "div",
+                                              {
+                                                class:
+                                                  "s-flex tw-px-[20px] tw-py-[6px]",
+                                                onClick: _e,
+                                              },
+                                              [
+                                                n[6] ||
+                                                  (n[6] = f(
+                                                    "i",
+                                                    {
+                                                      class:
+                                                        "iconfont tw-text-[16px] icon-edit",
+                                                    },
+                                                    null,
+                                                    -1,
+                                                  )),
+                                                f(
+                                                  "span",
+                                                  null,
+                                                  g(t.$t("base.edit")),
+                                                  1,
+                                                ),
+                                              ],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        }),
+                                        v(E, null, {
+                                          default: c(() => [
+                                            f(
+                                              "div",
+                                              {
+                                                class:
+                                                  "s-flex tw-px-[20px] tw-py-[6px]",
+                                                onClick:
+                                                  n[0] ||
+                                                  (n[0] = (t) =>
+                                                    ((e) => {
+                                                      var t;
+                                                      D() ||
+                                                        null ==
+                                                          (t = ue.value) ||
+                                                        t.acceptParams(
+                                                          P.CONFIG,
+                                                          e,
+                                                        );
+                                                    })(e.info)),
+                                              },
+                                              [
+                                                n[7] ||
+                                                  (n[7] = f(
+                                                    "i",
+                                                    {
+                                                      class:
+                                                        "iconfont tw-text-[16px] icon-Proxies",
+                                                    },
+                                                    null,
+                                                    -1,
+                                                  )),
+                                                f(
+                                                  "span",
+                                                  null,
+                                                  g(t.$t("expan.group")),
+                                                  1,
+                                                ),
+                                              ],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        }),
+                                        v(E, null, {
+                                          default: c(() => [
+                                            f(
+                                              "div",
+                                              {
+                                                class:
+                                                  "s-flex tw-px-[20px] tw-py-[6px]",
+                                                onClick: Ie,
+                                              },
+                                              [
+                                                n[8] ||
+                                                  (n[8] = f(
+                                                    "i",
+                                                    {
+                                                      class:
+                                                        "iconfont tw-text-[16px] icon-delete",
+                                                    },
+                                                    null,
+                                                    -1,
+                                                  )),
+                                                f(
+                                                  "span",
+                                                  null,
+                                                  g(t.$t("base.del")),
+                                                  1,
+                                                ),
+                                              ],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        }),
+                                      ]),
+                                      _: 1,
+                                    }),
+                                  ]),
+                                  default: c(() => [
+                                    v(
+                                      U,
+                                      {
+                                        class:
+                                          "tw-rotate-90 tw-mt-1 tw-cursor-pointer tw-duration-300 hover:tw-text-opacity-80 focus-visible:tw-outline-0",
+                                      },
+                                      { default: c(() => [v(d(h))]), _: 1 },
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                                512,
+                              ),
+                            ]),
+                            v(
+                              b,
+                              { placement: "top" },
+                              {
+                                content: c(() => [
+                                  f(
+                                    "div",
+                                    oe,
+                                    g(e.info.extensionsIntroduce),
+                                    1,
+                                  ),
+                                ]),
+                                default: c(() => [
+                                  f("p", le, g(e.info.extensionsIntroduce), 1),
+                                ]),
+                                _: 1,
+                              },
+                            ),
+                          ]),
+                          f("div", se, [
+                            f("div", re, [
+                              f("span", null, g(t.$t("expan.tip11")) + ":", 1),
+                              e.info.source === d(k).GOOGLE
+                                ? (l(),
+                                  u(
+                                    I,
+                                    {
+                                      key: 0,
+                                      class:
+                                        "!tw-text-textColor-700 !tw-px-0 hover:tw-underline tw-mt-[1px]",
+                                      link: "",
+                                      type: "primary",
+                                      onClick: De,
+                                    },
+                                    {
+                                      default: c(() => [
+                                        m(g(e.info.sourceText), 1),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ))
+                                : (l(),
+                                  u(
+                                    I,
+                                    {
+                                      key: 1,
+                                      class:
+                                        "!tw-text-textColor-700 !tw-px-0 tw-mt-[1px]",
+                                      link: "",
+                                      type: "primary",
+                                    },
+                                    {
+                                      default: c(() => [
+                                        m(g(e.info.sourceText), 1),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  )),
+                            ]),
+                            v(
+                              C,
+                              {
+                                modelValue: e.info.status,
+                                "onUpdate:modelValue":
+                                  n[1] || (n[1] = (t) => (e.info.status = t)),
+                                "active-value": d(_).ENABLED,
+                                "before-change": be,
+                                "inactive-value": d(_).DISABLED,
+                                loading: me.value,
+                              },
+                              null,
+                              8,
+                              [
+                                "modelValue",
+                                "active-value",
+                                "inactive-value",
+                                "loading",
+                              ],
+                            ),
+                          ]),
+                        ]),
+                      ];
+                    }),
+                    _: 1,
+                  },
+                  8,
+                  ["element-loading-text"],
+                )),
+                [[N, fe.value && !ke.value]],
+              ),
+              v(
+                G,
+                {
+                  ref_key: "configExpandGroupRef",
+                  ref: ue,
+                  onSubmit: n[2] || (n[2] = (e) => ge.getData()),
+                },
+                null,
+                512,
+              ),
+            ],
+            64,
+          )
+        );
+      };
+    },
+  });
+export { pe as _ };

@@ -1,0 +1,18 @@
+.country-wrapper .country-item[data-v-1174613e] {
+  display: flex;
+  align-items: center;
+}
+.country-wrapper .country-item .country-box[data-v-1174613e] {
+  width: 21px;
+  height: 21px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+}
+.country-text[data-v-1174613e] {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

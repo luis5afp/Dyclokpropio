@@ -1,0 +1,1732 @@
+import {
+  d as e,
+  bP as t,
+  cB as a,
+  v as l,
+  G as o,
+  i as r,
+  bQ as i,
+  R as n,
+  aW as s,
+  W as u,
+  P as p,
+  am as c,
+  bS as v,
+  ac as d,
+  r as m,
+  q as f,
+  o as _,
+  c as w,
+  h as y,
+  w as x,
+  b as g,
+  f as h,
+  cC as E,
+  X as I,
+  x as T,
+  a as k,
+  ca as b,
+  e as P,
+  t as D,
+  F as V,
+  z as L,
+  Y as j,
+  cD as C,
+  aq as S,
+  be as F,
+  ah as M,
+  O as A,
+  cE as B,
+  aj as R,
+  bR as N,
+  C as q,
+  a3 as U,
+  bB as $,
+  cF as O,
+  cG as G,
+  cH as Y,
+  cI as z,
+  a5 as W,
+  a1 as H,
+  bu as X,
+  cd as Z,
+  cJ as J,
+  I as K,
+  cK as Q,
+  cL as ee,
+  cM as te,
+  cN as ae,
+  _ as le,
+} from "./index-BUIbb6Pa.js";
+import { E as oe } from "./index-UZcsr-ei.js";
+import { _ as re } from "./groupEdit.vue_vue_type_script_setup_true_name_envGroupEdit_lang-OORP_IuD.js";
+import { _ as ie } from "./BindAccount.vue_vue_type_script_setup_true_lang-ctBeT3Be.js";
+import ne from "./envEditProxyForm-BbH2PHWU.js";
+import { g as se } from "./proxyProviderAvailability-Dl68x0Bx.js";
+import { _ as ue } from "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import pe from "./CustomRadioGroup-Dk-imFdD.js";
+import { _ as ce } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import { _ as ve } from "./TxtFilePreview.vue_vue_type_style_index_0_lang-BM2kh_uA.js";
+import { _ as de } from "./ImportInstructions.vue_vue_type_script_setup_true_lang-B6-YEbCB.js";
+import me from "./changEnvTagBtn-Ct3P2QWE.js";
+import fe from "./SocialMediaFileList-B9K8zyg5.js";
+import _e from "./SocialAccountAssignmentDialog-BpJPUyF5.js";
+import "./proxyEditV2-PrFoTQ5r.js";
+import "./ipResourceMock-CCd7H3CQ.js";
+import "./index.vue_vue_type_script_setup_true_lang-A7OAkZwm.js";
+import "./editProxySoftDlg.vue_vue_type_script_setup_true_lang-D9otwVyq.js";
+import "./proxySoftItem-B7tAwO_8.js";
+import "./envProxyItems-DIhzCyp-.js";
+import "./proxyCheckButton-qJacjpSf.js";
+import "./proxyUtil-OnkkuXcX.js";
+import "./envAutoInputProxy.vue_vue_type_script_setup_true_lang-CKSB7kpP.js";
+import "./proxyApiExtraction-CcAfvVt-.js";
+import "./ProxyGroupSelect.vue_vue_type_script_setup_true_lang-CTswbFOC.js";
+import "./envSerialNums-BjlyggGT.js";
+import "./ParaturboProxyConfig.vue_vue_type_script_setup_true_lang-DnrGQZKb.js";
+import "./DynamicProxyForm.vue_vue_type_script_setup_true_lang-BLDcp8Iw.js";
+import "./ipResourceCatalog-CJEdeRbI.js";
+import "./IpCountryFlag.vue_vue_type_script_setup_true_lang-DgLdnpgH.js";
+import "./country-flag.esm-Bg8BdAZu.js";
+import "./IpResourceSelector.vue_vue_type_script_setup_true_lang-Dxuw76Sd.js";
+import "./DynamicTrafficGate.vue_vue_type_script_setup_true_lang-3aGxeuRD.js";
+import "./IpResourcePurchaseDialog.vue_vue_type_script_setup_true_lang-DcxcArWP.js";
+import "./envSegmentedTabs-B8OKb7JK.js";
+import "./DynamicTrafficPurchase.vue_vue_type_script_setup_true_lang-BAxyvPun.js";
+import "./ipResourcePayment-DW1eNDIC.js";
+import "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import "./browser-DEPKJqf2.js";
+import "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+import "./paySelect-CHLWtiLZ.js";
+import "./StaticIpPurchase.vue_vue_type_script_setup_true_lang-Cjw6R1ER.js";
+import "./index-rtKG2tmD.js";
+import "./timeZone-D3UW65MQ.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+import "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import "./common-_BPSz0Vp.js";
+const we = { class: "tw-flex tw-flex-col tw-w-full" },
+  ye = { class: "tw-mr-[4px]" },
+  xe = { class: "tw-mr-[4px]" },
+  ge = {
+    key: 0,
+    class: "tw-text-[var(--text-color-light1)] tw-my-[12px] tw-leading-[17px]",
+  },
+  he = { class: "tw-text-main tw-cursor-pointer tw-outline-none" },
+  Ee = ["href"],
+  Ie = ["href"],
+  Te = { key: 1, class: "tw-my-[12px]" },
+  ke = { class: "tw-flex tw-justify-between" },
+  be = {
+    class:
+      "tw-mt-[12px] tw-text-[var(--text-color-light1)] tw-text-[14px] tw-leading-normal tw-flex tw-items-center",
+  },
+  Pe = {
+    key: 2,
+    class: "tw-text-[var(--text-color-light1)] tw-my-[12px] tw-leading-[17px]",
+  },
+  De = {
+    key: 3,
+    class:
+      "social-account-assignment-action tw-mt-[12px] tw-flex tw-items-center tw-gap-[10px] tw-self-start",
+  },
+  Ve = {
+    class: "tw-text-[12px] tw-leading-[18px] tw-text-[var(--warning-color)]",
+  },
+  Le = {
+    key: 0,
+    class:
+      "tw-w-[100%] tw-leading-[21px] tw-py-[10px] tw-pl-[16px] tw-pr-[16px] tw-border-[var(--warning-color)] tw-border-[0.8px] tw-rounded-[8px] tw-bg-opacity-10 tw-bg-[#faa63a] tw-text-[var(--warning-color)] tw-flex tw-justify-between tw-mt-[10px]",
+  },
+  je = { class: "tw-text-red tw-pr-[32px] tw-flex tw-items-baseline" },
+  Ce = { class: "c-flex tw-cursor-pointer tw-text-[#faa63a]" },
+  Se = { class: "envV2-input-layout" },
+  Fe = { class: "tw-text-right" },
+  Me = { class: "tw-text-[var(--text-color-light1)]" },
+  Ae = { class: "envV2-input-layout" },
+  Be = { class: "tw-text-right" },
+  Re = { id: "envV2ProxyBox" },
+  Ne = { class: "envV2-input-layout" },
+  qe = {
+    class: "tw-flex tw-gap-[12px] tw-items-center tw-w-full group-wrapper",
+  },
+  Ue = le(
+    e({
+      __name: "index",
+      props: {
+        modelValue: {},
+        isBatch: { type: Boolean },
+        isEdit: { type: Boolean },
+        uaTypeOptions: {},
+        batchData: { default: () => ({ row: {} }) },
+        importData: { default: () => ({ row: {} }) },
+        envGroupOptions: {},
+        isBulkImport: { type: Boolean },
+        isSingle: { type: Boolean, default: !0 },
+        isShare: { type: Boolean },
+        formRef: {},
+        isPreference: { type: Boolean },
+        labelWidth: {},
+      },
+      emits: ["updateEnvGroup", "checkStep"],
+      setup(e, { expose: le, emit: Ue }) {
+        const $e = t(),
+          Oe = r([]),
+          { generateBVid: Ge } = a(),
+          { t: Ye } = l.useI18n(),
+          ze = o(),
+          We = r({
+            isView: !1,
+            title: "env.env.createTitle",
+            row: {},
+            uaTypeArr: ["all"],
+          }),
+          He = r(),
+          Xe = e,
+          Ze = r();
+        let Je = r(!0),
+          Ke = r(),
+          Qe = r();
+        const et = r(!1),
+          tt = r(!1);
+        let at = Ue,
+          lt = r(i(N)),
+          ot = r({});
+        const rt = q(() => We.value.row.fileType == b.SOCIAL_MEDIA_TEMPLATE),
+          { listingLinkAccounts: it } = n(s()),
+          nt = q({
+            get: () => We.value.socialMediaImportDraft ?? X(),
+            set: (e) => {
+              We.value.socialMediaImportDraft = e;
+            },
+          }),
+          st = r(""),
+          ut = q(() => nt.value.files.find((e) => e.id === st.value)),
+          pt = q(() =>
+            it.value
+              .filter((e) => "other" !== e.value)
+              .map((e) => ({ value: e.value, label: e.value, logo: e.logo })),
+          ),
+          ct = q(() => pt.value.length),
+          vt = q(() => {
+            var e;
+            return null ==
+              (e = pt.value.find((e) => {
+                var t;
+                return (
+                  e.value === (null == (t = ut.value) ? void 0 : t.platform)
+                );
+              }))
+              ? void 0
+              : e.logo;
+          }),
+          dt = q(
+            () =>
+              nt.value.files.length > 0 &&
+              nt.value.files.every((e) => e.configured && !e.readError) &&
+              nt.value.accounts.length > 0,
+          ),
+          mt = r(),
+          ft = r();
+        let _t = 0,
+          wt = 0;
+        const yt = new Map(),
+          xt = new Map();
+        let gt = 0,
+          ht = q(() => {
+            switch (We.value.row.fileType) {
+              case b.SOCIAL_MEDIA_TEMPLATE:
+                return ["txt"];
+              case b.ADS_EXCEL_TEMPLATE:
+                return ["xlsx", "xls"];
+              case b.DIC_EXCEL_TEMPLATE:
+                return ["txt", "xlsx", "xls"];
+              default:
+                return ["xlsx", "xls"];
+            }
+          }),
+          Et = Promise.resolve();
+        function It() {
+          var e, t;
+          const a =
+            null == (t = null == (e = We.value) ? void 0 : e.row)
+              ? void 0
+              : t.browserVersionId;
+          We.value.row.browserVersionId = Ge(Xe.isEdit, a) || "";
+        }
+        u(
+          () => [Xe.isBatch, Xe.isSingle, Xe.isBulkImport, Xe.isEdit],
+          async () => {
+            (Xe.isBatch
+              ? (We.value = Xe.batchData)
+              : Xe.isBulkImport
+                ? (We.value = Xe.importData)
+                : (We.value = Xe.modelValue),
+              (_t += 1),
+              yt.clear(),
+              xt.clear(),
+              (gt = 0),
+              (st.value = ""),
+              (Et = (async function () {
+                (await $e.getBrowserList(),
+                  await $e.getLocalBrowserList(),
+                  It());
+              })()),
+              await Et);
+          },
+          { immediate: !0 },
+        );
+        const Tt = q(() => ("zh" === ze.language ? Q : ee)),
+          kt = q(() => ("zh" === ze.language ? te : ae));
+        function bt(e, t) {
+          We.value.row[t] = e.trim();
+        }
+        function Pt() {
+          var e;
+          (Qe.value.blur(),
+            null == (e = Ke.value) ||
+              e.acceptParams({
+                title: "env.group.createTitle",
+                row: { name: void 0, memberIds: void 0, remark: void 0 },
+              }));
+        }
+        function Dt(e) {
+          (console.log(e), at("updateEnvGroup", e));
+        }
+        let Vt = r();
+        async function Lt(e) {
+          if (!e.name.toLowerCase().endsWith(".txt"))
+            throw new Error("FILE_TYPE");
+          if (!e.size) throw new Error("EMPTY_FILE");
+          if (e.size > 5242880) throw new Error("FILE_SIZE");
+          const t = J(
+            await (function (e) {
+              return new Promise((t, a) => {
+                const l = new FileReader();
+                ((l.onload = (e) => {
+                  var a;
+                  return t(
+                    String((null == (a = e.target) ? void 0 : a.result) ?? ""),
+                  );
+                }),
+                  (l.onerror = () => a(new Error("EMPTY_FILE"))),
+                  (l.onabort = () => a(new Error("EMPTY_FILE"))),
+                  l.readAsText(e));
+              });
+            })(e),
+          );
+          if (!t.length) throw new Error("EMPTY_FILE");
+          if (t.length > 200) throw new Error("ROW_LIMIT");
+          return t;
+        }
+        function jt(e) {
+          const t = e instanceof Error ? e.message : "";
+          return "FILE_TYPE" === t ||
+            "EMPTY_FILE" === t ||
+            "FILE_SIZE" === t ||
+            "ROW_LIMIT" === t
+            ? t
+            : "EMPTY_FILE";
+        }
+        function Ct(e) {
+          const t = jt(e),
+            a = {
+              FILE_TYPE: Ye("setting.uploadFileFormatError"),
+              EMPTY_FILE: Ye("The file cannot be empty."),
+              FILE_SIZE: Ye("env.env.req.filesUpload.fileSizeError", {
+                fileSize: 5,
+              }),
+              ROW_LIMIT: Ye("env.env.import.uploadMaxNum", { num: 200 }),
+            };
+          U.warning(a[t]);
+        }
+        function St(e, t, a, l, o) {
+          return {
+            id: e,
+            file: t,
+            order: a,
+            platform: "",
+            lines: l,
+            delimiter: "",
+            headerMapping: [],
+            useAccountName: !1,
+            configured: !1,
+            readError: o,
+          };
+        }
+        async function Ft(e) {
+          var t;
+          const a = _t,
+            l = ct.value,
+            o = Math.max(0, l - nt.value.files.length - gt),
+            r = e.slice(0, o);
+          (r.length < e.length &&
+            U.warning(Ye("env.env.import.fileCountMax", { num: l })),
+            (gt += r.length));
+          for (const n of r) {
+            const e = $();
+            let t,
+              o = [];
+            try {
+              o = await Lt(n);
+            } catch (i) {
+              ((t = jt(i)), Ct(i));
+            } finally {
+              a === _t && (gt = Math.max(0, gt - 1));
+            }
+            if (a !== _t || !rt.value) continue;
+            const r = nt.value;
+            r.files.length >= l ||
+              (nt.value = {
+                ...r,
+                files: [...r.files, St(e, n, r.files.length, o, t)],
+              });
+          }
+          a === _t &&
+            (null == (t = Xe.formRef) || t.validateField("importFileData"));
+        }
+        function Mt(e) {
+          const t = ++wt;
+          return (
+            yt.set(e, t),
+            xt.delete(e),
+            { sessionId: _t, operationId: t }
+          );
+        }
+        function At(e, t, a) {
+          return (
+            t === _t &&
+            yt.get(e) === a &&
+            nt.value.files.some((t) => t.id === e)
+          );
+        }
+        async function Bt(e) {
+          if (
+            !(function (e) {
+              return nt.value.accounts.some(
+                (t) => t.fileId === e && t.environmentId,
+              );
+            })(e)
+          )
+            return !0;
+          try {
+            return (
+              await K.confirm(
+                Ye("env.env.import.fileChangeAssignmentWarning"),
+                Ye("env.env.shareDialog.operatorTips"),
+                { type: "warning" },
+              ),
+              !0
+            );
+          } catch {
+            return !1;
+          }
+        }
+        async function Rt(e, t) {
+          var a;
+          const l = nt.value.files.find((t) => t.id === e);
+          if (!l || l.platform === t) return;
+          if (!(await Bt(e))) return;
+          const o = Mt(e);
+          At(e, o.sessionId, o.operationId) &&
+            (t && nt.value.files.some((a) => a.id !== e && a.platform === t)
+              ? U.warning(
+                  Ye("env.env.import.samePlatformConflict", { platform: t }),
+                )
+              : ((nt.value = O(nt.value, e, t)),
+                null == (a = Xe.formRef) || a.validateField("importFileData")));
+        }
+        function Nt(e) {
+          const t = nt.value.files.find((t) => t.id === e);
+          t &&
+            t.platform &&
+            !t.readError &&
+            ((st.value = e),
+            d(() => {
+              var t;
+              const a = ut.value;
+              a &&
+                a.id === e &&
+                (null == (t = mt.value) ||
+                  t.open(
+                    a.configured
+                      ? {
+                          delimiter: a.delimiter,
+                          headerMapping: a.headerMapping,
+                          useAccountName: a.useAccountName,
+                        }
+                      : void 0,
+                  ));
+            }));
+        }
+        function qt(e) {
+          var t;
+          const a = st.value;
+          if (!a || !nt.value.files.some((e) => e.id === a)) return;
+          const l = nt.value.files.map((t) =>
+            t.id === a
+              ? {
+                  ...t,
+                  delimiter: e.delimiter,
+                  headerMapping: e.headerMapping,
+                  accountNameField: e.accountNameField,
+                  useAccountName: e.useAccountName,
+                  configured: !0,
+                }
+              : t,
+          );
+          ((nt.value = G({ ...nt.value, files: l }, a, e.formData)),
+            null == (t = Xe.formRef) || t.validateField("importFileData"));
+        }
+        function Ut() {
+          var e;
+          dt.value && (null == (e = ft.value) || e.open(nt.value));
+        }
+        function $t(e) {
+          var t;
+          ((nt.value = e),
+            null == (t = Xe.formRef) || t.validateField("importFileData"));
+        }
+        async function Ot(e, t) {
+          var a;
+          if (!nt.value.files.some((t) => t.id === e)) return;
+          if (!(await Bt(e))) return;
+          const l = Mt(e);
+          if (!At(e, l.sessionId, l.operationId)) return;
+          let o;
+          xt.set(e, l.operationId);
+          try {
+            o = { file: t, lines: await Lt(t), readError: void 0 };
+          } catch (r) {
+            ((o = { file: t, lines: [], readError: jt(r) }), Ct(r));
+          } finally {
+            xt.get(e) === l.operationId && xt.delete(e);
+          }
+          At(e, l.sessionId, l.operationId) &&
+            ((nt.value = Y(nt.value, e, o)),
+            st.value === e && (st.value = ""),
+            null == (a = Xe.formRef) || a.validateField("importFileData"));
+        }
+        async function Gt(e) {
+          var t;
+          if (!nt.value.files.some((t) => t.id === e)) return;
+          if (!(await Bt(e))) return;
+          const a = Mt(e);
+          At(e, a.sessionId, a.operationId) &&
+            ((nt.value = z(nt.value, e)),
+            yt.delete(e),
+            st.value === e && (st.value = ""),
+            null == (t = Xe.formRef) || t.validateField("importFileData"));
+        }
+        const Yt = q(() => {
+            var e;
+            return null == (e = Ze.value) ? void 0 : e.rules;
+          }),
+          zt = (e) => {
+            var t, a;
+            let l = {
+              [b.ADS_EXCEL_TEMPLATE]: { fileType: "Excel", name: "Adspower" },
+            };
+            return W("div", { class: "tw-text-themeColor13" }, [
+              W("span", null == (t = l[e]) ? void 0 : t.name),
+              W(
+                "span",
+                { class: "tw-text-themeColor12" },
+                `(${Ye("env.env.req.filesUpload.support_file", { fileType: null == (a = l[e]) ? void 0 : a.fileType })})`,
+              ),
+            ]);
+          };
+        function Wt() {
+          H({
+            title: Ye("env.env.import.importInstructions"),
+            message: W(de),
+            showClose: !0,
+            showCancelButton: !1,
+            showConfirmButton: !1,
+            isHidIcon: !0,
+            autofocus: !1,
+            center: !0,
+            customClass: "el-message-hid-box__btns tw-max-w-[60vw] content-fit",
+          });
+        }
+        function Ht() {
+          var e;
+          ((_t += 1),
+            yt.clear(),
+            xt.clear(),
+            (gt = 0),
+            null == (e = He.value) || e.delFile(),
+            (nt.value = X()),
+            (st.value = ""));
+        }
+        return (
+          le({
+            getProxyList: async () => {
+              var e;
+              await (null == (e = Ze.value) ? void 0 : e.getProxyList());
+            },
+            getIpProxyInfo: async () => {
+              var e;
+              await (null == (e = Ze.value) ? void 0 : e.getIpProxyInfo());
+            },
+            validateParaturbo: () => {
+              var e;
+              return (
+                (null == (e = Ze.value) ? void 0 : e.validateParaturbo()) ||
+                Promise.resolve(!0)
+              );
+            },
+            validateAccountList: function () {
+              return Vt.value
+                ? Vt.value.validateAccountList()
+                : Promise.resolve();
+            },
+            validateSocialMediaImport: function () {
+              if (!rt.value) return Promise.resolve();
+              if (gt > 0 || xt.size > 0)
+                return Promise.reject(new Error("FILE_READ_PENDING"));
+              const e = Z(nt.value);
+              return e.length
+                ? Promise.reject(new Error(e[0]))
+                : Promise.resolve();
+            },
+            proxyRules: Yt,
+            setBrowserVersionId: It,
+            ensureBrowserVersionId: async function () {
+              try {
+                await Et;
+              } catch (e) {}
+              It();
+            },
+          }),
+          p(() => {
+            ((Oe.value = i(v, [c.Ssh, ...se(We.value.row.proxyType)])),
+              d(() => {
+                var e, t;
+                (null == Xe ? void 0 : Xe.isEdit) ||
+                  (null == (e = We.value.row.accountList)
+                    ? void 0
+                    : e.length) ||
+                  null == (t = Vt.value) ||
+                  t.addAccount();
+              }));
+            const e = We.value.row.cookie;
+            e &&
+            "[]" !== e &&
+            "NEW_ENCRYPT" !== We.value.row.cookieEncryptStatus
+              ? (et.value = !0)
+              : (et.value = !1);
+          }),
+          (t, a) => {
+            var l, o;
+            const r = m("el-input"),
+              i = m("el-form-item"),
+              n = m("el-input-number"),
+              s = m("el-radio-button"),
+              u = m("el-dropdown-item"),
+              p = m("el-dropdown-menu"),
+              c = m("el-dropdown"),
+              v = m("el-option"),
+              d = m("el-select"),
+              N = m("el-button"),
+              q = f("trim");
+            return (
+              _(),
+              w("div", null, [
+                Xe.isBulkImport || Xe.isBatch || Xe.isPreference
+                  ? I("", !0)
+                  : (_(),
+                    y(
+                      i,
+                      { key: 0, label: t.$t("env.env.req.name") },
+                      {
+                        default: x(() => [
+                          g(
+                            r,
+                            {
+                              modelValue: We.value.row.name,
+                              "onUpdate:modelValue":
+                                a[0] || (a[0] = (e) => (We.value.row.name = e)),
+                              placeholder: t.$t("env.env.req.nameHolder"),
+                              clearable: "",
+                              maxlength: "100",
+                              "show-word-limit": "",
+                              onInput:
+                                a[1] ||
+                                (a[1] = (e) => {
+                                  h(E)(e, (e) => (We.value.row.name = e));
+                                }),
+                            },
+                            null,
+                            8,
+                            ["modelValue", "placeholder"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    )),
+                Xe.isBatch
+                  ? (_(),
+                    y(
+                      i,
+                      {
+                        key: 1,
+                        label: t.$t("env.env.req.createNum"),
+                        prop: "createNum",
+                      },
+                      {
+                        default: x(() => [
+                          g(
+                            n,
+                            {
+                              modelValue: We.value.row.createNum,
+                              "onUpdate:modelValue":
+                                a[2] ||
+                                (a[2] = (e) => (We.value.row.createNum = e)),
+                              modelModifiers: { number: !0 },
+                              controls: !1,
+                              max: 1e3,
+                              min: 1,
+                              placeholder: t.$t("env.env.req.createNumHolder"),
+                              precision: 0,
+                              clearable: "",
+                              style: { width: "100%" },
+                            },
+                            null,
+                            8,
+                            ["modelValue", "placeholder"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    ))
+                  : I("", !0),
+                Xe.isBatch
+                  ? (_(),
+                    y(
+                      i,
+                      {
+                        key: 2,
+                        label: t.$t("env.env.req.prefixName"),
+                        prop: "prefixName",
+                      },
+                      {
+                        default: x(() => [
+                          T(
+                            g(
+                              r,
+                              {
+                                modelValue: We.value.row.prefixName,
+                                "onUpdate:modelValue":
+                                  a[3] ||
+                                  (a[3] = (e) => (We.value.row.prefixName = e)),
+                                maxlength: 100,
+                                placeholder: t.$t(
+                                  "env.env.req.prefixNameHolder",
+                                ),
+                                clearable: "",
+                                "show-word-limit": "",
+                              },
+                              null,
+                              8,
+                              ["modelValue", "placeholder"],
+                            ),
+                            [[q]],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    ))
+                  : I("", !0),
+                e.isBulkImport
+                  ? (_(),
+                    y(
+                      i,
+                      {
+                        key: 3,
+                        label: h(Ye)("env.env.req.filesUpload.downloadTip7"),
+                        required: "",
+                      },
+                      {
+                        default: x(() => [
+                          k("div", we, [
+                            g(
+                              pe,
+                              {
+                                modelValue: e.importData.row.fileType,
+                                "onUpdate:modelValue":
+                                  a[4] ||
+                                  (a[4] = (t) =>
+                                    (e.importData.row.fileType = t)),
+                                onChange: Ht,
+                              },
+                              {
+                                default: x(() => [
+                                  g(
+                                    s,
+                                    { value: h(b).DIC_EXCEL_TEMPLATE },
+                                    {
+                                      default: x(() => [
+                                        P(
+                                          D(
+                                            h(Ye)(
+                                              `env.env.req.filesUpload.${h(b).DIC_EXCEL_TEMPLATE}`,
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["value"],
+                                  ),
+                                  g(
+                                    s,
+                                    { value: h(b).SOCIAL_MEDIA_TEMPLATE },
+                                    {
+                                      default: x(() => [
+                                        k(
+                                          "span",
+                                          ye,
+                                          D(
+                                            h(Ye)(
+                                              "env.env.import.socialMediaModule",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                        g(
+                                          ce,
+                                          {
+                                            cic: "",
+                                            content: h(Ye)(
+                                              "env.env.import.socialMediaModuleTip",
+                                            ),
+                                          },
+                                          null,
+                                          8,
+                                          ["content"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["value"],
+                                  ),
+                                  g(
+                                    s,
+                                    { value: h(b).OTHER },
+                                    {
+                                      default: x(() => [
+                                        k(
+                                          "span",
+                                          xe,
+                                          D(
+                                            h(Ye)(
+                                              `env.env.req.filesUpload.${h(b).OTHER}`,
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                        g(
+                                          ce,
+                                          {
+                                            content: h(Ye)(
+                                              "env.env.import.otherModuleTip",
+                                            ),
+                                          },
+                                          null,
+                                          8,
+                                          ["content"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["value"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["modelValue"],
+                            ),
+                            e.importData.row.fileType ===
+                            h(b).DIC_EXCEL_TEMPLATE
+                              ? (_(),
+                                w("div", ge, [
+                                  P(
+                                    D(
+                                      h(Ye)(
+                                        "env.env.req.filesUpload.downloadTip1",
+                                      ),
+                                    ) + " ",
+                                    1,
+                                  ),
+                                  g(
+                                    c,
+                                    { class: "!tw-inline-block tw-mt-[2px]" },
+                                    {
+                                      dropdown: x(() => [
+                                        g(p, null, {
+                                          default: x(() => [
+                                            g(u, null, {
+                                              default: x(() => [
+                                                k(
+                                                  "a",
+                                                  {
+                                                    href: Tt.value,
+                                                    class: "",
+                                                    onClick:
+                                                      a[5] ||
+                                                      (a[5] = (...e) =>
+                                                        t.downloadTemplate &&
+                                                        t.downloadTemplate(
+                                                          ...e,
+                                                        )),
+                                                  },
+                                                  D(
+                                                    h(Ye)(
+                                                      "env.env.req.filesUpload.excel_template",
+                                                    ),
+                                                  ),
+                                                  9,
+                                                  Ee,
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            }),
+                                            g(u, null, {
+                                              default: x(() => [
+                                                k(
+                                                  "a",
+                                                  {
+                                                    href: kt.value,
+                                                    class: "",
+                                                    onClick:
+                                                      a[6] ||
+                                                      (a[6] = (...e) =>
+                                                        t.downloadTemplate &&
+                                                        t.downloadTemplate(
+                                                          ...e,
+                                                        )),
+                                                  },
+                                                  D(
+                                                    h(Ye)(
+                                                      "env.env.req.filesUpload.txt_template",
+                                                    ),
+                                                  ),
+                                                  9,
+                                                  Ie,
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            }),
+                                          ]),
+                                          _: 1,
+                                        }),
+                                      ]),
+                                      default: x(() => [
+                                        k(
+                                          "div",
+                                          he,
+                                          D(
+                                            h(Ye)(
+                                              "proxy.proxy.import.template",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ),
+                                  P(
+                                    " " +
+                                      D(
+                                        h(Ye)(
+                                          "env.env.req.filesUpload.downloadTip3",
+                                        ),
+                                      ),
+                                    1,
+                                  ),
+                                ]))
+                              : e.importData.row.fileType === h(b).OTHER
+                                ? (_(),
+                                  w("div", Te, [
+                                    g(
+                                      d,
+                                      {
+                                        modelValue:
+                                          e.importData.row.fileTypeValue,
+                                        "onUpdate:modelValue":
+                                          a[7] ||
+                                          (a[7] = (t) =>
+                                            (e.importData.row.fileTypeValue =
+                                              t)),
+                                      },
+                                      {
+                                        label: x((e) => [
+                                          k("div", ke, [
+                                            (_(), y(j(zt(e.value)))),
+                                            g(
+                                              ce,
+                                              {
+                                                content: h(Ye)(
+                                                  "env.env.req.filesUpload.export_environment_after_fingerprints",
+                                                ),
+                                                "popper-class":
+                                                  "!tw-max-w-[300px]",
+                                              },
+                                              null,
+                                              8,
+                                              ["content"],
+                                            ),
+                                          ]),
+                                        ]),
+                                        default: x(() => [
+                                          (_(!0),
+                                          w(
+                                            V,
+                                            null,
+                                            L(
+                                              h(b),
+                                              (e, t) => (
+                                                _(),
+                                                w(
+                                                  V,
+                                                  { key: t },
+                                                  [
+                                                    [
+                                                      h(b).OTHER,
+                                                      h(b).DIC_EXCEL_TEMPLATE,
+                                                      h(b)
+                                                        .SOCIAL_MEDIA_TEMPLATE,
+                                                      h(b).DIC_TXT_TEMPLATE,
+                                                    ].includes(e)
+                                                      ? I("", !0)
+                                                      : (_(),
+                                                        y(
+                                                          v,
+                                                          { key: 0, value: e },
+                                                          {
+                                                            default: x(() => [
+                                                              (_(),
+                                                              y(j(zt(e)))),
+                                                            ]),
+                                                            _: 2,
+                                                          },
+                                                          1032,
+                                                          ["value"],
+                                                        )),
+                                                  ],
+                                                  64,
+                                                )
+                                              ),
+                                            ),
+                                            128,
+                                          )),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["modelValue"],
+                                    ),
+                                    k("div", be, [
+                                      P(
+                                        D(
+                                          h(Ye)(
+                                            "env.env.req.filesUpload.contact_support_for_other_imports",
+                                          ),
+                                        ) + " ",
+                                        1,
+                                      ),
+                                      g(
+                                        N,
+                                        {
+                                          type: "primary",
+                                          class: "tw-ml-[6px]",
+                                          link: "",
+                                          onClick:
+                                            a[8] ||
+                                            (a[8] = (e) =>
+                                              h(C)({
+                                                title: h(Ye)(
+                                                  "cost.plan.dialog.service",
+                                                ),
+                                                contentTitle: h(Ye)(
+                                                  "header.guide.customerServiceTip",
+                                                ),
+                                              })),
+                                        },
+                                        {
+                                          default: x(() => [
+                                            P(D(h(Ye)("openapi.tip12")), 1),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      ),
+                                    ]),
+                                  ]))
+                                : rt.value
+                                  ? (_(),
+                                    w("div", Pe, [
+                                      P(
+                                        D(
+                                          h(Ye)(
+                                            "env.env.import.supportImportTxtFile",
+                                          ),
+                                        ) + " ",
+                                        1,
+                                      ),
+                                      g(
+                                        N,
+                                        {
+                                          type: "primary",
+                                          class: "!tw-p-[0]",
+                                          link: "",
+                                          onClick: Wt,
+                                        },
+                                        {
+                                          default: x(() => [
+                                            P(
+                                              D(
+                                                h(Ye)(
+                                                  "env.env.import.importInstructions",
+                                                ),
+                                              ),
+                                              1,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      ),
+                                    ]))
+                                  : I("", !0),
+                            g(
+                              i,
+                              {
+                                prop: "importFileData",
+                                class: "social-media-import-form-item !tw-mb-0",
+                              },
+                              {
+                                default: x(() => [
+                                  rt.value
+                                    ? (_(),
+                                      y(
+                                        fe,
+                                        {
+                                          key: 0,
+                                          files: nt.value.files,
+                                          "platform-options": pt.value,
+                                          onFilesSelected: Ft,
+                                          onPlatformChange: Rt,
+                                          onConfigureFile: Nt,
+                                          onReplaceFile: Ot,
+                                          onRemoveFile: Gt,
+                                        },
+                                        null,
+                                        8,
+                                        ["files", "platform-options"],
+                                      ))
+                                    : (_(),
+                                      y(
+                                        oe,
+                                        {
+                                          key: 1,
+                                          ref_key: "eUploadRef",
+                                          ref: He,
+                                          fileData:
+                                            e.importData.row.importFileData,
+                                          "onUpdate:fileData":
+                                            a[9] ||
+                                            (a[9] = (t) =>
+                                              (e.importData.row.importFileData =
+                                                t)),
+                                          accept: h(ht),
+                                          fileSize: 5,
+                                          class: "tw-w-[100%]",
+                                        },
+                                        null,
+                                        8,
+                                        ["fileData", "accept"],
+                                      )),
+                                ]),
+                                _: 1,
+                              },
+                            ),
+                            rt.value
+                              ? (_(),
+                                w("div", De, [
+                                  g(
+                                    N,
+                                    {
+                                      type: "primary",
+                                      plain: "",
+                                      disabled: !dt.value,
+                                      onClick: Ut,
+                                    },
+                                    {
+                                      default: x(() => [
+                                        P(
+                                          D(
+                                            h(Ye)(
+                                              "env.env.import.accountAssignment",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["disabled"],
+                                  ),
+                                  k(
+                                    "span",
+                                    Ve,
+                                    D(
+                                      h(Ye)(
+                                        "env.env.import.accountAssignmentTip",
+                                      ),
+                                    ),
+                                    1,
+                                  ),
+                                ]))
+                              : I("", !0),
+                          ]),
+                          h(Je) && !rt.value
+                            ? (_(),
+                              w("div", Le, [
+                                k("div", je, [
+                                  a[22] ||
+                                    (a[22] = k(
+                                      "div",
+                                      {
+                                        class:
+                                          "tw-w-[16px] tw-h-[16px] tw-rounded-full tw-mr-[8px] c-flex tw-bg-[#faa63a]",
+                                      },
+                                      [
+                                        k("i", {
+                                          class:
+                                            "iconfont icon-warning tw-text-[#fff] tw-text-[16px]",
+                                        }),
+                                      ],
+                                      -1,
+                                    )),
+                                  P(
+                                    " " +
+                                      D(h(Ye)("env.env.req.filesUpload.tip")),
+                                    1,
+                                  ),
+                                ]),
+                                k("div", Ce, [
+                                  k("i", {
+                                    class:
+                                      "iconfont icon-a-guanbi2-01 tw-text-[8px]",
+                                    onClick:
+                                      a[10] ||
+                                      (a[10] = (e) =>
+                                        S(Je) ? (Je.value = !1) : (Je = !1)),
+                                  }),
+                                ]),
+                              ]))
+                            : I("", !0),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    ))
+                  : I("", !0),
+                rt.value
+                  ? I("", !0)
+                  : (_(),
+                    y(
+                      ie,
+                      {
+                        key: 4,
+                        ref_key: "accountFormRef",
+                        ref: Vt,
+                        modelValue: We.value.row,
+                        "onUpdate:modelValue":
+                          a[11] || (a[11] = (e) => (We.value.row = e)),
+                        batchData: e.batchData.row,
+                        importData: e.importData.row,
+                        "is-share": e.isShare,
+                        isBatch: !!e.isBatch,
+                        isBulkImport: e.isBulkImport,
+                        isEdit: e.isEdit,
+                        isSingle: e.isSingle,
+                        isPreference: e.isPreference,
+                        onCheckStep:
+                          a[12] || (a[12] = (e) => h(at)("checkStep")),
+                      },
+                      null,
+                      8,
+                      [
+                        "modelValue",
+                        "batchData",
+                        "importData",
+                        "is-share",
+                        "isBatch",
+                        "isBulkImport",
+                        "isEdit",
+                        "isSingle",
+                        "isPreference",
+                      ],
+                    )),
+                "NEW_ENCRYPT" === We.value.row.cookieEncryptStatus &&
+                h(F)(h(M).GLOBAL_SETTING)
+                  ? (_(),
+                    y(
+                      i,
+                      {
+                        key: 5,
+                        class: A([
+                          (null == (l = We.value.row)
+                            ? void 0
+                            : l.operateStatus) === h(B).ENABLED &&
+                            "!tw-mb-[10px]",
+                        ]),
+                      },
+                      {
+                        label: x(() => [
+                          k("div", Se, [
+                            k("div", Fe, [
+                              P(D(t.$t("env.env.req.cookie")) + " ", 1),
+                              g(ue, { text: t.$t("envV2.tip13") }, null, 8, [
+                                "text",
+                              ]),
+                            ]),
+                          ]),
+                        ]),
+                        default: x(() => [
+                          k(
+                            "span",
+                            Me,
+                            D(t.$t("env.cookie.cookieDisabledTip")),
+                            1,
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["class"],
+                    ))
+                  : I("", !0),
+                Xe.isBulkImport ||
+                Xe.isBatch ||
+                Xe.isPreference ||
+                "NEW_ENCRYPT" === We.value.row.cookieEncryptStatus
+                  ? I("", !0)
+                  : (_(),
+                    y(
+                      i,
+                      {
+                        key: 6,
+                        id: "guide-cookie",
+                        class: A([
+                          (null == (o = We.value.row)
+                            ? void 0
+                            : o.operateStatus) === h(B).ENABLED &&
+                            "!tw-mb-[10px]",
+                        ]),
+                        prop: "cookie",
+                      },
+                      {
+                        label: x(() => [
+                          k("div", Ae, [
+                            k("div", Be, [
+                              P(D(t.$t("env.env.req.cookie")) + " ", 1),
+                              g(ue, { text: t.$t("envV2.tip13") }, null, 8, [
+                                "text",
+                              ]),
+                            ]),
+                          ]),
+                        ]),
+                        default: x(() => [
+                          g(
+                            r,
+                            {
+                              modelValue: We.value.row.cookie,
+                              "onUpdate:modelValue":
+                                a[13] ||
+                                (a[13] = (e) => (We.value.row.cookie = e)),
+                              autosize: { minRows: 1, maxRows: 5 },
+                              placeholder: t.$t(
+                                "env.env.req.cookieFormatSupport",
+                              ),
+                              class: "envV2-input-width envV2-cookie-input",
+                              clearable: "",
+                              resize: "none",
+                              type: "textarea",
+                              onInput:
+                                a[14] || (a[14] = (e) => bt(e, "cookie")),
+                            },
+                            null,
+                            8,
+                            ["modelValue", "placeholder"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["class"],
+                    )),
+                e.isEdit
+                  ? (_(),
+                    w(
+                      V,
+                      { key: 7 },
+                      [
+                        et.value && !tt.value
+                          ? (_(),
+                            y(
+                              i,
+                              { key: 0, class: "tw-mt-[-18px]", label: " " },
+                              {
+                                default: x(() => [
+                                  k(
+                                    "div",
+                                    {
+                                      class:
+                                        "tw-mt-[8px] c-flex tw-cursor-pointer tw-duration-300 tw-text-main tw-opacity-80 hover:tw-opacity-100",
+                                      onClick:
+                                        a[15] ||
+                                        (a[15] = (e) => (tt.value = !0)),
+                                    },
+                                    [
+                                      a[23] ||
+                                        (a[23] = k(
+                                          "i",
+                                          { class: "iconfont icon-plus" },
+                                          null,
+                                          -1,
+                                        )),
+                                      k(
+                                        "span",
+                                        null,
+                                        D(t.$t("envV2.tip32")),
+                                        1,
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ))
+                          : I("", !0),
+                        tt.value
+                          ? (_(),
+                            y(
+                              i,
+                              {
+                                key: 1,
+                                label: t.$t("envV2.tip33"),
+                                prop: "otherCookie",
+                              },
+                              {
+                                default: x(() => [
+                                  g(
+                                    r,
+                                    {
+                                      modelValue: We.value.row.otherCookie,
+                                      "onUpdate:modelValue":
+                                        a[16] ||
+                                        (a[16] = (e) =>
+                                          (We.value.row.otherCookie = e)),
+                                      autosize: { minRows: 1, maxRows: 5 },
+                                      placeholder: t.$t(
+                                        "env.env.req.cookieFormatSupport",
+                                      ),
+                                      class:
+                                        "envV2-input-width envV2-cookie-input",
+                                      clearable: "",
+                                      resize: "none",
+                                      type: "textarea",
+                                      onInput:
+                                        a[17] ||
+                                        (a[17] = (e) => bt(e, "otherCookie")),
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue", "placeholder"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ))
+                          : I("", !0),
+                      ],
+                      64,
+                    ))
+                  : I("", !0),
+                k("div", Re, [
+                  Xe.isEdit || Xe.isBulkImport || Xe.isBatch
+                    ? I("", !0)
+                    : (_(),
+                      y(
+                        ne,
+                        {
+                          key: 0,
+                          ref_key: "envEditProxyFormRef",
+                          ref: Ze,
+                          modelValue: We.value.row,
+                          "onUpdate:modelValue":
+                            a[18] || (a[18] = (e) => (We.value.row = e)),
+                          batchData: We.value.row,
+                          importData: e.importData.row,
+                          "is-batch": !!e.isBatch,
+                          "is-edit": e.isEdit,
+                          "is-share": e.isShare,
+                          isBulkImport: e.isBulkImport,
+                          isEnvEditV2: !0,
+                          isSingle: e.isSingle,
+                          "label-width": Xe.labelWidth,
+                          proxyListMap: h(ot),
+                          proxyTypeOptions: Oe.value,
+                          proxyWayOptions: h(lt),
+                          "is-preference": Xe.isPreference,
+                        },
+                        null,
+                        8,
+                        [
+                          "modelValue",
+                          "batchData",
+                          "importData",
+                          "is-batch",
+                          "is-edit",
+                          "is-share",
+                          "isBulkImport",
+                          "isSingle",
+                          "label-width",
+                          "proxyListMap",
+                          "proxyTypeOptions",
+                          "proxyWayOptions",
+                          "is-preference",
+                        ],
+                      )),
+                ]),
+                Xe.isPreference
+                  ? I("", !0)
+                  : (_(),
+                    y(
+                      i,
+                      { key: 8, label: t.$t("envV2.tip4"), prop: "remark" },
+                      {
+                        default: x(() => [
+                          g(
+                            r,
+                            {
+                              type: "textarea",
+                              modelValue: We.value.row.remark,
+                              "onUpdate:modelValue":
+                                a[19] ||
+                                (a[19] = (e) => (We.value.row.remark = e)),
+                              maxlength: 500,
+                              placeholder: t.$t("env.env.req.remarkHolder"),
+                              clearable: "",
+                              "show-word-limit": "",
+                              rows: 4,
+                              resize: "none",
+                            },
+                            null,
+                            8,
+                            ["modelValue", "placeholder"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["label"],
+                    )),
+                e.isShare || Xe.isPreference
+                  ? I("", !0)
+                  : (_(),
+                    y(
+                      i,
+                      { key: 9, prop: "groupIds" },
+                      {
+                        label: x(() => [
+                          k("div", Ne, [
+                            k("div", null, [
+                              P(D(t.$t("env.env.req.groupId")) + " ", 1),
+                              g(ue, { text: t.$t("envV2.tip15") }, null, 8, [
+                                "text",
+                              ]),
+                            ]),
+                          ]),
+                        ]),
+                        default: x(() => [
+                          k("div", qe, [
+                            g(
+                              d,
+                              {
+                                class: "tw-flex-1 tw-w-0",
+                                ref_key: "envGroupInputRef",
+                                ref: Qe,
+                                modelValue: We.value.row.groupIds,
+                                "onUpdate:modelValue":
+                                  a[20] ||
+                                  (a[20] = (e) => (We.value.row.groupIds = e)),
+                                placeholder: t.$t("env.env.req.groupIdHolder"),
+                                clearable: "",
+                                filterable: "",
+                                required: "",
+                                multiple: "",
+                                "collapse-tags": "",
+                                "collapse-tags-tooltip": "",
+                                "max-collapse-tags": 2,
+                              },
+                              R(
+                                {
+                                  default: x(() => [
+                                    (_(!0),
+                                    w(
+                                      V,
+                                      null,
+                                      L(
+                                        e.envGroupOptions,
+                                        (e) => (
+                                          _(),
+                                          y(
+                                            v,
+                                            {
+                                              key: e.value,
+                                              label: e.label,
+                                              value: e.value,
+                                            },
+                                            null,
+                                            8,
+                                            ["label", "value"],
+                                          )
+                                        ),
+                                      ),
+                                      128,
+                                    )),
+                                  ]),
+                                  _: 2,
+                                },
+                                [
+                                  h(F)(h(M).CREATE_GROUP)
+                                    ? {
+                                        name: "footer",
+                                        fn: x(() => [
+                                          k(
+                                            "div",
+                                            {
+                                              class:
+                                                "tw-text-[14px] tw-text-[var(--btn-primary-link-color)] tw-flex tw-items-center tw-cursor-pointer",
+                                              onClick: Pt,
+                                            },
+                                            [
+                                              a[24] ||
+                                                (a[24] = k(
+                                                  "i",
+                                                  {
+                                                    class: "iconfont icon-plus",
+                                                  },
+                                                  null,
+                                                  -1,
+                                                )),
+                                              P(
+                                                D(h(Ye)("env.group.createBtn")),
+                                                1,
+                                              ),
+                                            ],
+                                          ),
+                                        ]),
+                                        key: "0",
+                                      }
+                                    : void 0,
+                                ],
+                              ),
+                              1032,
+                              ["modelValue", "placeholder"],
+                            ),
+                            h(F)(h(M).ENV_TAG_USE)
+                              ? (_(),
+                                y(
+                                  me,
+                                  {
+                                    key: 0,
+                                    modelValue: We.value.row.envTagIds,
+                                    "onUpdate:modelValue":
+                                      a[21] ||
+                                      (a[21] = (e) =>
+                                        (We.value.row.envTagIds = e)),
+                                  },
+                                  null,
+                                  8,
+                                  ["modelValue"],
+                                ))
+                              : I("", !0),
+                          ]),
+                        ]),
+                        _: 1,
+                      },
+                    )),
+                Xe.isPreference
+                  ? I("", !0)
+                  : (_(),
+                    y(
+                      re,
+                      {
+                        key: 10,
+                        ref_key: "groupEditRef",
+                        ref: Ke,
+                        onSubmit: Dt,
+                      },
+                      null,
+                      512,
+                    )),
+                ut.value
+                  ? (_(),
+                    y(
+                      ve,
+                      {
+                        key: 11,
+                        ref_key: "txtFilePreviewRef",
+                        ref: mt,
+                        "media-txt-strs": ut.value.lines,
+                        platform: ut.value.platform,
+                        "platform-logo": vt.value,
+                        onConfirm: qt,
+                      },
+                      null,
+                      8,
+                      ["media-txt-strs", "platform", "platform-logo"],
+                    ))
+                  : I("", !0),
+                g(
+                  _e,
+                  {
+                    ref_key: "socialAccountAssignmentRef",
+                    ref: ft,
+                    onConfirm: $t,
+                  },
+                  null,
+                  512,
+                ),
+              ])
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-d26578a0"]],
+  );
+export { Ue as default };

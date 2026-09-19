@@ -1,0 +1,47 @@
+import t from "./proxySoftItem-B7tAwO_8.js";
+import {
+  d as e,
+  v as s,
+  o as a,
+  c as o,
+  h as i,
+  i as r,
+  a3 as c,
+} from "./index-BUIbb6Pa.js";
+const n = { class: "tw-grid tw-gap-[32px] tw-h-fit" },
+  p = e({
+    __name: "proxySoftContent",
+    props: { activeName: {} },
+    setup(e, { expose: p }) {
+      const { t: m } = s.useI18n(),
+        u = r();
+      return (
+        p({
+          totalSubmit: async function () {
+            var t;
+            (await (null == (t = u.value) ? void 0 : t.submit()),
+              c.success(m("setting.SaveSuccess")));
+          },
+        }),
+        (s, r) => (
+          a(),
+          o("div", n, [
+            (a(),
+            i(
+              t,
+              {
+                ref_key: "proxySoftItemRef",
+                ref: u,
+                type: e.activeName,
+                key: e.activeName,
+              },
+              null,
+              8,
+              ["type"],
+            )),
+          ])
+        )
+      );
+    },
+  });
+export { p as _ };

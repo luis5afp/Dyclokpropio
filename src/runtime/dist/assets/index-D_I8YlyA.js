@@ -1,0 +1,61 @@
+import {
+  d as s,
+  u as a,
+  r as e,
+  c as r,
+  a as t,
+  t as i,
+  b as n,
+  w as o,
+  e as l,
+  f as c,
+  o as d,
+  _ as g,
+} from "./index-BUIbb6Pa.js";
+const m = "" + new URL("EditProfile-KyFm2yNn.png", import.meta.url).href,
+  p = { class: "wrapper-404" },
+  u = { class: "right-404" },
+  P = { class: "bg-box" },
+  f = { class: "content" },
+  v = g(
+    s({
+      __name: "index",
+      setup(s) {
+        const g = a();
+        return (s, a) => {
+          const v = e("el-button");
+          return (
+            d(),
+            r("div", p, [
+              a[2] || (a[2] = t("img", { src: m }, null, -1)),
+              t("div", u, [
+                t("div", P, [
+                  a[1] || (a[1] = t("div", { class: "bg" }, null, -1)),
+                  t(
+                    "span",
+                    null,
+                    i(s.$t("errorPage.missingPagePermission")),
+                    1,
+                  ),
+                ]),
+                t("div", f, i(s.$t("errorPage.missingPagePermissionHint")), 1),
+                n(
+                  v,
+                  {
+                    type: "primary",
+                    onClick: a[0] || (a[0] = (s) => c(g).push("/")),
+                  },
+                  {
+                    default: o(() => [l(i(s.$t("errorPage.goBack")), 1)]),
+                    _: 1,
+                  },
+                ),
+              ]),
+            ])
+          );
+        };
+      },
+    }),
+    [["__scopeId", "data-v-a137f69e"]],
+  );
+export { v as default };

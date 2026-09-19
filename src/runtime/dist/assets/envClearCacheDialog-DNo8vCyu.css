@@ -1,0 +1,65 @@
+.clear-cache-dialog-wrapper .serialNums-wrapper[data-v-e2286518] {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.clear-cache-dialog-wrapper
+  .serialNums-wrapper
+  .serialNum-item[data-v-e2286518] {
+  background: var(--btn-info-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.clear-cache-dialog-wrapper .custom-clear[data-v-e2286518] {
+  background: var(--card-base-bg-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+.clear-cache-dialog-wrapper .footer-tips[data-v-e2286518] {
+  color: var(--warning-colo);
+  text-align: center;
+}
+.clear-cache-dialog-wrapper
+  .clear-cache-type-radios
+  .radios-wrapper[data-v-e2286518] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.clear-cache-dialog-wrapper
+  .clear-cache-type-radios
+  .radios-wrapper
+  .el-radio[data-v-e2286518] {
+  margin-right: 0;
+  margin-bottom: 16px;
+  height: 40px;
+}
+.clear-cache-dialog-wrapper
+  .clear-cache-type-radios
+  .radios-wrapper
+  .el-radio[data-v-e2286518]
+  .el-radio__label {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+.clear-cache-dialog-wrapper
+  .clear-cache-type-radios
+  .radios-wrapper
+  .el-radio[data-v-e2286518]:last-child {
+  margin-bottom: 0;
+}
+.clear-cache-dialog-wrapper .iconfont[data-v-e2286518] {
+  font-size: 16px;
+}
+.clear-cache-dialog-wrapper[data-v-e2286518]
+  .action-message-dialog
+  .action-message-wrap {
+  width: 496px;
+}
+.clear-cache-dialog-wrapper[data-v-e2286518]
+  .action-message-dialog
+  .content-row {
+  display: flex;
+  align-items: center;
+}

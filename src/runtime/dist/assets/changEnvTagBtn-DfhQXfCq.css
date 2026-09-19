@@ -1,0 +1,9 @@
+.none-border .el-input__wrapper {
+  height: 32px !important;
+  border: none !important;
+}
+.create-tag-btn[data-v-92afa519]:hover:not(
+    :has(.tag-color-list-wrapper:hover)
+  ) {
+  background-color: var(--text-light9);
+}

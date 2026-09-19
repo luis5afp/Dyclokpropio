@@ -1,0 +1,663 @@
+import {
+  d as t,
+  v as e,
+  ad as a,
+  R as l,
+  r as s,
+  q as r,
+  o as n,
+  c as i,
+  F as c,
+  a as o,
+  O as p,
+  b as d,
+  f as w,
+  w as u,
+  t as v,
+  c5 as x,
+  x as m,
+  ah as g,
+  h as y,
+  e as h,
+  X as f,
+  C as _,
+  i as b,
+  ev as k,
+  be as C,
+} from "./index-BUIbb6Pa.js";
+import P from "./walletRechargeDlg-BfDzblZH.js";
+import { _ as A } from "./pendingOrderList.vue_vue_type_script_setup_true_lang-WjMCl0TZ.js";
+import { _ as L } from "./ipResourceCard.vue_vue_type_script_setup_true_lang-BEgHaQcX.js";
+const R = "" + new URL("plan-card-bg-CfDHqEhQ.png", import.meta.url).href,
+  D = { class: "tw-truncate tw-text-[var(--text-light4)]" },
+  E = {
+    class:
+      "tw-text-[var(--primary-color)] tw-text-[20px] tw-mt-[8px] tw-mb-[16px]",
+  },
+  F = { class: "tw-mb-[8px]" },
+  N = { class: "tw-whitespace-pre" },
+  O = { class: "tw-text-[var(--text-light1)]" },
+  U = { key: 0, class: "sle" },
+  G = { key: 1, style: { color: "var(--text-high-light)" } },
+  T = { class: "tw-w-fit tw-flex" },
+  $ = { class: "tw-whitespace-pre" },
+  j = { class: "tw-text-[var(--text-light1)]" },
+  H = { key: 0, class: "sle" },
+  M = { key: 1 },
+  S = { key: 1, style: { color: "var(--text-high-light)" } },
+  B = { class: "tw-flex tw-justify-end tw-mt-[10px]" },
+  K = { key: 0, class: "max-discount" },
+  Q = { key: 0, class: "max-discount" },
+  q = { class: "tw-mb-[8px] tw-text-[var(--text-light4)]" },
+  I = { class: "tw-text-[var(--primary-color)] tw-mb-[16px] tw-text-[20px]" },
+  X = { class: "tw-whitespace-pre" },
+  Y = { class: "tw-mb-[16px] tw-text-[var(--text-light4)]" },
+  Z = { class: "tw-flex tw-items-center" },
+  z = { class: "tw-whitespace-pre" },
+  J = { key: 0, class: "tw-text-[var(--primary-color)]" },
+  V = { class: "tw-text-[var(--text-light1)]" },
+  W = { key: 1, class: "tw-text-[var(--text-light1)]" },
+  tt = { class: "tw-py-[8px] tw-flex tw-items-center" },
+  et = { class: "tw-whitespace-pre" },
+  at = { key: 0, class: "tw-text-[var(--primary-color)]" },
+  lt = { class: "tw-text-[var(--text-light1)]" },
+  st = { key: 1, class: "tw-text-[var(--text-light1)]" },
+  rt = { class: "tw-flex tw-items-center" },
+  nt = { class: "tw-whitespace-pre" },
+  it = { key: 0, class: "tw-text-[var(--primary-color)]" },
+  ct = { class: "tw-text-[var(--text-light1)]" },
+  ot = { key: 1, class: "tw-text-[var(--text-light1)]" },
+  pt = { class: "content-wrap" },
+  dt = { class: "title flx-align-center" },
+  wt = { class: "tips-content" },
+  ut = { class: "btn-container" },
+  vt =
+    "tw-relative tw-flex-1 tw-p-[24px] tw-rounded-[16px] tw-border-[1px] tw-border-[var(--border-color-base)] tw-bg-[var(--table-tr-bg-color)] tw-text-[var(--text-color-light1)]",
+  xt = t({
+    __name: "planTopCard",
+    props: { maxDiscount: {}, renewLoading: { type: Boolean } },
+    emits: ["showUpdatePlan", "refresh", "showRenew", "goBuy"],
+    setup(t, { emit: xt }) {
+      const { t: mt, locale: gt } = e.useI18n(),
+        yt = xt;
+      let ht = a();
+      const {
+          currentPlan: ft,
+          currentPlanConfig: _t,
+          targetTryPlanArr: bt,
+          payOrderNum: kt,
+          walletInfo: Ct,
+        } = l(ht),
+        Pt = _(() => (gt.value === k.ZH ? "：" : ": ")),
+        At = _(() => C(g.GET_PROXY)),
+        Lt = b(),
+        Rt = b();
+      function Dt() {
+        yt("showUpdatePlan");
+      }
+      function Et() {
+        yt("showRenew");
+      }
+      function Ft() {
+        yt("goBuy");
+      }
+      function Nt() {
+        var t;
+        null == (t = Lt.value) || t.openDlg();
+      }
+      function Ot() {
+        var t;
+        null == (t = Rt.value) || t.open();
+      }
+      return (e, a) => {
+        var l, _, b, k, C, xt, gt, ht, Ut, Gt, Tt;
+        const $t = s("el-tooltip"),
+          jt = s("el-button"),
+          Ht = s("el-popover"),
+          Mt = r("auth");
+        return (
+          n(),
+          i(
+            c,
+            null,
+            [
+              o(
+                "div",
+                {
+                  class: p([
+                    "tw-mb-[16px] tw-grid tw-w-full tw-grid-cols-1 tw-gap-[16px] tw-text-[14px] md:tw-grid-cols-2",
+                    At.value ? "2xl:tw-grid-cols-4" : "2xl:tw-grid-cols-3",
+                  ]),
+                },
+                [
+                  o("div", { class: p(vt) }, [
+                    o("div", null, [
+                      d(
+                        $t,
+                        {
+                          content: w(mt)("cost.plan.card.currentPlan"),
+                          placement: "top",
+                        },
+                        {
+                          default: u(() => [
+                            o(
+                              "p",
+                              D,
+                              v(w(mt)("cost.plan.card.currentPlan")),
+                              1,
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["content"],
+                      ),
+                    ]),
+                    o(
+                      "div",
+                      E,
+                      v(
+                        w(ft).type === w(x).CUSTOM_PLAN
+                          ? w(mt)("enum.PlanType.CUSTOM_PLAN")
+                          : w(ft).name,
+                      ),
+                      1,
+                    ),
+                    o("div", F, [
+                      o(
+                        "span",
+                        N,
+                        v(w(mt)("cost.plan.card.planMonthlyFee") + Pt.value),
+                        1,
+                      ),
+                      o("span", O, [
+                        d(
+                          $t,
+                          {
+                            content: (
+                              (null == (l = w(ft)) ? void 0 : l.monthPrice) ?? 0
+                            ).toFixed(2),
+                            placement: "top",
+                          },
+                          {
+                            default: u(() => {
+                              var t;
+                              return [
+                                w(ft).type
+                                  ? (n(),
+                                    i(
+                                      "span",
+                                      U,
+                                      "$" +
+                                        v(
+                                          (
+                                            (null == (t = w(ft))
+                                              ? void 0
+                                              : t.monthPrice) ?? 0
+                                          ).toFixed(2),
+                                        ),
+                                      1,
+                                    ))
+                                  : (n(), i("span", G, "--")),
+                              ];
+                            }),
+                            _: 1,
+                          },
+                          8,
+                          ["content"],
+                        ),
+                      ]),
+                    ]),
+                    d(
+                      $t,
+                      {
+                        placement: "top",
+                        content: `${w(mt)("cost.plan.card.validityPeriod")}${Pt.value}${w(ft).type ? ((null == (_ = w(ft)) ? void 0 : _.type) !== w(x).Free ? w(mt)("cost.plan.card.expire", { expireDate: null == (b = w(ft)) ? void 0 : b.expireDate }) : w(mt)("cost.plan.card.unlimitedExpiry")) : "--"}`,
+                      },
+                      {
+                        default: u(() => {
+                          var t, e;
+                          return [
+                            o("div", T, [
+                              o(
+                                "span",
+                                $,
+                                v(
+                                  w(mt)("cost.plan.card.validityPeriod") +
+                                    Pt.value,
+                                ),
+                                1,
+                              ),
+                              o("span", j, [
+                                w(ft).type
+                                  ? (n(),
+                                    i(
+                                      c,
+                                      { key: 0 },
+                                      [
+                                        (null == (t = w(ft))
+                                          ? void 0
+                                          : t.type) !== w(x).Free
+                                          ? (n(),
+                                            i(
+                                              "span",
+                                              H,
+                                              v(
+                                                w(mt)("cost.plan.card.expire", {
+                                                  expireDate:
+                                                    null == (e = w(ft))
+                                                      ? void 0
+                                                      : e.expireDate,
+                                                }),
+                                              ),
+                                              1,
+                                            ))
+                                          : (n(),
+                                            i(
+                                              "div",
+                                              M,
+                                              v(
+                                                w(mt)(
+                                                  "cost.plan.card.unlimitedExpiry",
+                                                ),
+                                              ),
+                                              1,
+                                            )),
+                                      ],
+                                      64,
+                                    ))
+                                  : (n(), i("span", S, "--")),
+                              ]),
+                            ]),
+                          ];
+                        }),
+                        _: 1,
+                      },
+                      8,
+                      ["content"],
+                    ),
+                    o("div", B, [
+                      !w(kt) && w(bt).length
+                        ? m(
+                            (n(),
+                            y(
+                              jt,
+                              {
+                                key: 0,
+                                style: { position: "relative" },
+                                type: "primary",
+                                onClick: Ft,
+                              },
+                              {
+                                default: u(() => [
+                                  h(v(w(mt)("cost.plan.card.tryNow")), 1),
+                                ]),
+                                _: 1,
+                              },
+                            )),
+                            [[Mt, w(g).CHANGE_PACKAGE]],
+                          )
+                        : f("", !0),
+                      m(
+                        (n(),
+                        y(
+                          jt,
+                          {
+                            plain: "",
+                            style: { position: "relative" },
+                            type: "primary",
+                            onClick: Dt,
+                          },
+                          {
+                            default: u(() => {
+                              var e;
+                              return [
+                                (null == (e = w(ft)) ? void 0 : e.type) ===
+                                w(x).Free
+                                  ? (n(),
+                                    i(
+                                      "span",
+                                      K,
+                                      " -" +
+                                        v(
+                                          Math.ceil(100 - 100 * t.maxDiscount),
+                                        ) +
+                                        "% ",
+                                      1,
+                                    ))
+                                  : f("", !0),
+                                h(
+                                  " " + v(w(mt)("cost.plan.card.upgradePlan")),
+                                  1,
+                                ),
+                              ];
+                            }),
+                            _: 1,
+                          },
+                        )),
+                        [[Mt, w(g).CHANGE_PACKAGE]],
+                      ),
+                      (null == (k = w(ft)) ? void 0 : k.type) !== w(x).Free
+                        ? (n(),
+                          y(
+                            jt,
+                            {
+                              key: 1,
+                              style: { position: "relative" },
+                              type: "primary",
+                              loading: t.renewLoading,
+                              onClick: Et,
+                            },
+                            {
+                              default: u(() => [
+                                t.maxDiscount && 1 !== t.maxDiscount
+                                  ? (n(),
+                                    i(
+                                      "span",
+                                      Q,
+                                      "-" +
+                                        v(
+                                          Math.ceil(100 - 100 * t.maxDiscount),
+                                        ) +
+                                        "%",
+                                      1,
+                                    ))
+                                  : f("", !0),
+                                h(" " + v(w(mt)("cost.plan.card.renewal")), 1),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["loading"],
+                          ))
+                        : f("", !0),
+                    ]),
+                    a[2] ||
+                      (a[2] = o(
+                        "img",
+                        {
+                          class:
+                            "tw-absolute tw-top-0 tw-right-0 tw-max-w-[225px] tw-scale-y-[-1]",
+                          src: R,
+                        },
+                        null,
+                        -1,
+                      )),
+                  ]),
+                  o("div", { class: p(vt) }, [
+                    o("div", q, v(w(mt)("walletRecharge.walletBalance")), 1),
+                    o("div", I, "$" + v(w(Ct).balance.toFixed(2)), 1),
+                    o("div", null, [
+                      o(
+                        "span",
+                        X,
+                        v(
+                          w(mt)("walletRecharge.pendingActivationOrder") +
+                            Pt.value,
+                        ),
+                        1,
+                      ),
+                      o(
+                        "span",
+                        {
+                          onClick: Ot,
+                          class:
+                            "tw-underline tw-text-[var(--primary-color)] tw-cursor-pointer",
+                        },
+                        v(w(Ct).deductionOrderNum),
+                        1,
+                      ),
+                    ]),
+                    d(
+                      jt,
+                      {
+                        class: "tw-float-right tw-mt-[38px]",
+                        type: "primary",
+                        onClick: Nt,
+                      },
+                      {
+                        default: u(() => [
+                          h(v(w(mt)("walletRecharge.recharge")), 1),
+                        ]),
+                        _: 1,
+                      },
+                    ),
+                  ]),
+                  o("div", { class: p(vt) }, [
+                    o("div", Y, v(w(mt)("cost.plan.card.usageStatistics")), 1),
+                    o("div", Z, [
+                      a[3] ||
+                        (a[3] = o(
+                          "div",
+                          {
+                            class:
+                              "tw-w-[4px] tw-h-[4px] tw-rounded-[50%] tw-bg-[var(--text-color-light1)] tw-mr-[4px]",
+                          },
+                          null,
+                          -1,
+                        )),
+                      o(
+                        "span",
+                        z,
+                        v(w(mt)("cost.plan.card.envCount") + Pt.value),
+                        1,
+                      ),
+                      w(_t).envLimit > 0
+                        ? (n(),
+                          i("span", J, [
+                            h(v(null == (C = w(ft)) ? void 0 : C.envUsage), 1),
+                            o(
+                              "span",
+                              V,
+                              "/" +
+                                v(null == (xt = w(ft)) ? void 0 : xt.envLimit),
+                              1,
+                            ),
+                          ]))
+                        : (n(),
+                          i(
+                            "span",
+                            W,
+                            v(w(mt)("cost.plan.dialog.unlimited")),
+                            1,
+                          )),
+                    ]),
+                    o("div", tt, [
+                      a[4] ||
+                        (a[4] = o(
+                          "div",
+                          {
+                            class:
+                              "tw-w-[4px] tw-h-[4px] tw-rounded-[50%] tw-bg-[var(--text-color-light1)] tw-mr-[4px]",
+                          },
+                          null,
+                          -1,
+                        )),
+                      o(
+                        "span",
+                        et,
+                        v(w(mt)("cost.plan.card.memberCount") + Pt.value),
+                        1,
+                      ),
+                      w(_t).memberLimit > 0
+                        ? (n(),
+                          i("span", at, [
+                            h(
+                              v(null == (gt = w(ft)) ? void 0 : gt.memberUsage),
+                              1,
+                            ),
+                            o(
+                              "span",
+                              lt,
+                              "/" +
+                                v(
+                                  null == (ht = w(ft))
+                                    ? void 0
+                                    : ht.memberLimit,
+                                ),
+                              1,
+                            ),
+                          ]))
+                        : (n(),
+                          i(
+                            "span",
+                            st,
+                            v(w(mt)("cost.plan.dialog.unlimited")),
+                            1,
+                          )),
+                    ]),
+                    o("div", rt, [
+                      a[5] ||
+                        (a[5] = o(
+                          "div",
+                          {
+                            class:
+                              "tw-w-[4px] tw-h-[4px] tw-rounded-[50%] tw-bg-[var(--text-color-light1)] tw-mr-[4px]",
+                          },
+                          null,
+                          -1,
+                        )),
+                      o(
+                        "span",
+                        nt,
+                        v(w(mt)("cost.plan.card.dailyEnvCount") + Pt.value),
+                        1,
+                      ),
+                      w(_t).openLimit > 0
+                        ? (n(),
+                          i("span", it, [
+                            h(
+                              v(null == (Ut = w(ft)) ? void 0 : Ut.openUsage),
+                              1,
+                            ),
+                            o(
+                              "span",
+                              ct,
+                              "/" +
+                                v(null == (Gt = w(ft)) ? void 0 : Gt.openLimit),
+                              1,
+                            ),
+                          ]))
+                        : (n(),
+                          i(
+                            "span",
+                            ot,
+                            v(w(mt)("cost.plan.dialog.unlimited")),
+                            1,
+                          )),
+                    ]),
+                    d(
+                      Ht,
+                      {
+                        width: 300,
+                        placement: "left",
+                        "popper-class": "delete-popover",
+                        trigger: "hover",
+                        disabled:
+                          (null == (Tt = w(ft)) ? void 0 : Tt.type) !==
+                          w(x).Free,
+                      },
+                      {
+                        reference: u(() => [
+                          m(
+                            (n(),
+                            y(
+                              jt,
+                              {
+                                class: "tw-float-right tw-mt-[18px]",
+                                plain: "",
+                                type: "primary",
+                                onClick: Dt,
+                              },
+                              {
+                                default: u(() => [
+                                  h(
+                                    v(w(mt)("cost.plan.card.increaseQuota")),
+                                    1,
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            )),
+                            [[Mt, w(g).CHANGE_PACKAGE]],
+                          ),
+                        ]),
+                        default: u(() => [
+                          o("div", pt, [
+                            o("div", dt, [
+                              a[6] ||
+                                (a[6] = o(
+                                  "span",
+                                  null,
+                                  [o("i", { class: "iconfont icon-warning" })],
+                                  -1,
+                                )),
+                              h(v(w(mt)("cost.plan.card.notification")), 1),
+                            ]),
+                            o("div", wt, [
+                              o(
+                                "p",
+                                null,
+                                v(w(mt)("cost.plan.card.increaseQuotaTip")),
+                                1,
+                              ),
+                            ]),
+                            o("div", ut, [
+                              d(
+                                jt,
+                                { type: "info" },
+                                {
+                                  default: u(() => [
+                                    h(v(w(mt)("base.cancel")), 1),
+                                  ]),
+                                  _: 1,
+                                },
+                              ),
+                              d(
+                                jt,
+                                { type: "primary", onClick: Dt },
+                                {
+                                  default: u(() => [
+                                    h(v(w(mt)("cost.plan.card.upgradeNow")), 1),
+                                  ]),
+                                  _: 1,
+                                },
+                              ),
+                            ]),
+                          ]),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["disabled"],
+                    ),
+                  ]),
+                  At.value
+                    ? (n(),
+                      y(L, {
+                        key: 0,
+                        onSuccess: a[0] || (a[0] = (t) => yt("refresh")),
+                      }))
+                    : f("", !0),
+                ],
+                2,
+              ),
+              d(
+                P,
+                {
+                  ref_key: "walletRechargeRef",
+                  ref: Lt,
+                  onSubmit: a[1] || (a[1] = (t) => e.$emit("refresh")),
+                },
+                null,
+                512,
+              ),
+              d(A, { ref_key: "pendingOrderListRef", ref: Rt }, null, 512),
+            ],
+            64,
+          )
+        );
+      };
+    },
+  });
+export { xt as _ };

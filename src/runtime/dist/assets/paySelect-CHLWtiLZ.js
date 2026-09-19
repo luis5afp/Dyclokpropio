@@ -1,0 +1,244 @@
+import {
+  d as e,
+  R as a,
+  ad as t,
+  v as n,
+  G as s,
+  P as l,
+  W as o,
+  r as i,
+  q as c,
+  c as p,
+  F as u,
+  a as r,
+  f as y,
+  z as d,
+  h as v,
+  w as m,
+  O as f,
+  b as h,
+  e as g,
+  t as x,
+  x as T,
+  X as P,
+  C as w,
+  D as C,
+  es as k,
+  et as b,
+  cZ as I,
+  eu as _,
+  cv as F,
+  am as $,
+  o as N,
+  i as R,
+  ev as A,
+  _ as D,
+} from "./index-BUIbb6Pa.js";
+const O = { class: "pay-group-btn tw-text-[13px]" },
+  H = ["onClick"],
+  L = { key: 0, class: "tw-text-[var(--text-color-light1)]" },
+  M = D(
+    e({
+      __name: "paySelect",
+      props: {
+        activePayType: {},
+        showPaymentTip: { type: Boolean, default: !0 },
+      },
+      emits: ["changePay"],
+      setup(e, { expose: D, emit: M }) {
+        let { payList: W } = a(t()),
+          { t: Z } = n.useI18n(),
+          j = R(!1);
+        const q = M;
+        let z = R(!1),
+          B = R(!1),
+          E = s(),
+          G = w(() => !z.value && !B.value && E.language !== A.ZH),
+          K = w(() =>
+            W.value
+              .filter((e) => !!G.value || !e.virtualCurrency)
+              .filter((e) => {
+                var a;
+                return (
+                  !!j.value ||
+                  (null == (a = e.payType) ? void 0 : a.indexOf("APPLE")) < 0
+                );
+              }),
+          );
+        function S(e) {
+          var a, t;
+          let n = null == (a = e.commissionRule) ? void 0 : a.dynamic,
+            s = null == (t = e.commissionRule) ? void 0 : t.fixed,
+            l = `${n ? " * " + Math.round(100 * n * 1e3) / 1e3 + "%" : ""} ${n && s ? " + " : ""} ${s ? "$" + (null == s ? void 0 : s.toFixed(2)) : ""}`;
+          return (
+            (n
+              ? Z("cost.plan.dialog.transactionFeeTip")
+              : `${Z("cost.plan.dialog.transactionFee")}：`) + l
+          );
+        }
+        function U() {
+          (I(["do", "chat:open", []]),
+            I([
+              "do",
+              "message:send",
+              ["text", "There is no payment method here that I need"],
+            ]));
+        }
+        const V = async () => {
+          try {
+            z.value = !0;
+            const e = await _({ type: $.NonUse, ipType: F.IpAPI });
+            e.countryCode &&
+              (B.value = ["CN", "HK", "MO"].includes(e.countryCode));
+          } catch (e) {
+          } finally {
+            z.value = !1;
+          }
+        };
+        return (
+          (async function () {
+            if (C.isClient) {
+              let e = await C.api.getCurrentPlatform();
+              j.value = e === k.DARWIN;
+            } else j.value = b();
+          })(),
+          l(() => {
+            if ((V(), !W.value.length)) {
+              let e = o(
+                () => W.value,
+                (a) => {
+                  (a.length && q("changePay", a[0].payType), e());
+                },
+              );
+            }
+          }),
+          D({ checkProxy: V }),
+          (a, t) => {
+            const n = i("ThemeImage"),
+              s = i("el-tooltip"),
+              l = i("el-button"),
+              o = c("loadingV2");
+            return (
+              N(),
+              p(
+                u,
+                null,
+                [
+                  r("div", O, [
+                    y(K).length
+                      ? (N(!0),
+                        p(
+                          u,
+                          { key: 0 },
+                          d(
+                            y(K),
+                            (a) => (
+                              N(),
+                              v(
+                                s,
+                                {
+                                  "popper-class":
+                                    "tw-whitespace-pre-wrap tw-text-center",
+                                  key: a.payType,
+                                  content: a.payCommission
+                                    ? S(a)
+                                    : y(Z)(
+                                        "cost.plan.dialog.transactionFeeNone",
+                                      ),
+                                  effect: "dark",
+                                  placement: "top",
+                                },
+                                {
+                                  default: m(() => [
+                                    r(
+                                      "button",
+                                      {
+                                        class: f(
+                                          e.activePayType === a.payType
+                                            ? "active"
+                                            : "",
+                                        ),
+                                        onClick: (e) => {
+                                          return (
+                                            (t = e),
+                                            (n = a.payType),
+                                            t.preventDefault(),
+                                            void q("changePay", n)
+                                          );
+                                          var t, n;
+                                        },
+                                      },
+                                      [
+                                        h(n, { src: a.logo }, null, 8, ["src"]),
+                                        g(" " + x(a.label), 1),
+                                      ],
+                                      10,
+                                      H,
+                                    ),
+                                  ]),
+                                  _: 2,
+                                },
+                                1032,
+                                ["content"],
+                              )
+                            ),
+                          ),
+                          128,
+                        ))
+                      : (N(),
+                        p(
+                          u,
+                          { key: 1 },
+                          [
+                            T(
+                              (N(),
+                              p("button", null, [
+                                ...(t[0] || (t[0] = [g("11", -1)])),
+                              ])),
+                              [[o, !0]],
+                            ),
+                            T(
+                              (N(),
+                              p("button", null, [
+                                ...(t[1] || (t[1] = [g("11", -1)])),
+                              ])),
+                              [[o, !0]],
+                            ),
+                            T(
+                              (N(),
+                              p("button", null, [
+                                ...(t[2] || (t[2] = [g("11", -1)])),
+                              ])),
+                              [[o, !0]],
+                            ),
+                          ],
+                          64,
+                        )),
+                  ]),
+                  e.showPaymentTip
+                    ? (N(),
+                      p("div", L, [
+                        g(x(y(Z)("cost.plan.card.paymentTip")) + " ? ", 1),
+                        h(
+                          l,
+                          { type: "primary", link: "", onClick: U },
+                          {
+                            default: m(() => [
+                              g(x(y(Z)("cost.plan.dialog.service")), 1),
+                            ]),
+                            _: 1,
+                          },
+                        ),
+                      ]))
+                    : P("", !0),
+                ],
+                64,
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-92f389c5"]],
+  );
+export { M as default };

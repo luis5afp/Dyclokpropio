@@ -1,0 +1,5 @@
+@charset "UTF-8";
+.skeleton-loading-mask--info {
+  --el-skeleton-color: var(--el-skeleton-color-info);
+  --el-skeleton-to-color: var(--el-skeleton-to-color-info);
+}

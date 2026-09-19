@@ -1,0 +1,268 @@
+import {
+  d as e,
+  v as t,
+  P as a,
+  gw as l,
+  r as o,
+  o as n,
+  h as s,
+  w as i,
+  a as p,
+  t as c,
+  b as u,
+  c as r,
+  F as d,
+  z as w,
+  f as x,
+  gx as m,
+  X as v,
+  e as S,
+  i as f,
+  C as y,
+  _ as g,
+} from "./index-BUIbb6Pa.js";
+const b = { class: "tw-text-[18px] tw-font-medium" },
+  h = { class: "tw-text-[14px] tw-pb-[16px]" },
+  k = {
+    class:
+      "tw-bg-[var(--card-base-bg-color)] tw-p-[24px] tw-pb-[8px] tw-rounded-[8px]",
+  },
+  A = {
+    key: 0,
+    class:
+      "tw-mt-[16px] tw-flex tw-items-center tw-justify-between tw-gap-[16px] tw-rounded-[8px] tw-bg-[var(--card-base-bg-color)] tw-px-[16px] tw-py-[12px]",
+  },
+  _ = { class: "tw-flex tw-items-center tw-gap-[4px]" },
+  V = { class: "tw-text-[14px] tw-text-[var(--text-light1)]" },
+  C = g(
+    e({
+      __name: "doubleCheckSafetyProtectionDialog",
+      emits: {
+        confirm: (e) => e,
+        cancel: (e) => e,
+        expandSecuritySkipSuperAdminChange: (e) => "boolean" == typeof e,
+      },
+      setup(e, { expose: g, emit: C }) {
+        const { t: T } = t.useI18n(),
+          E = f(!1),
+          P = f([]),
+          B = C,
+          U = f({
+            content: "",
+            confirmText: "",
+            confirmType: "",
+            action: void 0,
+            showExpandSecuritySkipSuperAdminSwitch: !1,
+            expandSecuritySkipSuperAdmin: !1,
+            realtimeExpandSecuritySkipSuperAdmin: !1,
+          }),
+          $ = f(!1),
+          j = y(() => Boolean(U.value.showExpandSecuritySkipSuperAdminSwitch));
+        a(() => {
+          D();
+        });
+        const D = () => {
+            const e = [];
+            for (const t in l)
+              if (l.hasOwnProperty(t)) {
+                const a = l[t];
+                e.push(a);
+              }
+            P.value = e;
+          },
+          I = () => {
+            ((E.value = !1), B("cancel", U.value.action ?? void 0));
+          },
+          q = (e) => {
+            U.value.realtimeExpandSecuritySkipSuperAdmin &&
+              B("expandSecuritySkipSuperAdminChange", Boolean(e));
+          },
+          z = async () => {
+            ((E.value = !1),
+              B("confirm", {
+                action: U.value.action ?? void 0,
+                expandSecuritySkipSuperAdmin: $.value,
+              }));
+          };
+        return (
+          g({
+            acceptParams: (e) => {
+              ((E.value = !0),
+                (U.value = e),
+                ($.value = Boolean(e.expandSecuritySkipSuperAdmin)));
+            },
+          }),
+          (e, t) => {
+            const a = o("el-checkbox"),
+              f = o("el-checkbox-group"),
+              y = o("svg-icon"),
+              g = o("el-tooltip"),
+              C = o("el-switch"),
+              B = o("el-button"),
+              D = o("el-dialog");
+            return (
+              n(),
+              s(
+                D,
+                {
+                  modelValue: E.value,
+                  "onUpdate:modelValue": t[2] || (t[2] = (e) => (E.value = e)),
+                  "destroy-on-close": "",
+                  "close-on-click-modal": !1,
+                  "close-on-press-escape": !1,
+                  "align-center": "",
+                  class: "expan-dialog",
+                  width: "570px",
+                  "show-close": !1,
+                },
+                {
+                  title: i(() => [
+                    t[3] ||
+                      (t[3] = p(
+                        "i",
+                        {
+                          class:
+                            "iconfont icon-warning tw-p-[1px] tw-rounded-[50%] tw-bg-[var(--warning-color)] tw-text-[20px] tw-text-[var(--text-color-white)] tw-mr-[8px]",
+                        },
+                        null,
+                        -1,
+                      )),
+                    p(
+                      "span",
+                      b,
+                      c(x(T)("env.env.shareDialog.operatorTips")),
+                      1,
+                    ),
+                  ]),
+                  footer: i(() => [
+                    u(
+                      B,
+                      { type: "info", class: "tw-w-full", onClick: I },
+                      {
+                        default: i(() => [S(c(e.$t("base.cancel")), 1)]),
+                        _: 1,
+                      },
+                    ),
+                    u(
+                      B,
+                      {
+                        class: "tw-w-full",
+                        type: U.value.confirmType,
+                        onClick: z,
+                      },
+                      {
+                        default: i(() => [S(c(U.value.confirmText), 1)]),
+                        _: 1,
+                      },
+                      8,
+                      ["type"],
+                    ),
+                  ]),
+                  default: i(() => [
+                    p("p", h, c(U.value.content), 1),
+                    p("div", k, [
+                      u(
+                        f,
+                        {
+                          modelValue: P.value,
+                          "onUpdate:modelValue":
+                            t[0] || (t[0] = (e) => (P.value = e)),
+                          class: "safety-protection-checkbox-group",
+                        },
+                        {
+                          default: i(() => [
+                            (n(!0),
+                            r(
+                              d,
+                              null,
+                              w(
+                                x(m),
+                                (t, o) => (
+                                  n(),
+                                  s(
+                                    a,
+                                    {
+                                      key: t,
+                                      disabled: !0,
+                                      label: e.$t(`env.env.req.${t}`, {
+                                        version: "2.6.18",
+                                      }),
+                                      value: x(l)[o],
+                                      class:
+                                        "tw-flex tw-items-start tw-w-fit tw-h-[auto] tw-mb-[16px] tw-mr-0",
+                                    },
+                                    null,
+                                    8,
+                                    ["label", "value"],
+                                  )
+                                ),
+                              ),
+                              128,
+                            )),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["modelValue"],
+                      ),
+                    ]),
+                    j.value
+                      ? (n(),
+                        r("div", A, [
+                          p("div", _, [
+                            p(
+                              "span",
+                              V,
+                              c(x(T)("expan.security.skipSuperAdmin")),
+                              1,
+                            ),
+                            u(
+                              g,
+                              {
+                                content: x(T)(
+                                  "expan.security.skipSuperAdminTip",
+                                ),
+                                placement: "top",
+                              },
+                              {
+                                default: i(() => [
+                                  u(y, {
+                                    "icon-class": "prompt",
+                                    "class-name":
+                                      "tw-w-[14px] tw-h-[14px] tw-text-[var(--text-color-light1)]",
+                                  }),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["content"],
+                            ),
+                          ]),
+                          u(
+                            C,
+                            {
+                              modelValue: $.value,
+                              "onUpdate:modelValue":
+                                t[1] || (t[1] = (e) => ($.value = e)),
+                              onChange: q,
+                            },
+                            null,
+                            8,
+                            ["modelValue"],
+                          ),
+                        ]))
+                      : v("", !0),
+                  ]),
+                  _: 1,
+                },
+                8,
+                ["modelValue"],
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-fba115a4"]],
+  );
+export { C as default };

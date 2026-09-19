@@ -1,0 +1,17 @@
+.proxy-textarea-wrapper[data-v-631605cd] {
+  margin-bottom: 0;
+}
+.proxy-textarea-wrapper[data-v-631605cd] .el-form-item__content {
+  align-items: unset;
+  flex-direction: column;
+}
+.proxy-textarea-wrapper .el-textarea[data-v-631605cd] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.proxy-textarea-wrapper .el-textarea[data-v-631605cd] .el-textarea__inner {
+  flex: 1;
+  height: 100% !important;
+  resize: none;
+}
