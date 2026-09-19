@@ -13,15 +13,30 @@ require('lodash');
 
 const { loadWithMigratedIpc } = require('./ipc/migration-loader');
 const {
+  loadWithElectronStoreCapture,
+} = require('./legacy/capture-electron-store');
+const {
   MIGRATED_CHANNELS,
   registerMigratedHandlers,
 } = require('./ipc/clean-registry');
 
+let capturedStores;
+
 const legacy = loadWithMigratedIpc({
   ipcMain,
   migratedChannels: MIGRATED_CHANNELS,
-  loadLegacy: () => require('./legacy-bundle'),
-  registerMigrated: registerMigratedHandlers,
+  loadLegacy: () => {
+    const result = loadWithElectronStoreCapture(
+      () => require('./legacy-bundle'),
+    );
+
+    capturedStores = result.stores;
+    return result.legacy;
+  },
+  registerMigrated: (mainIpc) =>
+    registerMigratedHandlers(mainIpc, {
+      stores: capturedStores,
+    }),
 });
 
 Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
