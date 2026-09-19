@@ -17,6 +17,7 @@ on:
       - "tools/reconstruction-symbol-seeds.json"
       - "tools/extract-main-symbol-definitions.js"
       - "tools/trace-device-id-symbol.js"
+      - "tools/index-pretty-main-symbols.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -57,6 +58,12 @@ jobs:
           Set-Location source
           Copy-Item "reconstruction-work\main.stage1.js" "reconstruction-work\main.stage1.pretty.js" -Force
           npx --yes prettier@3.3.3 --write "reconstruction-work\main.stage1.pretty.js"
+
+      - name: Index formatted main symbols
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/index-pretty-main-symbols.js
 
       - name: Extract main IPC handlers
         shell: pwsh
