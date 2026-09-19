@@ -8,7 +8,7 @@ const INPUT = path.join(ROOT, 'reconstruction-work', 'main.stage1.pretty.js');
 const OUT = path.join(ROOT, 'reconstruction-analysis', 'store-bootstrap.pretty.txt');
 
 const lines = fs.readFileSync(INPUT, 'utf8').split(/\r?\n/);
-const start = 430;
+const start = 240;
 const end = 730;
 
 const selected = [];
