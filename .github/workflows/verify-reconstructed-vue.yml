@@ -1,0 +1,31 @@
+name: Verify Reconstructed Vue SFCs
+
+on:
+  push:
+    branches:
+      - reconstruction-source
+    paths:
+      - "src/renderer/components/reconstructed/**"
+      - "src/renderer/reconstructed-components.json"
+      - "tools/verify-reconstructed-vue-components.js"
+      - ".github/workflows/verify-reconstructed-vue.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-vue:
+    runs-on: windows-latest
+    steps:
+      - name: Clone reconstruction branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch reconstruction-source --depth 1
+
+      - name: Verify reconstructed Vue contracts
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/verify-reconstructed-vue-components.js
