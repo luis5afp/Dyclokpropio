@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video replacement</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <div>
+          <h1 id="titleText">Video replacement</h1>
+          <p id="environmentLabel" class="muted">-</p>
+        </div>
+        <div class="header-side">
+          <span id="stateBadge" class="badge">Loading</span>
+        </div>
+      </header>
+
+      <section id="statusPanel" class="status-panel">
+        <div class="empty-state">Loading...</div>
+      </section>
+
+      <footer class="actions">
+        <button id="copyPathButton" class="secondary" type="button" disabled>Copy original path</button>
+        <button id="uploadButton" class="primary" type="button">Upload/replace video</button>
+      </footer>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

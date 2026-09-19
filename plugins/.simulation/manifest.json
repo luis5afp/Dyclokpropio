@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "输入仿真3",
+  "version": "1.0",
+  "key": "-----BEGIN--KEY-----ZGljbG9hay1naW5zYnJvd3Nlci1leHRlbnNpb24y-----END",
+  "icons": {
+    "16": "img/icon.png",
+    "48": "img/icon.png",
+    "128": "img/icon.png"
+  },
+  "permissions": ["contextMenus", "activeTab", "clipboardRead", "storage"],
+  "host_permissions": ["https://*/*", "*://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "commands": {
+    "autopaste": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Run on focus element"
+    }
+  }
+}

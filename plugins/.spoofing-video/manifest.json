@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "MP4 to Y4M Converter",
+  "version": "1.0.1",
+  "description": "Convert MP4 files to Y4M for Chrome fake video capture",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtbxA58m3JsM9ShaQdSxTHGOY8Y9wMYlxjxEaoovli7W7FdO14QTeESqB5KquWm2aa/FS2k5A85M9dj/g7jtQTZIvB+Mh8n5gcbwKsnHryfXfnfyjSrO3Rx1Gc9Gs/92oLSacG0YzaAyLo+2LLFWWxDqt/lnpYWkccfKs7UiY4KDs7D6TC7ut6y7WDuX3xZwP2RwNU0+UMToQbvuCWkpCzqpj5fq9hoPv7RLuiukd2oc5rYM4b9r6hm9BPGPqFFz7HwiTUZc7ZgSGriWGvTio8W9Ujf8VTRZAD0plhmEwV/zJEtHTEiLDso9zG+wcQZWQ4l7mA8jo2Vl7FkVqvV5XAQIDAQAB",
+  "permissions": ["storage", "tabs", "activeTab", "notifications"],
+  "host_permissions": ["http://127.0.0.1:27777/*", "<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "To replace the browser's video stream, please upload an MP4 video.",
+    "default_icon": {
+      "16": "icons/camera-16.png",
+      "32": "icons/camera-32.png",
+      "48": "icons/camera-48.png",
+      "128": "icons/camera-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/camera-16.png",
+    "32": "icons/camera-32.png",
+    "48": "icons/camera-48.png",
+    "128": "icons/camera-128.png"
+  }
+}
