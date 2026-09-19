@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T03:12:40.928Z",
+  "generatedAt": "2026-09-19T06:27:56.968Z",
   "scannedJsFiles": 381,
   "componentChunks": 239,
   "uniqueNamedComponents": 559,
@@ -1597,7 +1597,7 @@
     },
     {
       "file": "index-D2T4aaQJ.js",
-      "bytes": 112919,
+      "bytes": 111107,
       "names": [
         "Avatar",
         "CoreUpdate",
@@ -1730,8 +1730,7 @@
         "/rpa",
         "/rpa/market",
         "/system/role",
-        "/team",
-        "/v1/app/notice"
+        "/team"
       ],
       "hasProps": true,
       "hasSetup": true,
