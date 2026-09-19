@@ -1,0 +1,1698 @@
+{
+  "generatedAt": "2026-09-19T02:21:55.319Z",
+  "legacyShape": {
+    "DIC": {
+      "api": {
+        "activeWindow": "<function>",
+        "aes128Decrypt": "<function>",
+        "aes128DecryptMany": "<function>",
+        "aes128Encrypt": "<function>",
+        "cancelKernelInstall": "<function>",
+        "changeAppApiLine": "<function>",
+        "cleanupOldKernels": "<function>",
+        "clearElectronStore": "<function>",
+        "closeAllExternalWindows": "<function>",
+        "createApplicationWindow": "<function>",
+        "delRpaTaskLog": "<function>",
+        "deleteInstalledKernel": "<function>",
+        "envController": {
+          "runEnv": "<function>",
+          "stopEnv": "<function>"
+        },
+        "getAllDisplays": "<function>",
+        "getAppTitle": "<function>",
+        "getCurrentMainWindowSize": "<function>",
+        "getCurrentPlatform": "<function>",
+        "getDesktopSources": "<function>",
+        "getDeviceId": "<function>",
+        "getDeviceName": "<function>",
+        "getDeviceUserName": "<function>",
+        "getKernelProgress": "<function>",
+        "getLocalServerStatus": "<function>",
+        "getLocalVersionInfo": "<function>",
+        "getMacAddress": "<function>",
+        "getMainWindowLaunchPreference": "<function>",
+        "getNewDeviceId": "<function>",
+        "getPublicIP": "<function>",
+        "getRpaIndexPage": "<function>",
+        "getRpaLogList": "<function>",
+        "getSystemIdleTime": "<function>",
+        "getSystemVersion": "<function>",
+        "getWindowByPid": "<function>",
+        "installRequestedKernel": "<function>",
+        "listInstalledKernels": "<function>",
+        "setMainWindowLaunchPreference": "<function>",
+        "setProcessEnv": "<function>",
+        "setRpaTaskConfig": "<function>",
+        "setUserPlan": "<function>",
+        "store": {
+          "delete": "<function>",
+          "get": "<function>",
+          "set": "<function>"
+        },
+        "trackEvent": "<function>",
+        "windowTest": "<function>"
+      }
+    },
+    "ipcRenderer": {},
+    "openUrl": "<function>"
+  },
+  "reconstructedShape": {
+    "DIC": {
+      "api": {
+        "activeWindow": "<function>",
+        "aes128Decrypt": "<function>",
+        "aes128DecryptMany": "<function>",
+        "aes128Encrypt": "<function>",
+        "cancelKernelInstall": "<function>",
+        "changeAppApiLine": "<function>",
+        "cleanupOldKernels": "<function>",
+        "clearElectronStore": "<function>",
+        "closeAllExternalWindows": "<function>",
+        "createApplicationWindow": "<function>",
+        "delRpaTaskLog": "<function>",
+        "deleteInstalledKernel": "<function>",
+        "envController": {
+          "runEnv": "<function>",
+          "stopEnv": "<function>"
+        },
+        "getAllDisplays": "<function>",
+        "getAppTitle": "<function>",
+        "getCurrentMainWindowSize": "<function>",
+        "getCurrentPlatform": "<function>",
+        "getDesktopSources": "<function>",
+        "getDeviceId": "<function>",
+        "getDeviceName": "<function>",
+        "getDeviceUserName": "<function>",
+        "getKernelProgress": "<function>",
+        "getLocalServerStatus": "<function>",
+        "getLocalVersionInfo": "<function>",
+        "getMacAddress": "<function>",
+        "getMainWindowLaunchPreference": "<function>",
+        "getNewDeviceId": "<function>",
+        "getPublicIP": "<function>",
+        "getRpaIndexPage": "<function>",
+        "getRpaLogList": "<function>",
+        "getSystemIdleTime": "<function>",
+        "getSystemVersion": "<function>",
+        "getWindowByPid": "<function>",
+        "installRequestedKernel": "<function>",
+        "listInstalledKernels": "<function>",
+        "setMainWindowLaunchPreference": "<function>",
+        "setProcessEnv": "<function>",
+        "setRpaTaskConfig": "<function>",
+        "setUserPlan": "<function>",
+        "store": {
+          "delete": "<function>",
+          "get": "<function>",
+          "set": "<function>"
+        },
+        "trackEvent": "<function>",
+        "windowTest": "<function>"
+      }
+    },
+    "ipcRenderer": {},
+    "openUrl": "<function>"
+  },
+  "shapeEqual": true,
+  "legacyFunctions": [
+    "activeWindow",
+    "aes128Decrypt",
+    "aes128DecryptMany",
+    "aes128Encrypt",
+    "cancelKernelInstall",
+    "changeAppApiLine",
+    "cleanupOldKernels",
+    "clearElectronStore",
+    "closeAllExternalWindows",
+    "createApplicationWindow",
+    "delRpaTaskLog",
+    "deleteInstalledKernel",
+    "envController.runEnv",
+    "envController.stopEnv",
+    "getAllDisplays",
+    "getAppTitle",
+    "getCurrentMainWindowSize",
+    "getCurrentPlatform",
+    "getDesktopSources",
+    "getDeviceId",
+    "getDeviceName",
+    "getDeviceUserName",
+    "getKernelProgress",
+    "getLocalServerStatus",
+    "getLocalVersionInfo",
+    "getMacAddress",
+    "getMainWindowLaunchPreference",
+    "getNewDeviceId",
+    "getPublicIP",
+    "getRpaIndexPage",
+    "getRpaLogList",
+    "getSystemIdleTime",
+    "getSystemVersion",
+    "getWindowByPid",
+    "installRequestedKernel",
+    "listInstalledKernels",
+    "setMainWindowLaunchPreference",
+    "setProcessEnv",
+    "setRpaTaskConfig",
+    "setUserPlan",
+    "store.delete",
+    "store.get",
+    "store.set",
+    "trackEvent",
+    "windowTest"
+  ],
+  "reconstructedFunctions": [
+    "activeWindow",
+    "aes128Decrypt",
+    "aes128DecryptMany",
+    "aes128Encrypt",
+    "cancelKernelInstall",
+    "changeAppApiLine",
+    "cleanupOldKernels",
+    "clearElectronStore",
+    "closeAllExternalWindows",
+    "createApplicationWindow",
+    "delRpaTaskLog",
+    "deleteInstalledKernel",
+    "envController.runEnv",
+    "envController.stopEnv",
+    "getAllDisplays",
+    "getAppTitle",
+    "getCurrentMainWindowSize",
+    "getCurrentPlatform",
+    "getDesktopSources",
+    "getDeviceId",
+    "getDeviceName",
+    "getDeviceUserName",
+    "getKernelProgress",
+    "getLocalServerStatus",
+    "getLocalVersionInfo",
+    "getMacAddress",
+    "getMainWindowLaunchPreference",
+    "getNewDeviceId",
+    "getPublicIP",
+    "getRpaIndexPage",
+    "getRpaLogList",
+    "getSystemIdleTime",
+    "getSystemVersion",
+    "getWindowByPid",
+    "installRequestedKernel",
+    "listInstalledKernels",
+    "setMainWindowLaunchPreference",
+    "setProcessEnv",
+    "setRpaTaskConfig",
+    "setUserPlan",
+    "store.delete",
+    "store.get",
+    "store.set",
+    "trackEvent",
+    "windowTest"
+  ],
+  "missingInReconstruction": [],
+  "extraInReconstruction": [],
+  "behavior": {
+    "activeWindow": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "active-window",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "active-window",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "aes128Decrypt": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "aes-128-decrypt",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "aes-128-decrypt",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "aes-128-decrypt",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "aes-128-decrypt",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "aes128DecryptMany": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "aes-128-decrypt-many",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "aes-128-decrypt-many",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "aes-128-decrypt-many",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "aes-128-decrypt-many",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "aes128Encrypt": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "aes-128-encrypt",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "aes-128-encrypt",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "aes-128-encrypt",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "aes-128-encrypt",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "cancelKernelInstall": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-cancel",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "kernel-cancel",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-cancel",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "kernel-cancel",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "changeAppApiLine": {
+      "legacy": {
+        "calls": [],
+        "result": "<undefined>",
+        "error": null,
+        "env": {
+          "API_LINE": {
+            "sample": "arg1"
+          }
+        }
+      },
+      "reconstructed": {
+        "calls": [],
+        "result": "<undefined>",
+        "error": null,
+        "env": {
+          "API_LINE": {
+            "sample": "arg1"
+          }
+        }
+      },
+      "equal": true
+    },
+    "cleanupOldKernels": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-cleanup-old"
+          ]
+        ],
+        "result": {
+          "channel": "kernel-cleanup-old",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-cleanup-old"
+          ]
+        ],
+        "result": {
+          "channel": "kernel-cleanup-old",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "clearElectronStore": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "clear-electron-store"
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "clear-electron-store"
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "closeAllExternalWindows": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "close-all-win"
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "close-all-win"
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "createApplicationWindow": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "open-application-window",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "open-application-window",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "delRpaTaskLog": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "del-rpa-task-log",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "del-rpa-task-log",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "del-rpa-task-log",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "del-rpa-task-log",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "deleteInstalledKernel": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-delete-installed",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "kernel-delete-installed",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-delete-installed",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "kernel-delete-installed",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "envController.runEnv": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "run-env",
+            {
+              "sample": "arg1"
+            },
+            {
+              "sample": "arg2"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "run-env",
+            {
+              "sample": "arg1"
+            },
+            {
+              "sample": "arg2"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "envController.stopEnv": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "stop-env",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "stop-env",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getAllDisplays": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-all-displays"
+          ]
+        ],
+        "result": {
+          "channel": "get-all-displays",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-all-displays"
+          ]
+        ],
+        "result": {
+          "channel": "get-all-displays",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getAppTitle": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-app-title"
+          ]
+        ],
+        "result": {
+          "channel": "get-app-title",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-app-title"
+          ]
+        ],
+        "result": {
+          "channel": "get-app-title",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getCurrentMainWindowSize": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-current-main-window-size"
+          ]
+        ],
+        "result": {
+          "channel": "get-current-main-window-size",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-current-main-window-size"
+          ]
+        ],
+        "result": {
+          "channel": "get-current-main-window-size",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getCurrentPlatform": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-current-platform"
+          ]
+        ],
+        "result": {
+          "channel": "get-current-platform",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-current-platform"
+          ]
+        ],
+        "result": {
+          "channel": "get-current-platform",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getDesktopSources": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-desktop-sources"
+          ]
+        ],
+        "result": {
+          "channel": "get-desktop-sources",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-desktop-sources"
+          ]
+        ],
+        "result": {
+          "channel": "get-desktop-sources",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getDeviceId": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-device-id"
+          ]
+        ],
+        "result": {
+          "channel": "get-device-id",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-device-id"
+          ]
+        ],
+        "result": {
+          "channel": "get-device-id",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getDeviceName": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-device-name"
+          ]
+        ],
+        "result": {
+          "channel": "get-device-name",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-device-name"
+          ]
+        ],
+        "result": {
+          "channel": "get-device-name",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getDeviceUserName": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-device-user-name"
+          ]
+        ],
+        "result": {
+          "channel": "get-device-user-name",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-device-user-name"
+          ]
+        ],
+        "result": {
+          "channel": "get-device-user-name",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getKernelProgress": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-get-progress"
+          ]
+        ],
+        "result": {
+          "channel": "kernel-get-progress",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-get-progress"
+          ]
+        ],
+        "result": {
+          "channel": "kernel-get-progress",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getLocalServerStatus": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-local-server-status",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "get-local-server-status",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-local-server-status",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "get-local-server-status",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getLocalVersionInfo": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "version-local-info"
+          ]
+        ],
+        "result": {
+          "channel": "version-local-info",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "version-local-info"
+          ]
+        ],
+        "result": {
+          "channel": "version-local-info",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getMacAddress": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-mac-address"
+          ]
+        ],
+        "result": {
+          "channel": "get-mac-address",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-mac-address"
+          ]
+        ],
+        "result": {
+          "channel": "get-mac-address",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getMainWindowLaunchPreference": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-main-window-launch-preference"
+          ]
+        ],
+        "result": {
+          "channel": "get-main-window-launch-preference",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-main-window-launch-preference"
+          ]
+        ],
+        "result": {
+          "channel": "get-main-window-launch-preference",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getNewDeviceId": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-new-device-id"
+          ]
+        ],
+        "result": {
+          "channel": "get-new-device-id",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-new-device-id"
+          ]
+        ],
+        "result": {
+          "channel": "get-new-device-id",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getPublicIP": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-public-ip"
+          ]
+        ],
+        "result": {
+          "channel": "get-public-ip",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-public-ip"
+          ]
+        ],
+        "result": {
+          "channel": "get-public-ip",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getRpaIndexPage": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-rpa-index-page"
+          ]
+        ],
+        "result": {
+          "channel": "get-rpa-index-page",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-rpa-index-page"
+          ]
+        ],
+        "result": {
+          "channel": "get-rpa-index-page",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getRpaLogList": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-rpa-task-log",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "get-rpa-task-log",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-rpa-task-log",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "get-rpa-task-log",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getSystemIdleTime": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-system-idle-time"
+          ]
+        ],
+        "result": {
+          "channel": "get-system-idle-time",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-system-idle-time"
+          ]
+        ],
+        "result": {
+          "channel": "get-system-idle-time",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getSystemVersion": {
+      "legacy": {
+        "calls": [],
+        "result": "mock-system-version",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [],
+        "result": "mock-system-version",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "getWindowByPid": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "get-window-by-pid",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "get-window-by-pid",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "get-window-by-pid",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "get-window-by-pid",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "installRequestedKernel": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-install-requested",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "kernel-install-requested",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-install-requested",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "kernel-install-requested",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "listInstalledKernels": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-list-installed"
+          ]
+        ],
+        "result": {
+          "channel": "kernel-list-installed",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "kernel-list-installed"
+          ]
+        ],
+        "result": {
+          "channel": "kernel-list-installed",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "setMainWindowLaunchPreference": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "set-main-window-launch-preference",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "set-main-window-launch-preference",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "set-main-window-launch-preference",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "set-main-window-launch-preference",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "setProcessEnv": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "set-process-env",
+            {
+              "key": {
+                "sample": "arg1"
+              },
+              "value": {
+                "sample": "arg2"
+              }
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "set-process-env",
+            {
+              "key": {
+                "sample": "arg1"
+              },
+              "value": {
+                "sample": "arg2"
+              }
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "setRpaTaskConfig": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "set-rpa-task-config",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "set-rpa-task-config",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "set-rpa-task-config",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "set-rpa-task-config",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "setUserPlan": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "set-user-plan",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "set-user-plan",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "store.delete": {
+      "legacy": {
+        "calls": [
+          [
+            "sendSync",
+            "electron-store-delete",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "electron-store-delete",
+          "kind": "sync-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "sendSync",
+            "electron-store-delete",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "electron-store-delete",
+          "kind": "sync-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "store.get": {
+      "legacy": {
+        "calls": [
+          [
+            "sendSync",
+            "electron-store-get",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "electron-store-get",
+          "kind": "sync-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "sendSync",
+            "electron-store-get",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "electron-store-get",
+          "kind": "sync-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "store.set": {
+      "legacy": {
+        "calls": [
+          [
+            "sendSync",
+            "electron-store-set",
+            {
+              "key": {
+                "sample": "arg1"
+              },
+              "value": {
+                "sample": "arg2"
+              }
+            }
+          ]
+        ],
+        "result": {
+          "channel": "electron-store-set",
+          "kind": "sync-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "sendSync",
+            "electron-store-set",
+            {
+              "key": {
+                "sample": "arg1"
+              },
+              "value": {
+                "sample": "arg2"
+              }
+            }
+          ]
+        ],
+        "result": {
+          "channel": "electron-store-set",
+          "kind": "sync-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "trackEvent": {
+      "legacy": {
+        "calls": [
+          [
+            "send",
+            "track-event",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "send",
+            "track-event",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": "<undefined>",
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    },
+    "windowTest": {
+      "legacy": {
+        "calls": [
+          [
+            "invoke",
+            "window-test",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "window-test",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "reconstructed": {
+        "calls": [
+          [
+            "invoke",
+            "window-test",
+            {
+              "sample": "arg1"
+            }
+          ]
+        ],
+        "result": {
+          "channel": "window-test",
+          "kind": "invoke-result"
+        },
+        "error": null,
+        "env": {}
+      },
+      "equal": true
+    }
+  },
+  "behaviorMismatches": []
+}

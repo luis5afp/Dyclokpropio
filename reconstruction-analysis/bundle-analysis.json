@@ -1,0 +1,3576 @@
+{
+  "generatedAt": "2026-09-19T02:21:53.729Z",
+  "note": "Static recovery report derived from compiled bundles. It is evidence for reconstruction, not proof of original source names.",
+  "mainFiles": [
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "bytes": 5937233,
+      "requires": [
+        "@koa/cors",
+        "adm-zip",
+        "archiver",
+        "cheerio",
+        "crypto",
+        "electron",
+        "form-data",
+        "fs",
+        "http",
+        "https",
+        "koa-router",
+        "net",
+        "node-7z",
+        "node:https",
+        "os",
+        "stream",
+        "tls",
+        "tty",
+        "url"
+      ],
+      "urls": [
+        "http://gin",
+        "https://gi",
+        "http://loc",
+        "http://127",
+        "https://ap",
+        "https://ke",
+        "http:///,_0xc29acb["
+      ],
+      "routeLikeStrings": [
+        "/.DICloakC",
+        "/Default/P",
+        "/System/Li",
+        "/app_copy",
+        "/detail/",
+        "/downloadW",
+        "/gin",
+        "/indexeddb",
+        "/issues/10",
+        "/localstor",
+        "/lock_env",
+        "/logo-256.",
+        "/open_app_",
+        "/openapi",
+        "/rpa/task/",
+        "/test_writ",
+        "/v1/env",
+        "/v1/env/ex",
+        "/v1/rpa/ta",
+        "/v1/system",
+        "/video/cur",
+        "/video/inf",
+        "/video/sel"
+      ],
+      "electronMarkers": {
+        "BrowserWindow": 1,
+        "ipcMain": 54,
+        "webContents": 0,
+        "session": 3,
+        "protocol": 13,
+        "app": 35
+      },
+      "ipcContexts": [
+        {
+          "token": "open-url",
+          "offset": 28780,
+          "context": "8e6,0xea6)+'s',yS='sync-all-w'+_0x28d9a9(0x1697,'0x1c84')+'e',bS='clear-text'+'-content',wS=_0x1acd6a(0x3145,'0xe9a')+_0x28d9a9('0x4c97','0x5d81'),vS=_0x1acd6a(0x88dd,'0x6444')+_0x1acd6a('0x4dc3',0x2fb8)+'ndows',_S=_0x28d9a9(0x4a14,'0x62bc')+_0x28d9a9(0x131c,0x35f1)+_0x1acd6a('0x21ac','0x324c'),SS=_0x28d9a9('0x6865',0x62bc)+_0x28d9a9('0x5dbf',0x46a9)+'-windows',xS='close-tab-'+'pages',ES=_0x1acd6a('0x4d9',0x2a6b)+_0x28d9a9(0xfcf,'0xa2a')+'s',TS='open-urls',CS=_0x1acd6a(-0x21d7,0x513)+_0x1acd6a(0x797b,0x4732),PS=_0x28d9a9(-0x16fb,'0x1007')+'tall-reque'+_0x28d9a9('0x8842',0x5459),IS='kernel-lis'+_0x28d9a9(0x5459,'0x3d47')+'d',RS='kernel-get'+'-progress',kS='kernel-can'+_0x1acd6a('0x5984','0x698c'),AS=_0x28d9a9(0x36ed,0xb91)+_0x1acd6a(0x3839,'0x4d06')+_0x28d9a9('0x2515',0x4377),NS=_0x28d9a9(0x6378,0x6412)+_0x28d9a9(0x3763,0x313a),OS='kernel-pro'+_0x28d9a9(0x39ae,0x5c95),DS='update-app',LS=_"
+        },
+        {
+          "token": "run-env",
+          "offset": 23865,
+          "context": "arInvalidConfig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381}),Av=_0x28d9a9(0x3c5e,'0x6571')+'g-map',Nv=_0x1acd6a('0x40c2','0x66f9')+_0x28d9a9(-'0x10c2','0x1e7f')+_0x28d9a9('0x3fce',0x3da6),Ov=_0x1acd6a('0x6ec2',0x4dec)+'ning-env-r'+_0x28d9a9(0x1837,'0x250e'),Dv=_0x28d9a9('0x6757',0x3f51)+_0x28d9a9(0x5e0c,0x3891),Lv=_0x1acd6a('0x9cd8','0x696c')+_0x1acd6a('0x1dca',0x307c),$v=_0x28d9a9(0x4034,'0x5d51')+_0x28d9a9('0x507c','0x63ae'),Mv='run-env',Fv='run-env-fo'+_0x28d9a9(0x1521,0x594),Bv='check-prox'+_0x28d9a9('0x382f',0xe9b),Uv=_0x1acd6a(0x6bdd,'0x3d7c')+'y',Vv='clear-dev-'+_0x1acd6a(-'0x499',0x2222),jv=_0x1acd6a(0x9e,'0x1d69')+_0x28d9a9('0x1319','0x1e6b'),Wv=_0x1acd6a(0x5e7d,0x52fa)+_0x1acd6a(-0x1839,0xcea),zv=_0x28d9a9('0x44d',0x3049)+'r-dialog',Gv=_0x28d9a9(0x302c,0x3049)+_0x28d9a9(0x1b83,0x885),qv='get-cache-'+_0x1acd6a(0x12bf,'0x3910'),Hv=_0x1acd6a('0x40ea',0x35fe)+'config"
+        },
+        {
+          "token": "run-env",
+          "offset": 23878,
+          "context": "ig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381}),Av=_0x28d9a9(0x3c5e,'0x6571')+'g-map',Nv=_0x1acd6a('0x40c2','0x66f9')+_0x28d9a9(-'0x10c2','0x1e7f')+_0x28d9a9('0x3fce',0x3da6),Ov=_0x1acd6a('0x6ec2',0x4dec)+'ning-env-r'+_0x28d9a9(0x1837,'0x250e'),Dv=_0x28d9a9('0x6757',0x3f51)+_0x28d9a9(0x5e0c,0x3891),Lv=_0x1acd6a('0x9cd8','0x696c')+_0x1acd6a('0x1dca',0x307c),$v=_0x28d9a9(0x4034,'0x5d51')+_0x28d9a9('0x507c','0x63ae'),Mv='run-env',Fv='run-env-fo'+_0x28d9a9(0x1521,0x594),Bv='check-prox'+_0x28d9a9('0x382f',0xe9b),Uv=_0x1acd6a(0x6bdd,'0x3d7c')+'y',Vv='clear-dev-'+_0x1acd6a(-'0x499',0x2222),jv=_0x1acd6a(0x9e,'0x1d69')+_0x28d9a9('0x1319','0x1e6b'),Wv=_0x1acd6a(0x5e7d,0x52fa)+_0x1acd6a(-0x1839,0xcea),zv=_0x28d9a9('0x44d',0x3049)+'r-dialog',Gv=_0x28d9a9(0x302c,0x3049)+_0x28d9a9(0x1b83,0x885),qv='get-cache-'+_0x1acd6a(0x12bf,'0x3910'),Hv=_0x1acd6a('0x40ea',0x35fe)+'config',Kv=_0x1acd6"
+        },
+        {
+          "token": "run-env",
+          "offset": 31346,
+          "context": "0xadd,'0x267c'),cx=_0x1acd6a(-0x233f,'0xeeb')+'tore-delet'+'e',lx=_0x1acd6a(0x68,0xd70)+_0x1acd6a('0x572a','0x3355')+_0x28d9a9('0xea9',0x3e21)+_0x28d9a9('0x5594','0x2ec2'),ux=_0x1acd6a(0x49ef,0x64c1)+'indow-laun'+_0x28d9a9(0x70d7,'0x3e21')+_0x28d9a9(0x54d1,0x2ec2),px=_0x1acd6a('0x55a9','0x4082')+'t-main-win'+_0x28d9a9(0x51a6,0x44ae),dx=_0x28d9a9(-'0x1ab3',0x106c)+'t',fx='set-user-p'+_0x1acd6a(0x446d,0x4f26),Fd=_0x28d9a9('0x456d',0x2d9d)+'tt',Nn='run-env-ca'+_0x28d9a9('0x8664','0x68e0'),Dh=_0x28d9a9(0x10d1,'0x2138')+_0x1acd6a('0x4dc8',0x6b3f),mx='set-sync-s'+_0x1acd6a('0x36a5',0x4c61),Bd=_0x28d9a9(0xa76,0xece)+_0x1acd6a(0x130f,0x2bc6),hx='update-app'+_0x1acd6a('0x5b2d','0x5bbf'),gx=_0x1acd6a(0x4836,0x313c)+_0x28d9a9(0x85b9,'0x5cbb')+_0x28d9a9('0x4b70','0x2b81'),yx=_0x1acd6a(0x816a,'0x6ab7')+_0x1acd6a(0x2d8a,'0x46fa')+_0x28d9a9(0x4053,'0x52fa'),Ud=_0x28d9a9('0x1dc2',0x1170)+_0x28d9a9(0x23d"
+        }
+      ]
+    },
+    {
+      "file": "dist-electron/main.js",
+      "bytes": 7658,
+      "requires": [
+        "electron",
+        "fs"
+      ],
+      "urls": [],
+      "routeLikeStrings": [],
+      "electronMarkers": {
+        "BrowserWindow": 0,
+        "ipcMain": 0,
+        "webContents": 0,
+        "session": 0,
+        "protocol": 0,
+        "app": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist-electron/main.readable.js",
+      "bytes": 1320,
+      "requires": [
+        "./main-CuCOh59n.js",
+        "child_process",
+        "crypto",
+        "electron",
+        "fs",
+        "get-port-please",
+        "lodash",
+        "path",
+        "ts-md5"
+      ],
+      "urls": [],
+      "routeLikeStrings": [],
+      "electronMarkers": {
+        "BrowserWindow": 3,
+        "ipcMain": 0,
+        "webContents": 0,
+        "session": 0,
+        "protocol": 0,
+        "app": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist-electron/multipart-parser-BHl0gU7Q.js",
+      "bytes": 38954,
+      "requires": [],
+      "urls": [],
+      "routeLikeStrings": [],
+      "electronMarkers": {
+        "BrowserWindow": 0,
+        "ipcMain": 0,
+        "webContents": 0,
+        "session": 0,
+        "protocol": 0,
+        "app": 0
+      },
+      "ipcContexts": []
+    }
+  ],
+  "rendererFiles": [
+    {
+      "file": "dist/assets/AccountSecurityConfig-CZ9-A59C.js",
+      "bytes": 507,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/AccountSecurityConfig.vue_vue_type_script_setup_true_lang-Bd_fsFqO.js",
+      "bytes": 1420,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/BatchDelProxyDlg-Dafz5071.js",
+      "bytes": 408,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/BatchDelProxyDlg.vue_vue_type_script_setup_true_lang-C-h_7VS6.js",
+      "bytes": 7626,
+      "urls": [
+        "http://192.168.0.1:8000:Username:Password\\nsocks5://[2001:db2:2de:0:0:0:0:e12]:8000:Username:Password"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/BindAccount-CH8uctBX.js",
+      "bytes": 195,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/BindAccount.vue_vue_type_script_setup_true_lang-ctBeT3Be.js",
+      "bytes": 7559,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/BrowserSelection-DT8JdE4_.js",
+      "bytes": 4474,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/ConvertEnvDialog-uW3XYugW.js",
+      "bytes": 3115,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/DynamicProxyDialog-DtpKqsw2.js",
+      "bytes": 1339,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/DynamicProxyDialog.vue_vue_type_script_setup_true_lang-PmDjw-OT.js",
+      "bytes": 1798,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/DynamicProxyForm-DgUQJ9j5.js",
+      "bytes": 493,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/DynamicProxyForm.vue_vue_type_script_setup_true_lang-BLDcp8Iw.js",
+      "bytes": 10477,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/EnvClearCacheResultDialog-q9G9rHnN.js",
+      "bytes": 3503,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/EnvStatusColumn-C9en56cw.js",
+      "bytes": 5861,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/EnvironmentWarningNoticeBanner-CBtFv7kr.js",
+      "bytes": 152,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/EnvironmentWarningNoticeBanner.vue_vue_type_script_setup_true_lang-CnmLlY1e.js",
+      "bytes": 1227,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/MainWindowStartupSetting-DxWXs34c.js",
+      "bytes": 146,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/MainWindowStartupSetting.vue_vue_type_script_setup_true_lang-DYKQzjQJ.js",
+      "bytes": 4503,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/MemberEnvGroupDailyAccessDialog-T_nU6zjI.js",
+      "bytes": 254,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/MemberEnvGroupDailyAccessDialog.vue_vue_type_script_setup_true_name_MemberEnvGroupDailyAccessDialog_lang-Do1rLGCx.js",
+      "bytes": 7794,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/OpenEnvNetworkDiagnosisDialog-DpxqtuRu.js",
+      "bytes": 4108,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/OpenEnvProgress-BTyh7ol8.js",
+      "bytes": 4714,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/OperationEnv-BnOUP9xc.js",
+      "bytes": 679,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/OperationEnv.vue_vue_type_script_setup_true_lang-D8zXmnxC.js",
+      "bytes": 2023,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/ParaturboProxyConfig-Cyo2Js6h.js",
+      "bytes": 1418,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/ParaturboProxyConfig.vue_vue_type_script_setup_true_lang-DnrGQZKb.js",
+      "bytes": 4103,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/ProxyConfiguredIndicator-CTf-Kzl6.js",
+      "bytes": 937,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/ProxyGroupSelect-5a0kQ2tx.js",
+      "bytes": 138,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/ProxyGroupSelect.vue_vue_type_script_setup_true_lang-CTswbFOC.js",
+      "bytes": 2823,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaDetails-DX18d3T1.js",
+      "bytes": 1720,
+      "urls": [],
+      "routeLikeStrings": [
+        "/rpa/rpaTaskEdit"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaImportDlg-CeKONKlO.js",
+      "bytes": 162,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaImportDlg.vue_vue_type_script_setup_true_lang-Dxo4t88C.js",
+      "bytes": 3576,
+      "urls": [],
+      "routeLikeStrings": [
+        "/rpa/rpaTaskEdit"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaMissedScheduleBanner-CEV8GcNE.js",
+      "bytes": 234,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaMissedScheduleBanner.vue_vue_type_script_setup_true_lang-BgK9dXbF.js",
+      "bytes": 1059,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaOperationRule-Bcro0UJX.js",
+      "bytes": 165,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaOperationRule.vue_vue_type_style_index_0_lang-Cp8Mvyio.js",
+      "bytes": 11993,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaProcessOptions-qd4ZUD7R.js",
+      "bytes": 6048,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaProcessOptions.vue_vue_type_script_setup_true_lang-Y78tQZi4.js",
+      "bytes": 4060,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaProcessOptionsForm-CFYUzWuy.js",
+      "bytes": 173,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaProcessOptionsForm.vue_vue_type_script_setup_true_lang-DUVd1wa2.js",
+      "bytes": 7978,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 3,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaProcessOptionsSet-CsYhcLlG.js",
+      "bytes": 950,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaRunningRecord-xU6dfGpc.js",
+      "bytes": 3761,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaRunningRecordList-Bt0E0t6P.js",
+      "bytes": 5444,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaRunningTime-CTJ6JUd1.js",
+      "bytes": 136,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaRunningTime.vue_vue_type_script_setup_true_lang-SXig6H1T.js",
+      "bytes": 9087,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaSelectEnvTable-DYJ82JBS.js",
+      "bytes": 5630,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaSelectEnvTableDrawer-C0LMo_ie.js",
+      "bytes": 608,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaSelectEnvTableDrawer.vue_vue_type_script_setup_true_lang-H9iu7eXj.js",
+      "bytes": 2200,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaSetting-BeZtX7gq.js",
+      "bytes": 132,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaSetting.vue_vue_type_script_setup_true_lang-DeBcBySm.js",
+      "bytes": 4036,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaTaskConfigSet-95fPaRs9.js",
+      "bytes": 4084,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/RpaTaskEdit-Y_ARSHjZ.js",
+      "bytes": 11809,
+      "urls": [],
+      "routeLikeStrings": [
+        "/rpa/market?activeCategory=",
+        "/rpa/taskManage"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 3,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/SocialAccountAssignmentDialog-BpJPUyF5.js",
+      "bytes": 10202,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/accountInfo-D158F1C6.js",
+      "bytes": 7684,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/basicSetting-GkSM4U9T.js",
+      "bytes": 22850,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 1,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/batchCreateProxy-Bol-3RxX.js",
+      "bytes": 6220,
+      "urls": [
+        "http://192.168.0.1:8000:Username:Password{Remark}",
+        "http://[2001:db2:2de:0:0:0:0:e12]:8000:Username:Password{Remark}"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/batchCreateProxyList-BHajGyIR.js",
+      "bytes": 380,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/batchCreateProxyList.vue_vue_type_script_setup_true_lang-Dy92vlL8.js",
+      "bytes": 4544,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/browser-DEPKJqf2.js",
+      "bytes": 23712,
+      "urls": [
+        "http://www.w3.org/2000/svg"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 18,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/changEnvTagBtn-Ct3P2QWE.js",
+      "bytes": 5618,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/country-flag.esm-Bg8BdAZu.js",
+      "bytes": 304367,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/createEnvTag-DaHa--Ol.js",
+      "bytes": 134,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/createEnvTag.vue_vue_type_script_setup_true_lang-DCN15S07.js",
+      "bytes": 2591,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/editProxySoftDlg-DRyo6ks3.js",
+      "bytes": 281,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/editProxySoftDlg.vue_vue_type_script_setup_true_lang-D9otwVyq.js",
+      "bytes": 1954,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/editRpaTask-CWh9kgiS.js",
+      "bytes": 5862,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/editRpaTask.vue_vue_type_style_index_0_lang-qriV8oII.js",
+      "bytes": 15553,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envAddAcceptLangDialog-BYlhepcj.js",
+      "bytes": 172,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envAddAcceptLangDialog.vue_vue_type_script_setup_true_name_envAddAcceptLangDialog_lang-DdcOzUN-.js",
+      "bytes": 1647,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envAddCookieDialog-LPq-9s6G.js",
+      "bytes": 1734,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envAutoInputProxy-JUOSrlvO.js",
+      "bytes": 171,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envAutoInputProxy.vue_vue_type_script_setup_true_lang-CKSB7kpP.js",
+      "bytes": 2378,
+      "urls": [
+        "http://192.168.0.1:8000:Username:Password",
+        "http://192.168.0.1:8000:Username:Password\\n",
+        "http://[2a03:c005:bd2e:00a1:2d4c:2cbd:4253:e2bc]:8000`,placement:"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envBatchOperationDlg-AbR-Mv5C.js",
+      "bytes": 19513,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envBatchUpdate-DzCHSa6X.js",
+      "bytes": 8235,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envBookmarkConfigItem-CFyCh0Iz.js",
+      "bytes": 710,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envClearCacheDialog-Dd6zx9GP.js",
+      "bytes": 9051,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 9,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 1,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envCloneDialog-DVttJNmI.js",
+      "bytes": 4478,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envConfigPreview-CBaHhdWV.js",
+      "bytes": 11876,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envEditAccountForm-WSrZTnvX.js",
+      "bytes": 9782,
+      "urls": [
+        "https://${e.url}`"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envEditComConfigForm-CG8_j7gQ.js",
+      "bytes": 12467,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envEditExtendForm-1k6uLxBb.js",
+      "bytes": 22741,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 4,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envEditFontDialog-BAmKs9Pq.js",
+      "bytes": 1763,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envEditProxyForm-BbH2PHWU.js",
+      "bytes": 30833,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envGroupEdit-BArlMN1p.js",
+      "bytes": 4417,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envList-DqmdMwZZ.js",
+      "bytes": 92002,
+      "urls": [
+        "https://www.example.com",
+        "https://www.baidu.com",
+        "https://www.cloudflare.com",
+        "https://www.gstatic.com/generate_204"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 15,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envListDialog-CxPEnpSF.js",
+      "bytes": 5796,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envListDialog.vue_vue_type_style_index_0_lang-2Qz_48rj.js",
+      "bytes": 1336,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envListTop-BptdKu4B.js",
+      "bytes": 2075,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envPreferences-CqnpQk93.js",
+      "bytes": 11086,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envProxyItems-DIhzCyp-.js",
+      "bytes": 5235,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envSegmentedTabs-B8OKb7JK.js",
+      "bytes": 1710,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envSerialNums-BjlyggGT.js",
+      "bytes": 383,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envShareDialog-emkFu1kO.js",
+      "bytes": 4481,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envShareManageDrawer-_imzjmW4.js",
+      "bytes": 677,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envShareManageDrawer.vue_vue_type_style_index_0_lang-BlZFMB9j.js",
+      "bytes": 6019,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envShareManageList-pFNp_gMy.js",
+      "bytes": 675,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envShareManageList.vue_vue_type_style_index_0_lang-CxJ0BEO-.js",
+      "bytes": 6041,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTagBtn-2ZQSSkW_.js",
+      "bytes": 629,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTagBtn.vue_vue_type_script_setup_true_lang-cDjl7HzD.js",
+      "bytes": 539,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTagList-sLKK2Rb0.js",
+      "bytes": 3959,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTagSelect-BOvyEvCo.js",
+      "bytes": 5985,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTopUpForm-DvUnRY5g.js",
+      "bytes": 134,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTopUpForm.vue_vue_type_script_setup_true_lang-D3Aivpi6.js",
+      "bytes": 1846,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTransfer-DIhTS2PS.js",
+      "bytes": 4710,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTransferLogDrawer-CtisM-p9.js",
+      "bytes": 3676,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTransferLogList-B-UXe0hK.js",
+      "bytes": 599,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTransferLogList.vue_vue_type_style_index_0_lang-BlNXFBQB.js",
+      "bytes": 3681,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTrash-un3eriYB.js",
+      "bytes": 652,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envTrash.vue_vue_type_style_index_0_lang-CtsNY7US.js",
+      "bytes": 8687,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/envUpdate-BZbHBa1q.js",
+      "bytes": 10450,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/groupEdit.vue_vue_type_script_setup_true_name_envGroupEdit_lang-OORP_IuD.js",
+      "bytes": 2402,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-2aSE6uVi.js",
+      "bytes": 1863,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-90lhaiW6.js",
+      "bytes": 1654,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-BFrckwEl.js",
+      "bytes": 24140,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 6,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "bytes": 3281310,
+      "urls": [
+        "https://vuejs.org/error-reference/#runtime-${n}`;for(;a;",
+        "http://www.w3.org/2000/svg",
+        "http://www.w3.org/1998/Math/MathML",
+        "http://www.w3.org/1999/xlink",
+        "https://npms.io/search?q=ponyfill.",
+        "https://vue-i18n.intlify.dev/guide/essentials/syntax#rails-i18n-format",
+        "https://tinyurl.com/2p97mcze",
+        "https://oss-gin.dicloak.com/static/files/DICloak%E6%89%B9%E9%87%8F%E5%AF%BC%E5%85%A5%E7%8E%AF%E5%A2%83%E6%A8%A1%E6%9D%BF.xlsx",
+        "https://tj-gin.oss-us-west-1.aliyuncs.com/static/files/Profile%20import%20template-DICloak.xlsx",
+        "http://tj-gin.oss-us-west-1.aliyuncs.com/static/files/%E7%8E%AF%E5%A2%83%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF%20-%20DICloak.txt",
+        "http://tj-gin.oss-us-west-1.aliyuncs.com/static/files/Profile%20import%20template-DICloak.txt",
+        "https://dicloak.com",
+        "https://dicloak.cn",
+        "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/GooglePay.png",
+        "http://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/TelegramLogo.png",
+        "https://help.dicloak.com/zh/ai%e7%88%ac%e8%99%ab%ef%bc%9a%e5%a6%82%e4%bd%95%e5%bf%ab%e9%80%9f%e5%88%9b%e5%bb%ba%e7%8e%af%e5%a2%83%ef%bc%8c%e5%b9%b6%e9%85%8d%e7%bd%ae%e4%bb%a3%e7%90%86%e3%80%81%e7%99%bb%e5%bd%95%e8%b4%a6%e5%8f%b7/",
+        "https://help.dicloak.com/ai-crawler-how-to-quickly-set-up-profiles-with-proxy-account-logins/",
+        "http://localhost",
+        "https://element-plus.org/en-US/component/button.html#button-attributes",
+        "https://element-plus.org/en-US/component/checkbox.html",
+        "https://element-plus.org/en-US/component/radio.html",
+        "https://github.com/vuejs/vue-next/pull/2485\\n",
+        "https://element-plus.org/en-US/component/dialog.html#slots",
+        "https://element-plus.org/en-US/component/drawer.html#slots",
+        "https://element-plus.org/zh-CN/component/pagination.html",
+        "https://www.example.com",
+        "https://dicloak.com/download",
+        "http://192.168.0.1:8000:Username:Password{Remark}",
+        "http://[2002:db6:2db:0:0:0:0:e12]:8000{Remark}",
+        "https://chromewebstore.google.com/`",
+        "https://google.com",
+        "https://dicloak.com/download?rc={promoCode}",
+        "https://www.ejemplo.com",
+        "https://gin-server.dicloak.com/gin",
+        "https://gin-server.dicloak.net/gin",
+        "https://ru-gin-server.dicloak.net/gin",
+        "http://gin-server-test.dicloak.com/gin",
+        "https://gin-server-test.dicloak.net/gin",
+        "https://telegram.me/DICloak",
+        "https://api.whatsapp.com/send/?phone=8617324261352&text=Hello.I%20want%20to%20customize%20RPA%20workflow",
+        "http://127.0.0.1:27777/dic_api/rpa/task/env/running/logs",
+        "https://help.dicloak.com/zh/%e8%87%aa%e5%ae%9a%e4%b9%89rpa%e6%95%99%e7%a8%8b/",
+        "https://help.dicloak.com/custom-rpa-tutorial/",
+        "https://www.clarity.ms/tag/",
+        "https://store.dicloak.com",
+        "https://gin-admin.dicloak.com/gin/backend/open/version/latest",
+        "https://official-admin.dicloak.com/environment",
+        "https://help.dicloak.com/api-development-guide",
+        "https://help.dicloak.com/zh/dicloak-api%e5%bc%80%e5%8f%91%e6%8c%87%e5%8d%97",
+        "https://official-admin.dicloak.com/pluginsEnv",
+        "https://dicloak.com/api/user-track?type=${e}`,die=async",
+        "http://127.0.0.1:27777/dic_api/open_app_state",
+        "http://tj-gin.oss-us-west-1.aliyuncs.com/static/img/customer-service-vx.jpg",
+        "https://www.gstatic.com/generate_204",
+        "https://next.vuex.vuejs.org/",
+        "https://vuejs.org/images/icons/favicon-96x96.png",
+        "https://ipfly.net/activity/U1A3OVo4S1E6TFZKOVhYQzM5NQ==",
+        "https://www.922proxy.com/register?inviter_code=2223c085",
+        "https://iproyal.com/?r=792175",
+        "https://netnut.io/?ref=y2zlyzk",
+        "https://go.nodemaven.com/DICloak",
+        "http://${e.domain}/`,expirationDate:n,...e};return",
+        "http://${r.slice(1",
+        "http://127.0.0.1:${e}/environment`:null}(t,n",
+        "https://ltrack.dicloak.com/gin${t}`"
+      ],
+      "routeLikeStrings": [
+        "/403",
+        "/404",
+        "/500",
+        "/?",
+        "/activity-bd",
+        "/activity-bd-login",
+        "/activity-bd-register",
+        "/activity-bd-resetPassword",
+        "/application",
+        "/automation",
+        "/crawl",
+        "/crawl/index",
+        "/detail/",
+        "/dic_api",
+        "/emptyTeam",
+        "/environment/envList",
+        "/environment/envTrash",
+        "/environment/groupList",
+        "/expansion",
+        "/expansion/expansionList",
+        "/gin",
+        "/home/index",
+        "/layout",
+        "/lock_env",
+        "/official/web/download/app",
+        "/openapi",
+        "/openapi/index",
+        "/organization",
+        "/organization/change_org/",
+        "/organization/logs",
+        "/organization/member",
+        "/organization/memberList",
+        "/page",
+        "/pagina",
+        "/personalInfo",
+        "/personalInfo/index",
+        "/plan/planList",
+        "/proxy",
+        "/proxy/batchCreateProxy",
+        "/proxy/components/batchCreateProxy",
+        "/proxy/proxyManagement",
+        "/referral",
+        "/referral/index",
+        "/rpa",
+        "/rpa/market",
+        "/rpa/market/RpaDetails",
+        "/rpa/market/RpaTaskEdit",
+        "/rpa/market/index",
+        "/rpa/rpaDetails",
+        "/rpa/rpaTaskEdit",
+        "/rpa/taskList",
+        "/rpa/taskManage",
+        "/setting",
+        "/setting/index",
+        "/src/views",
+        "/src/views/404/index.vue",
+        "/src/views/common/CustomRadioGroup.vue",
+        "/src/views/crawl/components/crawlRunningList.vue",
+        "/src/views/crawl/components/crawlerMarket.vue",
+        "/src/views/crawl/components/crawlerMarketCard.vue",
+        "/src/views/crawl/components/marketForm.vue",
+        "/src/views/crawl/components/resultCard.vue",
+        "/src/views/crawl/components/resultDownload.vue",
+        "/src/views/crawl/components/scrape.vue",
+        "/src/views/crawl/index.vue",
+        "/src/views/environment/components/EnvClearCacheResultDialog.vue",
+        "/src/views/environment/components/EnvStatusColumn.vue",
+        "/src/views/environment/components/EnvironmentWarningNoticeBanner.vue",
+        "/src/views/environment/components/ImportInstructions.vue",
+        "/src/views/environment/components/OpenEnvNetworkDiagnosisDialog.vue",
+        "/src/views/environment/components/OpenEnvProgress.vue",
+        "/src/views/environment/components/OpenProgressBar.vue",
+        "/src/views/environment/components/ProxyConfiguredIndicator.vue",
+        "/src/views/environment/components/RpaMissedScheduleBanner.vue",
+        "/src/views/environment/components/SocialAccountAssignmentDialog.vue",
+        "/src/views/environment/components/SocialMediaFileList.vue",
+        "/src/views/environment/components/TlsCipherSuiteSelector.vue",
+        "/src/views/environment/components/TxtFilePreview.vue",
+        "/src/views/environment/components/batchOperationBar.vue",
+        "/src/views/environment/components/createEnvV2/EditEnvV2/Layout.vue",
+        "/src/views/environment/components/createEnvV2/EditEnvV2/Tip.vue",
+        "/src/views/environment/components/createEnvV2/EditEnvV2/index.vue",
+        "/src/views/environment/components/createEnvV2/EnvEditBasicFormV2/BindAccount.vue",
+        "/src/views/environment/components/createEnvV2/EnvEditBasicFormV2/index.vue",
+        "/src/views/environment/components/createEnvV2/EnvFingerprintFormV2/BrowserSelection.vue",
+        "/src/views/environment/components/createEnvV2/EnvFingerprintFormV2/index.vue",
+        "/src/views/environment/components/createEnvV2/EnvSeniorV2/index.vue",
+        "/src/views/environment/components/createEnvV2/components/accessLimitCard.vue",
+        "/src/views/environment/components/createEnvV2/components/fixedUrlsFormItem.vue",
+        "/src/views/environment/components/createEnvV2/envEditProxyForm.vue",
+        "/src/views/environment/components/editProxySoftDlg.vue",
+        "/src/views/environment/components/envAutoInputProxy.vue",
+        "/src/views/environment/components/envBatchOperationDlg.vue",
+        "/src/views/environment/components/envBatchUpdate.vue",
+        "/src/views/environment/components/envBookmarkConfigItem.vue",
+        "/src/views/environment/components/envConfigPreview.vue",
+        "/src/views/environment/components/envEditAccountForm.vue",
+        "/src/views/environment/components/envEditComConfigForm.vue",
+        "/src/views/environment/components/envEditExtendForm.vue",
+        "/src/views/environment/components/envListTop.vue",
+        "/src/views/environment/components/envProxyItems.vue",
+        "/src/views/environment/components/envSegmentedTabs.vue",
+        "/src/views/environment/components/envShareManageList.vue",
+        "/src/views/environment/components/envTag/changEnvTagBtn.vue",
+        "/src/views/environment/components/envTag/createEnvTag.vue",
+        "/src/views/environment/components/envTag/envTagBtn.vue",
+        "/src/views/environment/components/envTag/envTagList.vue",
+        "/src/views/environment/components/envTag/envTagSelect.vue",
+        "/src/views/environment/components/envTopUpForm.vue",
+        "/src/views/environment/components/envTransferLogList.vue",
+        "/src/views/environment/components/introductionPage.vue",
+        "/src/views/environment/components/oneWaySync.vue",
+        "/src/views/environment/components/proxyApiExtraction.vue",
+        "/src/views/environment/components/proxyCheckButton.vue",
+        "/src/views/environment/components/uploadResTable.vue",
+        "/src/views/environment/components/uploadStateBox.vue",
+        "/src/views/environment/envAddAcceptLangDialog.vue",
+        "/src/views/environment/envAddCookieDialog.vue",
+        "/src/views/environment/envClearCacheDialog.vue",
+        "/src/views/environment/envCloneDialog.vue",
+        "/src/views/environment/envEditFontDialog.vue",
+        "/src/views/environment/envGroupEdit.vue",
+        "/src/views/environment/envList.vue",
+        "/src/views/environment/envSerialNums.vue",
+        "/src/views/environment/envShareDialog.vue",
+        "/src/views/environment/envShareManageDrawer.vue",
+        "/src/views/environment/envTransfer.vue",
+        "/src/views/environment/envTransferLogDrawer.vue",
+        "/src/views/environment/envTrash.vue",
+        "/src/views/environment/envUpdate.vue",
+        "/src/views/environment/groupEdit.vue",
+        "/src/views/environment/groupList.vue",
+        "/src/views/environment/test.vue",
+        "/src/views/expansion/components/configExpandGroup.vue",
+        "/src/views/expansion/components/doubleCheckSafetyProtectionDialog.vue",
+        "/src/views/expansion/components/editExpandGroup.vue",
+        "/src/views/expansion/components/expandCard.vue",
+        "/src/views/expansion/components/expansionAdded.vue",
+        "/src/views/expansion/components/expansionCard.vue",
+        "/src/views/expansion/components/expansionDefaulAvatar.vue",
+        "/src/views/expansion/components/extendMarketAddList.vue",
+        "/src/views/expansion/components/extensionsTip.vue",
+        "/src/views/expansion/components/groupManage.vue",
+        "/src/views/expansion/components/safetyProtectionDialog.vue",
+        "/src/views/expansion/expansionList.vue",
+        "/src/views/expansion/expansionMarket.vue",
+        "/src/views/home/index.vue",
+        "/src/views/openapi/index.vue",
+        "/src/views/organization/components/MemberEnvGroupDailyAccessDialog.vue",
+        "/src/views/organization/components/createApiParamsComp.vue",
+        "/src/views/organization/components/createApiResDialog.vue",
+        "/src/views/organization/components/loginVerifyDialog.vue",
+        "/src/views/organization/components/memberLoginDeviceList.vue",
+        "/src/views/organization/components/nameIdCell.vue",
+        "/src/views/organization/components/operationVerificationDialog.vue",
+        "/src/views/organization/components/verifyConfigDialog.vue",
+        "/src/views/organization/logs.vue",
+        "/src/views/organization/memberEdit.vue",
+        "/src/views/organization/memberEditForApi.vue",
+        "/src/views/organization/memberList.vue",
+        "/src/views/organization/memberListForApi.vue",
+        "/src/views/organization/memberListForApiDrawer.vue",
+        "/src/views/organization/memberTransfer.vue",
+        "/src/views/organization/orgNameEdit.vue",
+        "/src/views/personalInfo/accountInfo.vue",
+        "/src/views/personalInfo/comppnents/AccountSecurityConfig.vue",
+        "/src/views/personalInfo/comppnents/MainWindowStartupSetting.vue",
+        "/src/views/personalInfo/comppnents/basicSetting.vue",
+        "/src/views/personalInfo/comppnents/envPreferences.vue",
+        "/src/views/personalInfo/comppnents/loginDeviceCard.vue",
+        "/src/views/personalInfo/comppnents/realNameVerificationDlg.vue",
+        "/src/views/personalInfo/index.vue",
+        "/src/views/plan/components/PackagePermissions.vue",
+        "/src/views/plan/components/activityBanner.vue",
+        "/src/views/plan/components/airdropActivity.vue",
+        "/src/views/plan/components/choosePlanDialog.vue",
+        "/src/views/plan/components/ipResourceCard.vue",
+        "/src/views/plan/components/newChoosePlan.vue",
+        "/src/views/plan/components/newUpdatePlanDialog.vue",
+        "/src/views/plan/components/payDialog.vue",
+        "/src/views/plan/components/paySelect.vue",
+        "/src/views/plan/components/pendingOrderList.vue",
+        "/src/views/plan/components/planTopCard.vue",
+        "/src/views/plan/components/renewDialog.vue",
+        "/src/views/plan/components/walletPaymentSelect.vue",
+        "/src/views/plan/components/walletRechargeDlg.vue",
+        "/src/views/plan/planList.vue",
+        "/src/views/proxy/components/BatchDelProxyDlg.vue",
+        "/src/views/proxy/components/CustomTooltip.vue",
+        "/src/views/proxy/components/ProxyGroupSelect.vue",
+        "/src/views/proxy/components/batchCreateProxy.vue",
+        "/src/views/proxy/components/batchCreateProxyList.vue",
+        "/src/views/proxy/components/proxySoftContent.vue",
+        "/src/views/proxy/components/proxySoftItem.vue",
+        "/src/views/proxy/ipResource/DynamicIpResource.vue",
+        "/src/views/proxy/ipResource/StaticIpResource.vue",
+        "/src/views/proxy/ipResource/components/DynamicIpEmptyGuide.vue",
+        "/src/views/proxy/ipResource/components/DynamicProxyDialog.vue",
+        "/src/views/proxy/ipResource/components/DynamicProxyForm.vue",
+        "/src/views/proxy/ipResource/components/DynamicTrafficGate.vue",
+        "/src/views/proxy/ipResource/components/DynamicTrafficPurchase.vue",
+        "/src/views/proxy/ipResource/components/IpCountryFlag.vue",
+        "/src/views/proxy/ipResource/components/IpPurchaseCheckoutFooter.vue",
+        "/src/views/proxy/ipResource/components/IpPurchaseImportantNotice.vue",
+        "/src/views/proxy/ipResource/components/IpPurchaseOrderSummary.vue",
+        "/src/views/proxy/ipResource/components/IpResourceEmptyState.vue",
+        "/src/views/proxy/ipResource/components/IpResourcePurchaseDialog.vue",
+        "/src/views/proxy/ipResource/components/IpResourceSelector.vue",
+        "/src/views/proxy/ipResource/components/ParaturboProxyConfig.vue",
+        "/src/views/proxy/ipResource/components/StaticIpPurchase.vue",
+        "/src/views/proxy/ipResource/index.vue",
+        "/src/views/proxy/proxyEdit.vue",
+        "/src/views/proxy/proxyEditV2.vue",
+        "/src/views/proxy/proxyImport.vue",
+        "/src/views/proxy/proxyList.vue",
+        "/src/views/proxy/proxyManagement.vue",
+        "/src/views/proxy/proxySoftConfig.vue",
+        "/src/views/proxy/resourcesList.vue",
+        "/src/views/referral/components/ApplyForWithdrawalDlg.vue",
+        "/src/views/referral/components/inviteList.vue",
+        "/src/views/referral/index.vue",
+        "/src/views/rpa/automatedProcess.vue",
+        "/src/views/rpa/components/CustomizedProcessDlg.vue",
+        "/src/views/rpa/components/ProcessImg.vue",
+        "/src/views/rpa/components/ProcessTable.vue",
+        "/src/views/rpa/components/RpaImportDlg.vue",
+        "/src/views/rpa/components/RpaProcessOptions.vue",
+        "/src/views/rpa/components/RpaProcessOptionsForm.vue",
+        "/src/views/rpa/components/RpaSetting.vue",
+        "/src/views/rpa/components/envListDialog.vue",
+        "/src/views/rpa/components/newRpaProcessOptionsForm.vue",
+        "/src/views/rpa/editRpaTask.vue",
+        "/src/views/rpa/logsDialog.vue",
+        "/src/views/rpa/market/RpaDetails.vue",
+        "/src/views/rpa/market/RpaTaskEdit.vue",
+        "/src/views/rpa/market/components/OperationEnv.vue",
+        "/src/views/rpa/market/components/RpaOperationRule.vue",
+        "/src/views/rpa/market/components/RpaProcessOptionsSet.vue",
+        "/src/views/rpa/market/components/RpaRunningRecord.vue",
+        "/src/views/rpa/market/components/RpaRunningRecordList.vue",
+        "/src/views/rpa/market/components/RpaRunningTime.vue",
+        "/src/views/rpa/market/components/RpaSelectEnvTable.vue",
+        "/src/views/rpa/market/components/RpaSelectEnvTableDrawer.vue",
+        "/src/views/rpa/market/components/RpaTaskConfigSet.vue",
+        "/src/views/rpa/market/index.vue",
+        "/src/views/rpa/taskList.vue",
+        "/src/views/setting/components/ConfigItemTooltip.vue",
+        "/src/views/setting/components/ConvertEnvDialog.vue",
+        "/src/views/setting/components/CoreVersion.vue",
+        "/src/views/setting/components/DelLocalCache.vue",
+        "/src/views/setting/components/GuideEncryptDialog.vue",
+        "/src/views/setting/components/VersionLimit.vue",
+        "/src/views/setting/index.vue",
+        "/src/views/sso/components/PreLoginLineDiagnosisDialog.vue",
+        "/src/views/sso/components/appWebSSOLayout.vue",
+        "/src/views/sso/components/changeLangDropdown.vue",
+        "/src/views/sso/components/codeTipText.vue",
+        "/src/views/sso/components/downloadBar.vue",
+        "/src/views/sso/components/headerBar.vue",
+        "/src/views/sso/components/leftSideBar.vue",
+        "/src/views/sso/components/openLoginVerifyDialog.vue",
+        "/src/views/sso/components/privacyPolicyDialog.vue",
+        "/src/views/sso/components/serviceAgreementDialog.vue",
+        "/src/views/sso/components/typewriterEffect.vue",
+        "/src/views/sso/login.vue",
+        "/src/views/sso/register.vue",
+        "/src/views/sso/reset.vue",
+        "/src/views/sso/resetPassword.vue",
+        "/src/views/synchronizer/components/childwindow.vue",
+        "/src/views/synchronizer/components/help.vue",
+        "/src/views/synchronizer/components/tabsAdmin.vue",
+        "/src/views/synchronizer/components/textAdmin.vue",
+        "/src/views/synchronizer/components/tipButton.vue",
+        "/src/views/synchronizer/components/windowOperation.vue",
+        "/src/views/synchronizer/index.vue",
+        "/src/views/system/editRole.vue",
+        "/src/views/system/roleList.vue",
+        "/sso/login",
+        "/sso/register",
+        "/sso/reset",
+        "/sso/resetPassword",
+        "/synchronizer",
+        "/synchronizer/components/childwindow",
+        "/synchronizer/help",
+        "/synchronizer/index",
+        "/system/role",
+        "/system/roleList",
+        "/team",
+        "/trang",
+        "/v1/activity/get_airdrop_activity",
+        "/v1/activity/start",
+        "/v1/ai/crawler",
+        "/v1/ai/crawler/market",
+        "/v1/ai/crawler/status",
+        "/v1/api/official/version/latest",
+        "/v1/api/timezone/lookup",
+        "/v1/env",
+        "/v1/env/batch",
+        "/v1/env/batch/account",
+        "/v1/env/batch/common_config",
+        "/v1/env/batch/custom_number",
+        "/v1/env/batch/edit_group",
+        "/v1/env/batch/edit_many_group",
+        "/v1/env/batch/fingerprint",
+        "/v1/env/batch/fixed_url",
+        "/v1/env/batch/kernel",
+        "/v1/env/batch/proxy",
+        "/v1/env/batch/recover",
+        "/v1/env/batch/share",
+        "/v1/env/batch/thorough",
+        "/v1/env/batch/top",
+        "/v1/env/batch/transfer",
+        "/v1/env/batch_clear_cache",
+        "/v1/env/batch_import",
+        "/v1/env/batch_txt_import_account",
+        "/v1/env/batch_txt_import_type",
+        "/v1/env/cancel_share",
+        "/v1/env/command_close_env",
+        "/v1/env/count_list",
+        "/v1/env/encrypt_cookie_num",
+        "/v1/env/example",
+        "/v1/env/export/batch",
+        "/v1/env/fingerprint",
+        "/v1/env/group",
+        "/v1/env/heartbeat",
+        "/v1/env/history",
+        "/v1/env/history/export",
+        "/v1/env/list",
+        "/v1/env/proxy_use_ip",
+        "/v1/env/random_fingerprint",
+        "/v1/env/remark/batch",
+        "/v1/env/share_log",
+        "/v1/env/summary",
+        "/v1/env/summary/partial",
+        "/v1/env/tag",
+        "/v1/env/tag/batch",
+        "/v1/env/title/get",
+        "/v1/env/title/save",
+        "/v1/env/transfer_log",
+        "/v1/env/ua",
+        "/v1/env/update/batch",
+        "/v1/env_share/share_count",
+        "/v1/env_share/share_list",
+        "/v1/env_share/summary",
+        "/v1/event/new",
+        "/v1/event/notice",
+        "/v1/exten",
+        "/v1/exten/dicloak",
+        "/v1/exten/group",
+        "/v1/exten/local_md5",
+        "/v1/exten/market",
+        "/v1/exten/market/add",
+        "/v1/exten/permission",
+        "/v1/exten/refresh_hash",
+        "/v1/exten/verify_hash",
+        "/v1/log",
+        "/v1/log/dowload_data",
+        "/v1/log/export",
+        "/v1/log/statistics/org",
+        "/v1/member",
+        "/v1/member/api",
+        "/v1/member/api/edit/token",
+        "/v1/member/api/list",
+        "/v1/member/batch/authority",
+        "/v1/member/batch/delete",
+        "/v1/member/batch/group",
+        "/v1/member/batch/manager",
+        "/v1/member/batch/manager_logout",
+        "/v1/member/batch/remark",
+        "/v1/member/batch/status",
+        "/v1/member/device_log",
+        "/v1/member/export/batch",
+        "/v1/member/goole_auth_verify",
+        "/v1/member/member_open_api_key",
+        "/v1/member/member_open_api_key_reset",
+        "/v1/member/operation_log",
+        "/v1/member/operation_log/export",
+        "/v1/member/preference",
+        "/v1/order",
+        "/v1/order/info",
+        "/v1/order/submit",
+        "/v1/organization",
+        "/v1/organization/sys_super_list",
+        "/v1/organization/user_org_query",
+        "/v1/pay",
+        "/v1/proxy",
+        "/v1/proxy/batch/update_info",
+        "/v1/proxy/batch_delete",
+        "/v1/proxy/batch_import",
+        "/v1/proxy/batch_save",
+        "/v1/proxy/batch_select",
+        "/v1/proxy/check",
+        "/v1/proxy/country_city",
+        "/v1/proxy/export/batch",
+        "/v1/proxy/group",
+        "/v1/proxy/group/proxy_group",
+        "/v1/proxy/proxy_soft_api_info",
+        "/v1/proxy/proxy_soft_data",
+        "/v1/proxy/proxy_soft_data/share",
+        "/v1/proxy/soft_info",
+        "/v1/proxy/update/batch",
+        "/v1/rpa/market",
+        "/v1/rpa/task",
+        "/v1/rpa/task/close_workflow_env",
+        "/v1/rpa/task/custom",
+        "/v1/rpa/task/env",
+        "/v1/rpa/task/get_workflow_env",
+        "/v1/rpa/task/get_workflow_status",
+        "/v1/rpa/task/open_count",
+        "/v1/rpa/task/open_workflow_env",
+        "/v1/rpa/task/pending_execution",
+        "/v1/rpa/task/permission",
+        "/v1/rpa/task/workflow",
+        "/v1/rpa/workflow",
+        "/v1/system/config/app_store_menu",
+        "/v1/system/config/get_env_upload_limit",
+        "/v1/system/config/get_interface_style",
+        "/v1/system/config/get_link_account",
+        "/v1/system/config/get_marketing_activity",
+        "/v1/system/oss/oss_sts_token",
+        "/v1/user/bind_email",
+        "/v1/user/device/login",
+        "/v1/user/email_code_verify",
+        "/v1/user/get_bind_google_url",
+        "/v1/user/goole_auth_verify",
+        "/v1/user/profile",
+        "/v1/user/profile/info",
+        "/v1/user/real_name_auth",
+        "/v1/user/send_bind_email_verify_code",
+        "/v1/user/send_verify_code",
+        "/v1/user/sso/bind_third_account",
+        "/v1/user/sso/inviteCode/check",
+        "/v1/user/sso/login",
+        "/v1/user/sso/login/get_third_auth_url",
+        "/v1/user/sso/login_validate",
+        "/v1/user/sso/logout",
+        "/v1/user/sso/register",
+        "/v1/user/sso/reset_passwd",
+        "/v1/user/sso/send_verify_code",
+        "/v1/user/un_bind_account",
+        "/v1/user_data/skin",
+        "/v1/version/kernel/auto_latest",
+        "/v1/version/kernel/latest/default",
+        "/v1/version/kernel/list",
+        "/v1/version/new",
+        "/v1/wallet/calc_cost",
+        "/v1/wallet/deduction_order",
+        "/v1/wallet/info",
+        "/v1/wallet/submit",
+        "/v1/webgl/list",
+        "/v1/webgl/random",
+        "/v2/plan",
+        "/v2/plan/calc_cost",
+        "/v2/plan/get_org_plan",
+        "/v2/plan/get_renew"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 464,
+        "pinia": 8,
+        "vuex": 13,
+        "ipcRenderer": 95,
+        "DIC": 21
+      },
+      "ipcContexts": [
+        {
+          "token": "open-url",
+          "offset": 2372535,
+          "context": "=Hre().replaceAll(\"-\",\"\"),localStorage.setItem(\"device_id\",e)),e}const j3=\"get-running-env-records\",W3=\"app-window-active\",Y3=\"system-suspend\",X3=\"system-resume\",J3=\"clear-dev-cache\",Q3=\"clear-dev-all-cache\",Z3=\"open-file-dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-"
+        },
+        {
+          "token": "open-url",
+          "offset": 2580266,
+          "context": "ll==e||e(!1)}},async syncCloseCurrentTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(k6,t,!0);return zoe(n),n}finally{null==e||e(!1)}},async syncCloseBlankTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(\"sync-close-blank-tabs\",t);return zoe(n),n}finally{null==e||e(!1)}},async syncOpenWebsite(e,t){try{null==t||t(!0);const n=this.getCompleteSelectEnvIds(),a=await C8.invoke(\"sync-open-urls\",n,e,!!this.currentTabOpenSiteState);return zoe(a),a}finally{null==t||t(!1)}},async syncClearTextContent(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(\"sync-clear-text-content\",t);return zoe(n),n}finally{null==e||e(!1)}},async syncPasteClipboard(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await(null==C8?void 0:C8.invoke(\"sync-send-clipboard\",t));return zoe(n),n}finally{null==e||e(!1)}}"
+        },
+        {
+          "token": "open-url",
+          "offset": 2587267,
+          "context": "ly{null==e||e(!1)}},async syncCloseCurrentTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(A6,t,!0);return Koe(n),n}finally{null==e||e(!1)}},async syncCloseBlankTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(\"close-blank-tab-pages\",t);return Koe(n),n}finally{null==e||e(!1)}},async syncOpenWebsite(e,t){try{null==t||t(!0);const n=this.getCompleteSelectEnvIds(),a=await C8.invoke(\"open-urls\",n,e,!!this.currentTabOpenSiteState);return Koe(a),a}finally{null==t||t(!1)}},syncClearTextContent(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds();C8.invoke(\"clear-text-content\",t),Koe(!0)}finally{null==e||e(!1)}},syncPasteClipboard(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds();null==C8||C8.invoke(\"sync-clipboard\",t),Koe(!0)}finally{null==e||e(!1)}},syncSendText(e,t){try{null==t||t(!0);const n=this.inputDelay"
+        },
+        {
+          "token": "get-local-server-status",
+          "offset": 2374659,
+          "context": "eUserName\"),t(this,\"deviceInfo\"),t(this,\"localVersionInfo\"),t(this,\"ipcRenderer\"),t(this,\"api\",{networkProbe:(e,t,n=!1)=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"network-probe\",e,t??3e3,n),()=>new Promise(e=>e(null))),getLocalProxy:()=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"get-local-proxy\"),()=>new Promise(e=>e({enabled:!1,address:\"\"}))),getLocalServerStatus:e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"get-local-server-status\",e),()=>new Promise(e=>{e(null)})),checkerResourceUpdate:e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"checker-resource-update\",e),()=>new Promise(e=>{e(null)})),setHttpLog:(e,t)=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"http:log\",e,t),()=>{}),getDeviceId:()=>this.synHandelIpcEvents(async()=>(!this.newDeviceId&&(this.newDeviceId=await window.DIC.api.getNewDeviceId()),this.newDeviceId),()=>new Promise(e"
+        },
+        {
+          "token": "version-local-info",
+          "offset": 2375539,
+          "context": "d),()=>new Promise(e=>{e($3())})),getNewDeviceId:()=>this.handelIpcEvents(async()=>(!this.deviceId&&(this.deviceId=await this.ipcRenderer.invoke(\"get-device-id\")),this.deviceId),()=>new Promise(e=>{e($3())})),userSaveFile:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"user-save-file\",e),()=>{}),getLocalVersionInfo:async()=>this.synHandelIpcEvents(async()=>(this.localVersionInfo.version||(this.localVersionInfo=await this.ipcRenderer.invoke(\"version-local-info\")),this.localVersionInfo),()=>new Promise(e=>{e({version:\"3.0.0\",platform:\"web\",arch:\"\",patchVersion:\"\",browserVersion:\"\",browserUpdateTime:\"\"})})),getMainWindowLaunchPreference:()=>this.handelIpcEvents(()=>window.DIC.api.getMainWindowLaunchPreference(),()=>Promise.resolve(null)),setMainWindowLaunchPreference:e=>this.handelIpcEvents(()=>window.DIC.api.setMainWindowLaunchPreference(e),()=>Promise.resolve(null)),getCurrentMainWin"
+        },
+        {
+          "token": "get-device-id",
+          "offset": 2375235,
+          "context": "erer.invoke(\"checker-resource-update\",e),()=>new Promise(e=>{e(null)})),setHttpLog:(e,t)=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"http:log\",e,t),()=>{}),getDeviceId:()=>this.synHandelIpcEvents(async()=>(!this.newDeviceId&&(this.newDeviceId=await window.DIC.api.getNewDeviceId()),this.newDeviceId),()=>new Promise(e=>{e($3())})),getNewDeviceId:()=>this.handelIpcEvents(async()=>(!this.deviceId&&(this.deviceId=await this.ipcRenderer.invoke(\"get-device-id\")),this.deviceId),()=>new Promise(e=>{e($3())})),userSaveFile:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"user-save-file\",e),()=>{}),getLocalVersionInfo:async()=>this.synHandelIpcEvents(async()=>(this.localVersionInfo.version||(this.localVersionInfo=await this.ipcRenderer.invoke(\"version-local-info\")),this.localVersionInfo),()=>new Promise(e=>{e({version:\"3.0.0\",platform:\"web\",arch:\"\",patchVersion:\"\",browserVersion:\"\",brows"
+        },
+        {
+          "token": "get-device-name",
+          "offset": 2376251,
+          "context": "eference(),()=>Promise.resolve(null)),setMainWindowLaunchPreference:e=>this.handelIpcEvents(()=>window.DIC.api.setMainWindowLaunchPreference(e),()=>Promise.resolve(null)),getCurrentMainWindowSize:()=>this.handelIpcEvents(()=>window.DIC.api.getCurrentMainWindowSize(),()=>Promise.reject(new Error(\"MAIN_WINDOW_SIZE_CLIENT_ONLY\"))),getDeviceName:async()=>this.handelIpcEvents(async()=>(!this.deviceName&&(this.deviceName=await this.ipcRenderer.invoke(\"get-device-name\")),this.deviceName),()=>new Promise(e=>{e(\"WEB\")})),getDeviceUserName:async()=>this.handelIpcEvents(async()=>(!this.deviceUserName&&(this.deviceUserName=await this.ipcRenderer.invoke(\"get-device-user-name\")),this.deviceUserName),()=>new Promise(e=>{e(\"\")})),getDeviceInfo:async()=>this.handelIpcEvents(async()=>(Object.entries(this.deviceInfo).some(([e,t])=>\"\"===t)&&(this.deviceInfo=await this.ipcRenderer.invoke(\"get-device-info\")),"
+        },
+        {
+          "token": "get-device-user-name",
+          "offset": 2376451,
+          "context": "this.handelIpcEvents(()=>window.DIC.api.getCurrentMainWindowSize(),()=>Promise.reject(new Error(\"MAIN_WINDOW_SIZE_CLIENT_ONLY\"))),getDeviceName:async()=>this.handelIpcEvents(async()=>(!this.deviceName&&(this.deviceName=await this.ipcRenderer.invoke(\"get-device-name\")),this.deviceName),()=>new Promise(e=>{e(\"WEB\")})),getDeviceUserName:async()=>this.handelIpcEvents(async()=>(!this.deviceUserName&&(this.deviceUserName=await this.ipcRenderer.invoke(\"get-device-user-name\")),this.deviceUserName),()=>new Promise(e=>{e(\"\")})),getDeviceInfo:async()=>this.handelIpcEvents(async()=>(Object.entries(this.deviceInfo).some(([e,t])=>\"\"===t)&&(this.deviceInfo=await this.ipcRenderer.invoke(\"get-device-info\")),this.deviceInfo),()=>new Promise(e=>{e({...this.deviceInfo,name:\"WEB\",id:$3(),timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone,language:Intl.DateTimeFormat().resolvedOptions().locale})})),che"
+        },
+        {
+          "token": "active-window",
+          "offset": 2372717,
+          "context": ",Q3=\"clear-dev-all-cache\",Z3=\"open-file-dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart"
+        },
+        {
+          "token": "track-event",
+          "offset": 2377928,
+          "context": "c()=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"stop-detect-proxy\"),()=>new Promise(e=>{e(null)})),openUrl:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(u6,{url:e})},()=>{window.open(e,\"_blank\")})},activeWindow:async e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(w6,e)}),getAllDisplays:()=>this.synHandelIpcEvents(async()=>{await window.DIC.api.getAllDisplays()}),trackEvent:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"track-event\",e)}),syncChangeOrgRes:async e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"change-org-res\",e),()=>new Promise(e=>{e(null)})),syncOpenEnvRes:async e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"open-env-res\",e),()=>new Promise(e=>{e(null)})),syncCommonRequestRespForLocalApi:async e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"common-request-for-local-api-response\",e),()=>new Promise(e=>{e(null)})),sync"
+        },
+        {
+          "token": "set-user-plan",
+          "offset": 2381091,
+          "context": "nderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|iPad|iPod/i.test(e)?\"iOS\":\"Unknown\"}),setUserPlan:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-user-plan\",e)}),delRpaTaskLog:e=>this.handelIpcEvents(async()=>await window.DIC.api.delRpaTaskLog(e)),setRpaTaskConfig:async e=>await this.handelIpcEvents(async()=>await window.DIC.api.setRpaTaskConfig(e)),getRpaIndexPage:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getRpaIndexPage()),createApplicationWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIp"
+        },
+        {
+          "token": "electron-store-get",
+          "offset": 2379853,
+          "context": "exedDB:async(e,t)=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"clear-env-server-cache-for-indexed-db\",e,t),()=>new Promise(e=>{e(null)})),getLastModifiedTime:async e=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-last-modified-time\",e),()=>new Promise(e=>{e(null)})),clearElectronStore:()=>this.handelIpcEvents(()=>{window.DIC.api.clearElectronStore()}),store:{get:e=>this.handelIpcEvents(()=>this.ipcRenderer.sendSync(\"electron-store-get\",e),()=>{const t=e.split(\".\")[0];let n,a=Bre(t)??{};return n=e.includes(\".\")?a[e.replace(`${t}.`,\"\")]:a,n}),set:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(n8,{key:e,value:t})},()=>{const n=e.split(\".\")[0];let a=Bre(n)??{};e.includes(\".\")&&(a[e.replace(`${n}.`,\"\")]=t),Vre(n,a)}),delete:e=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};"
+        },
+        {
+          "token": "electron-store-set",
+          "offset": 2373612,
+          "context": "start\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-save-state\",n8=\"electron-store-set\",a8=\"run-env-progress\",o8=\"update-app-completed\",i8=\"update-app-progress\",r8=\"env-sleep-recovery-result\",s8=\"env-open-rule-check-due\",l8=\"close-environment\",c8=\"float-focus\",u8=\"float-blur\",d8=\"get-expansion-version-from-expan-id\",p8=\"get-expansion-version-from-zip\",m8=\"delete-expansion\",h8=\"get-env-count-for-migrate\",f8=\"start-migrate-env\",g8=\"stop-migrate-env\",v8=\"fast-click-event\",y8=\"refresh-all-expansion-sha256-hash\",b8=\"s"
+        },
+        {
+          "token": "electron-store-delete",
+          "offset": 2380230,
+          "context": "re()}),store:{get:e=>this.handelIpcEvents(()=>this.ipcRenderer.sendSync(\"electron-store-get\",e),()=>{const t=e.split(\".\")[0];let n,a=Bre(t)??{};return n=e.includes(\".\")?a[e.replace(`${t}.`,\"\")]:a,n}),set:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(n8,{key:e,value:t})},()=>{const n=e.split(\".\")[0];let a=Bre(n)??{};e.includes(\".\")&&(a[e.replace(`${n}.`,\"\")]=t),Vre(n,a)}),delete:e=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};e.includes(\".\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))"
+        },
+        {
+          "token": "stop-env",
+          "offset": 306854,
+          "context": "_STORE:\"RPA_STORE\",PLAN_STORE:\"PLAN_STORE\",CRAWLER_STORE:\"CRAWLER_STORE\"},Mf=[{label:\"English\",value:\"en\"},{label:\"Русский\",value:\"ru\"},{label:\"Tiếng Việt\",value:\"vi\"},{label:\"Português\",value:\"pt\"},{label:\"Español\",value:\"es\"},{label:\"简体中文\",value:\"zh\"}],Bf=[\"/v1/env/summary\",\"/v1/env/summary/partial\"];var Vf=(e=>(e.RUN_ENV_CALLBACK=\"run-env-callback\",e.SYNC_COOKIES=\"sync-cookies\",e.ENV_HEARTBEAT=\"env-heartbeat\",e.LOGOUT_STOP_ENV_SUCCESS=\"logout-stop-env-success\",e.CHANGE_ORG_STOP_ENV_SUCCESS=\"change-org-stop-env-success\",e.CHECK_PROXY_ENV_CALLBACK=\"check-proxy-env-callback\",e.RUN_RPA_CALLBACK=\"run-rpa-callback\",e.RPA_HEARTBEAT=\"rpa-heartbeat\",e.CORE_STOP_ALL_ENV_SUCCESS=\"core-stop-all-env-success\",e.NOTICE=\"public-notice\",e.RUN_RPA_FOR_OPEN_API=\"run-rpa-for-open-api\",e.CLOSE_RPA_FOR_OPEN_API=\"close-rpa-for-open-api\",e.CHANGE_ORG_FOR_OPEN_API=\"change-org-for-open-api\",e.OPEN_ENV_V2_FOR_O"
+        },
+        {
+          "token": "stop-env",
+          "offset": 306914,
+          "context": "AWLER_STORE\"},Mf=[{label:\"English\",value:\"en\"},{label:\"Русский\",value:\"ru\"},{label:\"Tiếng Việt\",value:\"vi\"},{label:\"Português\",value:\"pt\"},{label:\"Español\",value:\"es\"},{label:\"简体中文\",value:\"zh\"}],Bf=[\"/v1/env/summary\",\"/v1/env/summary/partial\"];var Vf=(e=>(e.RUN_ENV_CALLBACK=\"run-env-callback\",e.SYNC_COOKIES=\"sync-cookies\",e.ENV_HEARTBEAT=\"env-heartbeat\",e.LOGOUT_STOP_ENV_SUCCESS=\"logout-stop-env-success\",e.CHANGE_ORG_STOP_ENV_SUCCESS=\"change-org-stop-env-success\",e.CHECK_PROXY_ENV_CALLBACK=\"check-proxy-env-callback\",e.RUN_RPA_CALLBACK=\"run-rpa-callback\",e.RPA_HEARTBEAT=\"rpa-heartbeat\",e.CORE_STOP_ALL_ENV_SUCCESS=\"core-stop-all-env-success\",e.NOTICE=\"public-notice\",e.RUN_RPA_FOR_OPEN_API=\"run-rpa-for-open-api\",e.CLOSE_RPA_FOR_OPEN_API=\"close-rpa-for-open-api\",e.CHANGE_ORG_FOR_OPEN_API=\"change-org-for-open-api\",e.OPEN_ENV_V2_FOR_OPEN_API=\"open-env-v2-for-open-api\",e.INSTALL_CHROME_EXTENSIO"
+        },
+        {
+          "token": "stop-env",
+          "offset": 2372521,
+          "context": ");return e||(e=Hre().replaceAll(\"-\",\"\"),localStorage.setItem(\"device_id\",e)),e}const j3=\"get-running-env-records\",W3=\"app-window-active\",Y3=\"system-suspend\",X3=\"system-resume\",J3=\"clear-dev-cache\",Q3=\"clear-dev-all-cache\",Z3=\"open-file-dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\","
+        },
+        {
+          "token": "stop-env",
+          "offset": 2942192,
+          "context": "n(\"float-before-close\",(e,t)=>{n.setAllData(JSON.parse(t)),n.floatWindowState=!1}),voe.on(\"show-message\",e=>{const t=e,n=t.message.startsWith(\"$t.\")?l.t(t.message.split(\"$t.\").at(-1)):t.message;\"success\"===t.type&&Z4.success(n),\"error\"===t.type&&Z4.error(n),\"warning\"===t.type&&Z4.warning(n)}),v(),C8.on(Vf.LOGOUT_STOP_ENV_SUCCESS,_u.throttle(async(e,{stopIds:t,logoutData:n})=>{if(g(t))try{C8.api.trackEvent({type:vne.LOGOUT,params:{message:\"logout-stop-env-success callback\"}}),kse(!0,n)}catch(a){}},1e3))}),Wa(()=>{});const g=e=>{for(let t=0;t<e.length;t++){const n=e[t];if(Mue.state.envStopAll[n])return!1}return!0},v=()=>{setTimeout(()=>{C8.api.probeGostStart().then(e=>{console.log(\"probeGostStart 探测结果=>\",e)})},1e4)};return C8.isClient||(window.openUrl=e=>{window.open(e,\"_blank\")}),(e,t)=>{const n=to(\"router-view\");return Mi(),Hi(Ii,null,[i.value?(Mi(),zi(Ove,{key:0,button:h,locale:s.value,"
+        },
+        {
+          "token": "run-env",
+          "offset": 306740,
+          "context": "\"user_behavior_habit:state\",PROXY_MANAGEMENT_TAB:\"proxy_management_tab:state\",UserHabitStore:\"userHabit:store\",RPA_STORE:\"RPA_STORE\",PLAN_STORE:\"PLAN_STORE\",CRAWLER_STORE:\"CRAWLER_STORE\"},Mf=[{label:\"English\",value:\"en\"},{label:\"Русский\",value:\"ru\"},{label:\"Tiếng Việt\",value:\"vi\"},{label:\"Português\",value:\"pt\"},{label:\"Español\",value:\"es\"},{label:\"简体中文\",value:\"zh\"}],Bf=[\"/v1/env/summary\",\"/v1/env/summary/partial\"];var Vf=(e=>(e.RUN_ENV_CALLBACK=\"run-env-callback\",e.SYNC_COOKIES=\"sync-cookies\",e.ENV_HEARTBEAT=\"env-heartbeat\",e.LOGOUT_STOP_ENV_SUCCESS=\"logout-stop-env-success\",e.CHANGE_ORG_STOP_ENV_SUCCESS=\"change-org-stop-env-success\",e.CHECK_PROXY_ENV_CALLBACK=\"check-proxy-env-callback\",e.RUN_RPA_CALLBACK=\"run-rpa-callback\",e.RPA_HEARTBEAT=\"rpa-heartbeat\",e.CORE_STOP_ALL_ENV_SUCCESS=\"core-stop-all-env-success\",e.NOTICE=\"public-notice\",e.RUN_RPA_FOR_OPEN_API=\"run-rpa-for-open-api\",e.CLOSE"
+        },
+        {
+          "token": "run-env",
+          "offset": 2373636,
+          "context": "app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-save-state\",n8=\"electron-store-set\",a8=\"run-env-progress\",o8=\"update-app-completed\",i8=\"update-app-progress\",r8=\"env-sleep-recovery-result\",s8=\"env-open-rule-check-due\",l8=\"close-environment\",c8=\"float-focus\",u8=\"float-blur\",d8=\"get-expansion-version-from-expan-id\",p8=\"get-expansion-version-from-zip\",m8=\"delete-expansion\",h8=\"get-env-count-for-migrate\",f8=\"start-migrate-env\",g8=\"stop-migrate-env\",v8=\"fast-click-event\",y8=\"refresh-all-expansion-sha256-hash\",b8=\"software-monitor-check-re"
+        },
+        {
+          "token": "run-env",
+          "offset": 2380539,
+          "context": "[0];let a=Bre(n)??{};e.includes(\".\")&&(a[e.replace(`${n}.`,\"\")]=t),Vre(n,a)}),delete:e=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};e.includes(\".\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|"
+        },
+        {
+          "token": "run-env",
+          "offset": 2380656,
+          "context": "s.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};e.includes(\".\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|iPad|iPod/i.test(e)?\"iOS\":\"Unknown\"}),setUserPlan:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-user-plan\","
+        },
+        {
+          "token": "get-current-platform",
+          "offset": 2380766,
+          "context": "\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|iPad|iPod/i.test(e)?\"iOS\":\"Unknown\"}),setUserPlan:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-user-plan\",e)}),delRpaTaskLog:e=>this.handelIpcEvents(async()=>await window.DIC.api.delRpaTaskLog(e)),setRpaTaskConfig:as"
+        },
+        {
+          "token": "close-all-win",
+          "offset": 2372757,
+          "context": "dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-a"
+        },
+        {
+          "token": "aes-128-encrypt",
+          "offset": 2381664,
+          "context": "async e=>await this.handelIpcEvents(async()=>await window.DIC.api.setRpaTaskConfig(e)),getRpaIndexPage:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getRpaIndexPage()),createApplicationWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Ker"
+        },
+        {
+          "token": "aes-128-decrypt",
+          "offset": 2381759,
+          "context": "dexPage:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getRpaIndexPage()),createApplicationWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synH"
+        },
+        {
+          "token": "aes-128-decrypt",
+          "offset": 2381858,
+          "context": "ionWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>t"
+        },
+        {
+          "token": "aes-128-decrypt-many",
+          "offset": 2381858,
+          "context": "ionWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>t"
+        },
+        {
+          "token": "kernel-install-requested",
+          "offset": 2382055,
+          "context": "crypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstall"
+        },
+        {
+          "token": "kernel-list-installed",
+          "offset": 2382253,
+          "context": "y:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>"
+        },
+        {
+          "token": "kernel-get-progress",
+          "offset": 2382360,
+          "context": "s.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),("
+        },
+        {
+          "token": "kernel-cancel",
+          "offset": 2382466,
+          "context": "IpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-id"
+        },
+        {
+          "token": "kernel-delete-installed",
+          "offset": 2382570,
+          "context": "stallation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},ge"
+        },
+        {
+          "token": "kernel-cleanup-old",
+          "offset": 2382678,
+          "context": "this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.han"
+        },
+        {
+          "token": "get-mac-address",
+          "offset": 2382791,
+          "context": "pcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>"
+        },
+        {
+          "token": "get-system-idle-time",
+          "offset": 2382903,
+          "context": "erer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-process-env\",{key:e,value:t})}),getNetworkIdentity:()=>this.handelIpcEvents(async()="
+        },
+        {
+          "token": "set-process-env",
+          "offset": 2383265,
+          "context": "),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-process-env\",{key:e,value:t})}),getNetworkIdentity:()=>this.handelIpcEvents(async()=>{try{return await this.ipcRenderer.invoke(\"get-network-identity\")}catch{return{canCache:!1,signature:\"\"}}},()=>Promise.resolve({canCache:!1,signature:\"\"}))}),this.deviceId=\"\",this.newDeviceId=\"\",this.deviceName=\"\",this.deviceUserName=\"\",this.deviceInfo={name:\"\",timeZone:\"\",language:\"\",id:\"\"},this.localVersionInfo={version:\"\",platform:\"\",arch:\"\",patchVersion:\""
+        }
+      ]
+    },
+    {
+      "file": "dist/assets/index-BcquP_YP.js",
+      "bytes": 2332,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-BznQPGm1.js",
+      "bytes": 6862,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-C1USGHg9.js",
+      "bytes": 23662,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-C6tOf3zW.js",
+      "bytes": 6677,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 6,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-CHAW1Dmu.js",
+      "bytes": 21029,
+      "urls": [
+        "http://127.0.0.1",
+        "https://help.dicloak.com/zh/dicloak-api%e5%bc%80%e5%8f%91%e6%8c%87%e5%8d%97",
+        "https://help.dicloak.com/api-development-guide",
+        "https://help.dicloak.com/zh/http-api-%e5%bc%80%e5%8f%91%e6%96%87%e6%a1%a3",
+        "https://help.dicloak.com/http-api-development-documentation",
+        "https://help.dicloak.com/zh/%e5%a6%82%e4%bd%95%e5%b0%86%e7%8e%af%e5%a2%83%e8%bf%81%e7%a7%bb%e5%88%b0dicloak-api%e8%bf%81%e7%a7%bb-%ef%bc%9f/#nav4",
+        "https://help.dicloak.com/transfer-your-browser-profiles-to-dicloak-through-api/#nav4",
+        "https://help.dicloak.com/zh/%e5%a6%82%e4%bd%95%e5%b0%86%e7%8e%af%e5%a2%83%e8%bf%81%e7%a7%bb%e5%88%b0dicloak-api%e8%bf%81%e7%a7%bb-%ef%bc%9f/#nav1",
+        "https://help.dicloak.com/transfer-your-browser-profiles-to-dicloak-through-api/#nav1"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 1,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-CLVJdR_V.js",
+      "bytes": 16496,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-CjqfvICL.js",
+      "bytes": 2094,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-Cl4ZyFim.js",
+      "bytes": 38193,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 5,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-CtLO3b0v.js",
+      "bytes": 36316,
+      "urls": [
+        "http://${i.slice(1"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 8,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-D-rhdQr3.js",
+      "bytes": 250,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-D2T4aaQJ.js",
+      "bytes": 112919,
+      "urls": [
+        "https://www.dicloak.com",
+        "https://help.dicloak.com/zh/",
+        "https://help.dicloak.com/",
+        "https://dicloak.com/videos",
+        "https://dicloak.com/ru/videos",
+        "https://dicloak.com/vn/videos",
+        "https://dicloak.com/pt/videos",
+        "https://dicloak.com/download",
+        "https://store.dicloak.com"
+      ],
+      "routeLikeStrings": [
+        "/automation",
+        "/openapi",
+        "/organization",
+        "/organization/member",
+        "/plan/planList",
+        "/plan/planList?openType=plan",
+        "/proxy",
+        "/rpa",
+        "/rpa/market",
+        "/system/role",
+        "/team",
+        "/v1/app/notice"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 32,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-D44neKCD.js",
+      "bytes": 424,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-D7tcaRcX.js",
+      "bytes": 3190,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-DJbrLQU9.js",
+      "bytes": 62902,
+      "urls": [
+        "https://official-ad"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 13,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-D_I8YlyA.js",
+      "bytes": 780,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-DfrabvZl.js",
+      "bytes": 5751,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-Dqj4v5Js.js",
+      "bytes": 9621,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-ETqoAWwV.js",
+      "bytes": 5030,
+      "urls": [],
+      "routeLikeStrings": [
+        "/rpa/rpaTaskEdit"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-UZcsr-ei.js",
+      "bytes": 3026,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/index-rtKG2tmD.js",
+      "bytes": 13428,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 5,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/login-CEAkIYKC.js",
+      "bytes": 15531,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 7,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/loginDeviceCard-D3aK8BRa.js",
+      "bytes": 2947,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/loginVerifyDialog-DemffzFg.js",
+      "bytes": 427,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/loginVerifyDialog.vue_vue_type_style_index_0_lang-gaNi40et.js",
+      "bytes": 10488,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/memberLoginDeviceList-BLG1-5e8.js",
+      "bytes": 452,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/memberLoginDeviceList.vue_vue_type_script_setup_true_lang-CfN3tWVG.js",
+      "bytes": 8301,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/newRpaProcessOptionsForm-Dq3swr3V.js",
+      "bytes": 176,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/newRpaProcessOptionsForm.vue_vue_type_script_setup_true_lang-BLtJw3M5.js",
+      "bytes": 9101,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 3,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/openEnvProgressDisplay-BkwyI96I.js",
+      "bytes": 2975,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/openLoginVerifyDialog-BNranNve.js",
+      "bytes": 4346,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 1,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyApiExtraction-CcAfvVt-.js",
+      "bytes": 5574,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyCheckButton-qJacjpSf.js",
+      "bytes": 3927,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyEdit-D0n8YkEv.js",
+      "bytes": 9226,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyEditV2-PrFoTQ5r.js",
+      "bytes": 20203,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyImport-BRdN4xJw.js",
+      "bytes": 424,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyImport.vue_vue_type_style_index_0_lang-iPTpCM4H.js",
+      "bytes": 5004,
+      "urls": [
+        "https://tj-gin.oss-us-west-1.aliyuncs.com/static/files/DICloak%E5%AF%BC%E5%85%A5%E4%BB%A3%E7%90%86%E6%A8%A1%E6%9D%BF.xlsx",
+        "https://tj-gin.oss-us-west-1.aliyuncs.com/static/files/Import%20IP%20template%20with%20DICloak.xlsx",
+        "https://tj-gin.oss-us-west-1.aliyuncs.com/static/files/%D0%98%D0%BC%D0%BF%D0%BE%D1%80%D1%82%20%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%D0%B0%20IP%20%D1%81%20DICloak.xlsx"
+      ],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyList-9a1oI0QO.js",
+      "bytes": 23087,
+      "urls": [],
+      "routeLikeStrings": [
+        "/proxy/batchCreateProxy"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyManagement-CzrnoGva.js",
+      "bytes": 5897,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyProviderAvailability-Dl68x0Bx.js",
+      "bytes": 302,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxySoftConfig-uwBz50gz.js",
+      "bytes": 2039,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxySoftContent-Pk8p0WJg.js",
+      "bytes": 281,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxySoftContent.vue_vue_type_script_setup_true_lang-BH1G_AGZ.js",
+      "bytes": 547,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxySoftItem-B7tAwO_8.js",
+      "bytes": 2716,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/proxyUtil-OnkkuXcX.js",
+      "bytes": 1802,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/rpaRule-swm8xZfZ.js",
+      "bytes": 300,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/transformExcel-Cy_3yjj_.js",
+      "bytes": 414515,
+      "urls": [
+        "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+        "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties",
+        "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties",
+        "http://schemas.openxmlformats.org/package/2006/content-types",
+        "http://schemas.openxmlformats.org/package/2006/relationships",
+        "http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments",
+        "http://purl.org/dc/elements/1.1/",
+        "http://purl.org/dc/terms/",
+        "http://purl.org/dc/dcmitype/",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+        "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes",
+        "http://www.w3.org/2001/XMLSchema-instance",
+        "http://www.w3.org/2001/XMLSchema",
+        "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        "http://purl.oclc.org/ooxml/spreadsheetml/main",
+        "http://schemas.microsoft.com/office/excel/2006/main",
+        "http://schemas.microsoft.com/office/excel/2006/2",
+        "http://macVmlSchemaUri",
+        "http://www.w3.org/TR/REC-html40",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+        "http://sheetjs.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath",
+        "http://schemas.microsoft.com/office/2006/relationships/xlExternalLinkPath/xlPathMissing",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXmlProps",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
+        "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart",
+        "http://schemas.microsoft.com/office/2014/relationships/chartEx",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
+        "http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/dialogsheet",
+        "http://schemas.microsoft.com/office/2006/relationships/xlMacrosheet",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sheetMetadata",
+        "http://schemas.microsoft.com/office/2017/10/relationships/threadedComment",
+        "http://schemas.microsoft.com/office/2017/10/relationships/person",
+        "http://schemas.microsoft.com/office/2006/relationships/vbaProject",
+        "http://docs.oasis-open.org/ns/office/1.2/meta/",
+        "http://docs.oasis-open.org/ns/office/1.2/meta/pkg#",
+        "http://www.w3.org/1999/xlink",
+        "http://schemas.openxmlformats.org/drawingml/2006/main",
+        "http://schemas.microsoft.com/office/spreadsheetml/2017/richdata",
+        "http://schemas.microsoft.com/office/spreadsheetml/2017/dynamicarray",
+        "http://www.w3.org/1998/Math/MathML",
+        "http://openoffice.org/2004/office",
+        "http://openoffice.org/2004/writer",
+        "http://openoffice.org/2004/calc",
+        "http://www.w3.org/2001/xml-events",
+        "http://www.w3.org/2002/xforms",
+        "http://openoffice.org/2005/report",
+        "http://www.w3.org/1999/xhtml",
+        "http://www.w3.org/2003/g/data-view#",
+        "http://openoffice.org/2009/table",
+        "http://openoffice.org/2010/draw",
+        "http://www.w3.org/TR/css3-text/",
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      ],
+      "routeLikeStrings": [
+        "/Book",
+        "/EncryptedPackage",
+        "/EncryptionInfo",
+        "/Workbook",
+        "/_VBA_PROJECT_CUR/",
+        "/_VBA_PROJECT_CUR/VBA/dir",
+        "/encryption"
+      ],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 486,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/useEnvConvert-Diwx279c.js",
+      "bytes": 2502,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 2,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/useEnvEdit-B6M5ajw7.js",
+      "bytes": 19058,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 4,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    },
+    {
+      "file": "dist/assets/usePreLoginLineDiagnosis-CL2ALneS.js",
+      "bytes": 765,
+      "urls": [],
+      "routeLikeStrings": [],
+      "markers": {
+        "createRouter": 0,
+        "routerPush": 0,
+        "pinia": 0,
+        "vuex": 0,
+        "ipcRenderer": 0,
+        "DIC": 0
+      },
+      "ipcContexts": []
+    }
+  ],
+  "primaryMain": {
+    "file": "dist-electron/main-CuCOh59n.js",
+    "bytes": 5937233,
+    "requires": [
+      "@koa/cors",
+      "adm-zip",
+      "archiver",
+      "cheerio",
+      "crypto",
+      "electron",
+      "form-data",
+      "fs",
+      "http",
+      "https",
+      "koa-router",
+      "net",
+      "node-7z",
+      "node:https",
+      "os",
+      "stream",
+      "tls",
+      "tty",
+      "url"
+    ],
+    "urls": [
+      "http://gin",
+      "https://gi",
+      "http://loc",
+      "http://127",
+      "https://ap",
+      "https://ke",
+      "http:///,_0xc29acb["
+    ],
+    "routeLikeStrings": [
+      "/.DICloakC",
+      "/Default/P",
+      "/System/Li",
+      "/app_copy",
+      "/detail/",
+      "/downloadW",
+      "/gin",
+      "/indexeddb",
+      "/issues/10",
+      "/localstor",
+      "/lock_env",
+      "/logo-256.",
+      "/open_app_",
+      "/openapi",
+      "/rpa/task/",
+      "/test_writ",
+      "/v1/env",
+      "/v1/env/ex",
+      "/v1/rpa/ta",
+      "/v1/system",
+      "/video/cur",
+      "/video/inf",
+      "/video/sel"
+    ],
+    "electronMarkers": {
+      "BrowserWindow": 1,
+      "ipcMain": 54,
+      "webContents": 0,
+      "session": 3,
+      "protocol": 13,
+      "app": 35
+    },
+    "ipcContexts": [
+      {
+        "token": "open-url",
+        "offset": 28780,
+        "context": "8e6,0xea6)+'s',yS='sync-all-w'+_0x28d9a9(0x1697,'0x1c84')+'e',bS='clear-text'+'-content',wS=_0x1acd6a(0x3145,'0xe9a')+_0x28d9a9('0x4c97','0x5d81'),vS=_0x1acd6a(0x88dd,'0x6444')+_0x1acd6a('0x4dc3',0x2fb8)+'ndows',_S=_0x28d9a9(0x4a14,'0x62bc')+_0x28d9a9(0x131c,0x35f1)+_0x1acd6a('0x21ac','0x324c'),SS=_0x28d9a9('0x6865',0x62bc)+_0x28d9a9('0x5dbf',0x46a9)+'-windows',xS='close-tab-'+'pages',ES=_0x1acd6a('0x4d9',0x2a6b)+_0x28d9a9(0xfcf,'0xa2a')+'s',TS='open-urls',CS=_0x1acd6a(-0x21d7,0x513)+_0x1acd6a(0x797b,0x4732),PS=_0x28d9a9(-0x16fb,'0x1007')+'tall-reque'+_0x28d9a9('0x8842',0x5459),IS='kernel-lis'+_0x28d9a9(0x5459,'0x3d47')+'d',RS='kernel-get'+'-progress',kS='kernel-can'+_0x1acd6a('0x5984','0x698c'),AS=_0x28d9a9(0x36ed,0xb91)+_0x1acd6a(0x3839,'0x4d06')+_0x28d9a9('0x2515',0x4377),NS=_0x28d9a9(0x6378,0x6412)+_0x28d9a9(0x3763,0x313a),OS='kernel-pro'+_0x28d9a9(0x39ae,0x5c95),DS='update-app',LS=_"
+      },
+      {
+        "token": "run-env",
+        "offset": 23865,
+        "context": "arInvalidConfig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381}),Av=_0x28d9a9(0x3c5e,'0x6571')+'g-map',Nv=_0x1acd6a('0x40c2','0x66f9')+_0x28d9a9(-'0x10c2','0x1e7f')+_0x28d9a9('0x3fce',0x3da6),Ov=_0x1acd6a('0x6ec2',0x4dec)+'ning-env-r'+_0x28d9a9(0x1837,'0x250e'),Dv=_0x28d9a9('0x6757',0x3f51)+_0x28d9a9(0x5e0c,0x3891),Lv=_0x1acd6a('0x9cd8','0x696c')+_0x1acd6a('0x1dca',0x307c),$v=_0x28d9a9(0x4034,'0x5d51')+_0x28d9a9('0x507c','0x63ae'),Mv='run-env',Fv='run-env-fo'+_0x28d9a9(0x1521,0x594),Bv='check-prox'+_0x28d9a9('0x382f',0xe9b),Uv=_0x1acd6a(0x6bdd,'0x3d7c')+'y',Vv='clear-dev-'+_0x1acd6a(-'0x499',0x2222),jv=_0x1acd6a(0x9e,'0x1d69')+_0x28d9a9('0x1319','0x1e6b'),Wv=_0x1acd6a(0x5e7d,0x52fa)+_0x1acd6a(-0x1839,0xcea),zv=_0x28d9a9('0x44d',0x3049)+'r-dialog',Gv=_0x28d9a9(0x302c,0x3049)+_0x28d9a9(0x1b83,0x885),qv='get-cache-'+_0x1acd6a(0x12bf,'0x3910'),Hv=_0x1acd6a('0x40ea',0x35fe)+'config"
+      },
+      {
+        "token": "run-env",
+        "offset": 23878,
+        "context": "ig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381}),Av=_0x28d9a9(0x3c5e,'0x6571')+'g-map',Nv=_0x1acd6a('0x40c2','0x66f9')+_0x28d9a9(-'0x10c2','0x1e7f')+_0x28d9a9('0x3fce',0x3da6),Ov=_0x1acd6a('0x6ec2',0x4dec)+'ning-env-r'+_0x28d9a9(0x1837,'0x250e'),Dv=_0x28d9a9('0x6757',0x3f51)+_0x28d9a9(0x5e0c,0x3891),Lv=_0x1acd6a('0x9cd8','0x696c')+_0x1acd6a('0x1dca',0x307c),$v=_0x28d9a9(0x4034,'0x5d51')+_0x28d9a9('0x507c','0x63ae'),Mv='run-env',Fv='run-env-fo'+_0x28d9a9(0x1521,0x594),Bv='check-prox'+_0x28d9a9('0x382f',0xe9b),Uv=_0x1acd6a(0x6bdd,'0x3d7c')+'y',Vv='clear-dev-'+_0x1acd6a(-'0x499',0x2222),jv=_0x1acd6a(0x9e,'0x1d69')+_0x28d9a9('0x1319','0x1e6b'),Wv=_0x1acd6a(0x5e7d,0x52fa)+_0x1acd6a(-0x1839,0xcea),zv=_0x28d9a9('0x44d',0x3049)+'r-dialog',Gv=_0x28d9a9(0x302c,0x3049)+_0x28d9a9(0x1b83,0x885),qv='get-cache-'+_0x1acd6a(0x12bf,'0x3910'),Hv=_0x1acd6a('0x40ea',0x35fe)+'config',Kv=_0x1acd6"
+      },
+      {
+        "token": "run-env",
+        "offset": 31346,
+        "context": "0xadd,'0x267c'),cx=_0x1acd6a(-0x233f,'0xeeb')+'tore-delet'+'e',lx=_0x1acd6a(0x68,0xd70)+_0x1acd6a('0x572a','0x3355')+_0x28d9a9('0xea9',0x3e21)+_0x28d9a9('0x5594','0x2ec2'),ux=_0x1acd6a(0x49ef,0x64c1)+'indow-laun'+_0x28d9a9(0x70d7,'0x3e21')+_0x28d9a9(0x54d1,0x2ec2),px=_0x1acd6a('0x55a9','0x4082')+'t-main-win'+_0x28d9a9(0x51a6,0x44ae),dx=_0x28d9a9(-'0x1ab3',0x106c)+'t',fx='set-user-p'+_0x1acd6a(0x446d,0x4f26),Fd=_0x28d9a9('0x456d',0x2d9d)+'tt',Nn='run-env-ca'+_0x28d9a9('0x8664','0x68e0'),Dh=_0x28d9a9(0x10d1,'0x2138')+_0x1acd6a('0x4dc8',0x6b3f),mx='set-sync-s'+_0x1acd6a('0x36a5',0x4c61),Bd=_0x28d9a9(0xa76,0xece)+_0x1acd6a(0x130f,0x2bc6),hx='update-app'+_0x1acd6a('0x5b2d','0x5bbf'),gx=_0x1acd6a(0x4836,0x313c)+_0x28d9a9(0x85b9,'0x5cbb')+_0x28d9a9('0x4b70','0x2b81'),yx=_0x1acd6a(0x816a,'0x6ab7')+_0x1acd6a(0x2d8a,'0x46fa')+_0x28d9a9(0x4053,'0x52fa'),Ud=_0x28d9a9('0x1dc2',0x1170)+_0x28d9a9(0x23d"
+      }
+    ]
+  },
+  "primaryRenderer": {
+    "file": "dist/assets/index-2aSE6uVi.js",
+    "bytes": 1863,
+    "urls": [],
+    "routeLikeStrings": [],
+    "markers": {
+      "createRouter": 0,
+      "routerPush": 0,
+      "pinia": 0,
+      "vuex": 0,
+      "ipcRenderer": 0,
+      "DIC": 0
+    },
+    "ipcContexts": []
+  }
+}
