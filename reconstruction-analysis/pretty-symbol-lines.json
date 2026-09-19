@@ -1,0 +1,201 @@
+{
+  "generatedAt": "2026-09-19T03:23:46.518Z",
+  "lineCount": 243803,
+  "matches": {
+    "electron-store": [],
+    "new Oh": [
+      {
+        "line": 696,
+        "column": 7,
+        "text": "  B = new Oh({"
+      },
+      {
+        "line": 711,
+        "column": 8,
+        "text": "  Dt = new Oh({"
+      }
+    ],
+    "Oh =": [],
+    "Oh=": [],
+    "Rv =": [
+      {
+        "line": 695,
+        "column": 7,
+        "text": "const Rv = _0x3533fc,"
+      }
+    ],
+    "Rv=": [],
+    "kv =": [
+      {
+        "line": 710,
+        "column": 3,
+        "text": "  kv = _0x35bd54,"
+      }
+    ],
+    "kv=": [],
+    "_0x3533fc": [
+      {
+        "line": 589,
+        "column": 7,
+        "text": "const _0x3533fc = {};"
+      },
+      {
+        "line": 590,
+        "column": 2,
+        "text": "(_0x3533fc[\"userInfo\"] = _0x277d50),"
+      },
+      {
+        "line": 591,
+        "column": 4,
+        "text": "  (_0x3533fc[\"inputDelay\"] = _0x16b017),"
+      },
+      {
+        "line": 592,
+        "column": 4,
+        "text": "  (_0x3533fc[\"language\"] = _0x2bb24a),"
+      },
+      {
+        "line": 593,
+        "column": 4,
+        "text": "  (_0x3533fc[\"token\"] = _0x12848a),"
+      },
+      {
+        "line": 594,
+        "column": 4,
+        "text": "  (_0x3533fc[\"apiUrl\"] = _0x23e90c),"
+      },
+      {
+        "line": 595,
+        "column": 4,
+        "text": "  (_0x3533fc[\"homeUrl\"] = _0x323e75),"
+      },
+      {
+        "line": 596,
+        "column": 4,
+        "text": "  (_0x3533fc[\"userOpenLi\" + \"st\"] = _0x31f99e),"
+      },
+      {
+        "line": 597,
+        "column": 4,
+        "text": "  (_0x3533fc[\"closeWindo\" + \"wChoice\"] = _0x55052e),"
+      },
+      {
+        "line": 598,
+        "column": 4,
+        "text": "  (_0x3533fc[\"loginAccou\" + \"ntRecords\"] = _0x3e2f9b),"
+      },
+      {
+        "line": 599,
+        "column": 4,
+        "text": "  (_0x3533fc[\"baseURLKey\"] = _0x54f56c),"
+      },
+      {
+        "line": 600,
+        "column": 4,
+        "text": "  (_0x3533fc[\"cacheBaseD\" + \"ir\"] = _0x105b2e),"
+      },
+      {
+        "line": 601,
+        "column": 4,
+        "text": "  (_0x3533fc[\"pluginPath\"] = _0x3c0323),"
+      },
+      {
+        "line": 602,
+        "column": 4,
+        "text": "  (_0x3533fc[\"status\"] = _0x52757b),"
+      },
+      {
+        "line": 603,
+        "column": 4,
+        "text": "  (_0x3533fc[\"day\"] = _0xa02318),"
+      },
+      {
+        "line": 604,
+        "column": 4,
+        "text": "  (_0x3533fc[\"cacheBaseD\" + \"irs\"] = _0x2382ef),"
+      },
+      {
+        "line": 605,
+        "column": 4,
+        "text": "  (_0x3533fc[\"migrateTyp\" + \"e\"] = _0x12c524),"
+      },
+      {
+        "line": 606,
+        "column": 4,
+        "text": "  (_0x3533fc[\"migrateDir\"] = _0x16d517),"
+      },
+      {
+        "line": 607,
+        "column": 4,
+        "text": "  (_0x3533fc[\"currentOpe\" + \"nApiConfig\"] = _0x3f4fa0),"
+      },
+      {
+        "line": 608,
+        "column": 4,
+        "text": "  (_0x3533fc[\"currentOpe\" + \"nApiV2Conf\" + \"ig\"] = _0x5731d2),"
+      }
+    ],
+    "_0x35bd54": [
+      {
+        "line": 681,
+        "column": 7,
+        "text": "const _0x35bd54 = {};"
+      },
+      {
+        "line": 682,
+        "column": 2,
+        "text": "(_0x35bd54[\"isPaid\"] = _0x5943f8),"
+      },
+      {
+        "line": 683,
+        "column": 4,
+        "text": "  (_0x35bd54[\"installDat\" + \"e\"] = _0xcb79b9),"
+      },
+      {
+        "line": 684,
+        "column": 4,
+        "text": "  (_0x35bd54[\"dailyCount\"] = _0x143441),"
+      },
+      {
+        "line": 685,
+        "column": 4,
+        "text": "  (_0x35bd54[\"events\"] = _0x4b0dde),"
+      },
+      {
+        "line": 686,
+        "column": 4,
+        "text": "  (_0x35bd54[\"reliableEv\" + \"ents\"] = _0x442089),"
+      },
+      {
+        "line": 687,
+        "column": 4,
+        "text": "  (_0x35bd54[\"lastResetD\" + \"ate\"] = _0x451a7b);"
+      },
+      {
+        "line": 710,
+        "column": 8,
+        "text": "  kv = _0x35bd54,"
+      }
+    ],
+    "hp =": [
+      {
+        "line": 107172,
+        "column": 3,
+        "text": "  hp = () => {"
+      }
+    ],
+    "hp=": [],
+    "Ni =": [
+      {
+        "line": 943,
+        "column": 3,
+        "text": "  Ni = { app: B, tracker: Dt },"
+      }
+    ],
+    "Ni=": [],
+    "const B =": [],
+    "const B=": [],
+    "const Dt =": [],
+    "const Dt=": []
+  }
+}

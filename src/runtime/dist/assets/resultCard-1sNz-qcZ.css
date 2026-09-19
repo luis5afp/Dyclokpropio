@@ -1,0 +1,9 @@
+[data-v-342c790f] .el-tabs__header {
+  border-bottom: 1px solid var(--border-color-base);
+}
+[data-v-342c790f] .el-tabs__nav-scroll {
+  justify-content: start !important;
+}
+[data-v-342c790f] .el-tabs__content {
+  padding: 0;
+}

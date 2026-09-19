@@ -1,0 +1,19 @@
+.open-progress-bar[data-v-bd7dd7b6] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.progress-block[data-v-bd7dd7b6] {
+  width: 20px;
+  height: 6px;
+  border-radius: 999px;
+  background-color: var(--border-color-light1);
+  transition: background-color 0.3s ease;
+}
+.progress-block--active[data-v-bd7dd7b6] {
+  background-color: #faa63a;
+}

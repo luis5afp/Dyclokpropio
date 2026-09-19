@@ -1,0 +1,559 @@
+import {
+  d as a,
+  v as e,
+  i as l,
+  G as t,
+  r,
+  q as u,
+  o as s,
+  h as o,
+  w as i,
+  x as n,
+  b as d,
+  f as w,
+  a as c,
+  e as p,
+  c as m,
+  t as v,
+  X as f,
+  O as h,
+  F as g,
+  z as x,
+  fE as y,
+  C as b,
+  a3 as D,
+  a1 as _,
+  em as A,
+  N as P,
+  _ as T,
+} from "./index-BUIbb6Pa.js";
+import { W as V, a as k, b as L } from "./referral-Dz-93Jvj.js";
+const U = {
+    key: 0,
+    class: "tw-text-[var(--text-color-light1)] tw-leading-[25px]",
+  },
+  I = { class: "tw-flex tw-gap-[10px] tw-flex-wrap" },
+  C = ["src"],
+  Y = {
+    class:
+      "tw-text-[var(--text-color-light1)] tw-leading-[1.5] tw-flex tw-items-start",
+  },
+  j = ["src"],
+  E = { class: "tw-mt-[-3px]" },
+  S = {
+    class: "tw-text-[var(--text-color-light1)] tw-leading-[1.2] tw-mt-[8px]",
+  },
+  W = {
+    class: "tw-text-[var(--text-color-light1)] tw-leading-[1.2] tw-mt-[10px]",
+  },
+  q = {
+    class: "tw-text-[var(--text-color-light1)] tw-mt-[10px] tw-leading-[1.2]",
+  },
+  F = T(
+    a({
+      __name: "ApplyForWithdrawalDlg",
+      emits: ["submit"],
+      setup(a, { expose: T, emit: F }) {
+        let { t: R } = e.useI18n();
+        const B = l(!1),
+          N = l(!1),
+          $ = l({
+            amount: 10,
+            withdrawalData: { name: "", account: "", type: V.PAYPAL },
+          }),
+          z = b(() => $.value.withdrawalData.type === V.DICWALLET),
+          G = b(() => $.value.withdrawalData.type === V.USDT),
+          O = b(() => {
+            const a = $.value.withdrawalData.type;
+            return a === V.DICWALLET
+              ? R("walletRecharge.walletBalance")
+              : a === V.USDT
+                ? "USDT"
+                : k[a] || "";
+          }),
+          X = l(0),
+          H = t(),
+          J = b(() => ({
+            amount: [
+              {
+                required: !0,
+                message: R("referral.withdrawalAmountRule"),
+                trigger: "blur",
+              },
+            ],
+            "withdrawalData.name": [
+              { required: !0, message: R("referral.namePl") },
+            ],
+            "withdrawalData.account": [
+              {
+                validator: (a, e, l) => {
+                  e
+                    ? l()
+                    : G.value
+                      ? l(new Error(R("referral.walletAddressTip")))
+                      : l(R("referral.accountPl", { name: O.value }));
+                },
+              },
+              { required: !0, message: "" },
+            ],
+          })),
+          K = l(0),
+          M = F,
+          Q = [
+            {
+              logo: "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/PayPal.png",
+              text: k.PAYPAL,
+              value: V.PAYPAL,
+            },
+            {
+              logo: "http://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Alipay.png",
+              text: k.ALIPAY,
+              value: V.ALIPAY,
+            },
+            {
+              logo: "https://tj-gin.oss-us-west-1.aliyuncs.com/static/payType/Usdt.png",
+              text: R("USDT"),
+              value: V.USDT,
+            },
+            {
+              logo: "",
+              text: R("walletRecharge.walletBalance"),
+              value: V.DICWALLET,
+            },
+          ],
+          Z = l();
+        function aa() {
+          B.value = !1;
+        }
+        async function ea() {
+          var a;
+          if (!N.value)
+            if (K.value < 10) D.warning(R("referral.errTip"));
+            else {
+              (await (null == (a = Z.value) ? void 0 : a.validate()),
+                z.value &&
+                  (await _({
+                    title: R("reset.tip"),
+                    message: R("referral.balance_withdrawal_tip2", {
+                      name: H.userInfo.orgName,
+                    }),
+                  })),
+                (N.value = !0));
+              try {
+                (await L($.value),
+                  (B.value = !1),
+                  D.success(R("referral.application_successful")),
+                  M("submit"));
+              } catch (e) {
+                A(e);
+              } finally {
+                await P(() => {
+                  N.value = !1;
+                });
+              }
+            }
+        }
+        return (
+          T({
+            openDlg: function (a) {
+              var e;
+              ((B.value = !0),
+                (K.value = a),
+                null == (e = Z.value) || e.resetFields(),
+                ($.value.amount = a),
+                (X.value = a > 100 ? 100 : a),
+                ($.value.withdrawalData.type = V.PAYPAL));
+            },
+          }),
+          (a, e) => {
+            const l = r("el-input-number"),
+              t = r("el-form-item"),
+              b = r("el-button"),
+              D = r("el-input"),
+              _ = r("el-form"),
+              A = r("el-dialog"),
+              P = u("prevent-label-click");
+            return (
+              s(),
+              o(
+                A,
+                {
+                  width: "650",
+                  "close-on-click-modal": !1,
+                  "close-on-press-escape": !1,
+                  title: w(R)("referral.apply_withdrawal"),
+                  modelValue: B.value,
+                  "onUpdate:modelValue": e[5] || (e[5] = (a) => (B.value = a)),
+                },
+                {
+                  footer: i(() => [
+                    d(
+                      b,
+                      { type: "info", onClick: aa },
+                      {
+                        default: i(() => [p(v(w(R)("base.cancel")), 1)]),
+                        _: 1,
+                      },
+                    ),
+                    d(
+                      b,
+                      { type: "primary", loading: N.value, onClick: ea },
+                      {
+                        default: i(() => [
+                          p(v(w(R)("referral.submit_application")), 1),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["loading"],
+                    ),
+                  ]),
+                  default: i(() => [
+                    n(
+                      (s(),
+                      o(
+                        _,
+                        {
+                          ref_key: "ruleFormRef",
+                          ref: Z,
+                          "label-position": "right",
+                          "label-width": "150",
+                          model: $.value,
+                          rules: J.value,
+                          "validate-on-rule-change": !1,
+                        },
+                        {
+                          default: i(() => [
+                            d(
+                              t,
+                              {
+                                label: w(R)("referral.withdraw_amount"),
+                                prop: "amount",
+                              },
+                              {
+                                default: i(() => [
+                                  c("div", null, [
+                                    d(
+                                      l,
+                                      {
+                                        class: "new-input-number",
+                                        min: 10,
+                                        max: 100,
+                                        modelValue: $.value.amount,
+                                        "onUpdate:modelValue":
+                                          e[0] ||
+                                          (e[0] = (a) => ($.value.amount = a)),
+                                        controls: !1,
+                                        "input-style": { paddingLeft: "20px" },
+                                        onBlur:
+                                          e[1] ||
+                                          (e[1] = () =>
+                                            !$.value.amount &&
+                                            ($.value.amount = 10)),
+                                      },
+                                      {
+                                        prefix: i(() => [
+                                          ...(e[6] || (e[6] = [p(" $ ", -1)])),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["modelValue"],
+                                    ),
+                                    K.value >= 10
+                                      ? (s(),
+                                        m(
+                                          "div",
+                                          U,
+                                          v(
+                                            w(R)("referral.tip1", {
+                                              num: X.value,
+                                            }),
+                                          ),
+                                          1,
+                                        ))
+                                      : f("", !0),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            d(
+                              t,
+                              {
+                                label: w(R)("referral.withdraw_method"),
+                                prop: "type",
+                                class: h([
+                                  z.value && "tw-mb-0",
+                                  "withdraw-method-buttons",
+                                ]),
+                              },
+                              {
+                                default: i(() => [
+                                  c("div", I, [
+                                    (s(),
+                                    m(
+                                      g,
+                                      null,
+                                      x(Q, (a) =>
+                                        c("div", { key: a.value }, [
+                                          d(
+                                            b,
+                                            {
+                                              class: h(
+                                                $.value.withdrawalData.type ===
+                                                  a.value
+                                                  ? "active"
+                                                  : "",
+                                              ),
+                                              onClick: (e) => {
+                                                (($.value.withdrawalData.type =
+                                                  a.value),
+                                                  ($.value.withdrawalData.account =
+                                                    ""));
+                                              },
+                                            },
+                                            {
+                                              default: i(() => [
+                                                a.logo
+                                                  ? (s(),
+                                                    m(
+                                                      "img",
+                                                      {
+                                                        key: 0,
+                                                        class:
+                                                          "tw-w-[20px] tw-h-[20px] tw-mr-[4px]",
+                                                        src: a.logo,
+                                                        alt: "",
+                                                      },
+                                                      null,
+                                                      8,
+                                                      C,
+                                                    ))
+                                                  : f("", !0),
+                                                p(v(a.text), 1),
+                                              ]),
+                                              _: 2,
+                                            },
+                                            1032,
+                                            ["class", "onClick"],
+                                          ),
+                                        ]),
+                                      ),
+                                      64,
+                                    )),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label", "class"],
+                            ),
+                            G.value
+                              ? (s(),
+                                m(
+                                  g,
+                                  { key: 0 },
+                                  [
+                                    d(
+                                      t,
+                                      {
+                                        label: w(R)("referral.walletAddress"),
+                                        prop: "withdrawalData.account",
+                                      },
+                                      {
+                                        default: i(() => [
+                                          d(
+                                            D,
+                                            {
+                                              modelValue:
+                                                $.value.withdrawalData.account,
+                                              "onUpdate:modelValue":
+                                                e[2] ||
+                                                (e[2] = (a) =>
+                                                  ($.value.withdrawalData.account =
+                                                    a)),
+                                              placeholder: w(R)(
+                                                "referral.walletAddressTip2",
+                                              ),
+                                              maxlength: 500,
+                                            },
+                                            null,
+                                            8,
+                                            ["modelValue", "placeholder"],
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["label"],
+                                    ),
+                                    d(
+                                      t,
+                                      { label: "" },
+                                      {
+                                        default: i(() => [
+                                          c("div", Y, [
+                                            c(
+                                              "img",
+                                              {
+                                                class:
+                                                  "tw-w-[16px] tw-mr-[6px]",
+                                                src: w(y)("warning"),
+                                              },
+                                              null,
+                                              8,
+                                              j,
+                                            ),
+                                            c("div", E, [
+                                              c(
+                                                "div",
+                                                null,
+                                                v(
+                                                  w(R)(
+                                                    "referral.walletAddressTip3",
+                                                  ),
+                                                ),
+                                                1,
+                                              ),
+                                              c(
+                                                "div",
+                                                S,
+                                                v(w(R)("referral.tip2")),
+                                                1,
+                                              ),
+                                            ]),
+                                          ]),
+                                        ]),
+                                        _: 1,
+                                      },
+                                    ),
+                                  ],
+                                  64,
+                                ))
+                              : z.value
+                                ? (s(),
+                                  o(
+                                    t,
+                                    { key: 2, label: " " },
+                                    {
+                                      default: i(() => [
+                                        c(
+                                          "div",
+                                          q,
+                                          v(
+                                            w(R)(
+                                              "referral.balance_withdrawal_tip",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ))
+                                : (s(),
+                                  m(
+                                    g,
+                                    { key: 1 },
+                                    [
+                                      d(
+                                        t,
+                                        {
+                                          label: `${w(R)("referral.paypal_account", { name: O.value })}`,
+                                          prop: "withdrawalData.account",
+                                        },
+                                        {
+                                          default: i(() => [
+                                            d(
+                                              D,
+                                              {
+                                                modelValue:
+                                                  $.value.withdrawalData
+                                                    .account,
+                                                "onUpdate:modelValue":
+                                                  e[3] ||
+                                                  (e[3] = (a) =>
+                                                    ($.value.withdrawalData.account =
+                                                      a)),
+                                                maxlength: 500,
+                                                placeholder: w(R)(
+                                                  "referral.accountPl",
+                                                  { name: O.value },
+                                                ),
+                                              },
+                                              null,
+                                              8,
+                                              ["modelValue", "placeholder"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      d(
+                                        t,
+                                        {
+                                          label: w(R)("userInfo.name"),
+                                          prop: "withdrawalData.name",
+                                        },
+                                        {
+                                          default: i(() => [
+                                            d(
+                                              D,
+                                              {
+                                                modelValue:
+                                                  $.value.withdrawalData.name,
+                                                "onUpdate:modelValue":
+                                                  e[4] ||
+                                                  (e[4] = (a) =>
+                                                    ($.value.withdrawalData.name =
+                                                      a)),
+                                                placeholder:
+                                                  w(R)("referral.namePl"),
+                                                maxlength: 500,
+                                              },
+                                              null,
+                                              8,
+                                              ["modelValue", "placeholder"],
+                                            ),
+                                            c(
+                                              "div",
+                                              W,
+                                              v(w(R)("referral.tip2")),
+                                              1,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                    ],
+                                    64,
+                                  )),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["model", "rules"],
+                      )),
+                      [[P]],
+                    ),
+                  ]),
+                  _: 1,
+                },
+                8,
+                ["title", "modelValue"],
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-804a3b91"]],
+  );
+export { F as default };

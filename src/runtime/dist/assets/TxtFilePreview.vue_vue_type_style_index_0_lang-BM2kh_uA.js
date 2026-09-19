@@ -1,0 +1,547 @@
+import { E as e } from "./index-rtKG2tmD.js";
+import {
+  d as l,
+  v as a,
+  i as t,
+  V as n,
+  bH as o,
+  P as u,
+  bI as i,
+  a3 as r,
+  ag as s,
+  bJ as c,
+  W as p,
+  r as v,
+  q as d,
+  o as m,
+  h as f,
+  aq as g,
+  f as x,
+  w,
+  a as h,
+  c as b,
+  t as _,
+  b as y,
+  X as N,
+  x as S,
+  e as T,
+  C as V,
+  bK as k,
+  a5 as E,
+  bL as D,
+  b4 as M,
+} from "./index-BUIbb6Pa.js";
+import { _ as z } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import { _ as A } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+const C = { class: "tw-flex tw-h-full tw-flex-col" },
+  P = {
+    key: 0,
+    class:
+      "tw-mb-[20px] tw-p-[16px] tw-rounded-[8px] tw-bg-[var(--el-fill-color-extra--high-light)] tw-flex tw-justify-between",
+  },
+  I = { class: "tw-mr-[14px] tw-leading-[1.3]" },
+  L = { class: "tw-mb-[4px]" },
+  Y = { class: "tw-flex tw-items-center tw-gap-[8px]" },
+  $ = ["src"],
+  j = { class: "tw-flex-1 tw-h-0 tw-mt-[5px]" },
+  F = l({
+    __name: "TxtFilePreview",
+    props: { mediaTxtStrs: {}, platform: {}, platformLogo: {} },
+    emits: ["confirm", "close"],
+    setup(l, { expose: F, emit: O }) {
+      let q = t({ pageNo: 1, pageSize: 20, total: 0 }),
+        H = t(!1),
+        { t: U } = a.useI18n(),
+        R = l,
+        J = t(!1),
+        X = t(!0),
+        K = t(!1),
+        W = 0,
+        B = { decollator: "", useAccountName: !1, cpDecollatorVal: "" },
+        G = t(n.cloneDeep(B)),
+        Q = V(() => {
+          const e = (q.value.pageNo - 1) * q.value.pageSize,
+            l = e + q.value.pageSize;
+          return ae.value.slice(e, l);
+        });
+      function Z(e) {
+        q.value.pageNo = e;
+      }
+      function ee(e) {
+        ((q.value.pageSize = e), (q.value.pageNo = 1));
+      }
+      let le,
+        ae = t(o(R.mediaTxtStrs, "").data),
+        te = t([]),
+        ne = t(1),
+        oe = t([]),
+        ue = t(!1);
+      const ie = new Map();
+      function re(e) {
+        if (ie.has(e)) return ie.get(e);
+        const l = (l) =>
+          E(
+            M,
+            {
+              modelValue: te.value[e],
+              placeholder: U("base.selectHolder"),
+              clearable: !0,
+              style: { width: "100%" },
+              "onUpdate:modelValue": (l) =>
+                (function (e, l) {
+                  let a = te.value.findIndex((e) => e === l);
+                  a >= 0 && "SYSTEM_NONE" !== l && (te.value[a] = void 0);
+                  te.value[e] = l;
+                })(e, l),
+            },
+            {
+              default: () =>
+                oe.value.map((e) =>
+                  E(
+                    D,
+                    { key: e.type, value: e.type, label: e.name },
+                    {
+                      default: () =>
+                        (function (e) {
+                          return "SYSTEM_NONE" === e.type
+                            ? E(
+                                "div",
+                                { class: "tw-flex tw-items-center tw-gap-1" },
+                                [
+                                  e.name,
+                                  E(z, {
+                                    content: U("env.env.import.noMatchField"),
+                                  }),
+                                ],
+                              )
+                            : e.name;
+                        })(e),
+                    },
+                  ),
+                ),
+            },
+          );
+        return (ie.set(e, l), l);
+      }
+      let se = O;
+      async function ce(e = !0) {
+        if (ue.value && oe.value.length) return !0;
+        le ||
+          (le = i()
+            .then((e) => {
+              if (!e.length) throw new Error("EMPTY_TXT_IMPORT_TYPES");
+              return (
+                (oe.value = e),
+                (ue.value = !0),
+                (te.value = fe(te.value)),
+                e
+              );
+            })
+            .finally(() => {
+              le = void 0;
+            }));
+        try {
+          return (await le, !0);
+        } catch {
+          return (
+            (oe.value = []),
+            (ue.value = !1),
+            e && r.error(U("message.api.unknown")),
+            !1
+          );
+        }
+      }
+      u(() => {
+        ce(!1);
+      });
+      const pe = n.debounce(() => {
+        !(function (e) {
+          if (e && G.value.cpDecollatorVal === e) return;
+          ((te.value = []), me(e));
+        })(G.value.decollator);
+      }, 300);
+      s(() => pe.cancel());
+      let ve = [
+          {
+            prop: "$index",
+            label: U("env.env.import.number"),
+            width: 150,
+            render: (e) =>
+              e.$index + (q.value.pageNo - 1) * q.value.pageSize + 1,
+          },
+          { prop: "val1", headerRender: re(0) },
+        ],
+        de = t(n.cloneDeep(ve));
+      function me(e) {
+        H.value = !0;
+        const l = o(R.mediaTxtStrs, e);
+        var a;
+        return (
+          (ae.value = l.data),
+          (ne.value = l.maxLen),
+          (de.value =
+            1 === (a = l.maxLen)
+              ? n.cloneDeep(ve)
+              : [
+                  {
+                    prop: "$index",
+                    label: U("env.env.import.number"),
+                    width: 150,
+                    render: (e) =>
+                      e.$index + (q.value.pageNo - 1) * q.value.pageSize + 1,
+                  },
+                  ...Array.from({ length: a }, (e, l) => ({
+                    prop: `val${l + 1}`,
+                    width: 250,
+                    headerRender: re(l),
+                  })),
+                ]),
+          (G.value.cpDecollatorVal = l.appliedDelimiter),
+          (q.value.pageNo = 1),
+          (q.value.total = l.data.length),
+          (H.value = !1),
+          l
+        );
+      }
+      function fe(e) {
+        const l = ue.value ? oe.value.map((e) => e.type) : void 0;
+        return c(e, ne.value, l);
+      }
+      async function ge() {
+        if (K.value) return;
+        K.value = !0;
+        const e = W;
+        pe.cancel();
+        try {
+          if (!(await ce()) || !J.value || e !== W) return;
+          const l = fe(te.value);
+          if (((te.value = l), !l.some((e) => e && "SYSTEM_NONE" !== e)))
+            return void r.warning(U("env.env.import.selectHeader"));
+          const a = k(l, oe.value, U("env.env.req.accountName")),
+            t = ae.value.map((e) => {
+              const a = {};
+              return (
+                l.forEach((l, t) => {
+                  const n = e[`val${t + 1}`];
+                  l && "SYSTEM_NONE" !== l && void 0 !== n && (a[l] = n);
+                }),
+                a
+              );
+            });
+          (se("confirm", {
+            delimiter: G.value.cpDecollatorVal,
+            headerMapping: [...l],
+            accountNameField: a,
+            useAccountName: G.value.useAccountName,
+            formData: t,
+          }),
+            (J.value = !1));
+        } finally {
+          e === W && (K.value = !1);
+        }
+      }
+      function xe() {
+        (pe.cancel(), (W += 1), (K.value = !1), (J.value = !1), se("close"));
+      }
+      return (
+        p(
+          () => R.mediaTxtStrs,
+          () => {
+            (pe.cancel(), (G.value = n.cloneDeep(B)), (te.value = []), me(""));
+          },
+        ),
+        F({
+          open: function (e) {
+            (pe.cancel(), (W += 1), (K.value = !1));
+            const l = (null == e ? void 0 : e.delimiter) ?? "";
+            ((G.value = n.cloneDeep(B)),
+              (te.value = []),
+              me(""),
+              (G.value.useAccountName =
+                (null == e ? void 0 : e.useAccountName) ?? !1),
+              (G.value.decollator = l));
+            const a = l ? me(l) : o(R.mediaTxtStrs, "");
+            (l && a.appliedDelimiter !== l
+              ? (G.value.decollator = "")
+              : (te.value = fe((null == e ? void 0 : e.headerMapping) ?? [])),
+              (J.value = !0));
+          },
+        }),
+        (l, a) => {
+          const t = v("el-button"),
+            n = v("el-input"),
+            o = v("el-form-item"),
+            u = v("el-checkbox"),
+            i = v("el-form"),
+            r = v("el-dialog"),
+            s = d("prevent-label-click");
+          return (
+            m(),
+            f(
+              r,
+              {
+                title: x(U)("env.env.import.txtFilePreview"),
+                modelValue: x(J),
+                "onUpdate:modelValue":
+                  a[3] || (a[3] = (e) => (g(J) ? (J.value = e) : (J = e))),
+                class: "tw-h-[90%] flex-el-dialog",
+                width: "80%",
+                "show-close": !1,
+                "close-on-click-modal": !1,
+                "close-on-press-escape": !1,
+                "align-center": "",
+              },
+              {
+                footer: w(() => [
+                  h("div", null, [
+                    y(
+                      t,
+                      { type: "info", onClick: xe },
+                      {
+                        default: w(() => [T(_(x(U)("promotion.close")), 1)]),
+                        _: 1,
+                      },
+                    ),
+                    y(
+                      t,
+                      {
+                        type: "primary",
+                        loading: x(K),
+                        disabled: x(K),
+                        onClick: ge,
+                      },
+                      {
+                        default: w(() => [T(_(x(U)("base.confirm")), 1)]),
+                        _: 1,
+                      },
+                      8,
+                      ["loading", "disabled"],
+                    ),
+                  ]),
+                ]),
+                default: w(() => [
+                  h("div", C, [
+                    x(X)
+                      ? (m(),
+                        b("div", P, [
+                          h("div", I, [
+                            h(
+                              "p",
+                              L,
+                              _(x(U)("env.env.import.txtImportTip")),
+                              1,
+                            ),
+                            h(
+                              "p",
+                              null,
+                              _(x(U)("env.env.import.txtImportTip2")),
+                              1,
+                            ),
+                          ]),
+                          h("div", null, [
+                            y(
+                              t,
+                              {
+                                type: "info",
+                                link: "",
+                                onClick:
+                                  a[0] ||
+                                  (a[0] = (e) =>
+                                    g(X) ? (X.value = !1) : (X = !1)),
+                              },
+                              {
+                                default: w(() => [
+                                  ...(a[4] ||
+                                    (a[4] = [
+                                      h(
+                                        "i",
+                                        { class: "iconfont icon-fail" },
+                                        null,
+                                        -1,
+                                      ),
+                                    ])),
+                                ]),
+                                _: 1,
+                              },
+                            ),
+                          ]),
+                        ]))
+                      : N("", !0),
+                    S(
+                      (m(),
+                      f(
+                        i,
+                        { inline: "", model: x(G) },
+                        {
+                          default: w(() => [
+                            y(
+                              o,
+                              {
+                                label: x(U)("env.env.import.decollator"),
+                                class: "!tw-mb-[10px]",
+                              },
+                              {
+                                default: w(() => [
+                                  y(
+                                    n,
+                                    {
+                                      modelValue: x(G).decollator,
+                                      "onUpdate:modelValue":
+                                        a[1] ||
+                                        (a[1] = (e) => (x(G).decollator = e)),
+                                      modelModifiers: { trim: !0 },
+                                      class: "tw-w-[150px]",
+                                      placeholder: x(U)("rpa.task.req.enter"),
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue", "placeholder"],
+                                  ),
+                                  y(
+                                    t,
+                                    {
+                                      class: "tw-ml-[10px]",
+                                      type: "primary",
+                                      onClick: x(pe),
+                                    },
+                                    {
+                                      default: w(() => [
+                                        T(_(x(U)("env.env.import.split")), 1),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["onClick"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            y(
+                              o,
+                              {
+                                label: x(U)("env.env.import.accountPlatform"),
+                                class: "!tw-mb-[10px]",
+                              },
+                              {
+                                default: w(() => [
+                                  h("div", Y, [
+                                    x(R).platformLogo
+                                      ? (m(),
+                                        b(
+                                          "img",
+                                          {
+                                            key: 0,
+                                            src: x(R).platformLogo,
+                                            class:
+                                              "tw-w-[20px] tw-h-[20px] tw-rounded-[4px]",
+                                          },
+                                          null,
+                                          8,
+                                          $,
+                                        ))
+                                      : N("", !0),
+                                    h("span", null, _(x(R).platform), 1),
+                                  ]),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["label"],
+                            ),
+                            y(
+                              o,
+                              { class: "!tw-mb-[10px]" },
+                              {
+                                default: w(() => [
+                                  y(
+                                    u,
+                                    {
+                                      modelValue: x(G).useAccountName,
+                                      "onUpdate:modelValue":
+                                        a[2] ||
+                                        (a[2] = (e) =>
+                                          (x(G).useAccountName = e)),
+                                    },
+                                    {
+                                      default: w(() => [
+                                        T(
+                                          _(
+                                            x(U)(
+                                              "env.env.import.useAccountName",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["modelValue"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["model"],
+                      )),
+                      [[s]],
+                    ),
+                    h("div", j, [
+                      y(
+                        e,
+                        {
+                          class: "txt-table",
+                          columns: x(de),
+                          list: x(Q),
+                          showFilterSlot: !1,
+                          loading: x(H),
+                          "max-height": 500,
+                          isScrollTop: !0,
+                          "virtual-scroll": !0,
+                        },
+                        {
+                          pagination: w(() => [
+                            x(ae).length > x(q).pageSize
+                              ? (m(),
+                                f(
+                                  A,
+                                  {
+                                    key: 0,
+                                    "page-sizes": [10, 20, 50],
+                                    layout: " sizes, prev, pager, next,total",
+                                    pageable: x(q),
+                                    handleCurrentChange: Z,
+                                    handleSizeChange: ee,
+                                  },
+                                  null,
+                                  8,
+                                  ["pageable"],
+                                ))
+                              : N("", !0),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["columns", "list", "loading"],
+                      ),
+                    ]),
+                  ]),
+                ]),
+                _: 1,
+              },
+              8,
+              ["title", "modelValue"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { F as _ };

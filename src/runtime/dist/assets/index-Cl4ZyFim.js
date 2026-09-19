@@ -1,0 +1,4534 @@
+import { u as e, o as l } from "./useEnvEdit-B6M5ajw7.js";
+import {
+  d as a,
+  R as t,
+  aW as o,
+  v as u,
+  i as n,
+  G as r,
+  d6 as i,
+  W as d,
+  P as s,
+  cz as c,
+  r as v,
+  o as p,
+  c as m,
+  b as w,
+  w as f,
+  a as b,
+  F as y,
+  z as V,
+  h as g,
+  O as h,
+  e as x,
+  t as T,
+  X as k,
+  f as _,
+  aj as M,
+  bM as C,
+  ax as I,
+  C as $,
+  d7 as R,
+  cy as O,
+  bb as A,
+  d8 as U,
+  d9 as N,
+  as as q,
+  da as S,
+  bW as E,
+  cl as D,
+  V as L,
+  cA as B,
+  bU as P,
+  bT as G,
+  D as H,
+  db as W,
+  ac as j,
+  _ as F,
+} from "./index-BUIbb6Pa.js";
+import { _ as J } from "./envAddAcceptLangDialog.vue_vue_type_script_setup_true_name_envAddAcceptLangDialog_lang-DdcOzUN-.js";
+import z from "./envEditFontDialog-BAmKs9Pq.js";
+import K from "./CustomRadioGroup-Dk-imFdD.js";
+import { _ as X } from "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import Q from "./BrowserSelection-DT8JdE4_.js";
+import { g as Y } from "./ua-CJ8LtZXg.js";
+import { _ as Z } from "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import {
+  _ as ee,
+  n as le,
+} from "./TlsCipherSuiteSelector.vue_vue_type_script_setup_true_lang-Bm0jmwwi.js";
+import "./timezone-BMz8A6Hf.js";
+const ae = { class: "envV2-input-layout" },
+  te = { class: "os-type tw-gap-y-2" },
+  oe = { key: 0 },
+  ue = { class: "envV2-input-layout" },
+  ne = { class: "ua-container s-flex tw-w-full" },
+  re = { class: "extend-item-container" },
+  ie = { key: 0 },
+  de = { key: 0 },
+  se = { style: { color: "#fff", width: "300px" } },
+  ce = { key: 0, class: "accept-lang-container-box" },
+  ve = { class: "accept-lang-container" },
+  pe = { class: "extend-item-container" },
+  me = { key: 0 },
+  we = { key: 0 },
+  fe = { style: { color: "#fff", width: "300px" } },
+  be = { key: 0, class: "m-t-8" },
+  ye = {
+    key: 1,
+    class:
+      "geo-input-container tw-bg-[var(--card-base-bg-color)] tw-rounded-[8px] tw-flex tw-flex-col tw-p-[18px_24px] tw-mt-[8px]",
+  },
+  Ve = { key: 0, class: "font-container webGLMetadata-wrapper !tw-mt-[8px]" },
+  ge = { key: 0 },
+  he = { key: 0, class: "envV2EditFormItemBox tw-mt-[5px]" },
+  xe = { class: "tw-text-[var(--el-text-color-regular)]" },
+  Te = { class: "tw-text-[var(--el-text-color-regular)]" },
+  ke = { class: "tw-text-[var(--el-text-color-regular)]" },
+  _e = { class: "tw-text-[var(--el-text-color-regular)]" },
+  Me = { class: "tw-text-[var(--el-text-color-regular)]" },
+  Ce = { key: 0, class: "ratio-input-wrapper" },
+  Ie = { key: 0, class: "ratio-input-wrapper" },
+  $e = { key: 8, class: "webGLMetadata-wrapper tw-flex tw-flex-col" },
+  Re = { class: "tw-flex tw-gap-2 tw-w-full" },
+  Oe = { key: 1, class: "s-flex" },
+  Ae = { key: 0, class: "unit tw-ml-2" },
+  Ue = { key: 1, class: "s-flex" },
+  Ne = { key: 0, class: "unit tw-ml-2" },
+  qe = "disabled",
+  Se = "enabled",
+  Ee = F(
+    a({
+      __name: "index",
+      props: {
+        modelValue: {},
+        isBatch: { type: Boolean },
+        isEdit: { type: Boolean },
+        uaTypeOptions: {},
+        batchData: {},
+        importData: {},
+        envGroupOptions: {},
+        isBulkImport: { type: Boolean },
+        extendConfig: {},
+        batchExtendConfig: {},
+        importExtendConfig: {},
+        batchDrawerPropsRow: {},
+        importDrawerPropsRow: {},
+        isBatchOperation: { type: Boolean },
+        isSingle: { type: Boolean },
+        isShare: { type: Boolean },
+        isShowAll: { type: Boolean },
+        isMore: { type: Boolean },
+        isPreference: { type: Boolean },
+        mainFormRef: {},
+        noAutoebGLMetadata: { type: Boolean },
+        formRef: {},
+      },
+      emits: ["blurGeo"],
+      setup(a, { expose: F, emit: Ee }) {
+        const De = n(!1),
+          Le = n({
+            isView: !1,
+            title: "env.env.createTitle",
+            row: {},
+            uaTypeArr: ["all"],
+          }),
+          Be = a,
+          { webGLMetadata: Pe } = t(o()),
+          { t: Ge, locale: He } = u.useI18n(),
+          {
+            ratioList: We,
+            extendConfigList: je,
+            getRatioList: Fe,
+            androidRatioList: Je,
+            iosRatioList: ze,
+            noiseTypeArr: Ke,
+            noiseValueArr: Xe,
+            createNoiseValue: Qe,
+          } = e({ isEdit: n(Be.isEdit), isSingle: n(Be.isSingle) });
+        let Ye = Ee;
+        const Ze = n(!1),
+          el = n(!0),
+          ll = n(),
+          al = n(),
+          tl =
+            /^((25[0-5]\.|2[0-4]\d\.|1\d{2}\.|[1-9]?\d\.){3}(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d))$/;
+        let ol = n(Be.extendConfig);
+        const ul = n(qe),
+          nl = $({
+            get: () => {
+              var e, l;
+              return (null == (e = ol.value) ? void 0 : e.webrtcSyncProxyIpFlag)
+                ? "proxyIp"
+                : (
+                      null == (l = ol.value)
+                        ? void 0
+                        : l.webrtcUseRandomInternalIp
+                    )
+                  ? "randomIp"
+                  : "manual";
+            },
+            set: (e) => {
+              const l = e;
+              "proxyIp" === l
+                ? ((ol.value.webrtcSyncProxyIpFlag = !0),
+                  (ol.value.webrtcUseRandomInternalIp = !1))
+                : "randomIp" === l
+                  ? ((ol.value.webrtcSyncProxyIpFlag = !1),
+                    (ol.value.webrtcUseRandomInternalIp = !0),
+                    "boolean" != typeof ol.value.webrtcKeepRandomInternalIp &&
+                      (ol.value.webrtcKeepRandomInternalIp = !1))
+                  : ((ol.value.webrtcSyncProxyIpFlag = !1),
+                    (ol.value.webrtcUseRandomInternalIp = !1));
+            },
+          }),
+          rl = (e, l) => {
+            const a = e.os[l.value];
+            return (
+              (null == a ? void 0 : a.length) > 0 &&
+              !a.find((e) => e.indexOf("all") > -1)
+            );
+          },
+          il = r(),
+          dl = n({}),
+          sl = $(() => il.language),
+          cl = n({
+            [i.DEVICE_NAME]: !1,
+            [i.MAC]: !1,
+            webGLMetadata: !1,
+            ua: !1,
+          });
+        function vl(e = !1) {
+          var l;
+          le(null == (l = ol.value) ? void 0 : l.tlsDisabledValues)
+            ? (ul.value = Se)
+            : e && (ul.value = qe);
+        }
+        function pl(e) {
+          const a = e.toLocaleLowerCase();
+          if (!Le.value.row.os) return [];
+          if (A(Le.value.row.os[a])) return [];
+          const t = Reflect.get(Le.value.row.os, a);
+          if (!t) return [];
+          if (t.includes(`${a}-all`)) {
+            if (e === O.Linux) return ["linux"];
+            let t = [];
+            for (let e = 0; e < l.length; e++) {
+              const o = l[e];
+              if (o.value === a) {
+                t = o.options.slice(1);
+                break;
+              }
+            }
+            return t.map((e) => e.value);
+          }
+          return t;
+        }
+        const ml = $({
+          get: () => Le.value.row.browserVersionId,
+          set(e) {
+            ((Le.value.row.browserVersionId = e), Be.isPreference || wl());
+          },
+        });
+        async function wl() {
+          if (!Le.value.row) return;
+          if (!Le.value.row.browserVersionId) {
+            let e = d(
+              () => {
+                var e;
+                return null == (e = Le.value.row) ? void 0 : e.browserVersionId;
+              },
+              async (l) => {
+                l && (wl(), e());
+              },
+            );
+            return;
+          }
+          let e = [];
+          if (0 === Le.value.uaTypeArr.length)
+            return void R(Ge("env.env.req.uaTypeRule"));
+          if ("all" === Le.value.uaTypeArr[0]) {
+            Le.value.row.uaType = JSON.stringify(["all"]);
+            e = Y(Number(Le.value.row.browserVersionId));
+          } else
+            ((Le.value.row.uaType = JSON.stringify(Le.value.uaTypeArr)),
+              (e = Le.value.uaTypeArr));
+          if (Be.isPreference) return;
+          const l = [
+            ...pl(O.Windows).map((e) => ({ osName: O.Windows, value: e })),
+            ...pl(O.Mac).map((e) => ({ osName: O.Mac, value: e })),
+            ...pl(O.Android).map((e) => ({ osName: O.Android, value: e })),
+            ...pl(O.Ios).map((e) => ({ osName: O.Ios, value: e })),
+            ...pl(O.Linux).map((e) => ({ osName: O.Linux, value: e })),
+          ];
+          let a = {
+            windows: pl(O.Windows),
+            mac: pl(O.Mac),
+            android: pl(O.Android),
+            ios: pl(O.Ios),
+            linux: pl(O.Linux),
+          };
+          if (A(l)) return void R(Ge("env.env.req.osRule2"));
+          cl.value.ua = !0;
+          let [, t] = await q(
+            S({
+              os: a,
+              uaType: e,
+              browserVersionId: Le.value.row.browserVersionId,
+            }),
+          );
+          ((cl.value.ua = !1),
+            t &&
+              (Be.isEdit ||
+                (function (e, l) {
+                  const a = il.personalPreference.extendConfig ?? {};
+                  let t = !Le.value.row.uaOs;
+                  (console.log(a, "pExtendConfig"),
+                    t
+                      ? ((a.deviceMemoryType !== c.RANDOM &&
+                          a.deviceMemoryType) ||
+                          (ol.value.deviceMemoryValue = l),
+                        (a.hardwareConcurrencyType !== c.RANDOM &&
+                          a.hardwareConcurrencyType) ||
+                          (ol.value.hardwareConcurrencyValue = e))
+                      : ((ol.value.deviceMemoryType !== c.CUSTOM &&
+                          ol.value.deviceMemoryType) ||
+                          (ol.value.deviceMemoryValue = l),
+                        (ol.value.hardwareConcurrencyType !== c.CUSTOM &&
+                          ol.value.hardwareConcurrencyType) ||
+                          (ol.value.hardwareConcurrencyValue = e)));
+                  console.log(
+                    ol.value.deviceMemoryValue,
+                    ol.value.hardwareConcurrencyValue,
+                    "内存、硬件核数",
+                  );
+                })(t.hardwareConcurrencyValue, t.deviceMemoryValue),
+              (Le.value.row.uaOs = t.osName),
+              (Le.value.row.ua = t.value),
+              (ol.value.platformVersion = t.platformVersion)));
+        }
+        const fl = (e) => {
+            if ("all" === e[e.length - 1]) Le.value.uaTypeArr = ["all"];
+            else if (Le.value.uaTypeArr && Le.value.uaTypeArr.includes("all")) {
+              const e = Le.value.uaTypeArr.indexOf("all");
+              Le.value.uaTypeArr = [
+                ...Le.value.uaTypeArr.slice(0, e),
+                ...Le.value.uaTypeArr.slice(e + 1),
+              ].filter(Boolean);
+            }
+            (console.log(Le.value, "drawerProps.value.uaTypeArr"), wl());
+          },
+          bl = n([]),
+          yl = (e, l) => {
+            var a;
+            if (
+              ("webGPU" === e &&
+                "inWebGL" === l &&
+                (ol.value.webGPUTypeValue =
+                  Math.floor(99999 * Math.random()) + 2),
+              "webrtc" === e)
+            ) {
+              const e =
+                null == document
+                  ? void 0
+                  : document.querySelector('[data-id="webRTC-radio"]');
+              if (!e) return;
+              const l = E(e, "el-form-item__content");
+              null ==
+                (a =
+                  null == l
+                    ? void 0
+                    : l.querySelector(".el-form-item__error")) || a.remove();
+            }
+            ("acceptLang" === e &&
+              "custom" === l &&
+              setTimeout(() => {
+                D(".accept-lang-container-box", "end");
+              }, 200),
+              "custom" === ol.value.acceptLangType &&
+                (ol.value.acceptLangValue = bl.value.map((e) => e.value)),
+              "disable" === ol.value.geoType && (ol.value.geoSubType = "ip"),
+              "replace" !== ol.value.webrtcType ||
+                tl.test(ol.value.webrtcValue) ||
+                (ol.value.webrtcValue = ""),
+              "custom" === ol.value.ratioType &&
+                !ol.value.ratioValue &&
+                We.value.length > 1 &&
+                (ol.value.ratioValue = "750 x 1334"),
+              "custom" === ol.value.windowRatioType &&
+                !ol.value.windowRatioValue &&
+                We.value.length > 1 &&
+                (ol.value.windowRatioValue = "1920 x 1080"),
+              "custom" !== ol.value.webGLMetadataType ||
+                ol.value.webglManufacturer ||
+                Cl(),
+              "custom" !== ol.value.deviceNameType ||
+                ol.value.deviceNameValue ||
+                Ol(i.DEVICE_NAME),
+              "custom" !== ol.value.macType || ol.value.macValue || Ol(i.MAC));
+          },
+          Vl = (e, l) => {
+            if (e <= 0 || e >= bl.value.length) return;
+            const a = JSON.parse(JSON.stringify(bl.value[e]));
+            (l
+              ? (bl.value.splice(e, 1), bl.value.unshift(a))
+              : ((bl.value[e] = bl.value[e - 1]), (bl.value[e - 1] = a)),
+              yl());
+          },
+          gl = () => {
+            var e;
+            null == (e = ll.value) || e.openDialog();
+          },
+          hl = (e, l) => {
+            if (e < 0 || e >= bl.value.length - 1) return;
+            const a = JSON.parse(JSON.stringify(bl.value[e]));
+            (l
+              ? (bl.value.splice(e, 1), bl.value.push(a))
+              : ((bl.value[e] = bl.value[e + 1]), (bl.value[e + 1] = a)),
+              yl());
+          },
+          xl = (e) => {
+            if (!e || !e.length) return;
+            const l = bl.value.map((e) => e.value);
+            (e.forEach((e) => {
+              l.includes(e.value) || bl.value.push(e);
+            }),
+              yl());
+          },
+          Tl = () => {
+            var e;
+            (null == (e = Be.mainFormRef) || e.validateField("extend.geo"),
+              Ye("blurGeo"));
+          },
+          kl = async () => {
+            var e, l;
+            ol.value.fontValue = N({
+              uaOs: null == (e = Le.value.row) ? void 0 : e.uaOs,
+              os: null == (l = Le.value.row) ? void 0 : l.os,
+            });
+          },
+          _l = () => {
+            var e, l, a;
+            null == (a = al.value) ||
+              a.openDialog(ol.value.fontValue, {
+                uaOs: null == (e = Le.value.row) ? void 0 : e.uaOs,
+                os: null == (l = Le.value.row) ? void 0 : l.os,
+              });
+          },
+          Ml = n(!1);
+        async function Cl(e) {
+          var l, a;
+          try {
+            if (["truth"].includes(ol.value.webGLMetadataType)) return;
+            const t =
+              "string" == typeof e ? e : ol.value.webglManufacturer || void 0;
+            let o = null == (l = Le.value.row) ? void 0 : l.uaOs;
+            if (t && Pe.value && e) {
+              const e = Pe.value.find((e) => e.webglManufacturer === t);
+              e && e.os && (o = e.os);
+            }
+            if (!o) {
+              let e = Object.keys(
+                (null == (a = Le.value.row) ? void 0 : a.os) || {},
+              ).filter((e) => {
+                var l;
+                return Reflect.get(
+                  (null == (l = Le.value.row) ? void 0 : l.os) || {},
+                  e,
+                ).length;
+              });
+              o = e[L.random(0, e.length - 1)].toUpperCase();
+            }
+            cl.value.webGLMetadata = !0;
+            let {
+              webglManufacturer: u,
+              webglRender: n,
+              adapterinfoArchitecture: r,
+              adapterinfoVendor: i,
+            } = await B(o, e ? t : void 0);
+            ((ol.value.webglRender = n),
+              (ol.value.webglManufacturer = u),
+              (ol.value.adapterinfoArchitecture = r),
+              (ol.value.adapterinfoVendor = i));
+          } finally {
+            cl.value.webGLMetadata = !1;
+          }
+        }
+        const Il = $(() => {
+            if (!Pe.value) return [{ label: "Others", value: "Others" }];
+            const e = [...new Set(Pe.value.map((e) => e.webglManufacturer))]
+              .filter(Boolean)
+              .map((e) => ({ label: e, value: e }));
+            return (e.push({ label: "Others", value: "Others" }), e);
+          }),
+          $l = $({
+            get() {
+              if ("others" === ol.value.webglManufacturerType) return "Others";
+              if (Ml.value) return "Others";
+              const e = ol.value.webglManufacturer;
+              return e && Pe.value.some((l) => l.webglManufacturer === e)
+                ? e
+                : e
+                  ? "Others"
+                  : void 0;
+            },
+            set(e) {
+              if ("Others" === e) {
+                if (
+                  ((Ml.value = !0),
+                  (ol.value.webglManufacturerType = "others"),
+                  !ol.value.webglManufacturer && Pe.value.length > 0)
+                ) {
+                  const e = Pe.value[L.random(0, Pe.value.length - 1)];
+                  ((ol.value.webglManufacturer = e.webglManufacturer),
+                    Cl(e.webglManufacturer));
+                }
+              } else
+                ((Ml.value = !1),
+                  (ol.value.webglManufacturerType = ""),
+                  (ol.value.webglManufacturer = e),
+                  Cl(e));
+            },
+          });
+        const Rl = (e) => {
+          A(e)
+            ? R(Ge("env.env.req.fontRule"))
+            : (e.sort((e, l) =>
+                e.localeCompare(l, void 0, { sensitivity: "base" }),
+              ),
+              (ol.value.fontValue = e));
+        };
+        (d(
+          () => [Be.isBatch, Be.isSingle, Be.isBulkImport],
+          () => {
+            (Be.isBatch
+              ? ((ol.value = Be.batchExtendConfig),
+                (Le.value.row = Be.batchDrawerPropsRow))
+              : Be.isBulkImport
+                ? ((ol.value = Be.importExtendConfig),
+                  (Le.value.row = Be.importDrawerPropsRow))
+                : ((ol.value = Be.extendConfig), (Le.value = Be.modelValue)),
+              vl(!0),
+              ol.value.acceptLangValue &&
+                j(() => {
+                  ((bl.value = []),
+                    ol.value.acceptLangValue.forEach((e) => {
+                      Reflect.get(dl.value, e) &&
+                        bl.value.push({ label: dl.value[e], value: e });
+                    }));
+                }),
+              "boolean" != typeof ol.value.webrtcKeepRandomInternalIp &&
+                (ol.value.webrtcKeepRandomInternalIp = !1),
+              console.log("extendConfig.value", ol.value));
+          },
+          { immediate: !0 },
+        ),
+          d(
+            () => {
+              var e;
+              return null == (e = ol.value) ? void 0 : e.tlsDisabledValues;
+            },
+            () => {
+              vl(!1);
+            },
+          ),
+          d(
+            () => ul.value,
+            (e) => {
+              e === qe &&
+                (async function () {
+                  var e;
+                  (await j(),
+                    null == (e = Be.formRef) ||
+                      e.clearValidate("extend.tlsDisabledValues"));
+                })();
+            },
+          ),
+          d(
+            () => [Be.isBatch, Be.isSingle, Be.isBulkImport, Be.isEdit],
+            async () => {
+              Be.isBatch
+                ? (Le.value = Be.batchData)
+                : Be.isBulkImport
+                  ? (Le.value = Be.importData)
+                  : (Le.value = Be.modelValue);
+            },
+            { immediate: !0 },
+          ),
+          s(() => {
+            (!(async function () {
+              Le.value.row.ua || Be.isPreference || (await wl());
+              (d(
+                () => Le.value.row.uaOs,
+                () => {
+                  var e;
+                  (console.log(
+                    "UA OS 变化 ==>>> ",
+                    null == (e = Le.value.row) ? void 0 : e.uaOs,
+                  ),
+                    Be.isBatchOperation ||
+                      Be.isPreference ||
+                      (Be.noAutoebGLMetadata || Cl(),
+                      Ol(i.DEVICE_NAME),
+                      Ol(i.MAC)));
+                },
+                { deep: !0 },
+              ),
+                ol.value.deviceNameType !== c.CUSTOM ||
+                  ol.value.deviceNameValue ||
+                  Ol(i.DEVICE_NAME));
+              ol.value.macType !== c.CUSTOM || ol.value.macValue || Ol(i.MAC);
+              ol.value.webGLMetadataType !== c.CUSTOM ||
+                ol.value.webglManufacturer ||
+                Cl();
+            })(),
+              (function () {
+                const e = [];
+                (P.data.forEach((l) => {
+                  l.accept &&
+                    e.push({
+                      label:
+                        l[
+                          "zh" === (null == sl ? void 0 : sl.value)
+                            ? "zh"
+                            : "en"
+                        ],
+                      value: l.code,
+                    });
+                }),
+                  (dl.value = G(e)));
+              })(),
+              Fe());
+          }));
+        async function Ol(e, l = !1) {
+          var a, t;
+          let o = null == (a = Le.value.row) ? void 0 : a.uaOs;
+          if (!o && !Be.isPreference) return;
+          if (!o) {
+            let e = Object.keys(
+              (null == (t = Le.value.row) ? void 0 : t.os) || {},
+            ).filter((e) => {
+              var l;
+              return Reflect.get(
+                (null == (l = Le.value.row) ? void 0 : l.os) || {},
+                e,
+              ).length;
+            });
+            o = e[L.random(0, e.length - 1)].toUpperCase();
+          }
+          switch (e) {
+            case i.DEVICE_NAME:
+              if (ol.value.deviceNameType !== c.CUSTOM) return;
+              if (!l && Be.isEdit && ol.value.deviceNameValue) return;
+              break;
+            case i.MAC:
+              if (ol.value.macType !== c.CUSTOM) return;
+              if (!l && Be.isEdit && ol.value.macValue) return;
+              break;
+            default:
+              return;
+          }
+          cl.value[e] = !0;
+          let [, u] = await q(W({ type: e, os: o ?? "" }));
+          ((cl.value[e] = !1),
+            console.log("随机指纹 ==>>> ", e, u, ol.value.deviceNameValue),
+            e === i.DEVICE_NAME
+              ? (ol.value.deviceNameValue = u)
+              : e === i.MAC && (ol.value.macValue = u));
+        }
+        return (
+          F({
+            handleExtendConfig: async () => {
+              var e;
+              const l = L.cloneDeep(ol.value);
+              if (((l.tlsDisabledValues = le(l.tlsDisabledValues)), Ze.value))
+                return l;
+              let a = Le.value.row.uaOs;
+              if (!a) {
+                let l = Object.keys(
+                  (null == (e = Le.value.row) ? void 0 : e.os) || {},
+                ).filter((e) => {
+                  var l;
+                  return Reflect.get(
+                    (null == (l = Le.value.row) ? void 0 : l.os) || {},
+                    e,
+                  ).length;
+                });
+                a = l[L.random(0, l.length - 1)].toUpperCase();
+              }
+              if (
+                !Be.isPreference &&
+                ("random" == l.ratioType ||
+                  ("truth" === l.ratioType && ["IOS", "ANDROID"].includes(a)))
+              ) {
+                let e = {
+                    [O.Windows]: We.value,
+                    [O.Mac]: We.value,
+                    [O.Linux]: We.value,
+                    [O.Android]: Je.value,
+                    [O.Ios]: ze.value,
+                  },
+                  t = Reflect.get(e, a),
+                  o =
+                    t[
+                      L.random(
+                        ["IOS", "ANDROID"].includes(a) ? 0 : 3,
+                        ["IOS", "ANDROID"].includes(a) ? t.length - 1 : 29,
+                      )
+                    ];
+                ("random" == l.ratioType && (l.ratioValue = o.value),
+                  (l.ratioWidth = o.value.split(" x ")[0]),
+                  (l.ratioHeight = o.value.split(" x ")[1]),
+                  (l.ratioValue = "custom"));
+              } else
+                "custom" !== l.ratioValue &&
+                  ((l.ratioWidth = l.ratioValue.split(" x ")[0]),
+                  (l.ratioHeight = l.ratioValue.split(" x ")[1]));
+              return (
+                "custom" !== l.windowRatioValue &&
+                  l.windowRatioValue &&
+                  ((l.windowWidth = l.windowRatioValue.split(" x ")[0]),
+                  (l.windowHeight = l.windowRatioValue.split(" x ")[1])),
+                Ke.forEach((e) => {
+                  Reflect.set(l, e + "Value", Xe[e + "Noise"] || Qe());
+                }),
+                ((e) => {
+                  Be.isEdit ||
+                    Be.isPreference ||
+                    (null == e.canvasRev2Value && (e.canvasRev2Value = Qe()),
+                    null == e.webGLImageRev2Value &&
+                      (e.webGLImageRev2Value = Qe()));
+                })(l),
+                Be.isSingle ||
+                  Be.isPreference ||
+                  ("random" === l.deviceMemoryType &&
+                    ((l.deviceMemoryValue = "random"),
+                    delete l.deviceMemoryType),
+                  "random" === l.hardwareConcurrencyType &&
+                    ((l.hardwareConcurrencyValue = "random"),
+                    delete l.hardwareConcurrencyType)),
+                Be.isPreference ||
+                  (l.macTruthValue = await H.api.getMacAddress()),
+                l
+              );
+            },
+            refreshFingerprint: async function () {
+              if (!Le.value.row) return;
+              let e = [];
+              if (0 === Le.value.uaTypeArr.length)
+                return void R(Ge("env.env.req.uaTypeRule"));
+              if ("all" === Le.value.uaTypeArr[0]) {
+                Le.value.row.uaType = JSON.stringify(["all"]);
+                e = Y(Number(Le.value.row.browserVersionId));
+              } else
+                ((Le.value.row.uaType = JSON.stringify(Le.value.uaTypeArr)),
+                  (e = Le.value.uaTypeArr));
+              const l = [
+                ...pl(O.Windows).map((e) => ({ osName: O.Windows, value: e })),
+                ...pl(O.Mac).map((e) => ({ osName: O.Mac, value: e })),
+                ...pl(O.Android).map((e) => ({ osName: O.Android, value: e })),
+                ...pl(O.Ios).map((e) => ({ osName: O.Ios, value: e })),
+                ...pl(O.Linux).map((e) => ({ osName: O.Linux, value: e })),
+              ];
+              let a = {
+                windows: pl(O.Windows),
+                mac: pl(O.Mac),
+                android: pl(O.Android),
+                ios: pl(O.Ios),
+                linux: pl(O.Linux),
+              };
+              if (A(l)) return void R(Ge("env.env.req.osRule2"));
+              const t = le(ol.value.tlsDisabledValues),
+                o = { ...ol.value, tlsDisabledValues: t },
+                u = await U({
+                  config: JSON.stringify(o),
+                  os: a,
+                  uaType: e,
+                  browserVersionId: Le.value.row.browserVersionId,
+                });
+              ((Le.value.row.uaOs = u.osName), (Le.value.row.ua = u.value));
+              const n = JSON.parse(u.config);
+              return (
+                (n.fontValue = N({ uaOs: u.osName, os: a })),
+                (n.tlsDisabledValues = t),
+                (Le.value.row.config = n),
+                (ol.value = n),
+                (Ze.value = !0),
+                n
+              );
+            },
+            fingerprintRules: $(() => ({
+              "extend.deviceNameValue": [
+                {
+                  validator: (e, l, a) => {
+                    "custom" === ol.value.deviceNameType &&
+                    A(ol.value.deviceNameValue)
+                      ? a(new Error(Ge("env.env.req.deviceNameHolder")))
+                      : a();
+                  },
+                },
+              ],
+              "extend.macValue": [
+                {
+                  validator: (e, l, a) => {
+                    "custom" === ol.value.macType && A(ol.value.macValue)
+                      ? a(new Error(Ge("env.env.req.macHolder")))
+                      : a();
+                  },
+                },
+              ],
+              "extend.tlsDisabledValues": [
+                {
+                  validator: (e, l, a) => {
+                    var t;
+                    ul.value !== Se ||
+                    le(null == (t = ol.value) ? void 0 : t.tlsDisabledValues)
+                      ? a()
+                      : a(new Error(Ge("env.env.req.tlsDisabledValuesRule")));
+                  },
+                  trigger: "change",
+                },
+              ],
+            })),
+            randomUa: wl,
+          }),
+          (e, t) => {
+            const o = v("el-button"),
+              u = v("el-option"),
+              n = v("el-select"),
+              r = v("el-form-item"),
+              d = v("el-radio-button"),
+              s = v("el-tooltip"),
+              c = v("el-input"),
+              $ = v("el-input-number"),
+              R = v("el-radio"),
+              O = v("el-radio-group");
+            return (
+              p(),
+              m("div", null, [
+                w(
+                  Q,
+                  {
+                    modelValue: ml.value,
+                    "onUpdate:modelValue":
+                      t[0] || (t[0] = (e) => (ml.value = e)),
+                    "is-edit": Be.isEdit,
+                  },
+                  null,
+                  8,
+                  ["modelValue", "is-edit"],
+                ),
+                w(
+                  r,
+                  { prop: "os" },
+                  {
+                    label: f(() => [
+                      b("div", ae, [
+                        b("div", null, [
+                          x(T(e.$t("env.env.req.os")) + " ", 1),
+                          w(X, { text: e.$t("envV2.tip24") }, null, 8, [
+                            "text",
+                          ]),
+                        ]),
+                      ]),
+                    ]),
+                    default: f(() => [
+                      b("div", te, [
+                        (p(!0),
+                        m(
+                          y,
+                          null,
+                          V(_(l), (e) => {
+                            var l, a, t;
+                            return (
+                              p(),
+                              g(
+                                n,
+                                {
+                                  key: e.value,
+                                  modelValue: (null == (l = Le.value.row)
+                                    ? void 0
+                                    : l.os)[e.options[0].value.split("-")[0]],
+                                  "onUpdate:modelValue": (l) => {
+                                    var a;
+                                    return ((null == (a = Le.value.row)
+                                      ? void 0
+                                      : a.os)[
+                                      e.options[0].value.split("-")[0]
+                                    ] = l);
+                                  },
+                                  class: h([
+                                    (
+                                      null ==
+                                      (t = (
+                                        null == (a = Le.value.row)
+                                          ? void 0
+                                          : a.os
+                                      )[e.value])
+                                        ? void 0
+                                        : t.length
+                                    )
+                                      ? "act"
+                                      : "",
+                                    "envV2-os-select",
+                                  ]),
+                                  clearable: "",
+                                  multiple: "",
+                                  placeholder: "",
+                                  "popper-class": "os-type-option",
+                                  onChange: (l) => {
+                                    var a;
+                                    return ((e, l) => {
+                                      if (l[l.length - 1] === `${e}-all`)
+                                        Le.value.row.os[e] = [`${e}-all`];
+                                      else if (l && l.includes(`${e}-all`)) {
+                                        const a = l.indexOf(`${e}-all`);
+                                        Le.value.row.os[e] = [
+                                          ...l.slice(0, a),
+                                          ...l.slice(a + 1),
+                                        ].filter(Boolean);
+                                      }
+                                      wl();
+                                    })(
+                                      e.value,
+                                      (null == (a = Le.value.row)
+                                        ? void 0
+                                        : a.os)[
+                                        e.options[0].value.split("-")[0]
+                                      ],
+                                    );
+                                  },
+                                },
+                                {
+                                  tag: f(() => [
+                                    Le.value.row &&
+                                    Le.value.row.os &&
+                                    Le.value.row.os[e.value].length
+                                      ? (p(),
+                                        g(
+                                          o,
+                                          { key: 0, type: "primary" },
+                                          {
+                                            default: f(() => {
+                                              var l;
+                                              return [
+                                                x(T(e.label) + " ", 1),
+                                                rl(Le.value.row, e)
+                                                  ? (p(),
+                                                    m(
+                                                      "span",
+                                                      oe,
+                                                      " (" +
+                                                        T(
+                                                          null ==
+                                                            (l =
+                                                              Le.value.row.os[
+                                                                e.value
+                                                              ])
+                                                            ? void 0
+                                                            : l.length,
+                                                        ) +
+                                                        ") ",
+                                                      1,
+                                                    ))
+                                                  : k("", !0),
+                                              ];
+                                            }),
+                                            _: 2,
+                                          },
+                                          1024,
+                                        ))
+                                      : (p(),
+                                        g(
+                                          o,
+                                          { key: 1, type: "default" },
+                                          {
+                                            default: f(() => [
+                                              x(T(e.label), 1),
+                                            ]),
+                                            _: 2,
+                                          },
+                                          1024,
+                                        )),
+                                  ]),
+                                  default: f(() => [
+                                    (p(!0),
+                                    m(
+                                      y,
+                                      null,
+                                      V(
+                                        e.options,
+                                        (e) => (
+                                          p(),
+                                          g(
+                                            u,
+                                            {
+                                              key: e.value,
+                                              label: e.label,
+                                              value: e.value,
+                                            },
+                                            null,
+                                            8,
+                                            ["label", "value"],
+                                          )
+                                        ),
+                                      ),
+                                      128,
+                                    )),
+                                  ]),
+                                  _: 2,
+                                },
+                                1032,
+                                [
+                                  "modelValue",
+                                  "onUpdate:modelValue",
+                                  "class",
+                                  "onChange",
+                                ],
+                              )
+                            );
+                          }),
+                          128,
+                        )),
+                      ]),
+                    ]),
+                    _: 1,
+                  },
+                ),
+                w(r, null, {
+                  label: f(() => [
+                    b("div", ue, [
+                      b("span", null, [
+                        x(T(e.$t("env.env.req.ua")) + " ", 1),
+                        w(X, { text: e.$t("envV2.tip25") }, null, 8, ["text"]),
+                      ]),
+                    ]),
+                  ]),
+                  default: f(() => {
+                    var l;
+                    return [
+                      a.isSingle || Be.isPreference
+                        ? k("", !0)
+                        : (p(),
+                          g(
+                            K,
+                            {
+                              key: 0,
+                              modelValue: Le.value.row.uaCreateType,
+                              "onUpdate:modelValue":
+                                t[1] ||
+                                (t[1] = (e) => (Le.value.row.uaCreateType = e)),
+                              class: "m-b-8",
+                            },
+                            {
+                              default: f(() => [
+                                w(
+                                  d,
+                                  {
+                                    label: _(Ge)("env.env.req.random"),
+                                    value: "random",
+                                  },
+                                  null,
+                                  8,
+                                  ["label"],
+                                ),
+                                w(
+                                  d,
+                                  {
+                                    label: _(Ge)("env.env.req.fixed"),
+                                    value: "fixed",
+                                  },
+                                  null,
+                                  8,
+                                  ["label"],
+                                ),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["modelValue"],
+                          )),
+                      b("div", ne, [
+                        w(
+                          r,
+                          {
+                            prop: "uaType",
+                            class:
+                              "ua-type-form-item !tw-mb-0 tw-w-[158px] tw-flex-shrink-0",
+                            "inline-message": !1,
+                          },
+                          {
+                            default: f(() => [
+                              w(
+                                n,
+                                {
+                                  modelValue: Le.value.uaTypeArr,
+                                  "onUpdate:modelValue":
+                                    t[2] ||
+                                    (t[2] = (e) => (Le.value.uaTypeArr = e)),
+                                  "max-collapse-tags": 1,
+                                  placeholder: e.$t("env.env.req.uaTypeHolder"),
+                                  "collapse-tags": "",
+                                  "collapse-tags-tooltip": "",
+                                  multiple: "",
+                                  onChange: fl,
+                                },
+                                {
+                                  default: f(() => [
+                                    (p(!0),
+                                    m(
+                                      y,
+                                      null,
+                                      V(
+                                        a.uaTypeOptions,
+                                        (e) => (
+                                          p(),
+                                          g(
+                                            u,
+                                            {
+                                              key: e.value,
+                                              label: e.label,
+                                              value: e.value,
+                                            },
+                                            null,
+                                            8,
+                                            ["label", "value"],
+                                          )
+                                        ),
+                                      ),
+                                      128,
+                                    )),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["modelValue", "placeholder"],
+                              ),
+                            ]),
+                            _: 1,
+                          },
+                        ),
+                        (!a.isSingle &&
+                          "fixed" !==
+                            (null == (l = Le.value.row)
+                              ? void 0
+                              : l.uaCreateType)) ||
+                        Be.isPreference
+                          ? k("", !0)
+                          : (p(),
+                            g(
+                              r,
+                              {
+                                key: 0,
+                                prop: "ua",
+                                class: "ua-input-form-item !tw-mb-0 tw-flex-1",
+                                "inline-message": !1,
+                              },
+                              {
+                                default: f(() => {
+                                  var l;
+                                  return [
+                                    w(
+                                      c,
+                                      {
+                                        modelValue: Le.value.row.ua,
+                                        "onUpdate:modelValue":
+                                          t[3] ||
+                                          (t[3] = (e) => (Le.value.row.ua = e)),
+                                        placeholder: e.$t(
+                                          "env.env.req.uaHolder",
+                                        ),
+                                        class: "tw-w-full g-new-ua",
+                                        disabled: cl.value.ua,
+                                      },
+                                      M({ _: 2 }, [
+                                        a.isSingle ||
+                                        (!a.isSingle &&
+                                          "fixed" ===
+                                            (null == (l = Le.value.row)
+                                              ? void 0
+                                              : l.uaCreateType))
+                                          ? {
+                                              name: "append",
+                                              fn: f(() => [
+                                                w(
+                                                  s,
+                                                  {
+                                                    content:
+                                                      e.$t("env.env.req.newUA"),
+                                                    placement: "top",
+                                                  },
+                                                  {
+                                                    default: f(() => [
+                                                      b(
+                                                        "p",
+                                                        {
+                                                          class:
+                                                            "tw-text-black tw-whitespace-nowrap tw-cursor-pointer tw-duration-300 tw-h-[38px] tw-text-[20px] hover:tw-text-main tw-px-[12px]",
+                                                          onClick: wl,
+                                                        },
+                                                        [
+                                                          ...(t[31] ||
+                                                            (t[31] = [
+                                                              b(
+                                                                "i",
+                                                                {
+                                                                  class:
+                                                                    "iconfont icon-Reexecute tw-mr-1 tw-text-[18px]",
+                                                                },
+                                                                null,
+                                                                -1,
+                                                              ),
+                                                            ])),
+                                                        ],
+                                                      ),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                  8,
+                                                  ["content"],
+                                                ),
+                                              ]),
+                                              key: "0",
+                                            }
+                                          : void 0,
+                                      ]),
+                                      1032,
+                                      ["modelValue", "placeholder", "disabled"],
+                                    ),
+                                  ];
+                                }),
+                                _: 1,
+                              },
+                            )),
+                      ]),
+                    ];
+                  }),
+                  _: 1,
+                }),
+                (p(!0),
+                m(
+                  y,
+                  null,
+                  V(
+                    _(je).slice(0, 1),
+                    (l, u) => (
+                      p(),
+                      m(
+                        y,
+                        null,
+                        [
+                          a.isShowAll
+                            ? (p(),
+                              g(
+                                r,
+                                {
+                                  key: u,
+                                  label: l.label,
+                                  prop: `extend.${l.column}`,
+                                  class: "extend-item",
+                                },
+                                {
+                                  default: f(() => [
+                                    b("div", re, [
+                                      "custom2" !== l.componentType
+                                        ? (p(),
+                                          m("div", ie, [
+                                            w(
+                                              K,
+                                              {
+                                                modelValue:
+                                                  _(ol)[`${l.column}Type`],
+                                                "onUpdate:modelValue": (e) =>
+                                                  (_(ol)[`${l.column}Type`] =
+                                                    e),
+                                              },
+                                              {
+                                                default: f(() => [
+                                                  (p(!0),
+                                                  m(
+                                                    y,
+                                                    null,
+                                                    V(
+                                                      l.options,
+                                                      (e) => (
+                                                        p(),
+                                                        g(
+                                                          s,
+                                                          {
+                                                            key: e.value,
+                                                            content: e.tip,
+                                                            placement: "top",
+                                                            disabled: !e.tip,
+                                                          },
+                                                          {
+                                                            default: f(() => [
+                                                              w(
+                                                                d,
+                                                                {
+                                                                  label:
+                                                                    e.label,
+                                                                  value:
+                                                                    e.value,
+                                                                  onChange: (
+                                                                    a,
+                                                                  ) =>
+                                                                    yl(
+                                                                      l.column,
+                                                                      e.value,
+                                                                    ),
+                                                                },
+                                                                {
+                                                                  default: f(
+                                                                    () => [
+                                                                      "custom" ===
+                                                                      e.type
+                                                                        ? (p(),
+                                                                          m(
+                                                                            "div",
+                                                                            de,
+                                                                            [
+                                                                              w(
+                                                                                s,
+                                                                                {
+                                                                                  placement:
+                                                                                    "top",
+                                                                                },
+                                                                                {
+                                                                                  content:
+                                                                                    f(
+                                                                                      () => [
+                                                                                        b(
+                                                                                          "div",
+                                                                                          se,
+                                                                                          [
+                                                                                            b(
+                                                                                              "p",
+                                                                                              null,
+                                                                                              T(
+                                                                                                _(
+                                                                                                  Ge,
+                                                                                                )(
+                                                                                                  "env.env.req.ratioTruthBtn1",
+                                                                                                ),
+                                                                                              ),
+                                                                                              1,
+                                                                                            ),
+                                                                                            b(
+                                                                                              "p",
+                                                                                              null,
+                                                                                              T(
+                                                                                                _(
+                                                                                                  Ge,
+                                                                                                )(
+                                                                                                  "env.env.req.ratioTruthBtn2",
+                                                                                                ),
+                                                                                              ),
+                                                                                              1,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  default:
+                                                                                    f(
+                                                                                      () => [
+                                                                                        t[32] ||
+                                                                                          (t[32] =
+                                                                                            b(
+                                                                                              "i",
+                                                                                              {
+                                                                                                class:
+                                                                                                  "iconfont icon-help-circle",
+                                                                                                style:
+                                                                                                  {
+                                                                                                    "font-size":
+                                                                                                      "15px",
+                                                                                                  },
+                                                                                              },
+                                                                                              null,
+                                                                                              -1,
+                                                                                            )),
+                                                                                      ],
+                                                                                    ),
+                                                                                  _: 1,
+                                                                                },
+                                                                              ),
+                                                                              x(
+                                                                                " " +
+                                                                                  T(
+                                                                                    e.label,
+                                                                                  ),
+                                                                                1,
+                                                                              ),
+                                                                            ],
+                                                                          ))
+                                                                        : (p(),
+                                                                          m(
+                                                                            y,
+                                                                            {
+                                                                              key: 1,
+                                                                            },
+                                                                            [
+                                                                              x(
+                                                                                T(
+                                                                                  e.label,
+                                                                                ),
+                                                                                1,
+                                                                              ),
+                                                                            ],
+                                                                            64,
+                                                                          )),
+                                                                    ],
+                                                                  ),
+                                                                  _: 2,
+                                                                },
+                                                                1032,
+                                                                [
+                                                                  "label",
+                                                                  "value",
+                                                                  "onChange",
+                                                                ],
+                                                              ),
+                                                            ]),
+                                                            _: 2,
+                                                          },
+                                                          1032,
+                                                          [
+                                                            "content",
+                                                            "disabled",
+                                                          ],
+                                                        )
+                                                      ),
+                                                    ),
+                                                    128,
+                                                  )),
+                                                ]),
+                                                _: 2,
+                                              },
+                                              1032,
+                                              [
+                                                "modelValue",
+                                                "onUpdate:modelValue",
+                                              ],
+                                            ),
+                                          ]))
+                                        : k("", !0),
+                                      "acceptLang" === l.column
+                                        ? (p(),
+                                          m(
+                                            y,
+                                            { key: 1 },
+                                            [
+                                              "custom" ===
+                                              _(ol)[`${l.column}Type`]
+                                                ? (p(),
+                                                  m("div", ce, [
+                                                    b("div", ve, [
+                                                      (p(!0),
+                                                      m(
+                                                        y,
+                                                        null,
+                                                        V(
+                                                          bl.value,
+                                                          (e, l) => (
+                                                            p(),
+                                                            m(
+                                                              "div",
+                                                              {
+                                                                key: l,
+                                                                class:
+                                                                  "accept-lang-item",
+                                                              },
+                                                              [
+                                                                b(
+                                                                  "span",
+                                                                  null,
+                                                                  T(e.label),
+                                                                  1,
+                                                                ),
+                                                                b("div", null, [
+                                                                  w(
+                                                                    o,
+                                                                    {
+                                                                      disabled:
+                                                                        !(
+                                                                          l > 0
+                                                                        ),
+                                                                      link: "",
+                                                                      type: "info",
+                                                                      onClick: (
+                                                                        e,
+                                                                      ) =>
+                                                                        Vl(
+                                                                          l,
+                                                                          !0,
+                                                                        ),
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            ...(t[33] ||
+                                                                              (t[33] =
+                                                                                [
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-to-top",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  ),
+                                                                                ])),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    [
+                                                                      "disabled",
+                                                                      "onClick",
+                                                                    ],
+                                                                  ),
+                                                                  w(
+                                                                    o,
+                                                                    {
+                                                                      disabled:
+                                                                        !(
+                                                                          l > 0
+                                                                        ),
+                                                                      link: "",
+                                                                      type: "info",
+                                                                      onClick: (
+                                                                        e,
+                                                                      ) =>
+                                                                        Vl(
+                                                                          l,
+                                                                          !1,
+                                                                        ),
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            ...(t[34] ||
+                                                                              (t[34] =
+                                                                                [
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-arrow-up",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  ),
+                                                                                ])),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    [
+                                                                      "disabled",
+                                                                      "onClick",
+                                                                    ],
+                                                                  ),
+                                                                  w(
+                                                                    o,
+                                                                    {
+                                                                      disabled:
+                                                                        !(
+                                                                          l <
+                                                                          bl
+                                                                            .value
+                                                                            .length -
+                                                                            1
+                                                                        ),
+                                                                      link: "",
+                                                                      type: "info",
+                                                                      onClick: (
+                                                                        e,
+                                                                      ) =>
+                                                                        hl(
+                                                                          l,
+                                                                          !1,
+                                                                        ),
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            ...(t[35] ||
+                                                                              (t[35] =
+                                                                                [
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-arrow-down",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  ),
+                                                                                ])),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    [
+                                                                      "disabled",
+                                                                      "onClick",
+                                                                    ],
+                                                                  ),
+                                                                  w(
+                                                                    o,
+                                                                    {
+                                                                      disabled:
+                                                                        !(
+                                                                          l <
+                                                                          bl
+                                                                            .value
+                                                                            .length -
+                                                                            1
+                                                                        ),
+                                                                      link: "",
+                                                                      type: "info",
+                                                                      onClick: (
+                                                                        e,
+                                                                      ) =>
+                                                                        hl(
+                                                                          l,
+                                                                          !0,
+                                                                        ),
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            ...(t[36] ||
+                                                                              (t[36] =
+                                                                                [
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-to-bottom",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  ),
+                                                                                ])),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    [
+                                                                      "disabled",
+                                                                      "onClick",
+                                                                    ],
+                                                                  ),
+                                                                  w(
+                                                                    o,
+                                                                    {
+                                                                      link: "",
+                                                                      type: "info",
+                                                                      onClick: (
+                                                                        e,
+                                                                      ) => {
+                                                                        var a;
+                                                                        (a =
+                                                                          l) <
+                                                                          0 ||
+                                                                          a >
+                                                                            bl
+                                                                              .value
+                                                                              .length -
+                                                                              1 ||
+                                                                          (bl.value.splice(
+                                                                            a,
+                                                                            1,
+                                                                          ),
+                                                                          yl());
+                                                                      },
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            ...(t[37] ||
+                                                                              (t[37] =
+                                                                                [
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-remove",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  ),
+                                                                                ])),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    ["onClick"],
+                                                                  ),
+                                                                ]),
+                                                              ],
+                                                            )
+                                                          ),
+                                                        ),
+                                                        128,
+                                                      )),
+                                                    ]),
+                                                    w(
+                                                      o,
+                                                      {
+                                                        link: "",
+                                                        type: "primary",
+                                                        onClick: gl,
+                                                      },
+                                                      {
+                                                        default: f(() => [
+                                                          t[38] ||
+                                                            (t[38] = b(
+                                                              "i",
+                                                              {
+                                                                class:
+                                                                  "iconfont icon-plus",
+                                                              },
+                                                              null,
+                                                              -1,
+                                                            )),
+                                                          x(
+                                                            " " +
+                                                              T(
+                                                                e.$t(
+                                                                  "env.env.req.addLanguage",
+                                                                ),
+                                                              ),
+                                                            1,
+                                                          ),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                    ),
+                                                  ]))
+                                                : k("", !0),
+                                            ],
+                                            64,
+                                          ))
+                                        : k("", !0),
+                                    ]),
+                                  ]),
+                                  _: 2,
+                                },
+                                1032,
+                                ["label", "prop"],
+                              ))
+                            : k("", !0),
+                          "acceptLang" === l.column &&
+                          void 0 !== (null == Be ? void 0 : Be.isMore)
+                            ? (p(),
+                              m(
+                                "div",
+                                {
+                                  key: u,
+                                  class:
+                                    "tw-w-full c-flex tw-gap-x-4 tw-mb-[20px]",
+                                },
+                                [
+                                  t[39] ||
+                                    (t[39] = b(
+                                      "div",
+                                      {
+                                        class:
+                                          "tw-w-full tw-h-[1px] tw-bg-[var(--border-color-base)]",
+                                      },
+                                      null,
+                                      -1,
+                                    )),
+                                  b(
+                                    "div",
+                                    {
+                                      class:
+                                        "tw-flex-shrink-0 tw-text-[var(--el-text-color-regular)] c-flex tw-cursor-pointer tw-gap-x-[1px] tw-duration-300 hover:tw-text-main",
+                                      onClick:
+                                        t[4] ||
+                                        (t[4] = (e) => (De.value = !De.value)),
+                                    },
+                                    [
+                                      b(
+                                        "span",
+                                        null,
+                                        T(e.$t("menu.setting.top1")),
+                                        1,
+                                      ),
+                                      b(
+                                        "i",
+                                        {
+                                          class: h(
+                                            _(C)(
+                                              "tw-text-[14px] iconfont icon-arrow",
+                                              De.value ? "tw-rotate-180" : "",
+                                            ),
+                                          ),
+                                        },
+                                        null,
+                                        2,
+                                      ),
+                                    ],
+                                  ),
+                                  t[40] ||
+                                    (t[40] = b(
+                                      "div",
+                                      {
+                                        class:
+                                          "tw-w-full tw-h-[1px] tw-bg-[var(--border-color-base)]",
+                                      },
+                                      null,
+                                      -1,
+                                    )),
+                                ],
+                              ))
+                            : k("", !0),
+                        ],
+                        64,
+                      )
+                    ),
+                  ),
+                  256,
+                )),
+                De.value
+                  ? (p(!0),
+                    m(
+                      y,
+                      { key: 0 },
+                      V(
+                        _(je).slice(1, _(je).length),
+                        (l, v) => (
+                          p(),
+                          m(
+                            y,
+                            null,
+                            [
+                              a.isShowAll
+                                ? (p(),
+                                  g(
+                                    r,
+                                    {
+                                      key: v,
+                                      class: h(_(C)("extend-item")),
+                                      label: l.label,
+                                      prop: `extend.${l.column}`,
+                                      style: I({
+                                        marginBottom: [
+                                          "font",
+                                          "speechVoices",
+                                        ].includes(l.column)
+                                          ? "0!important"
+                                          : "",
+                                      }),
+                                    },
+                                    M(
+                                      {
+                                        default: f(() => {
+                                          var v, M, C;
+                                          return [
+                                            b("div", pe, [
+                                              "custom2" !== l.componentType
+                                                ? (p(),
+                                                  m("div", me, [
+                                                    w(
+                                                      K,
+                                                      {
+                                                        modelValue:
+                                                          _(ol)[
+                                                            `${l.column}Type`
+                                                          ],
+                                                        "onUpdate:modelValue": (
+                                                          e,
+                                                        ) =>
+                                                          (_(ol)[
+                                                            `${l.column}Type`
+                                                          ] = e),
+                                                        "data-id":
+                                                          "webrtc" === l.column
+                                                            ? "webRTC-radio"
+                                                            : "",
+                                                      },
+                                                      {
+                                                        default: f(() => [
+                                                          (p(!0),
+                                                          m(
+                                                            y,
+                                                            null,
+                                                            V(
+                                                              l.options,
+                                                              (e) => (
+                                                                p(),
+                                                                g(
+                                                                  s,
+                                                                  {
+                                                                    key: e.value,
+                                                                    content:
+                                                                      e.tip,
+                                                                    enterable:
+                                                                      !1,
+                                                                    placement:
+                                                                      "top",
+                                                                    disabled:
+                                                                      !e.tip,
+                                                                  },
+                                                                  {
+                                                                    default: f(
+                                                                      () => [
+                                                                        w(
+                                                                          d,
+                                                                          {
+                                                                            label:
+                                                                              e.label,
+                                                                            value:
+                                                                              e.value,
+                                                                            onChange:
+                                                                              (
+                                                                                a,
+                                                                              ) =>
+                                                                                yl(
+                                                                                  l.column,
+                                                                                  e.value,
+                                                                                ),
+                                                                          },
+                                                                          {
+                                                                            default:
+                                                                              f(
+                                                                                () => [
+                                                                                  "custom" ===
+                                                                                  e.type
+                                                                                    ? (p(),
+                                                                                      m(
+                                                                                        "div",
+                                                                                        we,
+                                                                                        [
+                                                                                          w(
+                                                                                            s,
+                                                                                            {
+                                                                                              placement:
+                                                                                                "top",
+                                                                                              enterable:
+                                                                                                !1,
+                                                                                            },
+                                                                                            {
+                                                                                              content:
+                                                                                                f(
+                                                                                                  () => [
+                                                                                                    b(
+                                                                                                      "div",
+                                                                                                      fe,
+                                                                                                      [
+                                                                                                        b(
+                                                                                                          "p",
+                                                                                                          null,
+                                                                                                          T(
+                                                                                                            _(
+                                                                                                              Ge,
+                                                                                                            )(
+                                                                                                              "env.env.req.ratioTruthBtn1",
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          1,
+                                                                                                        ),
+                                                                                                        b(
+                                                                                                          "p",
+                                                                                                          null,
+                                                                                                          T(
+                                                                                                            _(
+                                                                                                              Ge,
+                                                                                                            )(
+                                                                                                              "env.env.req.ratioTruthBtn2",
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          1,
+                                                                                                        ),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              default:
+                                                                                                f(
+                                                                                                  () => [
+                                                                                                    t[41] ||
+                                                                                                      (t[41] =
+                                                                                                        b(
+                                                                                                          "i",
+                                                                                                          {
+                                                                                                            class:
+                                                                                                              "iconfont icon-help-circle",
+                                                                                                            style:
+                                                                                                              {
+                                                                                                                "font-size":
+                                                                                                                  "15px",
+                                                                                                              },
+                                                                                                          },
+                                                                                                          null,
+                                                                                                          -1,
+                                                                                                        )),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              _: 1,
+                                                                                            },
+                                                                                          ),
+                                                                                          x(
+                                                                                            " " +
+                                                                                              T(
+                                                                                                e.label,
+                                                                                              ),
+                                                                                            1,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ))
+                                                                                    : (p(),
+                                                                                      m(
+                                                                                        y,
+                                                                                        {
+                                                                                          key: 1,
+                                                                                        },
+                                                                                        [
+                                                                                          x(
+                                                                                            T(
+                                                                                              e.label,
+                                                                                            ),
+                                                                                            1,
+                                                                                          ),
+                                                                                        ],
+                                                                                        64,
+                                                                                      )),
+                                                                                ],
+                                                                              ),
+                                                                            _: 2,
+                                                                          },
+                                                                          1032,
+                                                                          [
+                                                                            "label",
+                                                                            "value",
+                                                                            "onChange",
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    _: 2,
+                                                                  },
+                                                                  1032,
+                                                                  [
+                                                                    "content",
+                                                                    "disabled",
+                                                                  ],
+                                                                )
+                                                              ),
+                                                            ),
+                                                            128,
+                                                          )),
+                                                        ]),
+                                                        _: 2,
+                                                      },
+                                                      1032,
+                                                      [
+                                                        "modelValue",
+                                                        "onUpdate:modelValue",
+                                                        "data-id",
+                                                      ],
+                                                    ),
+                                                  ]))
+                                                : k("", !0),
+                                              "tlsDisabledValues" === l.column
+                                                ? (p(),
+                                                  g(
+                                                    ee,
+                                                    {
+                                                      key: 1,
+                                                      modelValue:
+                                                        _(ol).tlsDisabledValues,
+                                                      "onUpdate:modelValue":
+                                                        t[5] ||
+                                                        (t[5] = (e) =>
+                                                          (_(
+                                                            ol,
+                                                          ).tlsDisabledValues =
+                                                            e)),
+                                                      mode: ul.value,
+                                                      "onUpdate:mode":
+                                                        t[6] ||
+                                                        (t[6] = (e) =>
+                                                          (ul.value = e)),
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["modelValue", "mode"],
+                                                  ))
+                                                : "geo" === l.column
+                                                  ? (p(),
+                                                    m(
+                                                      y,
+                                                      { key: 2 },
+                                                      [
+                                                        "disable" !==
+                                                        _(ol).geoType
+                                                          ? (p(),
+                                                            m("div", be, [
+                                                              w(
+                                                                K,
+                                                                {
+                                                                  modelValue:
+                                                                    _(ol)
+                                                                      .geoSubType,
+                                                                  "onUpdate:modelValue":
+                                                                    t[7] ||
+                                                                    (t[7] = (
+                                                                      e,
+                                                                    ) =>
+                                                                      (_(
+                                                                        ol,
+                                                                      ).geoSubType =
+                                                                        e)),
+                                                                },
+                                                                {
+                                                                  default: f(
+                                                                    () => [
+                                                                      (p(!0),
+                                                                      m(
+                                                                        y,
+                                                                        null,
+                                                                        V(
+                                                                          l.valueOptions,
+                                                                          (
+                                                                            e,
+                                                                          ) => (
+                                                                            p(),
+                                                                            g(
+                                                                              s,
+                                                                              {
+                                                                                key: e.value,
+                                                                                content:
+                                                                                  e.tip,
+                                                                                enterable:
+                                                                                  !1,
+                                                                                placement:
+                                                                                  "top",
+                                                                                disabled:
+                                                                                  !e.tip,
+                                                                              },
+                                                                              {
+                                                                                default:
+                                                                                  f(
+                                                                                    () => [
+                                                                                      w(
+                                                                                        d,
+                                                                                        {
+                                                                                          label:
+                                                                                            e.label,
+                                                                                          value:
+                                                                                            e.value,
+                                                                                          onChange:
+                                                                                            yl,
+                                                                                        },
+                                                                                        null,
+                                                                                        8,
+                                                                                        [
+                                                                                          "label",
+                                                                                          "value",
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                _: 2,
+                                                                              },
+                                                                              1032,
+                                                                              [
+                                                                                "content",
+                                                                                "disabled",
+                                                                              ],
+                                                                            )
+                                                                          ),
+                                                                        ),
+                                                                        128,
+                                                                      )),
+                                                                    ],
+                                                                  ),
+                                                                  _: 2,
+                                                                },
+                                                                1032,
+                                                                ["modelValue"],
+                                                              ),
+                                                            ]))
+                                                          : k("", !0),
+                                                        "custom" ===
+                                                        _(ol).geoSubType
+                                                          ? (p(),
+                                                            m("div", ye, [
+                                                              w(
+                                                                r,
+                                                                {
+                                                                  label: e.$t(
+                                                                    "env.env.req.longitude",
+                                                                  ),
+                                                                  class:
+                                                                    "geo-longitude",
+                                                                },
+                                                                {
+                                                                  default: f(
+                                                                    () => [
+                                                                      w(
+                                                                        $,
+                                                                        {
+                                                                          modelValue:
+                                                                            _(
+                                                                              ol,
+                                                                            )
+                                                                              .geoValue
+                                                                              .longitude,
+                                                                          "onUpdate:modelValue":
+                                                                            t[8] ||
+                                                                            (t[8] =
+                                                                              (
+                                                                                e,
+                                                                              ) =>
+                                                                                (_(
+                                                                                  ol,
+                                                                                ).geoValue.longitude =
+                                                                                  e)),
+                                                                          controls:
+                                                                            !1,
+                                                                          max: 180,
+                                                                          min: -180,
+                                                                          placeholder:
+                                                                            e.$t(
+                                                                              "env.env.req.longitudeHolder",
+                                                                            ),
+                                                                          class:
+                                                                            "tw-w-[100%]",
+                                                                          clearable:
+                                                                            "",
+                                                                          onBlur:
+                                                                            Tl,
+                                                                        },
+                                                                        null,
+                                                                        8,
+                                                                        [
+                                                                          "modelValue",
+                                                                          "placeholder",
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  _: 1,
+                                                                },
+                                                                8,
+                                                                ["label"],
+                                                              ),
+                                                              w(
+                                                                r,
+                                                                {
+                                                                  label: e.$t(
+                                                                    "env.env.req.latitude",
+                                                                  ),
+                                                                  class:
+                                                                    "geo-latitude",
+                                                                },
+                                                                {
+                                                                  default: f(
+                                                                    () => [
+                                                                      w(
+                                                                        $,
+                                                                        {
+                                                                          modelValue:
+                                                                            _(
+                                                                              ol,
+                                                                            )
+                                                                              .geoValue
+                                                                              .latitude,
+                                                                          "onUpdate:modelValue":
+                                                                            t[9] ||
+                                                                            (t[9] =
+                                                                              (
+                                                                                e,
+                                                                              ) =>
+                                                                                (_(
+                                                                                  ol,
+                                                                                ).geoValue.latitude =
+                                                                                  e)),
+                                                                          controls:
+                                                                            !1,
+                                                                          max: 180,
+                                                                          min: -180,
+                                                                          placeholder:
+                                                                            e.$t(
+                                                                              "env.env.req.latitudeHolder",
+                                                                            ),
+                                                                          class:
+                                                                            "tw-w-[100%]",
+                                                                          clearable:
+                                                                            "",
+                                                                          onBlur:
+                                                                            Tl,
+                                                                        },
+                                                                        null,
+                                                                        8,
+                                                                        [
+                                                                          "modelValue",
+                                                                          "placeholder",
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  _: 1,
+                                                                },
+                                                                8,
+                                                                ["label"],
+                                                              ),
+                                                              w(
+                                                                r,
+                                                                {
+                                                                  label: e.$t(
+                                                                    "env.env.req.accuracy",
+                                                                  ),
+                                                                  style: {
+                                                                    marginBottom:
+                                                                      "0!important",
+                                                                  },
+                                                                  class:
+                                                                    "geo-accuracy",
+                                                                },
+                                                                {
+                                                                  default: f(
+                                                                    () => [
+                                                                      w(
+                                                                        $,
+                                                                        {
+                                                                          modelValue:
+                                                                            _(
+                                                                              ol,
+                                                                            )
+                                                                              .geoValue
+                                                                              .accuracy,
+                                                                          "onUpdate:modelValue":
+                                                                            t[10] ||
+                                                                            (t[10] =
+                                                                              (
+                                                                                e,
+                                                                              ) =>
+                                                                                (_(
+                                                                                  ol,
+                                                                                ).geoValue.accuracy =
+                                                                                  e)),
+                                                                          controls:
+                                                                            !1,
+                                                                          max: 5e3,
+                                                                          min: 10,
+                                                                          placeholder:
+                                                                            e.$t(
+                                                                              "env.env.req.accuracyHolder",
+                                                                            ),
+                                                                          step: 1,
+                                                                          class:
+                                                                            "tw-w-[100%]",
+                                                                          clearable:
+                                                                            "",
+                                                                          onBlur:
+                                                                            Tl,
+                                                                        },
+                                                                        null,
+                                                                        8,
+                                                                        [
+                                                                          "modelValue",
+                                                                          "placeholder",
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  _: 1,
+                                                                },
+                                                                8,
+                                                                ["label"],
+                                                              ),
+                                                            ]))
+                                                          : k("", !0),
+                                                      ],
+                                                      64,
+                                                    ))
+                                                  : "font" === l.column
+                                                    ? (p(),
+                                                      m(
+                                                        y,
+                                                        { key: 3 },
+                                                        [
+                                                          "custom" ===
+                                                          _(ol)[
+                                                            `${l.column}Type`
+                                                          ]
+                                                            ? (p(),
+                                                              m("div", Ve, [
+                                                                b(
+                                                                  "div",
+                                                                  {
+                                                                    class: h({
+                                                                      "font-list":
+                                                                        !0,
+                                                                      collapse:
+                                                                        el.value,
+                                                                    }),
+                                                                  },
+                                                                  T(
+                                                                    el.value
+                                                                      ? `${null == (v = _(ol).fontValue) ? void 0 : v.slice(0, 4).join(", ")} ${e.$t("base.etc", { N: null == (M = _(ol).fontValue) ? void 0 : M.length })}`
+                                                                      : null ==
+                                                                          (C =
+                                                                            _(
+                                                                              ol,
+                                                                            ).fontValue)
+                                                                        ? void 0
+                                                                        : C.join(
+                                                                            ", ",
+                                                                          ),
+                                                                  ),
+                                                                  3,
+                                                                ),
+                                                                w(
+                                                                  o,
+                                                                  {
+                                                                    link: "",
+                                                                    type: "primary",
+                                                                    onClick: kl,
+                                                                  },
+                                                                  {
+                                                                    default: f(
+                                                                      () => [
+                                                                        t[42] ||
+                                                                          (t[42] =
+                                                                            b(
+                                                                              "i",
+                                                                              {
+                                                                                class:
+                                                                                  "iconfont icon-random !tw-text-[20px]",
+                                                                              },
+                                                                              null,
+                                                                              -1,
+                                                                            )),
+                                                                        x(
+                                                                          " " +
+                                                                            T(
+                                                                              e.$t(
+                                                                                "env.env.req.randomFont",
+                                                                              ),
+                                                                            ),
+                                                                          1,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    _: 1,
+                                                                  },
+                                                                ),
+                                                                w(
+                                                                  o,
+                                                                  {
+                                                                    link: "",
+                                                                    type: "primary",
+                                                                    onClick: _l,
+                                                                  },
+                                                                  {
+                                                                    default: f(
+                                                                      () => [
+                                                                        t[43] ||
+                                                                          (t[43] =
+                                                                            b(
+                                                                              "i",
+                                                                              {
+                                                                                class:
+                                                                                  "iconfont icon-edit !tw-text-[20px]",
+                                                                              },
+                                                                              null,
+                                                                              -1,
+                                                                            )),
+                                                                        x(
+                                                                          " " +
+                                                                            T(
+                                                                              e.$t(
+                                                                                "base.edit",
+                                                                              ),
+                                                                            ),
+                                                                          1,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    _: 1,
+                                                                  },
+                                                                ),
+                                                                el.value
+                                                                  ? (p(),
+                                                                    g(
+                                                                      o,
+                                                                      {
+                                                                        key: 0,
+                                                                        link: "",
+                                                                        type: "primary",
+                                                                        onClick:
+                                                                          t[11] ||
+                                                                          (t[11] =
+                                                                            (
+                                                                              e,
+                                                                            ) =>
+                                                                              (el.value =
+                                                                                !1)),
+                                                                      },
+                                                                      {
+                                                                        default:
+                                                                          f(
+                                                                            () => [
+                                                                              t[44] ||
+                                                                                (t[44] =
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-arrow !tw-text-[20px]",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  )),
+                                                                              x(
+                                                                                " " +
+                                                                                  T(
+                                                                                    e.$t(
+                                                                                      "base.expand",
+                                                                                    ),
+                                                                                  ),
+                                                                                1,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        _: 1,
+                                                                      },
+                                                                    ))
+                                                                  : (p(),
+                                                                    g(
+                                                                      o,
+                                                                      {
+                                                                        key: 1,
+                                                                        link: "",
+                                                                        type: "primary",
+                                                                        onClick:
+                                                                          t[12] ||
+                                                                          (t[12] =
+                                                                            (
+                                                                              e,
+                                                                            ) =>
+                                                                              (el.value =
+                                                                                !0)),
+                                                                      },
+                                                                      {
+                                                                        default:
+                                                                          f(
+                                                                            () => [
+                                                                              t[45] ||
+                                                                                (t[45] =
+                                                                                  b(
+                                                                                    "i",
+                                                                                    {
+                                                                                      class:
+                                                                                        "iconfont icon-arrow fold !tw-text-[20px]",
+                                                                                    },
+                                                                                    null,
+                                                                                    -1,
+                                                                                  )),
+                                                                              x(
+                                                                                T(
+                                                                                  e.$t(
+                                                                                    "base.fold",
+                                                                                  ),
+                                                                                ),
+                                                                                1,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        _: 1,
+                                                                      },
+                                                                    )),
+                                                              ]))
+                                                            : k("", !0),
+                                                        ],
+                                                        64,
+                                                      ))
+                                                    : "select" ===
+                                                        l.componentType
+                                                      ? (p(),
+                                                        m(
+                                                          y,
+                                                          { key: 4 },
+                                                          [
+                                                            l.valueOptions &&
+                                                            "custom" ===
+                                                              _(ol)[
+                                                                `${l.column}Type`
+                                                              ]
+                                                              ? (p(),
+                                                                m("div", ge, [
+                                                                  w(
+                                                                    n,
+                                                                    {
+                                                                      modelValue:
+                                                                        _(ol)[
+                                                                          `${l.column}Value`
+                                                                        ],
+                                                                      "onUpdate:modelValue":
+                                                                        (e) =>
+                                                                          (_(
+                                                                            ol,
+                                                                          )[
+                                                                            `${l.column}Value`
+                                                                          ] =
+                                                                            e),
+                                                                      placeholder:
+                                                                        e.$t(
+                                                                          "base.selectHolder",
+                                                                        ),
+                                                                      class:
+                                                                        "tw-mt-[8px]",
+                                                                      filterable:
+                                                                        "",
+                                                                      onChange:
+                                                                        yl,
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            (p(
+                                                                              !0,
+                                                                            ),
+                                                                            m(
+                                                                              y,
+                                                                              null,
+                                                                              V(
+                                                                                l.valueOptions,
+                                                                                (
+                                                                                  e,
+                                                                                ) => (
+                                                                                  p(),
+                                                                                  g(
+                                                                                    u,
+                                                                                    {
+                                                                                      key: e.value,
+                                                                                      label:
+                                                                                        e.label,
+                                                                                      value:
+                                                                                        e.value,
+                                                                                    },
+                                                                                    null,
+                                                                                    8,
+                                                                                    [
+                                                                                      "label",
+                                                                                      "value",
+                                                                                    ],
+                                                                                  )
+                                                                                ),
+                                                                              ),
+                                                                              128,
+                                                                            )),
+                                                                          ],
+                                                                        ),
+                                                                      _: 2,
+                                                                    },
+                                                                    1032,
+                                                                    [
+                                                                      "modelValue",
+                                                                      "onUpdate:modelValue",
+                                                                      "placeholder",
+                                                                    ],
+                                                                  ),
+                                                                ]))
+                                                              : k("", !0),
+                                                          ],
+                                                          64,
+                                                        ))
+                                                      : "webrtc" === l.column
+                                                        ? (p(),
+                                                          m(
+                                                            y,
+                                                            { key: 5 },
+                                                            [
+                                                              "replace" ===
+                                                              _(ol)[
+                                                                `${l.column}Type`
+                                                              ]
+                                                                ? (p(),
+                                                                  m("div", he, [
+                                                                    w(
+                                                                      r,
+                                                                      {
+                                                                        label:
+                                                                          _(Ge)(
+                                                                            "env.env.req.webrtcReplaceType",
+                                                                          ),
+                                                                        "label-position":
+                                                                          "left",
+                                                                      },
+                                                                      {
+                                                                        default:
+                                                                          f(
+                                                                            () => [
+                                                                              w(
+                                                                                O,
+                                                                                {
+                                                                                  modelValue:
+                                                                                    nl.value,
+                                                                                  "onUpdate:modelValue":
+                                                                                    t[13] ||
+                                                                                    (t[13] =
+                                                                                      (
+                                                                                        e,
+                                                                                      ) =>
+                                                                                        (nl.value =
+                                                                                          e)),
+                                                                                  class:
+                                                                                    "m-t-5 tw-flex tw-gap-2",
+                                                                                },
+                                                                                {
+                                                                                  default:
+                                                                                    f(
+                                                                                      () => [
+                                                                                        w(
+                                                                                          R,
+                                                                                          {
+                                                                                            value:
+                                                                                              "manual",
+                                                                                          },
+                                                                                          {
+                                                                                            default:
+                                                                                              f(
+                                                                                                () => [
+                                                                                                  b(
+                                                                                                    "div",
+                                                                                                    xe,
+                                                                                                    T(
+                                                                                                      e.$t(
+                                                                                                        "env.env.req.webrtcManualInput",
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    1,
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            _: 1,
+                                                                                          },
+                                                                                        ),
+                                                                                        w(
+                                                                                          R,
+                                                                                          {
+                                                                                            value:
+                                                                                              "proxyIp",
+                                                                                          },
+                                                                                          {
+                                                                                            default:
+                                                                                              f(
+                                                                                                () => [
+                                                                                                  b(
+                                                                                                    "div",
+                                                                                                    Te,
+                                                                                                    T(
+                                                                                                      e.$t(
+                                                                                                        "env.env.req.useMatchingWebRTCIP",
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    1,
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            _: 1,
+                                                                                          },
+                                                                                        ),
+                                                                                        w(
+                                                                                          R,
+                                                                                          {
+                                                                                            value:
+                                                                                              "randomIp",
+                                                                                          },
+                                                                                          {
+                                                                                            default:
+                                                                                              f(
+                                                                                                () => [
+                                                                                                  b(
+                                                                                                    "div",
+                                                                                                    ke,
+                                                                                                    T(
+                                                                                                      e.$t(
+                                                                                                        "env.env.req.useRandomInternalIP",
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    1,
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            _: 1,
+                                                                                          },
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  _: 1,
+                                                                                },
+                                                                                8,
+                                                                                [
+                                                                                  "modelValue",
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        _: 1,
+                                                                      },
+                                                                      8,
+                                                                      ["label"],
+                                                                    ),
+                                                                    "manual" ===
+                                                                    nl.value
+                                                                      ? (p(),
+                                                                        g(
+                                                                          r,
+                                                                          {
+                                                                            key: 0,
+                                                                            label:
+                                                                              _(
+                                                                                Ge,
+                                                                              )(
+                                                                                "env.env.req.webrtcValue",
+                                                                              ),
+                                                                            "label-position":
+                                                                              "left",
+                                                                            prop: "extend.webrtcValue",
+                                                                          },
+                                                                          {
+                                                                            default:
+                                                                              f(
+                                                                                () => [
+                                                                                  w(
+                                                                                    c,
+                                                                                    {
+                                                                                      modelValue:
+                                                                                        _(
+                                                                                          ol,
+                                                                                        )[
+                                                                                          `${l.column}Value`
+                                                                                        ],
+                                                                                      "onUpdate:modelValue":
+                                                                                        (
+                                                                                          e,
+                                                                                        ) =>
+                                                                                          (_(
+                                                                                            ol,
+                                                                                          )[
+                                                                                            `${l.column}Value`
+                                                                                          ] =
+                                                                                            e),
+                                                                                      placeholder:
+                                                                                        e.$t(
+                                                                                          "env.env.req.webrtcValueHolder",
+                                                                                        ),
+                                                                                      class:
+                                                                                        "tw-mt-[8px] w-max",
+                                                                                      clearable:
+                                                                                        "",
+                                                                                    },
+                                                                                    null,
+                                                                                    8,
+                                                                                    [
+                                                                                      "modelValue",
+                                                                                      "onUpdate:modelValue",
+                                                                                      "placeholder",
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            _: 2,
+                                                                          },
+                                                                          1032,
+                                                                          [
+                                                                            "label",
+                                                                          ],
+                                                                        ))
+                                                                      : k(
+                                                                          "",
+                                                                          !0,
+                                                                        ),
+                                                                    "randomIp" ===
+                                                                    nl.value
+                                                                      ? (p(),
+                                                                        g(
+                                                                          r,
+                                                                          {
+                                                                            key: 1,
+                                                                            label:
+                                                                              _(
+                                                                                Ge,
+                                                                              )(
+                                                                                "env.env.req.webrtcKeepRandomInternalIp",
+                                                                              ),
+                                                                            "label-position":
+                                                                              "left",
+                                                                            class:
+                                                                              "!tw-mb-[0]",
+                                                                          },
+                                                                          {
+                                                                            default:
+                                                                              f(
+                                                                                () => [
+                                                                                  w(
+                                                                                    O,
+                                                                                    {
+                                                                                      modelValue:
+                                                                                        _(
+                                                                                          ol,
+                                                                                        )
+                                                                                          .webrtcKeepRandomInternalIp,
+                                                                                      "onUpdate:modelValue":
+                                                                                        t[14] ||
+                                                                                        (t[14] =
+                                                                                          (
+                                                                                            e,
+                                                                                          ) =>
+                                                                                            (_(
+                                                                                              ol,
+                                                                                            ).webrtcKeepRandomInternalIp =
+                                                                                              e)),
+                                                                                      class:
+                                                                                        "tw-flex tw-gap-4",
+                                                                                    },
+                                                                                    {
+                                                                                      default:
+                                                                                        f(
+                                                                                          () => [
+                                                                                            w(
+                                                                                              R,
+                                                                                              {
+                                                                                                value:
+                                                                                                  !1,
+                                                                                              },
+                                                                                              {
+                                                                                                default:
+                                                                                                  f(
+                                                                                                    () => [
+                                                                                                      b(
+                                                                                                        "div",
+                                                                                                        _e,
+                                                                                                        [
+                                                                                                          x(
+                                                                                                            T(
+                                                                                                              e.$t(
+                                                                                                                "env.env.req.notKeep",
+                                                                                                              ),
+                                                                                                            ) +
+                                                                                                              " ",
+                                                                                                            1,
+                                                                                                          ),
+                                                                                                          w(
+                                                                                                            Z,
+                                                                                                            {
+                                                                                                              content:
+                                                                                                                e.$t(
+                                                                                                                  "env.env.req.notKeepTip",
+                                                                                                                ),
+                                                                                                            },
+                                                                                                            null,
+                                                                                                            8,
+                                                                                                            [
+                                                                                                              "content",
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                _: 1,
+                                                                                              },
+                                                                                            ),
+                                                                                            w(
+                                                                                              R,
+                                                                                              {
+                                                                                                value:
+                                                                                                  !0,
+                                                                                              },
+                                                                                              {
+                                                                                                default:
+                                                                                                  f(
+                                                                                                    () => [
+                                                                                                      b(
+                                                                                                        "div",
+                                                                                                        Me,
+                                                                                                        [
+                                                                                                          x(
+                                                                                                            T(
+                                                                                                              e.$t(
+                                                                                                                "env.env.req.keep",
+                                                                                                              ),
+                                                                                                            ) +
+                                                                                                              " ",
+                                                                                                            1,
+                                                                                                          ),
+                                                                                                          w(
+                                                                                                            Z,
+                                                                                                            {
+                                                                                                              content:
+                                                                                                                e.$t(
+                                                                                                                  "env.env.req.keepTip",
+                                                                                                                ),
+                                                                                                            },
+                                                                                                            null,
+                                                                                                            8,
+                                                                                                            [
+                                                                                                              "content",
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                _: 1,
+                                                                                              },
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      _: 1,
+                                                                                    },
+                                                                                    8,
+                                                                                    [
+                                                                                      "modelValue",
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            _: 1,
+                                                                          },
+                                                                          8,
+                                                                          [
+                                                                            "label",
+                                                                          ],
+                                                                        ))
+                                                                      : k(
+                                                                          "",
+                                                                          !0,
+                                                                        ),
+                                                                  ]))
+                                                                : k("", !0),
+                                                            ],
+                                                            64,
+                                                          ))
+                                                        : "ratio" ===
+                                                              l.column &&
+                                                            "custom" ===
+                                                              _(ol).ratioType
+                                                          ? (p(),
+                                                            m(
+                                                              y,
+                                                              { key: 6 },
+                                                              [
+                                                                w(
+                                                                  n,
+                                                                  {
+                                                                    modelValue:
+                                                                      _(ol)
+                                                                        .ratioValue,
+                                                                    "onUpdate:modelValue":
+                                                                      t[15] ||
+                                                                      (t[15] = (
+                                                                        e,
+                                                                      ) =>
+                                                                        (_(
+                                                                          ol,
+                                                                        ).ratioValue =
+                                                                          e)),
+                                                                    placeholder:
+                                                                      e.$t(
+                                                                        "base.selectHolder",
+                                                                      ),
+                                                                    class:
+                                                                      "tw-mt-[8px]",
+                                                                    filterable:
+                                                                      "",
+                                                                  },
+                                                                  {
+                                                                    default: f(
+                                                                      () => [
+                                                                        (p(!0),
+                                                                        m(
+                                                                          y,
+                                                                          null,
+                                                                          V(
+                                                                            _(
+                                                                              We,
+                                                                            ),
+                                                                            (
+                                                                              e,
+                                                                            ) => (
+                                                                              p(),
+                                                                              g(
+                                                                                u,
+                                                                                {
+                                                                                  key: e.value,
+                                                                                  label:
+                                                                                    e.label,
+                                                                                  value:
+                                                                                    e.value,
+                                                                                },
+                                                                                null,
+                                                                                8,
+                                                                                [
+                                                                                  "label",
+                                                                                  "value",
+                                                                                ],
+                                                                              )
+                                                                            ),
+                                                                          ),
+                                                                          128,
+                                                                        )),
+                                                                      ],
+                                                                    ),
+                                                                    _: 1,
+                                                                  },
+                                                                  8,
+                                                                  [
+                                                                    "modelValue",
+                                                                    "placeholder",
+                                                                  ],
+                                                                ),
+                                                                "custom" ===
+                                                                _(ol).ratioValue
+                                                                  ? (p(),
+                                                                    m(
+                                                                      "div",
+                                                                      Ce,
+                                                                      [
+                                                                        w(
+                                                                          $,
+                                                                          {
+                                                                            modelValue:
+                                                                              _(
+                                                                                ol,
+                                                                              )
+                                                                                .ratioWidth,
+                                                                            "onUpdate:modelValue":
+                                                                              t[16] ||
+                                                                              (t[16] =
+                                                                                (
+                                                                                  e,
+                                                                                ) =>
+                                                                                  (_(
+                                                                                    ol,
+                                                                                  ).ratioWidth =
+                                                                                    e)),
+                                                                            modelModifiers:
+                                                                              {
+                                                                                number:
+                                                                                  !0,
+                                                                              },
+                                                                            controls:
+                                                                              !1,
+                                                                            placeholder:
+                                                                              e.$t(
+                                                                                "env.env.req.ratioInputPlaceholder",
+                                                                              ),
+                                                                            min: "1",
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "modelValue",
+                                                                            "placeholder",
+                                                                          ],
+                                                                        ),
+                                                                        t[46] ||
+                                                                          (t[46] =
+                                                                            b(
+                                                                              "span",
+                                                                              null,
+                                                                              "x",
+                                                                              -1,
+                                                                            )),
+                                                                        w(
+                                                                          $,
+                                                                          {
+                                                                            modelValue:
+                                                                              _(
+                                                                                ol,
+                                                                              )
+                                                                                .ratioHeight,
+                                                                            "onUpdate:modelValue":
+                                                                              t[17] ||
+                                                                              (t[17] =
+                                                                                (
+                                                                                  e,
+                                                                                ) =>
+                                                                                  (_(
+                                                                                    ol,
+                                                                                  ).ratioHeight =
+                                                                                    e)),
+                                                                            controls:
+                                                                              !1,
+                                                                            placeholder:
+                                                                              e.$t(
+                                                                                "env.env.req.ratioInputPlaceholder",
+                                                                              ),
+                                                                            min: "1",
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "modelValue",
+                                                                            "placeholder",
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ))
+                                                                  : k("", !0),
+                                                              ],
+                                                              64,
+                                                            ))
+                                                          : "windowRatio" ===
+                                                                l.column &&
+                                                              "custom" ===
+                                                                _(ol)
+                                                                  .windowRatioType
+                                                            ? (p(),
+                                                              m(
+                                                                y,
+                                                                { key: 7 },
+                                                                [
+                                                                  w(
+                                                                    n,
+                                                                    {
+                                                                      modelValue:
+                                                                        _(ol)
+                                                                          .windowRatioValue,
+                                                                      "onUpdate:modelValue":
+                                                                        t[18] ||
+                                                                        (t[18] =
+                                                                          (e) =>
+                                                                            (_(
+                                                                              ol,
+                                                                            ).windowRatioValue =
+                                                                              e)),
+                                                                      placeholder:
+                                                                        e.$t(
+                                                                          "base.selectHolder",
+                                                                        ),
+                                                                      class:
+                                                                        "tw-mt-[8px]",
+                                                                      filterable:
+                                                                        "",
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            (p(
+                                                                              !0,
+                                                                            ),
+                                                                            m(
+                                                                              y,
+                                                                              null,
+                                                                              V(
+                                                                                _(
+                                                                                  We,
+                                                                                ),
+                                                                                (
+                                                                                  e,
+                                                                                ) => (
+                                                                                  p(),
+                                                                                  g(
+                                                                                    u,
+                                                                                    {
+                                                                                      key: e.value,
+                                                                                      label:
+                                                                                        e.label,
+                                                                                      value:
+                                                                                        e.value,
+                                                                                    },
+                                                                                    null,
+                                                                                    8,
+                                                                                    [
+                                                                                      "label",
+                                                                                      "value",
+                                                                                    ],
+                                                                                  )
+                                                                                ),
+                                                                              ),
+                                                                              128,
+                                                                            )),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    [
+                                                                      "modelValue",
+                                                                      "placeholder",
+                                                                    ],
+                                                                  ),
+                                                                  "custom" ===
+                                                                  _(ol)
+                                                                    .windowRatioValue
+                                                                    ? (p(),
+                                                                      m(
+                                                                        "div",
+                                                                        Ie,
+                                                                        [
+                                                                          w(
+                                                                            $,
+                                                                            {
+                                                                              modelValue:
+                                                                                _(
+                                                                                  ol,
+                                                                                )
+                                                                                  .windowWidth,
+                                                                              "onUpdate:modelValue":
+                                                                                t[19] ||
+                                                                                (t[19] =
+                                                                                  (
+                                                                                    e,
+                                                                                  ) =>
+                                                                                    (_(
+                                                                                      ol,
+                                                                                    ).windowWidth =
+                                                                                      e)),
+                                                                              modelModifiers:
+                                                                                {
+                                                                                  number:
+                                                                                    !0,
+                                                                                },
+                                                                              controls:
+                                                                                !1,
+                                                                              placeholder:
+                                                                                e.$t(
+                                                                                  "env.env.req.ratioInputPlaceholder",
+                                                                                ),
+                                                                              min: "1",
+                                                                            },
+                                                                            null,
+                                                                            8,
+                                                                            [
+                                                                              "modelValue",
+                                                                              "placeholder",
+                                                                            ],
+                                                                          ),
+                                                                          t[47] ||
+                                                                            (t[47] =
+                                                                              b(
+                                                                                "span",
+                                                                                null,
+                                                                                "x",
+                                                                                -1,
+                                                                              )),
+                                                                          w(
+                                                                            $,
+                                                                            {
+                                                                              modelValue:
+                                                                                _(
+                                                                                  ol,
+                                                                                )
+                                                                                  .windowHeight,
+                                                                              "onUpdate:modelValue":
+                                                                                t[20] ||
+                                                                                (t[20] =
+                                                                                  (
+                                                                                    e,
+                                                                                  ) =>
+                                                                                    (_(
+                                                                                      ol,
+                                                                                    ).windowHeight =
+                                                                                      e)),
+                                                                              modelModifiers:
+                                                                                {
+                                                                                  number:
+                                                                                    !0,
+                                                                                },
+                                                                              controls:
+                                                                                !1,
+                                                                              placeholder:
+                                                                                e.$t(
+                                                                                  "env.env.req.ratioInputPlaceholder",
+                                                                                ),
+                                                                              min: "1",
+                                                                            },
+                                                                            null,
+                                                                            8,
+                                                                            [
+                                                                              "modelValue",
+                                                                              "placeholder",
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ))
+                                                                    : k("", !0),
+                                                                ],
+                                                                64,
+                                                              ))
+                                                            : "webGLMetadata" !==
+                                                                  l.column ||
+                                                                "custom" !==
+                                                                  _(ol)
+                                                                    .webGLMetadataType ||
+                                                                a.isBatchOperation
+                                                              ? "deviceMemory" ===
+                                                                l.column
+                                                                ? (p(),
+                                                                  m(
+                                                                    y,
+                                                                    { key: 9 },
+                                                                    [
+                                                                      a.isSingle ||
+                                                                      a.isEdit
+                                                                        ? k(
+                                                                            "",
+                                                                            !0,
+                                                                          )
+                                                                        : (p(),
+                                                                          g(
+                                                                            K,
+                                                                            {
+                                                                              key: 0,
+                                                                              modelValue:
+                                                                                _(
+                                                                                  ol,
+                                                                                )
+                                                                                  .deviceMemoryType,
+                                                                              "onUpdate:modelValue":
+                                                                                t[26] ||
+                                                                                (t[26] =
+                                                                                  (
+                                                                                    e,
+                                                                                  ) =>
+                                                                                    (_(
+                                                                                      ol,
+                                                                                    ).deviceMemoryType =
+                                                                                      e)),
+                                                                              class:
+                                                                                "m-b-8",
+                                                                            },
+                                                                            {
+                                                                              default:
+                                                                                f(
+                                                                                  () => [
+                                                                                    (p(
+                                                                                      !0,
+                                                                                    ),
+                                                                                    m(
+                                                                                      y,
+                                                                                      null,
+                                                                                      V(
+                                                                                        l.options,
+                                                                                        (
+                                                                                          e,
+                                                                                        ) => (
+                                                                                          p(),
+                                                                                          g(
+                                                                                            s,
+                                                                                            {
+                                                                                              key: e.value,
+                                                                                              content:
+                                                                                                e.tip,
+                                                                                              enterable:
+                                                                                                !1,
+                                                                                              placement:
+                                                                                                "top",
+                                                                                              disabled:
+                                                                                                !e.tip,
+                                                                                            },
+                                                                                            {
+                                                                                              default:
+                                                                                                f(
+                                                                                                  () => [
+                                                                                                    w(
+                                                                                                      d,
+                                                                                                      {
+                                                                                                        label:
+                                                                                                          e.label,
+                                                                                                        value:
+                                                                                                          e.value,
+                                                                                                        onChange:
+                                                                                                          yl,
+                                                                                                      },
+                                                                                                      null,
+                                                                                                      8,
+                                                                                                      [
+                                                                                                        "label",
+                                                                                                        "value",
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              _: 2,
+                                                                                            },
+                                                                                            1032,
+                                                                                            [
+                                                                                              "content",
+                                                                                              "disabled",
+                                                                                            ],
+                                                                                          )
+                                                                                        ),
+                                                                                      ),
+                                                                                      128,
+                                                                                    )),
+                                                                                  ],
+                                                                                ),
+                                                                              _: 2,
+                                                                            },
+                                                                            1032,
+                                                                            [
+                                                                              "modelValue",
+                                                                            ],
+                                                                          )),
+                                                                      a.isSingle ||
+                                                                      "custom" ===
+                                                                        _(ol)
+                                                                          .deviceMemoryType
+                                                                        ? (p(),
+                                                                          m(
+                                                                            "div",
+                                                                            Oe,
+                                                                            [
+                                                                              w(
+                                                                                n,
+                                                                                {
+                                                                                  modelValue:
+                                                                                    _(
+                                                                                      ol,
+                                                                                    )[
+                                                                                      `${l.column}Value`
+                                                                                    ],
+                                                                                  "onUpdate:modelValue":
+                                                                                    (
+                                                                                      e,
+                                                                                    ) =>
+                                                                                      (_(
+                                                                                        ol,
+                                                                                      )[
+                                                                                        `${l.column}Value`
+                                                                                      ] =
+                                                                                        e),
+                                                                                  placeholder:
+                                                                                    e.$t(
+                                                                                      "base.selectHolder",
+                                                                                    ),
+                                                                                  class:
+                                                                                    "tw-max-w-[120px]",
+                                                                                  filterable:
+                                                                                    "",
+                                                                                },
+                                                                                {
+                                                                                  default:
+                                                                                    f(
+                                                                                      () => [
+                                                                                        (p(
+                                                                                          !0,
+                                                                                        ),
+                                                                                        m(
+                                                                                          y,
+                                                                                          null,
+                                                                                          V(
+                                                                                            l.valueOptions,
+                                                                                            (
+                                                                                              e,
+                                                                                            ) => (
+                                                                                              p(),
+                                                                                              g(
+                                                                                                u,
+                                                                                                {
+                                                                                                  key: e.value,
+                                                                                                  label:
+                                                                                                    e.label,
+                                                                                                  value:
+                                                                                                    e.value,
+                                                                                                },
+                                                                                                null,
+                                                                                                8,
+                                                                                                [
+                                                                                                  "label",
+                                                                                                  "value",
+                                                                                                ],
+                                                                                              )
+                                                                                            ),
+                                                                                          ),
+                                                                                          128,
+                                                                                        )),
+                                                                                      ],
+                                                                                    ),
+                                                                                  _: 2,
+                                                                                },
+                                                                                1032,
+                                                                                [
+                                                                                  "modelValue",
+                                                                                  "onUpdate:modelValue",
+                                                                                  "placeholder",
+                                                                                ],
+                                                                              ),
+                                                                              "truth" !==
+                                                                              _(
+                                                                                ol,
+                                                                              )[
+                                                                                `${l.column}Value`
+                                                                              ]
+                                                                                ? (p(),
+                                                                                  m(
+                                                                                    "div",
+                                                                                    Ae,
+                                                                                    "GB",
+                                                                                  ))
+                                                                                : k(
+                                                                                    "",
+                                                                                    !0,
+                                                                                  ),
+                                                                            ],
+                                                                          ))
+                                                                        : k(
+                                                                            "",
+                                                                            !0,
+                                                                          ),
+                                                                    ],
+                                                                    64,
+                                                                  ))
+                                                                : "hardwareConcurrency" ===
+                                                                    l.column
+                                                                  ? (p(),
+                                                                    m(
+                                                                      y,
+                                                                      {
+                                                                        key: 10,
+                                                                      },
+                                                                      [
+                                                                        a.isSingle
+                                                                          ? k(
+                                                                              "",
+                                                                              !0,
+                                                                            )
+                                                                          : (p(),
+                                                                            g(
+                                                                              K,
+                                                                              {
+                                                                                key: 0,
+                                                                                modelValue:
+                                                                                  _(
+                                                                                    ol,
+                                                                                  )
+                                                                                    .hardwareConcurrencyType,
+                                                                                "onUpdate:modelValue":
+                                                                                  t[27] ||
+                                                                                  (t[27] =
+                                                                                    (
+                                                                                      e,
+                                                                                    ) =>
+                                                                                      (_(
+                                                                                        ol,
+                                                                                      ).hardwareConcurrencyType =
+                                                                                        e)),
+                                                                                class:
+                                                                                  "m-b-8",
+                                                                              },
+                                                                              {
+                                                                                default:
+                                                                                  f(
+                                                                                    () => [
+                                                                                      (p(
+                                                                                        !0,
+                                                                                      ),
+                                                                                      m(
+                                                                                        y,
+                                                                                        null,
+                                                                                        V(
+                                                                                          l.options,
+                                                                                          (
+                                                                                            e,
+                                                                                          ) => (
+                                                                                            p(),
+                                                                                            g(
+                                                                                              s,
+                                                                                              {
+                                                                                                key: e.value,
+                                                                                                content:
+                                                                                                  e.tip,
+                                                                                                enterable:
+                                                                                                  !1,
+                                                                                                placement:
+                                                                                                  "top",
+                                                                                                disabled:
+                                                                                                  !e.tip,
+                                                                                              },
+                                                                                              {
+                                                                                                default:
+                                                                                                  f(
+                                                                                                    () => [
+                                                                                                      w(
+                                                                                                        d,
+                                                                                                        {
+                                                                                                          label:
+                                                                                                            e.label,
+                                                                                                          value:
+                                                                                                            e.value,
+                                                                                                          onChange:
+                                                                                                            yl,
+                                                                                                        },
+                                                                                                        null,
+                                                                                                        8,
+                                                                                                        [
+                                                                                                          "label",
+                                                                                                          "value",
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                _: 2,
+                                                                                              },
+                                                                                              1032,
+                                                                                              [
+                                                                                                "content",
+                                                                                                "disabled",
+                                                                                              ],
+                                                                                            )
+                                                                                          ),
+                                                                                        ),
+                                                                                        128,
+                                                                                      )),
+                                                                                    ],
+                                                                                  ),
+                                                                                _: 2,
+                                                                              },
+                                                                              1032,
+                                                                              [
+                                                                                "modelValue",
+                                                                              ],
+                                                                            )),
+                                                                        a.isSingle ||
+                                                                        "custom" ===
+                                                                          _(ol)
+                                                                            .hardwareConcurrencyType
+                                                                          ? (p(),
+                                                                            m(
+                                                                              "div",
+                                                                              Ue,
+                                                                              [
+                                                                                w(
+                                                                                  n,
+                                                                                  {
+                                                                                    modelValue:
+                                                                                      _(
+                                                                                        ol,
+                                                                                      )[
+                                                                                        `${l.column}Value`
+                                                                                      ],
+                                                                                    "onUpdate:modelValue":
+                                                                                      (
+                                                                                        e,
+                                                                                      ) =>
+                                                                                        (_(
+                                                                                          ol,
+                                                                                        )[
+                                                                                          `${l.column}Value`
+                                                                                        ] =
+                                                                                          e),
+                                                                                    placeholder:
+                                                                                      e.$t(
+                                                                                        "base.selectHolder",
+                                                                                      ),
+                                                                                    class:
+                                                                                      "tw-max-w-[120px]",
+                                                                                    filterable:
+                                                                                      "",
+                                                                                  },
+                                                                                  {
+                                                                                    default:
+                                                                                      f(
+                                                                                        () => [
+                                                                                          (p(
+                                                                                            !0,
+                                                                                          ),
+                                                                                          m(
+                                                                                            y,
+                                                                                            null,
+                                                                                            V(
+                                                                                              l.valueOptions,
+                                                                                              (
+                                                                                                e,
+                                                                                              ) => (
+                                                                                                p(),
+                                                                                                g(
+                                                                                                  u,
+                                                                                                  {
+                                                                                                    key: e.value,
+                                                                                                    label:
+                                                                                                      e.label,
+                                                                                                    value:
+                                                                                                      e.value,
+                                                                                                  },
+                                                                                                  null,
+                                                                                                  8,
+                                                                                                  [
+                                                                                                    "label",
+                                                                                                    "value",
+                                                                                                  ],
+                                                                                                )
+                                                                                              ),
+                                                                                            ),
+                                                                                            128,
+                                                                                          )),
+                                                                                        ],
+                                                                                      ),
+                                                                                    _: 2,
+                                                                                  },
+                                                                                  1032,
+                                                                                  [
+                                                                                    "modelValue",
+                                                                                    "onUpdate:modelValue",
+                                                                                    "placeholder",
+                                                                                  ],
+                                                                                ),
+                                                                                "truth" !==
+                                                                                _(
+                                                                                  ol,
+                                                                                )[
+                                                                                  `${l.column}Value`
+                                                                                ]
+                                                                                  ? (p(),
+                                                                                    m(
+                                                                                      "div",
+                                                                                      Ne,
+                                                                                      T(
+                                                                                        e.$t(
+                                                                                          "env.env.req.nucleus",
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ))
+                                                                                  : k(
+                                                                                      "",
+                                                                                      !0,
+                                                                                    ),
+                                                                              ],
+                                                                            ))
+                                                                          : k(
+                                                                              "",
+                                                                              !0,
+                                                                            ),
+                                                                      ],
+                                                                      64,
+                                                                    ))
+                                                                  : "port" ===
+                                                                        l.column &&
+                                                                      "1" ===
+                                                                        _(ol)
+                                                                          .portType
+                                                                    ? (p(),
+                                                                      g(
+                                                                        c,
+                                                                        {
+                                                                          key: 11,
+                                                                          modelValue:
+                                                                            _(
+                                                                              ol,
+                                                                            )[
+                                                                              `${l.column}Value`
+                                                                            ],
+                                                                          "onUpdate:modelValue":
+                                                                            (
+                                                                              e,
+                                                                            ) =>
+                                                                              (_(
+                                                                                ol,
+                                                                              )[
+                                                                                `${l.column}Value`
+                                                                              ] =
+                                                                                e),
+                                                                          placeholder:
+                                                                            e.$t(
+                                                                              "env.env.req.portHolder",
+                                                                            ),
+                                                                          class:
+                                                                            "tw-mt-[8px]",
+                                                                        },
+                                                                        null,
+                                                                        8,
+                                                                        [
+                                                                          "modelValue",
+                                                                          "onUpdate:modelValue",
+                                                                          "placeholder",
+                                                                        ],
+                                                                      ))
+                                                                    : "startParams" ===
+                                                                        l.column
+                                                                      ? (p(),
+                                                                        g(
+                                                                          c,
+                                                                          {
+                                                                            key: 12,
+                                                                            modelValue:
+                                                                              _(
+                                                                                ol,
+                                                                              )
+                                                                                .startParams,
+                                                                            "onUpdate:modelValue":
+                                                                              t[28] ||
+                                                                              (t[28] =
+                                                                                (
+                                                                                  e,
+                                                                                ) =>
+                                                                                  (_(
+                                                                                    ol,
+                                                                                  ).startParams =
+                                                                                    e)),
+                                                                            placeholder:
+                                                                              e.$t(
+                                                                                "env.env.req.startExtraParamsHolder",
+                                                                              ),
+                                                                            clearable:
+                                                                              "",
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "modelValue",
+                                                                            "placeholder",
+                                                                          ],
+                                                                        ))
+                                                                      : "deviceName" ===
+                                                                            l.column &&
+                                                                          "custom" ===
+                                                                            _(
+                                                                              ol,
+                                                                            )
+                                                                              .deviceNameType
+                                                                        ? (p(),
+                                                                          g(
+                                                                            r,
+                                                                            {
+                                                                              key: 13,
+                                                                              style:
+                                                                                {
+                                                                                  marginBottom:
+                                                                                    "0!important",
+                                                                                },
+                                                                              prop: "extend.deviceNameValue",
+                                                                            },
+                                                                            {
+                                                                              default:
+                                                                                f(
+                                                                                  () => [
+                                                                                    w(
+                                                                                      c,
+                                                                                      {
+                                                                                        modelValue:
+                                                                                          _(
+                                                                                            ol,
+                                                                                          )[
+                                                                                            `${l.column}Value`
+                                                                                          ],
+                                                                                        "onUpdate:modelValue":
+                                                                                          (
+                                                                                            e,
+                                                                                          ) =>
+                                                                                            (_(
+                                                                                              ol,
+                                                                                            )[
+                                                                                              `${l.column}Value`
+                                                                                            ] =
+                                                                                              e),
+                                                                                        placeholder:
+                                                                                          e.$t(
+                                                                                            "env.env.req.deviceNameHolder",
+                                                                                          ),
+                                                                                        class:
+                                                                                          "tw-mt-[8px] input-append-default",
+                                                                                        disabled:
+                                                                                          cl
+                                                                                            .value[
+                                                                                            _(
+                                                                                              i,
+                                                                                            )
+                                                                                              .DEVICE_NAME
+                                                                                          ],
+                                                                                      },
+                                                                                      {
+                                                                                        append:
+                                                                                          f(
+                                                                                            () => [
+                                                                                              w(
+                                                                                                o,
+                                                                                                {
+                                                                                                  type: "info",
+                                                                                                  class:
+                                                                                                    "button-info-pro",
+                                                                                                  link: "",
+                                                                                                  onClick:
+                                                                                                    t[29] ||
+                                                                                                    (t[29] =
+                                                                                                      (
+                                                                                                        e,
+                                                                                                      ) =>
+                                                                                                        Ol(
+                                                                                                          _(
+                                                                                                            i,
+                                                                                                          )
+                                                                                                            .DEVICE_NAME,
+                                                                                                          !0,
+                                                                                                        )),
+                                                                                                },
+                                                                                                {
+                                                                                                  default:
+                                                                                                    f(
+                                                                                                      () => [
+                                                                                                        ...(t[49] ||
+                                                                                                          (t[49] =
+                                                                                                            [
+                                                                                                              b(
+                                                                                                                "i",
+                                                                                                                {
+                                                                                                                  class:
+                                                                                                                    "iconfont icon-random",
+                                                                                                                },
+                                                                                                                null,
+                                                                                                                -1,
+                                                                                                              ),
+                                                                                                            ])),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  _: 1,
+                                                                                                },
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        _: 1,
+                                                                                      },
+                                                                                      8,
+                                                                                      [
+                                                                                        "modelValue",
+                                                                                        "onUpdate:modelValue",
+                                                                                        "placeholder",
+                                                                                        "disabled",
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              _: 2,
+                                                                            },
+                                                                            1024,
+                                                                          ))
+                                                                        : "mac" ===
+                                                                              l.column &&
+                                                                            "custom" ===
+                                                                              _(
+                                                                                ol,
+                                                                              )
+                                                                                .macType
+                                                                          ? (p(),
+                                                                            g(
+                                                                              r,
+                                                                              {
+                                                                                key: 14,
+                                                                                style:
+                                                                                  {
+                                                                                    marginBottom:
+                                                                                      "0!important",
+                                                                                  },
+                                                                                prop: "extend.macValue",
+                                                                              },
+                                                                              {
+                                                                                default:
+                                                                                  f(
+                                                                                    () => [
+                                                                                      w(
+                                                                                        c,
+                                                                                        {
+                                                                                          modelValue:
+                                                                                            _(
+                                                                                              ol,
+                                                                                            )[
+                                                                                              `${l.column}Value`
+                                                                                            ],
+                                                                                          "onUpdate:modelValue":
+                                                                                            (
+                                                                                              e,
+                                                                                            ) =>
+                                                                                              (_(
+                                                                                                ol,
+                                                                                              )[
+                                                                                                `${l.column}Value`
+                                                                                              ] =
+                                                                                                e),
+                                                                                          placeholder:
+                                                                                            e.$t(
+                                                                                              "env.env.req.macHolder",
+                                                                                            ),
+                                                                                          class:
+                                                                                            "tw-mt-[8px] input-append-default",
+                                                                                          disabled:
+                                                                                            cl
+                                                                                              .value[
+                                                                                              _(
+                                                                                                i,
+                                                                                              )
+                                                                                                .MAC
+                                                                                            ],
+                                                                                        },
+                                                                                        {
+                                                                                          append:
+                                                                                            f(
+                                                                                              () => [
+                                                                                                w(
+                                                                                                  o,
+                                                                                                  {
+                                                                                                    type: "info",
+                                                                                                    class:
+                                                                                                      "button-info-pro",
+                                                                                                    link: "",
+                                                                                                    onClick:
+                                                                                                      t[30] ||
+                                                                                                      (t[30] =
+                                                                                                        (
+                                                                                                          e,
+                                                                                                        ) =>
+                                                                                                          Ol(
+                                                                                                            _(
+                                                                                                              i,
+                                                                                                            )
+                                                                                                              .MAC,
+                                                                                                            !0,
+                                                                                                          )),
+                                                                                                  },
+                                                                                                  {
+                                                                                                    default:
+                                                                                                      f(
+                                                                                                        () => [
+                                                                                                          ...(t[50] ||
+                                                                                                            (t[50] =
+                                                                                                              [
+                                                                                                                b(
+                                                                                                                  "i",
+                                                                                                                  {
+                                                                                                                    class:
+                                                                                                                      "iconfont icon-random",
+                                                                                                                  },
+                                                                                                                  null,
+                                                                                                                  -1,
+                                                                                                                ),
+                                                                                                              ])),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    _: 1,
+                                                                                                  },
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          _: 1,
+                                                                                        },
+                                                                                        8,
+                                                                                        [
+                                                                                          "modelValue",
+                                                                                          "onUpdate:modelValue",
+                                                                                          "placeholder",
+                                                                                          "disabled",
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                _: 2,
+                                                                              },
+                                                                              1024,
+                                                                            ))
+                                                                          : k(
+                                                                              "",
+                                                                              !0,
+                                                                            )
+                                                              : (p(),
+                                                                m("div", $e, [
+                                                                  w(
+                                                                    r,
+                                                                    {
+                                                                      label: _(
+                                                                        Ge,
+                                                                      )(
+                                                                        "env.env.req.UnmaskedVendor",
+                                                                      ),
+                                                                      "label-position":
+                                                                        "left",
+                                                                      prop: "extend.webglManufacturer",
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            b(
+                                                                              "div",
+                                                                              Re,
+                                                                              [
+                                                                                w(
+                                                                                  n,
+                                                                                  {
+                                                                                    modelValue:
+                                                                                      $l.value,
+                                                                                    "onUpdate:modelValue":
+                                                                                      t[21] ||
+                                                                                      (t[21] =
+                                                                                        (
+                                                                                          e,
+                                                                                        ) =>
+                                                                                          ($l.value =
+                                                                                            e)),
+                                                                                    placeholder:
+                                                                                      e.$t(
+                                                                                        "base.selectHolder",
+                                                                                      ),
+                                                                                    class:
+                                                                                      h(
+                                                                                        "Others" ===
+                                                                                          $l.value
+                                                                                          ? "tw-flex-[3] tw-w-[30%]"
+                                                                                          : "tw-w-full tw-flex-1",
+                                                                                      ),
+                                                                                    disabled:
+                                                                                      cl
+                                                                                        .value
+                                                                                        .webGLMetadata,
+                                                                                    filterable:
+                                                                                      "",
+                                                                                  },
+                                                                                  {
+                                                                                    default:
+                                                                                      f(
+                                                                                        () => [
+                                                                                          (p(
+                                                                                            !0,
+                                                                                          ),
+                                                                                          m(
+                                                                                            y,
+                                                                                            null,
+                                                                                            V(
+                                                                                              Il.value,
+                                                                                              (
+                                                                                                e,
+                                                                                              ) => (
+                                                                                                p(),
+                                                                                                g(
+                                                                                                  u,
+                                                                                                  {
+                                                                                                    key: e.value,
+                                                                                                    label:
+                                                                                                      e.label,
+                                                                                                    value:
+                                                                                                      e.value,
+                                                                                                  },
+                                                                                                  null,
+                                                                                                  8,
+                                                                                                  [
+                                                                                                    "label",
+                                                                                                    "value",
+                                                                                                  ],
+                                                                                                )
+                                                                                              ),
+                                                                                            ),
+                                                                                            128,
+                                                                                          )),
+                                                                                        ],
+                                                                                      ),
+                                                                                    _: 1,
+                                                                                  },
+                                                                                  8,
+                                                                                  [
+                                                                                    "modelValue",
+                                                                                    "placeholder",
+                                                                                    "class",
+                                                                                    "disabled",
+                                                                                  ],
+                                                                                ),
+                                                                                "Others" ===
+                                                                                $l.value
+                                                                                  ? (p(),
+                                                                                    g(
+                                                                                      c,
+                                                                                      {
+                                                                                        key: 0,
+                                                                                        modelValue:
+                                                                                          _(
+                                                                                            ol,
+                                                                                          )
+                                                                                            .webglManufacturer,
+                                                                                        "onUpdate:modelValue":
+                                                                                          t[22] ||
+                                                                                          (t[22] =
+                                                                                            (
+                                                                                              e,
+                                                                                            ) =>
+                                                                                              (_(
+                                                                                                ol,
+                                                                                              ).webglManufacturer =
+                                                                                                e)),
+                                                                                        placeholder:
+                                                                                          e.$t(
+                                                                                            "env.env.req.webglManufacturerRule",
+                                                                                          ),
+                                                                                        disabled:
+                                                                                          cl
+                                                                                            .value
+                                                                                            .webGLMetadata,
+                                                                                        class:
+                                                                                          "tw-flex-[7] tw-w-[70%]",
+                                                                                        onBlur:
+                                                                                          t[23] ||
+                                                                                          (t[23] =
+                                                                                            (
+                                                                                              e,
+                                                                                            ) => {
+                                                                                              var l;
+                                                                                              return (_(
+                                                                                                ol,
+                                                                                              ).webglManufacturer =
+                                                                                                null ==
+                                                                                                (l =
+                                                                                                  _(
+                                                                                                    ol,
+                                                                                                  ).webglManufacturer)
+                                                                                                  ? void 0
+                                                                                                  : l.trim());
+                                                                                            }),
+                                                                                      },
+                                                                                      null,
+                                                                                      8,
+                                                                                      [
+                                                                                        "modelValue",
+                                                                                        "placeholder",
+                                                                                        "disabled",
+                                                                                      ],
+                                                                                    ))
+                                                                                  : k(
+                                                                                      "",
+                                                                                      !0,
+                                                                                    ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    ["label"],
+                                                                  ),
+                                                                  w(
+                                                                    r,
+                                                                    {
+                                                                      "label-position":
+                                                                        "left",
+                                                                      label: _(
+                                                                        Ge,
+                                                                      )(
+                                                                        "env.env.req.UnmaskedRenderer",
+                                                                      ),
+                                                                      style: {
+                                                                        marginBottom:
+                                                                          "0!important",
+                                                                      },
+                                                                      prop: "extend.webglRender",
+                                                                    },
+                                                                    {
+                                                                      default:
+                                                                        f(
+                                                                          () => [
+                                                                            w(
+                                                                              c,
+                                                                              {
+                                                                                modelValue:
+                                                                                  _(
+                                                                                    ol,
+                                                                                  )
+                                                                                    .webglRender,
+                                                                                "onUpdate:modelValue":
+                                                                                  t[24] ||
+                                                                                  (t[24] =
+                                                                                    (
+                                                                                      e,
+                                                                                    ) =>
+                                                                                      (_(
+                                                                                        ol,
+                                                                                      ).webglRender =
+                                                                                        e)),
+                                                                                placeholder:
+                                                                                  e.$t(
+                                                                                    "env.env.req.webglRenderRule",
+                                                                                  ),
+                                                                                disabled:
+                                                                                  cl
+                                                                                    .value
+                                                                                    .webGLMetadata,
+                                                                                onBlur:
+                                                                                  t[25] ||
+                                                                                  (t[25] =
+                                                                                    (
+                                                                                      e,
+                                                                                    ) => {
+                                                                                      var l;
+                                                                                      return (_(
+                                                                                        ol,
+                                                                                      ).webglRender =
+                                                                                        null ==
+                                                                                        (l =
+                                                                                          _(
+                                                                                            ol,
+                                                                                          ).webglRender)
+                                                                                          ? void 0
+                                                                                          : l.trim());
+                                                                                    }),
+                                                                              },
+                                                                              null,
+                                                                              8,
+                                                                              [
+                                                                                "modelValue",
+                                                                                "placeholder",
+                                                                                "disabled",
+                                                                              ],
+                                                                            ),
+                                                                            "Others" !==
+                                                                            $l.value
+                                                                              ? (p(),
+                                                                                m(
+                                                                                  "div",
+                                                                                  {
+                                                                                    key: 0,
+                                                                                    class:
+                                                                                      "update-webGLMetadata-btn tw-mt-[10px]",
+                                                                                    onClick:
+                                                                                      Cl,
+                                                                                  },
+                                                                                  [
+                                                                                    t[48] ||
+                                                                                      (t[48] =
+                                                                                        b(
+                                                                                          "i",
+                                                                                          {
+                                                                                            class:
+                                                                                              "iconfont icon-random tw-mr-[5px]",
+                                                                                          },
+                                                                                          null,
+                                                                                          -1,
+                                                                                        )),
+                                                                                    x(
+                                                                                      T(
+                                                                                        _(
+                                                                                          Ge,
+                                                                                        )(
+                                                                                          "env.env.req.Randomize",
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                  ],
+                                                                                ))
+                                                                              : k(
+                                                                                  "",
+                                                                                  !0,
+                                                                                ),
+                                                                          ],
+                                                                        ),
+                                                                      _: 1,
+                                                                    },
+                                                                    8,
+                                                                    ["label"],
+                                                                  ),
+                                                                ])),
+                                            ]),
+                                          ];
+                                        }),
+                                        _: 2,
+                                      },
+                                      [
+                                        "tlsDisabledValues" === l.column
+                                          ? {
+                                              name: "label",
+                                              fn: f(() => [
+                                                b("span", null, T(l.label), 1),
+                                                w(
+                                                  X,
+                                                  {
+                                                    text: e.$t(
+                                                      "env.env.req.tlsDisabledValuesRiskTip",
+                                                    ),
+                                                  },
+                                                  null,
+                                                  8,
+                                                  ["text"],
+                                                ),
+                                              ]),
+                                              key: "0",
+                                            }
+                                          : void 0,
+                                      ],
+                                    ),
+                                    1032,
+                                    ["class", "label", "prop", "style"],
+                                  ))
+                                : k("", !0),
+                              ["font", "speechVoices"].includes(l.column)
+                                ? (p(),
+                                  g(
+                                    r,
+                                    {
+                                      key: v,
+                                      style: {
+                                        "margin-bottom": "0 !important",
+                                        "margin-top": "0 !important",
+                                      },
+                                    },
+                                    {
+                                      default: f(() => [
+                                        ...(t[51] ||
+                                          (t[51] = [
+                                            b(
+                                              "div",
+                                              {
+                                                class:
+                                                  "tw-w-full tw-h-[1px] tw-my-[24px] tw-bg-[var(--border-color-base)]",
+                                              },
+                                              null,
+                                              -1,
+                                            ),
+                                          ])),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ))
+                                : k("", !0),
+                            ],
+                            64,
+                          )
+                        ),
+                      ),
+                      256,
+                    ))
+                  : k("", !0),
+                w(
+                  J,
+                  { ref_key: "addAcceptLangDialogRef", ref: ll, onSubmit: xl },
+                  null,
+                  512,
+                ),
+                w(
+                  z,
+                  { ref_key: "editFontDialogRef", ref: al, onSubmit: Rl },
+                  null,
+                  512,
+                ),
+              ])
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-819e1bd7"]],
+  );
+export { Ee as default };

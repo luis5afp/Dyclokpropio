@@ -1,0 +1,279 @@
+{
+  "open-url": [
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "offset": 28780,
+      "context": "8e6,0xea6)+'s',yS='sync-all-w'+_0x28d9a9(0x1697,'0x1c84')+'e',bS='clear-text'+'-content',wS=_0x1acd6a(0x3145,'0xe9a')+_0x28d9a9('0x4c97','0x5d81'),vS=_0x1acd6a(0x88dd,'0x6444')+_0x1acd6a('0x4dc3',0x2fb8)+'ndows',_S=_0x28d9a9(0x4a14,'0x62bc')+_0x28d9a9(0x131c,0x35f1)+_0x1acd6a('0x21ac','0x324c'),SS=_0x28d9a9('0x6865',0x62bc)+_0x28d9a9('0x5dbf',0x46a9)+'-windows',xS='close-tab-'+'pages',ES=_0x1acd6a('0x4d9',0x2a6b)+_0x28d9a9(0xfcf,'0xa2a')+'s',TS='open-urls',CS=_0x1acd6a(-0x21d7,0x513)+_0x1acd6a(0x797b,0x4732),PS=_0x28d9a9(-0x16fb,'0x1007')+'tall-reque'+_0x28d9a9('0x8842',0x5459),IS='kernel-lis'+_0x28d9a9(0x5459,'0x3d47')+'d',RS='kernel-get'+'-progress',kS='kernel-can'+_0x1acd6a('0x5984','0x698c'),AS=_0x28d9a9(0x36ed,0xb91)+_0x1acd6a(0x3839,'0x4d06')+_0x28d9a9('0x2515',0x4377),NS=_0x28d9a9(0x6378,0x6412)+_0x28d9a9(0x3763,0x313a),OS='kernel-pro'+_0x28d9a9(0x39ae,0x5c95),DS='update-app',LS=_"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2372535,
+      "context": "=Hre().replaceAll(\"-\",\"\"),localStorage.setItem(\"device_id\",e)),e}const j3=\"get-running-env-records\",W3=\"app-window-active\",Y3=\"system-suspend\",X3=\"system-resume\",J3=\"clear-dev-cache\",Q3=\"clear-dev-all-cache\",Z3=\"open-file-dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2580266,
+      "context": "ll==e||e(!1)}},async syncCloseCurrentTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(k6,t,!0);return zoe(n),n}finally{null==e||e(!1)}},async syncCloseBlankTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(\"sync-close-blank-tabs\",t);return zoe(n),n}finally{null==e||e(!1)}},async syncOpenWebsite(e,t){try{null==t||t(!0);const n=this.getCompleteSelectEnvIds(),a=await C8.invoke(\"sync-open-urls\",n,e,!!this.currentTabOpenSiteState);return zoe(a),a}finally{null==t||t(!1)}},async syncClearTextContent(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(\"sync-clear-text-content\",t);return zoe(n),n}finally{null==e||e(!1)}},async syncPasteClipboard(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await(null==C8?void 0:C8.invoke(\"sync-send-clipboard\",t));return zoe(n),n}finally{null==e||e(!1)}}"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2587267,
+      "context": "ly{null==e||e(!1)}},async syncCloseCurrentTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(A6,t,!0);return Koe(n),n}finally{null==e||e(!1)}},async syncCloseBlankTab(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds(),n=await C8.invoke(\"close-blank-tab-pages\",t);return Koe(n),n}finally{null==e||e(!1)}},async syncOpenWebsite(e,t){try{null==t||t(!0);const n=this.getCompleteSelectEnvIds(),a=await C8.invoke(\"open-urls\",n,e,!!this.currentTabOpenSiteState);return Koe(a),a}finally{null==t||t(!1)}},syncClearTextContent(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds();C8.invoke(\"clear-text-content\",t),Koe(!0)}finally{null==e||e(!1)}},syncPasteClipboard(e){try{null==e||e(!0);const t=this.getCompleteSelectEnvIds();null==C8||C8.invoke(\"sync-clipboard\",t),Koe(!0)}finally{null==e||e(!1)}},syncSendText(e,t){try{null==t||t(!0);const n=this.inputDelay"
+    }
+  ],
+  "get-local-server-status": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2374659,
+      "context": "eUserName\"),t(this,\"deviceInfo\"),t(this,\"localVersionInfo\"),t(this,\"ipcRenderer\"),t(this,\"api\",{networkProbe:(e,t,n=!1)=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"network-probe\",e,t??3e3,n),()=>new Promise(e=>e(null))),getLocalProxy:()=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"get-local-proxy\"),()=>new Promise(e=>e({enabled:!1,address:\"\"}))),getLocalServerStatus:e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"get-local-server-status\",e),()=>new Promise(e=>{e(null)})),checkerResourceUpdate:e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"checker-resource-update\",e),()=>new Promise(e=>{e(null)})),setHttpLog:(e,t)=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"http:log\",e,t),()=>{}),getDeviceId:()=>this.synHandelIpcEvents(async()=>(!this.newDeviceId&&(this.newDeviceId=await window.DIC.api.getNewDeviceId()),this.newDeviceId),()=>new Promise(e"
+    }
+  ],
+  "version-local-info": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2375539,
+      "context": "d),()=>new Promise(e=>{e($3())})),getNewDeviceId:()=>this.handelIpcEvents(async()=>(!this.deviceId&&(this.deviceId=await this.ipcRenderer.invoke(\"get-device-id\")),this.deviceId),()=>new Promise(e=>{e($3())})),userSaveFile:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"user-save-file\",e),()=>{}),getLocalVersionInfo:async()=>this.synHandelIpcEvents(async()=>(this.localVersionInfo.version||(this.localVersionInfo=await this.ipcRenderer.invoke(\"version-local-info\")),this.localVersionInfo),()=>new Promise(e=>{e({version:\"3.0.0\",platform:\"web\",arch:\"\",patchVersion:\"\",browserVersion:\"\",browserUpdateTime:\"\"})})),getMainWindowLaunchPreference:()=>this.handelIpcEvents(()=>window.DIC.api.getMainWindowLaunchPreference(),()=>Promise.resolve(null)),setMainWindowLaunchPreference:e=>this.handelIpcEvents(()=>window.DIC.api.setMainWindowLaunchPreference(e),()=>Promise.resolve(null)),getCurrentMainWin"
+    }
+  ],
+  "get-main-window-launch-preference": [],
+  "set-main-window-launch-preference": [],
+  "get-current-main-window-size": [],
+  "get-device-id": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2375235,
+      "context": "erer.invoke(\"checker-resource-update\",e),()=>new Promise(e=>{e(null)})),setHttpLog:(e,t)=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"http:log\",e,t),()=>{}),getDeviceId:()=>this.synHandelIpcEvents(async()=>(!this.newDeviceId&&(this.newDeviceId=await window.DIC.api.getNewDeviceId()),this.newDeviceId),()=>new Promise(e=>{e($3())})),getNewDeviceId:()=>this.handelIpcEvents(async()=>(!this.deviceId&&(this.deviceId=await this.ipcRenderer.invoke(\"get-device-id\")),this.deviceId),()=>new Promise(e=>{e($3())})),userSaveFile:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"user-save-file\",e),()=>{}),getLocalVersionInfo:async()=>this.synHandelIpcEvents(async()=>(this.localVersionInfo.version||(this.localVersionInfo=await this.ipcRenderer.invoke(\"version-local-info\")),this.localVersionInfo),()=>new Promise(e=>{e({version:\"3.0.0\",platform:\"web\",arch:\"\",patchVersion:\"\",browserVersion:\"\",brows"
+    }
+  ],
+  "get-new-device-id": [],
+  "get-device-name": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2376251,
+      "context": "eference(),()=>Promise.resolve(null)),setMainWindowLaunchPreference:e=>this.handelIpcEvents(()=>window.DIC.api.setMainWindowLaunchPreference(e),()=>Promise.resolve(null)),getCurrentMainWindowSize:()=>this.handelIpcEvents(()=>window.DIC.api.getCurrentMainWindowSize(),()=>Promise.reject(new Error(\"MAIN_WINDOW_SIZE_CLIENT_ONLY\"))),getDeviceName:async()=>this.handelIpcEvents(async()=>(!this.deviceName&&(this.deviceName=await this.ipcRenderer.invoke(\"get-device-name\")),this.deviceName),()=>new Promise(e=>{e(\"WEB\")})),getDeviceUserName:async()=>this.handelIpcEvents(async()=>(!this.deviceUserName&&(this.deviceUserName=await this.ipcRenderer.invoke(\"get-device-user-name\")),this.deviceUserName),()=>new Promise(e=>{e(\"\")})),getDeviceInfo:async()=>this.handelIpcEvents(async()=>(Object.entries(this.deviceInfo).some(([e,t])=>\"\"===t)&&(this.deviceInfo=await this.ipcRenderer.invoke(\"get-device-info\")),"
+    }
+  ],
+  "get-device-user-name": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2376451,
+      "context": "this.handelIpcEvents(()=>window.DIC.api.getCurrentMainWindowSize(),()=>Promise.reject(new Error(\"MAIN_WINDOW_SIZE_CLIENT_ONLY\"))),getDeviceName:async()=>this.handelIpcEvents(async()=>(!this.deviceName&&(this.deviceName=await this.ipcRenderer.invoke(\"get-device-name\")),this.deviceName),()=>new Promise(e=>{e(\"WEB\")})),getDeviceUserName:async()=>this.handelIpcEvents(async()=>(!this.deviceUserName&&(this.deviceUserName=await this.ipcRenderer.invoke(\"get-device-user-name\")),this.deviceUserName),()=>new Promise(e=>{e(\"\")})),getDeviceInfo:async()=>this.handelIpcEvents(async()=>(Object.entries(this.deviceInfo).some(([e,t])=>\"\"===t)&&(this.deviceInfo=await this.ipcRenderer.invoke(\"get-device-info\")),this.deviceInfo),()=>new Promise(e=>{e({...this.deviceInfo,name:\"WEB\",id:$3(),timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone,language:Intl.DateTimeFormat().resolvedOptions().locale})})),che"
+    }
+  ],
+  "active-window": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2372717,
+      "context": ",Q3=\"clear-dev-all-cache\",Z3=\"open-file-dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart"
+    }
+  ],
+  "get-all-displays": [],
+  "track-event": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2377928,
+      "context": "c()=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"stop-detect-proxy\"),()=>new Promise(e=>{e(null)})),openUrl:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(u6,{url:e})},()=>{window.open(e,\"_blank\")})},activeWindow:async e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(w6,e)}),getAllDisplays:()=>this.synHandelIpcEvents(async()=>{await window.DIC.api.getAllDisplays()}),trackEvent:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"track-event\",e)}),syncChangeOrgRes:async e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"change-org-res\",e),()=>new Promise(e=>{e(null)})),syncOpenEnvRes:async e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"open-env-res\",e),()=>new Promise(e=>{e(null)})),syncCommonRequestRespForLocalApi:async e=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"common-request-for-local-api-response\",e),()=>new Promise(e=>{e(null)})),sync"
+    }
+  ],
+  "set-user-plan": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2381091,
+      "context": "nderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|iPad|iPod/i.test(e)?\"iOS\":\"Unknown\"}),setUserPlan:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-user-plan\",e)}),delRpaTaskLog:e=>this.handelIpcEvents(async()=>await window.DIC.api.delRpaTaskLog(e)),setRpaTaskConfig:async e=>await this.handelIpcEvents(async()=>await window.DIC.api.setRpaTaskConfig(e)),getRpaIndexPage:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getRpaIndexPage()),createApplicationWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIp"
+    }
+  ],
+  "clear-electron-store": [],
+  "electron-store-get": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2379853,
+      "context": "exedDB:async(e,t)=>this.handelIpcEvents(async()=>this.ipcRenderer.invoke(\"clear-env-server-cache-for-indexed-db\",e,t),()=>new Promise(e=>{e(null)})),getLastModifiedTime:async e=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-last-modified-time\",e),()=>new Promise(e=>{e(null)})),clearElectronStore:()=>this.handelIpcEvents(()=>{window.DIC.api.clearElectronStore()}),store:{get:e=>this.handelIpcEvents(()=>this.ipcRenderer.sendSync(\"electron-store-get\",e),()=>{const t=e.split(\".\")[0];let n,a=Bre(t)??{};return n=e.includes(\".\")?a[e.replace(`${t}.`,\"\")]:a,n}),set:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(n8,{key:e,value:t})},()=>{const n=e.split(\".\")[0];let a=Bre(n)??{};e.includes(\".\")&&(a[e.replace(`${n}.`,\"\")]=t),Vre(n,a)}),delete:e=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};"
+    }
+  ],
+  "electron-store-set": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373612,
+      "context": "start\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-save-state\",n8=\"electron-store-set\",a8=\"run-env-progress\",o8=\"update-app-completed\",i8=\"update-app-progress\",r8=\"env-sleep-recovery-result\",s8=\"env-open-rule-check-due\",l8=\"close-environment\",c8=\"float-focus\",u8=\"float-blur\",d8=\"get-expansion-version-from-expan-id\",p8=\"get-expansion-version-from-zip\",m8=\"delete-expansion\",h8=\"get-env-count-for-migrate\",f8=\"start-migrate-env\",g8=\"stop-migrate-env\",v8=\"fast-click-event\",y8=\"refresh-all-expansion-sha256-hash\",b8=\"s"
+    }
+  ],
+  "electron-store-delete": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2380230,
+      "context": "re()}),store:{get:e=>this.handelIpcEvents(()=>this.ipcRenderer.sendSync(\"electron-store-get\",e),()=>{const t=e.split(\".\")[0];let n,a=Bre(t)??{};return n=e.includes(\".\")?a[e.replace(`${t}.`,\"\")]:a,n}),set:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(n8,{key:e,value:t})},()=>{const n=e.split(\".\")[0];let a=Bre(n)??{};e.includes(\".\")&&(a[e.replace(`${n}.`,\"\")]=t),Vre(n,a)}),delete:e=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};e.includes(\".\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))"
+    }
+  ],
+  "stop-env": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 306854,
+      "context": "_STORE:\"RPA_STORE\",PLAN_STORE:\"PLAN_STORE\",CRAWLER_STORE:\"CRAWLER_STORE\"},Mf=[{label:\"English\",value:\"en\"},{label:\"Русский\",value:\"ru\"},{label:\"Tiếng Việt\",value:\"vi\"},{label:\"Português\",value:\"pt\"},{label:\"Español\",value:\"es\"},{label:\"简体中文\",value:\"zh\"}],Bf=[\"/v1/env/summary\",\"/v1/env/summary/partial\"];var Vf=(e=>(e.RUN_ENV_CALLBACK=\"run-env-callback\",e.SYNC_COOKIES=\"sync-cookies\",e.ENV_HEARTBEAT=\"env-heartbeat\",e.LOGOUT_STOP_ENV_SUCCESS=\"logout-stop-env-success\",e.CHANGE_ORG_STOP_ENV_SUCCESS=\"change-org-stop-env-success\",e.CHECK_PROXY_ENV_CALLBACK=\"check-proxy-env-callback\",e.RUN_RPA_CALLBACK=\"run-rpa-callback\",e.RPA_HEARTBEAT=\"rpa-heartbeat\",e.CORE_STOP_ALL_ENV_SUCCESS=\"core-stop-all-env-success\",e.NOTICE=\"public-notice\",e.RUN_RPA_FOR_OPEN_API=\"run-rpa-for-open-api\",e.CLOSE_RPA_FOR_OPEN_API=\"close-rpa-for-open-api\",e.CHANGE_ORG_FOR_OPEN_API=\"change-org-for-open-api\",e.OPEN_ENV_V2_FOR_O"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 306914,
+      "context": "AWLER_STORE\"},Mf=[{label:\"English\",value:\"en\"},{label:\"Русский\",value:\"ru\"},{label:\"Tiếng Việt\",value:\"vi\"},{label:\"Português\",value:\"pt\"},{label:\"Español\",value:\"es\"},{label:\"简体中文\",value:\"zh\"}],Bf=[\"/v1/env/summary\",\"/v1/env/summary/partial\"];var Vf=(e=>(e.RUN_ENV_CALLBACK=\"run-env-callback\",e.SYNC_COOKIES=\"sync-cookies\",e.ENV_HEARTBEAT=\"env-heartbeat\",e.LOGOUT_STOP_ENV_SUCCESS=\"logout-stop-env-success\",e.CHANGE_ORG_STOP_ENV_SUCCESS=\"change-org-stop-env-success\",e.CHECK_PROXY_ENV_CALLBACK=\"check-proxy-env-callback\",e.RUN_RPA_CALLBACK=\"run-rpa-callback\",e.RPA_HEARTBEAT=\"rpa-heartbeat\",e.CORE_STOP_ALL_ENV_SUCCESS=\"core-stop-all-env-success\",e.NOTICE=\"public-notice\",e.RUN_RPA_FOR_OPEN_API=\"run-rpa-for-open-api\",e.CLOSE_RPA_FOR_OPEN_API=\"close-rpa-for-open-api\",e.CHANGE_ORG_FOR_OPEN_API=\"change-org-for-open-api\",e.OPEN_ENV_V2_FOR_OPEN_API=\"open-env-v2-for-open-api\",e.INSTALL_CHROME_EXTENSIO"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2372521,
+      "context": ");return e||(e=Hre().replaceAll(\"-\",\"\"),localStorage.setItem(\"device_id\",e)),e}const j3=\"get-running-env-records\",W3=\"app-window-active\",Y3=\"system-suspend\",X3=\"system-resume\",J3=\"clear-dev-cache\",Q3=\"clear-dev-all-cache\",Z3=\"open-file-dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\","
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2942192,
+      "context": "n(\"float-before-close\",(e,t)=>{n.setAllData(JSON.parse(t)),n.floatWindowState=!1}),voe.on(\"show-message\",e=>{const t=e,n=t.message.startsWith(\"$t.\")?l.t(t.message.split(\"$t.\").at(-1)):t.message;\"success\"===t.type&&Z4.success(n),\"error\"===t.type&&Z4.error(n),\"warning\"===t.type&&Z4.warning(n)}),v(),C8.on(Vf.LOGOUT_STOP_ENV_SUCCESS,_u.throttle(async(e,{stopIds:t,logoutData:n})=>{if(g(t))try{C8.api.trackEvent({type:vne.LOGOUT,params:{message:\"logout-stop-env-success callback\"}}),kse(!0,n)}catch(a){}},1e3))}),Wa(()=>{});const g=e=>{for(let t=0;t<e.length;t++){const n=e[t];if(Mue.state.envStopAll[n])return!1}return!0},v=()=>{setTimeout(()=>{C8.api.probeGostStart().then(e=>{console.log(\"probeGostStart 探测结果=>\",e)})},1e4)};return C8.isClient||(window.openUrl=e=>{window.open(e,\"_blank\")}),(e,t)=>{const n=to(\"router-view\");return Mi(),Hi(Ii,null,[i.value?(Mi(),zi(Ove,{key:0,button:h,locale:s.value,"
+    }
+  ],
+  "run-env": [
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "offset": 23865,
+      "context": "arInvalidConfig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381}),Av=_0x28d9a9(0x3c5e,'0x6571')+'g-map',Nv=_0x1acd6a('0x40c2','0x66f9')+_0x28d9a9(-'0x10c2','0x1e7f')+_0x28d9a9('0x3fce',0x3da6),Ov=_0x1acd6a('0x6ec2',0x4dec)+'ning-env-r'+_0x28d9a9(0x1837,'0x250e'),Dv=_0x28d9a9('0x6757',0x3f51)+_0x28d9a9(0x5e0c,0x3891),Lv=_0x1acd6a('0x9cd8','0x696c')+_0x1acd6a('0x1dca',0x307c),$v=_0x28d9a9(0x4034,'0x5d51')+_0x28d9a9('0x507c','0x63ae'),Mv='run-env',Fv='run-env-fo'+_0x28d9a9(0x1521,0x594),Bv='check-prox'+_0x28d9a9('0x382f',0xe9b),Uv=_0x1acd6a(0x6bdd,'0x3d7c')+'y',Vv='clear-dev-'+_0x1acd6a(-'0x499',0x2222),jv=_0x1acd6a(0x9e,'0x1d69')+_0x28d9a9('0x1319','0x1e6b'),Wv=_0x1acd6a(0x5e7d,0x52fa)+_0x1acd6a(-0x1839,0xcea),zv=_0x28d9a9('0x44d',0x3049)+'r-dialog',Gv=_0x28d9a9(0x302c,0x3049)+_0x28d9a9(0x1b83,0x885),qv='get-cache-'+_0x1acd6a(0x12bf,'0x3910'),Hv=_0x1acd6a('0x40ea',0x35fe)+'config"
+    },
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "offset": 23878,
+      "context": "ig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381}),Av=_0x28d9a9(0x3c5e,'0x6571')+'g-map',Nv=_0x1acd6a('0x40c2','0x66f9')+_0x28d9a9(-'0x10c2','0x1e7f')+_0x28d9a9('0x3fce',0x3da6),Ov=_0x1acd6a('0x6ec2',0x4dec)+'ning-env-r'+_0x28d9a9(0x1837,'0x250e'),Dv=_0x28d9a9('0x6757',0x3f51)+_0x28d9a9(0x5e0c,0x3891),Lv=_0x1acd6a('0x9cd8','0x696c')+_0x1acd6a('0x1dca',0x307c),$v=_0x28d9a9(0x4034,'0x5d51')+_0x28d9a9('0x507c','0x63ae'),Mv='run-env',Fv='run-env-fo'+_0x28d9a9(0x1521,0x594),Bv='check-prox'+_0x28d9a9('0x382f',0xe9b),Uv=_0x1acd6a(0x6bdd,'0x3d7c')+'y',Vv='clear-dev-'+_0x1acd6a(-'0x499',0x2222),jv=_0x1acd6a(0x9e,'0x1d69')+_0x28d9a9('0x1319','0x1e6b'),Wv=_0x1acd6a(0x5e7d,0x52fa)+_0x1acd6a(-0x1839,0xcea),zv=_0x28d9a9('0x44d',0x3049)+'r-dialog',Gv=_0x28d9a9(0x302c,0x3049)+_0x28d9a9(0x1b83,0x885),qv='get-cache-'+_0x1acd6a(0x12bf,'0x3910'),Hv=_0x1acd6a('0x40ea',0x35fe)+'config',Kv=_0x1acd6"
+    },
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "offset": 31346,
+      "context": "0xadd,'0x267c'),cx=_0x1acd6a(-0x233f,'0xeeb')+'tore-delet'+'e',lx=_0x1acd6a(0x68,0xd70)+_0x1acd6a('0x572a','0x3355')+_0x28d9a9('0xea9',0x3e21)+_0x28d9a9('0x5594','0x2ec2'),ux=_0x1acd6a(0x49ef,0x64c1)+'indow-laun'+_0x28d9a9(0x70d7,'0x3e21')+_0x28d9a9(0x54d1,0x2ec2),px=_0x1acd6a('0x55a9','0x4082')+'t-main-win'+_0x28d9a9(0x51a6,0x44ae),dx=_0x28d9a9(-'0x1ab3',0x106c)+'t',fx='set-user-p'+_0x1acd6a(0x446d,0x4f26),Fd=_0x28d9a9('0x456d',0x2d9d)+'tt',Nn='run-env-ca'+_0x28d9a9('0x8664','0x68e0'),Dh=_0x28d9a9(0x10d1,'0x2138')+_0x1acd6a('0x4dc8',0x6b3f),mx='set-sync-s'+_0x1acd6a('0x36a5',0x4c61),Bd=_0x28d9a9(0xa76,0xece)+_0x1acd6a(0x130f,0x2bc6),hx='update-app'+_0x1acd6a('0x5b2d','0x5bbf'),gx=_0x1acd6a(0x4836,0x313c)+_0x28d9a9(0x85b9,'0x5cbb')+_0x28d9a9('0x4b70','0x2b81'),yx=_0x1acd6a(0x816a,'0x6ab7')+_0x1acd6a(0x2d8a,'0x46fa')+_0x28d9a9(0x4053,'0x52fa'),Ud=_0x28d9a9('0x1dc2',0x1170)+_0x28d9a9(0x23d"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 306740,
+      "context": "\"user_behavior_habit:state\",PROXY_MANAGEMENT_TAB:\"proxy_management_tab:state\",UserHabitStore:\"userHabit:store\",RPA_STORE:\"RPA_STORE\",PLAN_STORE:\"PLAN_STORE\",CRAWLER_STORE:\"CRAWLER_STORE\"},Mf=[{label:\"English\",value:\"en\"},{label:\"Русский\",value:\"ru\"},{label:\"Tiếng Việt\",value:\"vi\"},{label:\"Português\",value:\"pt\"},{label:\"Español\",value:\"es\"},{label:\"简体中文\",value:\"zh\"}],Bf=[\"/v1/env/summary\",\"/v1/env/summary/partial\"];var Vf=(e=>(e.RUN_ENV_CALLBACK=\"run-env-callback\",e.SYNC_COOKIES=\"sync-cookies\",e.ENV_HEARTBEAT=\"env-heartbeat\",e.LOGOUT_STOP_ENV_SUCCESS=\"logout-stop-env-success\",e.CHANGE_ORG_STOP_ENV_SUCCESS=\"change-org-stop-env-success\",e.CHECK_PROXY_ENV_CALLBACK=\"check-proxy-env-callback\",e.RUN_RPA_CALLBACK=\"run-rpa-callback\",e.RPA_HEARTBEAT=\"rpa-heartbeat\",e.CORE_STOP_ALL_ENV_SUCCESS=\"core-stop-all-env-success\",e.NOTICE=\"public-notice\",e.RUN_RPA_FOR_OPEN_API=\"run-rpa-for-open-api\",e.CLOSE"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373636,
+      "context": "app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-save-state\",n8=\"electron-store-set\",a8=\"run-env-progress\",o8=\"update-app-completed\",i8=\"update-app-progress\",r8=\"env-sleep-recovery-result\",s8=\"env-open-rule-check-due\",l8=\"close-environment\",c8=\"float-focus\",u8=\"float-blur\",d8=\"get-expansion-version-from-expan-id\",p8=\"get-expansion-version-from-zip\",m8=\"delete-expansion\",h8=\"get-env-count-for-migrate\",f8=\"start-migrate-env\",g8=\"stop-migrate-env\",v8=\"fast-click-event\",y8=\"refresh-all-expansion-sha256-hash\",b8=\"software-monitor-check-re"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2380539,
+      "context": "[0];let a=Bre(n)??{};e.includes(\".\")&&(a[e.replace(`${n}.`,\"\")]=t),Vre(n,a)}),delete:e=>this.handelIpcEvents(()=>{this.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};e.includes(\".\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2380656,
+      "context": "s.ipcRenderer.sendSync(\"electron-store-delete\",e)},()=>{const t=e.split(\".\")[0];let n=Bre(t)??{};e.includes(\".\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|iPad|iPod/i.test(e)?\"iOS\":\"Unknown\"}),setUserPlan:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-user-plan\","
+    }
+  ],
+  "get-current-platform": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2380766,
+      "context": "\")&&delete n[e.replace(`${t}.`,\"\")],Vre(t,n)})},envController:{stopEnv:e=>{this.handelIpcEvents(()=>{this.ipcRenderer.send(c6,e)})},runEnv:async(e,t,n)=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env\",e,t,void 0,n)),runEnvConvert:async e=>await this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"run-env-for-convert\",e))},getCurrentPlatform:()=>this.handelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-current-platform\"),()=>{const e=navigator.userAgent||navigator.vendor;return/windows/i.test(e)?\"WINDOW\":/Macintosh|MacIntel|MacPPC|Mac68K/i.test(e)?\"DARWIN\":/linux/i.test(e)?\"LINUX\":/android/i.test(e)?\"Android\":/iPhone|iPad|iPod/i.test(e)?\"iOS\":\"Unknown\"}),setUserPlan:e=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-user-plan\",e)}),delRpaTaskLog:e=>this.handelIpcEvents(async()=>await window.DIC.api.delRpaTaskLog(e)),setRpaTaskConfig:as"
+    }
+  ],
+  "get-desktop-sources": [],
+  "get-window-by-pid": [],
+  "window-test": [],
+  "del-rpa-task-log": [],
+  "get-rpa-task-log": [],
+  "set-rpa-task-config": [],
+  "get-rpa-index-page": [],
+  "open-application-window": [],
+  "close-all-win": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2372757,
+      "context": "dialog\",e6=\"open-folder-dialog\",t6=\"open-folder-path\",n6=\"get-cache-info\",a6=\"set-cache-config\",o6=\"check-cache-dir\",i6=\"update-env-browser-data-version-state\",r6=\"read-file\",s6=\"get-file-size\",l6=\"close-envs\",c6=\"stop-env\",u6=\"open-url\",d6=\"stop-all-env\",p6=\"rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-a"
+    }
+  ],
+  "aes-128-encrypt": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2381664,
+      "context": "async e=>await this.handelIpcEvents(async()=>await window.DIC.api.setRpaTaskConfig(e)),getRpaIndexPage:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getRpaIndexPage()),createApplicationWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Ker"
+    }
+  ],
+  "aes-128-decrypt": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2381759,
+      "context": "dexPage:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getRpaIndexPage()),createApplicationWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synH"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2381858,
+      "context": "ionWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>t"
+    }
+  ],
+  "aes-128-decrypt-many": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2381858,
+      "context": "ionWindow:e=>this.handelIpcEvents(async()=>await window.DIC.api.createApplicationWindow(e)),closeAllExternalWindows:()=>this.handelIpcEvents(()=>{window.DIC.api.closeAllExternalWindows()}),aes128Encrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>t"
+    }
+  ],
+  "get-public-ip": [],
+  "get-app-title": [],
+  "kernel-install-requested": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382055,
+      "context": "crypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-encrypt\",e),()=>[]),aes128Decrypt:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt\",e),()=>[]),aes128DecryptMany:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstall"
+    }
+  ],
+  "kernel-list-installed": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382253,
+      "context": "y:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"aes-128-decrypt-many\",e),()=>[]),getPublicIP:()=>this.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>"
+    }
+  ],
+  "kernel-get-progress": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382360,
+      "context": "s.synHandelIpcEvents(async()=>await window.DIC.api.getPublicIP()),installRequestedKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),("
+    }
+  ],
+  "kernel-cancel": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382466,
+      "context": "IpcEvents(()=>this.ipcRenderer.invoke(\"kernel-install-requested\",e),async()=>{throw new Error(\"Kernel installation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-id"
+    }
+  ],
+  "kernel-delete-installed": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382570,
+      "context": "stallation is only available in the desktop client\")}),listInstalledKernels:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},ge"
+    }
+  ],
+  "kernel-cleanup-old": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382678,
+      "context": "this.ipcRenderer.invoke(\"kernel-list-installed\"),()=>[]),getKernelProgress:()=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.han"
+    }
+  ],
+  "get-mac-address": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382791,
+      "context": "pcRenderer.invoke(\"kernel-get-progress\"),()=>[]),cancelKernelInstall:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>"
+    }
+  ],
+  "get-system-idle-time": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2382903,
+      "context": "erer.invoke(\"kernel-cancel\",e),()=>!1),deleteInstalledKernel:e=>this.synHandelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-delete-installed\",e),()=>!1),cleanupOldKernels:()=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"kernel-cleanup-old\"),()=>null),getMacAddress:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-mac-address\"),()=>\"\"),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-process-env\",{key:e,value:t})}),getNetworkIdentity:()=>this.handelIpcEvents(async()="
+    }
+  ],
+  "set-process-env": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2383265,
+      "context": "),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-process-env\",{key:e,value:t})}),getNetworkIdentity:()=>this.handelIpcEvents(async()=>{try{return await this.ipcRenderer.invoke(\"get-network-identity\")}catch{return{canCache:!1,signature:\"\"}}},()=>Promise.resolve({canCache:!1,signature:\"\"}))}),this.deviceId=\"\",this.newDeviceId=\"\",this.deviceName=\"\",this.deviceUserName=\"\",this.deviceInfo={name:\"\",timeZone:\"\",language:\"\",id:\"\"},this.localVersionInfo={version:\"\",platform:\"\",arch:\"\",patchVersion:\""
+    }
+  ]
+}

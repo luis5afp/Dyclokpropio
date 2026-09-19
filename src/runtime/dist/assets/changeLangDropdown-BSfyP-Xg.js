@@ -1,0 +1,124 @@
+import {
+  d as a,
+  G as n,
+  r as l,
+  c as e,
+  b as o,
+  w as s,
+  a as d,
+  t,
+  o as u,
+  F as r,
+  z as c,
+  f as i,
+  l5 as p,
+  h as f,
+  X as g,
+  C as w,
+  _ as m,
+} from "./index-BUIbb6Pa.js";
+const v = { class: "el-dropdown-link" },
+  _ = { style: { "text-decoration": "underline" } },
+  k = { class: "flx-justify-between" },
+  b = { key: 0, class: "iconfont icon-check" },
+  x = m(
+    a({
+      __name: "changeLangDropdown",
+      setup(a) {
+        const m = n(),
+          x = w(() => m.language),
+          y = (a) => {
+            a !== x.value &&
+              (m.setGlobalState("language", a), window.location.reload());
+          };
+        return (a, n) => {
+          const w = l("el-dropdown-item"),
+            m = l("el-dropdown-menu"),
+            h = l("el-dropdown");
+          return (
+            u(),
+            e("div", null, [
+              o(
+                h,
+                {
+                  "popper-class": "language-dropdown",
+                  trigger: "click",
+                  onCommand: y,
+                },
+                {
+                  dropdown: s(() => [
+                    o(m, null, {
+                      default: s(() => [
+                        (u(!0),
+                        e(
+                          r,
+                          null,
+                          c(
+                            i(p),
+                            (a) => (
+                              u(),
+                              f(
+                                w,
+                                { key: a.value, command: a.value },
+                                {
+                                  default: s(() => [
+                                    d("div", k, [
+                                      d("span", null, t(a.label), 1),
+                                      d("span", null, [
+                                        x.value === a.value
+                                          ? (u(), e("i", b))
+                                          : g("", !0),
+                                      ]),
+                                    ]),
+                                  ]),
+                                  _: 2,
+                                },
+                                1032,
+                                ["command"],
+                              )
+                            ),
+                          ),
+                          128,
+                        )),
+                      ]),
+                      _: 1,
+                    }),
+                  ]),
+                  default: s(() => {
+                    var a;
+                    return [
+                      d("span", v, [
+                        n[0] ||
+                          (n[0] = d(
+                            "i",
+                            { class: "iconfont icon-language" },
+                            null,
+                            -1,
+                          )),
+                        d(
+                          "span",
+                          _,
+                          t(null == (a = x.value) ? void 0 : a.toUpperCase()),
+                          1,
+                        ),
+                        n[1] ||
+                          (n[1] = d(
+                            "i",
+                            { class: "iconfont icon-arrow" },
+                            null,
+                            -1,
+                          )),
+                      ]),
+                    ];
+                  }),
+                  _: 1,
+                },
+              ),
+            ])
+          );
+        };
+      },
+    }),
+    [["__scopeId", "data-v-e92f2584"]],
+  );
+export { x as default };

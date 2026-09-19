@@ -11,6 +11,16 @@ on:
       - "src/preload/index.js"
       - "tools/analyze-recovered-bundles.js"
       - "tools/compare-preload-contract.js"
+      - "tools/deobfuscate-main-stage1.js"
+      - "tools/extract-main-ipc-handlers.js"
+      - "tools/extract-main-ipc-handler-bodies.js"
+      - "tools/reconstruction-symbol-seeds.json"
+      - "tools/extract-main-symbol-definitions.js"
+      - "tools/trace-device-id-symbol.js"
+      - "tools/index-pretty-main-symbols.js"
+      - "tools/extract-electron-store-schemas.js"
+      - "tools/extract-electron-store-descriptor-mutations.js"
+      - "tools/extract-store-bootstrap-context.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -39,6 +49,73 @@ jobs:
           Set-Location source
           node tools/analyze-recovered-bundles.js
 
+      - name: Deobfuscate main bundle stage 1
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/deobfuscate-main-stage1.js
+
+      - name: Format stage-one main bundle
+        shell: pwsh
+        run: |
+          Set-Location source
+          Copy-Item "reconstruction-work\main.stage1.js" "reconstruction-work\main.stage1.pretty.js" -Force
+          npx --yes prettier@3.3.3 --write "reconstruction-work\main.stage1.pretty.js"
+
+      - name: Index formatted main symbols
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/index-pretty-main-symbols.js
+
+      - name: Extract main IPC handlers
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-main-ipc-handlers.js
+
+      - name: Extract full IPC handler bodies
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-main-ipc-handler-bodies.js
+
+      - name: Extract main symbol definitions
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-main-symbol-definitions.js
+
+      - name: Extract electron-store schemas
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-electron-store-schemas.js
+
+      - name: Extract electron-store descriptor mutations
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-electron-store-descriptor-mutations.js
+
+      - name: Extract readable store bootstrap
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-store-bootstrap-context.js
+
+      - name: Trace recovered device ID algorithm
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/trace-device-id-symbol.js
+
+      - name: Compare recovered and reconstructed preload
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/compare-preload-contract.js
+
       - name: Commit analysis reports
         shell: pwsh
         env:
@@ -48,11 +125,27 @@ jobs:
           gh auth setup-git
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reconstruction-analysis
+          git add reconstruction-analysis reconstruction-work
           if (git diff --cached --quiet) {
             Write-Host "No analysis changes."
             exit 0
           }
           git commit -m "[reconstruction-bot] Update bundle analysis"
-          git pull --rebase origin reconstruction-source
-          git push origin reconstruction-source
+          $pushed = $false
+          for ($attempt = 1; $attempt -le 5; $attempt++) {
+            git pull --rebase origin reconstruction-source
+            if ($LASTEXITCODE -ne 0) { throw "git pull --rebase failed" }
+
+            git push origin reconstruction-source
+            if ($LASTEXITCODE -eq 0) {
+              $pushed = $true
+              break
+            }
+
+            Write-Host "Push race detected; retrying attempt $attempt/5..."
+            Start-Sleep -Seconds (2 * $attempt)
+          }
+
+          if (-not $pushed) {
+            throw "Could not push generated reconstruction changes after retries."
+          }

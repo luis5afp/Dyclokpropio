@@ -1,0 +1,10 @@
+.expansionCard[data-v-f613cc90] {
+  border-color: var(--table-border-color);
+}
+.expansionCard[data-v-f613cc90] .el-card__body {
+  height: 100%;
+  background-color: var(--table-tr-bg-color);
+}
+.expan-dropdown-item .el-dropdown-menu__item[data-v-f613cc90] {
+  padding: 0 !important;
+}

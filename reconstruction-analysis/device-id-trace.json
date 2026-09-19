@@ -1,0 +1,90 @@
+{
+  "generatedAt": "2026-09-19T03:23:51.163Z",
+  "sourceEvaluationError": "Cannot read properties of undefined (reading 'indexOf')",
+  "hpExpressionFound": true,
+  "hpResult": "TRACE_DEVICE_ID",
+  "hpEvaluationError": null,
+  "trace": [
+    {
+      "type": "os-property",
+      "property": "hostname"
+    },
+    {
+      "type": "os-call",
+      "method": "hostname",
+      "args": []
+    },
+    {
+      "type": "os-property",
+      "property": "arch"
+    },
+    {
+      "type": "os-call",
+      "method": "arch",
+      "args": []
+    },
+    {
+      "type": "os-property",
+      "property": "userInfo"
+    },
+    {
+      "type": "os-call",
+      "method": "userInfo",
+      "args": []
+    },
+    {
+      "type": "os-result-property",
+      "method": "userInfo",
+      "property": "username"
+    },
+    {
+      "type": "crypto-property",
+      "property": "createHash"
+    },
+    {
+      "type": "crypto-call",
+      "method": "createHash",
+      "args": [
+        "sha256"
+      ]
+    },
+    {
+      "type": "hash-created",
+      "algorithm": "sha256"
+    },
+    {
+      "type": "hash-property",
+      "property": "update"
+    },
+    {
+      "type": "hash-call",
+      "method": "update",
+      "args": [
+        "TRACE_HOSTNAMETRACE_ARCHTRACE_USERINFO_username"
+      ]
+    },
+    {
+      "type": "hash-property",
+      "property": "digest"
+    },
+    {
+      "type": "hash-call",
+      "method": "digest",
+      "args": [
+        "hex"
+      ]
+    },
+    {
+      "type": "digest-property",
+      "property": "substring"
+    },
+    {
+      "type": "digest-call",
+      "method": "substring",
+      "args": [
+        0,
+        32
+      ]
+    }
+  ]
+}

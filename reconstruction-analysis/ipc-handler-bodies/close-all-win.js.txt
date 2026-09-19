@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: close-all-win
+ * Method: on
+ * Source offset: 3539234
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>{const _0x4cb3ec={_0xe0920b:0x145};function _0x5d38f0(_0x4a8d0a,_0xa23a53){return _0x540e6e(_0xa23a53-_0x4cb3ec._0xe0920b,_0x4a8d0a);}function _0x1e7527(_0x2ef5d7,_0x848e08){return _0x540e6e(_0x2ef5d7- -'0x12a',_0x848e08);}console['log'](_0x5d38f0(_0x140c6c._0x1548c5,'0x26d6')),_0x154800[_0x1e7527(_0x140c6c._0x115abe,0x3e08)](ik);}

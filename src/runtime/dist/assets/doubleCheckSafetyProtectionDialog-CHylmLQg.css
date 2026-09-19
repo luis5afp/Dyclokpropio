@@ -1,0 +1,14 @@
+.safety-protection-checkbox-group[data-v-fba115a4] .el-checkbox__inner {
+  border: none;
+  border-radius: 50% !important;
+  width: 6px !important;
+  height: 6px !important;
+  background-color: var(--btn-info-plain-hover-color) !important;
+  margin-top: 6px !important;
+}
+.safety-protection-checkbox-group[data-v-fba115a4] .el-checkbox__label {
+  color: var(--text-light1) !important;
+}
+.safety-protection-checkbox-group[data-v-fba115a4] .el-checkbox__inner:after {
+  display: none;
+}

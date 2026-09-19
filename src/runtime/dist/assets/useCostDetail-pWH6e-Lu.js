@@ -1,0 +1,116 @@
+import {
+  v as l,
+  ad as e,
+  iY as a,
+  i as n,
+  as as u,
+  j4 as o,
+  C as t,
+  eo as r,
+} from "./index-BUIbb6Pa.js";
+function i(l, e) {
+  if (!l || "SUCCESS" !== l.result) return !1;
+  const a = l.allowPlanIds;
+  return !!(!a || (e && a.includes(e)));
+}
+function v() {
+  let t = n();
+  const r = n(!1),
+    { t: v } = l.useI18n(),
+    { getPlanConfigForId: d } = e();
+  function s(l, e) {
+    return (
+      console.log("当前套餐/目标套餐配置ID", l),
+      console.log("当前优惠码校验结果", t.value),
+      null == e
+        ? i(t.value, l)
+        : (function (l, e, a) {
+            var n, u;
+            return !(
+              !i(l, e) ||
+              ((null == l ? void 0 : l.usedValidate) &&
+                !(null == (u = null == (n = l.usedRule) ? void 0 : n.lifeTime)
+                  ? void 0
+                  : u.includes(Number(a))))
+            );
+          })(t.value, l, e)
+    );
+  }
+  return {
+    handleCheckCode: async function (l, e) {
+      var n;
+      if (!l) return ((t.value = void 0), null);
+      let [i, v] = await u(o(l));
+      return i
+        ? ((t.value = void 0), i)
+        : ((t.value = v),
+          (r.value = s(e)),
+          (null == (n = t.value) ? void 0 : n.result) !== a.SUCCESS ||
+            r.value ||
+            (t.value.result = a.FAIL),
+          i);
+    },
+    checkCodeRes: t,
+    codeCanUse: r,
+    canUseCode: s,
+    getCouponCodeTip: function () {
+      var l, e, n, u;
+      if ((null == (l = t.value) ? void 0 : l.result) === a.SUCCESS)
+        return r.value
+          ? v("cost.plan.dialog.couponCodeTip2")
+          : v("cost.plan.dialog.couponCodeTip7");
+      if (
+        !r.value &&
+        (null == (e = t.value) ? void 0 : e.result) === a.FAIL &&
+        (null == (u = null == (n = t.value) ? void 0 : n.allowPlanIds)
+          ? void 0
+          : u.length)
+      ) {
+        const l = t.value.allowPlanIds.map((l) => d(l).name).join("/");
+        return v("cost.plan.dialog.couponCodeTip5", { planNames: l });
+      }
+      return v("cost.plan.dialog.couponCodeTip1");
+    },
+    getCouponCodeTipColor: function () {
+      var l;
+      let e;
+      return (
+        (e =
+          (null == (l = t.value) ? void 0 : l.result) === a.SUCCESS
+            ? "var(--btn-primary-link-color)"
+            : "var(--danger-color)"),
+        r.value || (e = "var(--danger-color)"),
+        `tw-text-[${e}]`
+      );
+    },
+  };
+}
+function d(l, e, a) {
+  return {
+    showTopUp: t(() => {
+      var n;
+      return (
+        !a.value &&
+        !e.pay &&
+        e.wallet &&
+        ((null == (n = l.value) ? void 0 : n.payment) ?? 0) > 0
+      );
+    }),
+    walletCreditNum: t(() => {
+      var a, n;
+      let u = (null == (a = l.value) ? void 0 : a.payment) ?? 0,
+        o = (null == (n = l.value) ? void 0 : n.walletBalance) ?? 0;
+      return e.wallet ? (e.pay && u > o ? o : u) : 0;
+    }),
+    directPaymentAmount: t(() => {
+      let a = l.value.payment ?? 0,
+        n = l.value.walletBalance ?? 0;
+      return e.pay ? (e.wallet ? (a - n > 0 ? a - n : 0) : a) : 0;
+    }),
+    newPayMethod: t(() => {
+      let { wallet: l, pay: a } = e;
+      return l && a ? r.COMBO : l || a ? (a ? r.PAY : r.WALLET) : r.PAY;
+    }),
+  };
+}
+export { d as a, v as u };

@@ -1,0 +1,30 @@
+.table-footer-batch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+}
+.table-footer-batch .fl {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 90%;
+}
+.table-footer-batch .fl .selection-wrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+.table-footer-batch .fl .selection-wrapper .ellipse {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 21px;
+  background-color: var(--el-component-bg-color);
+  color: var(--text-high-light);
+  border-radius: 36px;
+}
+.table-footer-batch .rl i {
+  font-size: 14px;
+}

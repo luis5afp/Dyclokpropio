@@ -1,0 +1,98 @@
+{
+  "note": "Reconstructed Vue SFCs with direct evidence from compiled JS/CSS. compiledFiles remain the regression reference until the renderer build switches to source.",
+  "components": [
+    {
+      "name": "envSerialNums",
+      "source": "src/renderer/components/reconstructed/envSerialNums.vue",
+      "compiledFiles": [
+        "dist/assets/envSerialNums-BjlyggGT.js",
+        "dist/assets/envSerialNums-Deo1pJoV.css"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "CustomRadioGroup",
+      "source": "src/renderer/components/reconstructed/CustomRadioGroup.vue",
+      "compiledFiles": [
+        "dist/assets/CustomRadioGroup-Dk-imFdD.js",
+        "dist/assets/CustomRadioGroup-BBakkZxB.css"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "OpenProgressBar",
+      "source": "src/renderer/components/reconstructed/OpenProgressBar.vue",
+      "compiledFiles": [
+        "dist/assets/OpenProgressBar-CZucdUSf.js",
+        "dist/assets/OpenProgressBar-Dsu6-N2I.css"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "TruncateText",
+      "source": "src/renderer/components/reconstructed/TruncateText.vue",
+      "compiledFiles": [
+        "dist/assets/TruncateText.vue_vue_type_script_setup_true_lang-wXc_gDkK.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "EnvironmentWarningNoticeBanner",
+      "source": "src/renderer/components/reconstructed/EnvironmentWarningNoticeBanner.vue",
+      "compiledFiles": [
+        "dist/assets/EnvironmentWarningNoticeBanner.vue_vue_type_script_setup_true_lang-CnmLlY1e.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "IpCountryFlag",
+      "source": "src/renderer/components/reconstructed/IpCountryFlag.vue",
+      "compiledFiles": [
+        "dist/assets/IpCountryFlag.vue_vue_type_script_setup_true_lang-DgLdnpgH.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "LazyRow",
+      "source": "src/renderer/components/reconstructed/LazyRow.vue",
+      "compiledFiles": [
+        "dist/assets/LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "ImportInstructions",
+      "source": "src/renderer/components/reconstructed/ImportInstructions.vue",
+      "compiledFiles": [
+        "dist/assets/ImportInstructions.vue_vue_type_script_setup_true_lang-B6-YEbCB.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "Tip",
+      "source": "src/renderer/components/reconstructed/Tip.vue",
+      "compiledFiles": [
+        "dist/assets/Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "fixedUrlsFormItem",
+      "source": "src/renderer/components/reconstructed/fixedUrlsFormItem.vue",
+      "compiledFiles": [
+        "dist/assets/fixedUrlsFormItem.vue_vue_type_script_setup_true_lang-J-frhu2d.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    }
+  ]
+}

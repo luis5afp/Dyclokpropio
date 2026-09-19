@@ -1,0 +1,4250 @@
+import {
+  d as e,
+  G as l,
+  R as a,
+  ad as i,
+  v as n,
+  dL as t,
+  i as o,
+  ee as u,
+  c5 as s,
+  W as d,
+  V as p,
+  D as r,
+  eh as c,
+  iY as v,
+  as as m,
+  iZ as g,
+  at as y,
+  r as f,
+  q as w,
+  o as x,
+  c as h,
+  F as b,
+  h as C,
+  w as L,
+  a as k,
+  x as _,
+  f as T,
+  eZ as E,
+  b as P,
+  i_ as A,
+  i$ as I,
+  z as N,
+  j0 as D,
+  e as V,
+  t as M,
+  A as R,
+  E as S,
+  X as U,
+  O as F,
+  bM as O,
+  e4 as $,
+  j1 as j,
+  C as B,
+  ac as G,
+  a3 as H,
+  j2 as q,
+  c7 as z,
+  eq as X,
+  er as Z,
+  el as Y,
+  dg as K,
+  ev as W,
+  j3 as J,
+  _ as Q,
+} from "./index-BUIbb6Pa.js";
+import {
+  _ as ee,
+  u as le,
+} from "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import { _ as ae } from "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import { g as ie, u as ne } from "./index-D7tcaRcX.js";
+import { _ as te } from "./PackagePermissions.vue_vue_type_script_setup_true_lang-BWD9LN3L.js";
+import { u as oe, a as ue } from "./useCostDetail-pWH6e-Lu.js";
+import se from "./paySelect-CHLWtiLZ.js";
+import de from "./walletPaymentSelect-r4JXYpuJ.js";
+import {
+  g as pe,
+  a as re,
+  b as ce,
+  c as ve,
+} from "./guide-cookie-encrypt-en-light-Br-7UCuE.js";
+import "./browser-DEPKJqf2.js";
+import "./walletRechargeDlg-BfDzblZH.js";
+const me =
+    "" +
+    new URL("guide-cookie-encrypt-config-zh-0R4dj1Fg.png", import.meta.url)
+      .href,
+  ge =
+    "" +
+    new URL(
+      "guide-cookie-encrypt-config-zh-light-B-r9k8wr.png",
+      import.meta.url,
+    ).href,
+  ye =
+    "" +
+    new URL("guide-cookie-encrypt-config-en-DC75nsft.png", import.meta.url)
+      .href,
+  fe =
+    "" +
+    new URL(
+      "guide-cookie-encrypt-config-en-light-BNReoIx4.png",
+      import.meta.url,
+    ).href,
+  we = { class: "content-container" },
+  xe = { class: "fl" },
+  he = { class: "fl-form" },
+  be = {
+    class:
+      "tw-bg-[var(--bg-light8)] tw-p-2 tw-pb-1 tw-w-full tw-rounded-[8px] tw-relative tw-overflow-hidden",
+  },
+  Ce = {
+    class: "tw-max-w-[99999px] tw-pr-[30px] tw-w-[max-content] tw-mb-3 tw-px-2",
+  },
+  Le = { class: "plan-info tw-min-h-[70px]" },
+  ke = { class: "b-flex tw-h-full" },
+  _e = { class: "equity tw-h-full tw-flex tw-flex-col tw-justify-between" },
+  Te = { class: "s-flex tw-w-full tw-gap-x-2 tw-leading-[1]" },
+  Ee = { class: "tw-leading-[1]" },
+  Pe = { class: "b-flex tw-flex-col tw-h-full" },
+  Ae = { class: "tw-text-[var(--el-color-primary)] tw-leading-[1]" },
+  Ie = { class: "!tw-text-[var(--info-color-light6)]" },
+  Ne = { class: "tw-flex tw-items-center" },
+  De = { key: 1, class: "tw-mr-[8px]" },
+  Ve = { class: "m-r-8" },
+  Me = { key: 0, class: "tw-text-[var(--text-color-light1)]" },
+  Re = { class: "charging-wrap tw-whitespace-pre-line" },
+  Se = { key: 1, class: "tw-text-[var(--info-color-light5)]" },
+  Ue = { key: 2, class: "tw-flex tw-items-center tw-flex-wrap" },
+  Fe = { class: "tw-flex tw-mr-[6px]" },
+  Oe = { class: "tw-mr-[6px]" },
+  $e = { class: "tw-mr-[6px] tw-text-[var(--text-color-light1)]" },
+  je = {
+    class:
+      "tw-flex tw-gap-[16px] tw-flex-col tw-max-h-[600px] tw-overflow-y-scroll",
+  },
+  Be = { class: "tw-font-bold" },
+  Ge = { class: "tw-font-bold" },
+  He = ["src"],
+  qe = ["src"],
+  ze = { class: "tw-flex tw-items-center" },
+  Xe = { key: 1, class: "tw-mr-[8px]" },
+  Ze = { class: "m-r-8" },
+  Ye = { key: 0, style: { color: "var(--text-color-light1)" } },
+  Ke = { class: "charging-wrap tw-whitespace-pre-line" },
+  We = { key: 2, class: "tw-basis-full tw-text-[var(--warning-color)]" },
+  Je = { key: 1, class: "tw-text-[var(--info-color-light5)]" },
+  Qe = { class: "tw-flex tw-items-center" },
+  el = { key: 1, class: "tw-mr-[8px]" },
+  ll = { class: "tw-ml-[8px] m-r-8" },
+  al = { class: "charging-wrap" },
+  il = { class: "m-l-8" },
+  nl = { class: "time-group-btn" },
+  tl = ["onClick"],
+  ol = { key: 0 },
+  ul = { key: 1 },
+  sl = { key: 0, class: "!tw-leading-[20px]" },
+  dl = { key: 0, class: "tw-text-[var(--warning-color)] tw-ml-[10px]" },
+  pl = { class: "charging-wrap" },
+  rl = { key: 0 },
+  cl = { key: 1 },
+  vl = { class: "rl tw-relative !tw-bg-[var(--primary-card-color)]" },
+  ml = {
+    class: "tw-overflow-y-auto tw-py-[22px] tw-px-[38px]",
+    style: { height: "calc(100% - 113px)" },
+  },
+  gl = { class: "tw-mb-[10px] tw-text-black" },
+  yl = { class: "tw-max-w-[100px] tw-text-[var(--info-color-light6)]" },
+  fl = { class: "s-flex tw-whitespace-nowrap" },
+  wl = { class: "!tw-text-[var(--text-color-light1)]" },
+  xl = { class: "new-plan-detail" },
+  hl = { class: "tw-max-w-[100px] tw-text-[var(--info-color-light6)]" },
+  bl = { class: "s-flex tw-whitespace-nowrap" },
+  Cl = { class: "!tw-text-[var(--text-color-light1)]" },
+  Ll = {
+    class:
+      "tw-cursor-pointer tw-w-fit tw-text-[var(--text-color-light1)] tw-leading-[1] hover:tw-text-[var(--text-color-base)]",
+  },
+  kl = { class: "price-detail" },
+  _l = { key: 0 },
+  Tl = { key: 1 },
+  El = { class: "price-detail" },
+  Pl = {
+    class:
+      "tw-absolute tw-bottom-0 tw-w-full tw-left-0 tw-px-[38px] tw-pb-[18px] tw-bg-[var(--primary-card-color)] tw-pt-[5px]",
+    style: { "border-radius": "0px 0px 12px 12px" },
+  },
+  Al = { class: "b-flex tw-mt-[-10px]" },
+  Il = { class: "tw-text-black tw-text-[14px]" },
+  Nl = { class: "tw-text-[#FAA63A] tw-text-[28px]" },
+  Dl = { key: 0, class: "tw-mb-[10px] tw-mt-[10px]" },
+  Vl = { key: 1, class: "tw-relative" },
+  Ml = { key: 0, class: "tw-text-[13px] tw-pt-[4px]" },
+  Rl = { key: 0 },
+  Sl = { class: "tw-w-full" },
+  Ul = { class: "confirm-order-wrap" },
+  Fl = { class: "title" },
+  Ol = { class: "content" },
+  $l = { class: "tips tw-mb-4" },
+  jl = { key: 0, class: "lost-features card" },
+  Bl = { class: "lost-features__title" },
+  Gl = { class: "lost-features__more-text" },
+  Hl = { class: "changes-card card" },
+  ql = { key: 0, class: "change-item" },
+  zl = { class: "change-label" },
+  Xl = { class: "change-values" },
+  Zl = { class: "change-old" },
+  Yl = { key: 1, class: "change-item" },
+  Kl = { class: "change-label" },
+  Wl = { class: "change-values" },
+  Jl = { class: "change-old" },
+  Ql = { key: 2, class: "change-item" },
+  ea = { class: "change-label" },
+  la = { class: "change-values" },
+  aa = { class: "change-old" },
+  ia = { class: "btn-wrap" },
+  na = Q(
+    e({
+      __name: "newUpdatePlanDialog",
+      emits: ["submit"],
+      setup(e, { expose: Q, emit: na }) {
+        l();
+        const ta = o(),
+          oa = o(!1),
+          ua = o(),
+          sa = o(!1),
+          da = o(!1),
+          {
+            currentPlan: pa,
+            planDataList: ra,
+            giveDays: ca,
+            currentPlanConfig: va,
+            payOrderNum: ma,
+            payList: ga,
+            currentPaidModuleList: ya,
+            defaultPaidModuleList: fa,
+          } = a(i());
+        let wa = i();
+        const { t: xa, locale: ha } = n.useI18n(),
+          {
+            handleCheckCode: ba,
+            checkCodeRes: Ca,
+            codeCanUse: La,
+            canUseCode: ka,
+            getCouponCodeTip: _a,
+            getCouponCodeTipColor: Ta,
+          } = oe(),
+          Ea = B(
+            () => !!ya.value.find((e) => e.moduleCode === K.ENV_COOKIE_ENCRYPT),
+          ),
+          { themeMode: Pa } = t(),
+          Aa = B(() => "dark" === Pa.value),
+          Ia = B(() =>
+            ha.value === W.ZH ? (Aa.value ? pe : re) : Aa.value ? ce : ve,
+          ),
+          Na = B(() =>
+            ha.value === W.ZH ? (Aa.value ? me : ge) : Aa.value ? ye : fe,
+          ),
+          Da = o([
+            { value: 500, label: 500 },
+            { value: 1e3, label: 1e3 },
+            { value: 1500, label: 1500 },
+            { value: 2e3, label: 2e3 },
+            { value: 3e3, label: 3e3 },
+            { value: 4e3, label: 4e3 },
+            { value: 5e3, label: 5e3 },
+            { value: 6e3, label: 6e3 },
+            { value: 7e3, label: 7e3 },
+            { value: 8e3, label: 8e3 },
+            { value: 9e3, label: 9e3 },
+            { value: 1e4, label: 1e4 },
+            { value: 10001, label: xa("cost.plan.dialog.moreTenThousand") },
+          ]),
+          Va = {
+            modifiers: [
+              { name: "preventOverflow", options: { boundary: "viewport" } },
+              {
+                name: "flip",
+                options: {
+                  fallbackPlacements: ["top", "bottom", "right", "left"],
+                },
+              },
+            ],
+          },
+          Ma = {
+            openLimit: void 0,
+            memberLimit: void 0,
+            envLimit: void 0,
+            type: s.Free,
+            lifeTime: 30,
+            payType: u.WECHAT_PAY,
+            planConfigId: "",
+            couponCode: "",
+            xOpenLimit: void 0,
+            encryptEnvCookieEnable: !1,
+            payMethodConfig: { pay: !0, wallet: !0 },
+          },
+          Ra = o(!1),
+          Sa = B(() => ga.value.find((e) => e.payType === Za.payType)),
+          Ua = B(() => Za.type !== s.Free && pa.value.type === s.Free),
+          Fa = o(),
+          Oa = o([]),
+          $a = B(() => (e) => Oa.value.includes(e)),
+          ja = (e) => {
+            Oa.value.includes(e)
+              ? (Oa.value = Oa.value.filter((l) => l !== e))
+              : Oa.value.push(e);
+          },
+          Ba = B(() => {
+            var e, l, a, i, n, t;
+            if (Wa.value) return !1;
+            let o = !0;
+            return (
+              za.value.type === s.XPlan
+                ? (o = Za.xOpenLimit
+                    ? !pa.value.openLimit ||
+                      !(pa.value.openLimit || 0 == 1e4 * Za.xOpenLimit)
+                    : (null == (e = null == pa ? void 0 : pa.value)
+                        ? void 0
+                        : e.openLimit) !== Za.openLimit)
+                : ((null == (l = pa.value) ? void 0 : l.planConfigId) !==
+                    Za.planConfigId ||
+                    [s.Free].includes(Za.type) ||
+                    (o = !(
+                      (null == (a = null == pa ? void 0 : pa.value)
+                        ? void 0
+                        : a.openLimit) === Za.openLimit &&
+                      (null == (i = null == pa ? void 0 : pa.value)
+                        ? void 0
+                        : i.memberLimit) === Za.memberLimit &&
+                      (null == (n = null == pa ? void 0 : pa.value)
+                        ? void 0
+                        : n.envLimit) === Za.envLimit
+                    )),
+                  Za.type === s.AIRDROP_PLAN &&
+                    (null == (t = pa.value) ? void 0 : t.type) === Za.type &&
+                    pa.value.timeLimit === Za.lifeTime &&
+                    (o = !1),
+                  za.value.planStatus === J.ThoroughShelve && (o = !1),
+                  Ea.value !== Za.encryptEnvCookieEnable && (o = !0)),
+              o
+            );
+          }),
+          Ga = o(),
+          Ha = B(() => {
+            if (Wa.value) return [];
+            let e = p.cloneDeep(za.value.costConfig);
+            if (oi.value) return [];
+            let l = e.durationMonthPrice.filter((l) => {
+              var a, i, n, t, o, u, s, d, p, r, c;
+              let m;
+              m =
+                ra.value.discount && (e.joinActivity || e.joinDiscount)
+                  ? Reflect.get(za.value.discount || {}, l.duration) || 1
+                  : l.discount || 1;
+              let g,
+                y =
+                  ((null == (a = Ca.value) ? void 0 : a.result) === v.SUCCESS &&
+                    (null == (i = Ca.value) ? void 0 : i.discountType) ===
+                      j.PERCENTAGE &&
+                    (null == (n = Ca.value) ? void 0 : n.discountValue)) ||
+                  0,
+                f = (null == (t = Ca.value) ? void 0 : t.usedValidate)
+                  ? (
+                      null == (o = Ca.value.usedRule)
+                        ? void 0
+                        : o.lifeTime.includes(Number(l.duration))
+                    )
+                    ? y
+                    : 0
+                  : y;
+              if (f <= 0) g = m;
+              else
+                switch (null == (u = Ca.value) ? void 0 : u.discountStrategy) {
+                  case "EXCLUSIVE":
+                    g = 1 - f;
+                    break;
+                  case "BEST_OF":
+                    g = Math.min(m, 1 - f);
+                    break;
+                  case "STACKABLE":
+                    g =
+                      (null == (s = qa.value) ? void 0 : s.joinActivity) &&
+                      (null == (d = qa.value) ? void 0 : d.userJoinActivity)
+                        ? m
+                        : (null == (p = qa.value) ? void 0 : p.joinDiscount) &&
+                            "STACKABLE" ===
+                              (null == (r = Ca.value)
+                                ? void 0
+                                : r.discountStrategy) &&
+                            2 ===
+                              (null == (c = Ca.value)
+                                ? void 0
+                                : c.stackableDiscountTypes)
+                          ? 1 - (1 - m + f)
+                          : 1 - f;
+                    break;
+                  default:
+                    g = m;
+                }
+              return ((l.discount = g), l.enable);
+            });
+            return (
+              e.trial &&
+                !ma.value &&
+                l.unshift({
+                  duration: 7,
+                  price: e.trialPrice,
+                  discount: e.trialDiscount,
+                }),
+              l
+            );
+          }),
+          qa = o({}),
+          za = B(() => {
+            var e;
+            return (
+              ((null == (e = ra.value) ? void 0 : e.planConfigList) || []).find(
+                (e) =>
+                  (null == e ? void 0 : e.planConfigId) === Za.planConfigId,
+              ) || {
+                planConfigId: "",
+                name: "",
+                summary: "",
+                envLimit: 1,
+                memberLimit: 1,
+                openLimit: 1,
+                type: s.Free,
+                planStatus: J.Shelve,
+              }
+            );
+          }),
+          Xa = na,
+          Za = y({ ...Ma }),
+          Ya = o(!1),
+          Ka = o(0),
+          Wa = o(!1),
+          Ja = o(!1),
+          {
+            envLimitNumType: Qa,
+            memberLimitNumType: ei,
+            openLimitNumType: li,
+            envLimitGradientPrice: ai,
+            memberLimitGradientPrice: ii,
+            openLimitGradientPrice: ni,
+            GradientMap: ti,
+            isFree: oi,
+            extendMap: ui,
+          } = ne(za, Za),
+          { showTopUp: si, newPayMethod: di } = ue(qa, Za.payMethodConfig, Ya),
+          pi = B(() => {
+            var e;
+            if (Wa.value) return !1;
+            if (za.value.planConfigId == pa.value.planConfigId) return !1;
+            let l = (pa.value.planModuleList || []).map((e) => e.moduleId),
+              a =
+                (null == (e = za.value.authConfig) ? void 0 : e.moduleIds) ??
+                [];
+            for (let i = 0; i < l.length; i++) if (!a.includes(l[i])) return !0;
+            return !1;
+          }),
+          ri = B(() => [za.value.planConfigId, pa.value.planConfigId ?? ""]),
+          ci = B(() => {
+            var e;
+            if (Wa.value) return [];
+            const l = (pa.value.planModuleList || []).map((e) => e.moduleId),
+              a =
+                (null == (e = za.value.authConfig) ? void 0 : e.moduleIds) ??
+                [],
+              i = l.filter((e) => !a.includes(e));
+            return (fa.value || [])
+              .filter((e) => i.includes(e.id))
+              .map((e) => e.name);
+          }),
+          vi = o(!1),
+          mi = B(() => (vi.value ? ci.value : ci.value.slice(0, 5)));
+        function gi() {
+          za.value.type == s.XPlan &&
+            (Za.openLimit || 0) > 1e4 &&
+            (console.log(Za.openLimit, "model.openLimit"),
+            (Za.openLimit = 10001),
+            (Za.xOpenLimit = Za.openLimit || 0));
+        }
+        (d(
+          () => Za.payMethodConfig.pay,
+          (e) => {
+            e &&
+              G(() => {
+                var e;
+                null ==
+                  (e = document.querySelector(
+                    ".wallet-payment-select-wrapper .pay-group-btn",
+                  )) || e.scrollIntoView({ behavior: "smooth" });
+              });
+          },
+        ),
+          d(
+            () => Za.lifeTime,
+            () => {
+              Za.couponCode &&
+                Ca.value &&
+                (La.value = ka(Za.planConfigId, Za.lifeTime));
+            },
+          ));
+        const yi = () =>
+          Za.type === s.XPlan && (Za.openLimit || 0) > 1e4
+            ? 1e4 * (Za.xOpenLimit || 0)
+            : Za.openLimit;
+        Q({
+          acceptParams: async (e, l, a) => {
+            var i;
+            try {
+              if (
+                ((Wa.value = !0),
+                (oa.value = !0),
+                wa.getPayListFn(),
+                null == (i = Fa.value) || i.checkProxy(),
+                (Ca.value = void 0),
+                (Za.couponCode = ""),
+                (Za.payMethodConfig.pay = !0),
+                (Za.payMethodConfig.wallet = !0),
+                (Ra.value = !1),
+                ga.value[0] && (Za.payType = ga.value[0].payType),
+                await wa.getPlanDataV2Fn(),
+                e)
+              ) {
+                ((Za.planConfigId = e), (Za.type = za.value.type));
+                let i = l ? 360 : a ? 7 : 30;
+                (7 === i && za.value.tryPrice
+                  ? (Za.lifeTime = 7)
+                  : (Za.lifeTime = za.value.costConfig.durationMonthPrice.find(
+                      (e) => e.duration === i,
+                    )
+                      ? i
+                      : za.value.costConfig.durationMonthPrice[0].duration ||
+                        30),
+                  (Za.openLimit = za.value.openLimit),
+                  (Za.envLimit = za.value.envLimit),
+                  (Za.memberLimit = za.value.memberLimit));
+              } else
+                ((Za.type = pa.value.type),
+                  (Za.planConfigId = pa.value.planConfigId),
+                  (Za.openLimit = pa.value.openLimit),
+                  (Za.envLimit = pa.value.envLimit),
+                  (Za.memberLimit = pa.value.memberLimit),
+                  (Za.lifeTime = pa.value.timeLimit),
+                  (Za.encryptEnvCookieEnable = Ea.value));
+              (gi(),
+                await bi(),
+                setTimeout(() => {
+                  let e = document.querySelector("#plan" + Za.planConfigId);
+                  null == e ||
+                    e.scrollIntoView({
+                      behavior: "smooth",
+                      inline: "center",
+                      block: "nearest",
+                    });
+                }));
+            } finally {
+              Wa.value = !1;
+            }
+          },
+        });
+        const fi = async () => {
+            (10001 === Za.openLimit && (Za.xOpenLimit = 1.1), await bi());
+          },
+          wi = p.debounce((e, l, a) => {
+            r.api.trackEvent({ type: e, action: l, params: a });
+          }, 500),
+          xi = async (e) => {
+            var l, a, i, n;
+            if (
+              (await G(),
+              wi(R.PLAN_VALUE_CHANGE, S.CHANGE_PLAN_TYPE, Za.planConfigId),
+              Za.couponCode &&
+                ((Za.couponCode = Za.couponCode.replace(/[^a-zA-Z0-9]/g, "")),
+                await ba(Za.couponCode, Za.planConfigId)),
+              Za.planConfigId === pa.value.planConfigId)
+            )
+              ((Za.openLimit = null == (l = pa.value) ? void 0 : l.openLimit),
+                (Za.envLimit = null == (a = pa.value) ? void 0 : a.envLimit),
+                (Za.lifeTime = null == (i = pa.value) ? void 0 : i.timeLimit),
+                (Za.memberLimit =
+                  null == (n = pa.value) ? void 0 : n.memberLimit),
+                (Za.type = pa.value.type),
+                (Za.planConfigId = pa.value.planConfigId));
+            else {
+              let e = ra.value.planConfigList.find(
+                (e) => e.planConfigId === Za.planConfigId,
+              );
+              if (e) {
+                let {
+                  envLimit: l,
+                  memberLimit: a,
+                  openLimit: i,
+                  type: n,
+                  costConfig: t,
+                } = e;
+                ((Za.openLimit = i),
+                  (Za.envLimit = l),
+                  (Za.memberLimit = a),
+                  (Za.type = n),
+                  (null == t ? void 0 : t.durationMonthPrice) &&
+                    (Za.lifeTime =
+                      (null == t ? void 0 : t.durationMonthPrice[0].duration) ||
+                      30));
+              }
+            }
+            gi();
+            let [t] = await m(bi());
+            t ? (Za.type = Ga.value) : (Ga.value = Za.type);
+          },
+          hi = async (e) => {
+            let l = p.cloneDeep(Za.payType);
+            Za.payType = e;
+            let [a] = await m(bi());
+            a && (Za.payType = l);
+          },
+          bi = p.throttle(async () => {
+            var e, l, a;
+            if (!Za.payType) return;
+            Ya.value = !0;
+            const i = Date.now();
+            Ka.value = i;
+            let n = {
+              orderType: c.ALTER_PLAN,
+              planType: Za.type,
+              lifeTime: Za.lifeTime,
+              payType: Za.payType,
+              memberLimit: (null == Za ? void 0 : Za.memberLimit) ?? null,
+              envLimit: (null == Za ? void 0 : Za.envLimit) ?? null,
+              planConfigId: za.value.planConfigId,
+              openLimit: yi(),
+              payMethod: di.value,
+              encryptEnv: Za.encryptEnvCookieEnable,
+              ...((null == (e = Sa.value) ? void 0 : e.currency)
+                ? { currency: null == (l = Sa.value) ? void 0 : l.currency }
+                : {}),
+            };
+            (null == (a = Ca.value) ? void 0 : a.result) === v.SUCCESS &&
+              (n.couponCode = Za.couponCode);
+            let [, t] = await m(g(n));
+            i == Ka.value && ((Ya.value = !1), t && (qa.value = t));
+          }, 300),
+          Ci = async (e = !0) => {
+            var l, a, i, n, t, o, u, s, d, p, r, m, g, y, f, w;
+            try {
+              if (!Za.payMethodConfig.pay && !Za.payMethodConfig.wallet)
+                return void H.warning(xa("walletRecharge.selectPaymentMethod"));
+              ((Ja.value = !0),
+                await (null == (l = ta.value) ? void 0 : l.validate()),
+                await Ai(),
+                await wa.getPayListFn(),
+                await q(300));
+              let x = !1;
+              if (
+                (ei.value >= 0 &&
+                  pa.value.memberUsage > Za.memberLimit &&
+                  (z(xa("cost.plan.dialog.membersLimitTip")), (x = !0)),
+                Qa.value >= 0 &&
+                  pa.value.envUsage > Za.envLimit &&
+                  (z(xa("cost.plan.dialog.envLimitTip")), (x = !0)),
+                x)
+              )
+                return;
+              if (
+                (0 ===
+                  (((null == (a = null == qa ? void 0 : qa.value)
+                    ? void 0
+                    : a.rateAmount) ?? 0) <= 0
+                    ? 0
+                    : ((null == (i = null == qa ? void 0 : qa.value)
+                        ? void 0
+                        : i.rateAmount) ?? 0)) &&
+                  ((null == (n = pa.value) ? void 0 : n.monthPrice) ?? 0) >
+                    ((null == (t = qa.value) ? void 0 : t.monthPrice) ?? 0)) ||
+                (pi.value && e)
+              )
+                da.value = !0;
+              else {
+                let e = {
+                  orderType: c.ALTER_PLAN,
+                  memberLimit: (null == Za ? void 0 : Za.memberLimit) ?? null,
+                  envLimit: (null == Za ? void 0 : Za.envLimit) ?? null,
+                  planType: Za.type,
+                  lifeTime: Za.lifeTime,
+                  payType: Za.payType,
+                  ...((null == (o = Sa.value) ? void 0 : o.currency)
+                    ? { currency: null == (u = Sa.value) ? void 0 : u.currency }
+                    : {}),
+                  rate:
+                    null == (s = null == qa ? void 0 : qa.value)
+                      ? void 0
+                      : s.rate,
+                  rateAmount:
+                    null == (d = null == qa ? void 0 : qa.value)
+                      ? void 0
+                      : d.rateAmount,
+                  payChannel: null == (p = Sa.value) ? void 0 : p.payChannel,
+                  payment:
+                    ((null == (r = null == qa ? void 0 : qa.value)
+                      ? void 0
+                      : r.rateAmount) ?? 0) <= 0
+                      ? 0
+                      : ((null == (m = null == qa ? void 0 : qa.value)
+                          ? void 0
+                          : m.payment) ?? 0),
+                  openLimit: yi(),
+                  planConfigId: Za.planConfigId,
+                  payMethod: di.value,
+                  couponCode: "",
+                  walletBalance:
+                    null == (g = null == qa ? void 0 : qa.value)
+                      ? void 0
+                      : g.walletBalance,
+                  walletDeductionAmount:
+                    null == (y = null == qa ? void 0 : qa.value)
+                      ? void 0
+                      : y.walletDeductionAmount,
+                  encryptEnv: Za.encryptEnvCookieEnable,
+                };
+                ((null == (f = Ca.value) ? void 0 : f.result) === v.SUCCESS &&
+                  (e.couponCode = Za.couponCode),
+                  null == (w = null == ua ? void 0 : ua.value) ||
+                    w.acceptParams(e, qa.value.walletBalance));
+              }
+            } finally {
+              Ja.value = !1;
+            }
+          },
+          Li = async () => {
+            var e, l, a, i, n, t, o, u, s, d;
+            if (
+              !(
+                0 ===
+                  (((null == (e = null == qa ? void 0 : qa.value)
+                    ? void 0
+                    : e.rateAmount) ?? 0) <= 0
+                    ? 0
+                    : ((null == (l = null == qa ? void 0 : qa.value)
+                        ? void 0
+                        : l.rateAmount) ?? 0)) &&
+                ((null == (a = pa.value) ? void 0 : a.monthPrice) ?? 0) >
+                  ((null == (i = qa.value) ? void 0 : i.monthPrice) ?? 0)
+              )
+            )
+              return ((sa.value = !0), await Ci(!1), void (sa.value = !1));
+            try {
+              sa.value = !0;
+              let e = {
+                orderType: c.ALTER_PLAN,
+                memberLimit:
+                  ei.value > 0
+                    ? ((null == Za ? void 0 : Za.memberLimit) ?? null)
+                    : null,
+                envLimit:
+                  Qa.value > 0
+                    ? ((null == Za ? void 0 : Za.envLimit) ?? null)
+                    : null,
+                planType: Za.type,
+                lifeTime: Za.lifeTime,
+                payType: Za.payType,
+                ...((null == (n = Sa.value) ? void 0 : n.currency)
+                  ? { currency: null == (t = Sa.value) ? void 0 : t.currency }
+                  : {}),
+                rate:
+                  null == (o = null == qa ? void 0 : qa.value)
+                    ? void 0
+                    : o.rate,
+                payChannel: null == (u = Sa.value) ? void 0 : u.payChannel,
+                payment:
+                  ((null == (s = null == qa ? void 0 : qa.value)
+                    ? void 0
+                    : s.rateAmount) ?? 0) <= 0
+                    ? 0
+                    : ((null == (d = null == qa ? void 0 : qa.value)
+                        ? void 0
+                        : d.payment) ?? 0),
+                openLimit: li.value > 0 ? yi() : null,
+                planConfigId: Za.planConfigId,
+                encryptEnv: Za.encryptEnvCookieEnable,
+              };
+              await X(e).then(async (e) => {
+                [Z.PAID_SUCCESS, Z.PLAN_SUCCESS].includes(e.statue)
+                  ? (Y(xa("cost.plan.dialog.paySuccess")), _i())
+                  : le.addPendingOrder(e.orderId);
+              });
+            } catch (p) {
+            } finally {
+              sa.value = !1;
+            }
+          };
+        function ki(e, l, a, i) {
+          return a && !i
+            ? "is-down"
+            : !a && i
+              ? "is-up"
+              : e > l
+                ? "is-down"
+                : e < l
+                  ? "is-up"
+                  : "";
+        }
+        const _i = () => {
+            (Ti(), Xa("submit"));
+          },
+          Ti = () => {
+            var e;
+            (null == (e = ta.value) || e.validateField(),
+              (oa.value = !1),
+              (da.value = !1));
+          },
+          Ei = y({
+            openLimit: [
+              {
+                required: !0,
+                message: xa("cost.plan.dialog.dayEnvAccessCountChoiceHolder"),
+              },
+            ],
+            xOpenLimit: [
+              {
+                required: !0,
+                message: xa("cost.plan.dialog.dayEnvAccessCountInputHolder"),
+              },
+            ],
+            envLimit: [
+              {
+                required: !0,
+                message: xa("cost.plan.dialog.browserEnvCountHolder"),
+              },
+            ],
+            memberLimit: [
+              { required: !0, message: xa("cost.plan.dialog.membersHolder") },
+            ],
+            payMethodConfig: [
+              {
+                validator(e, l, a) {
+                  Za.payMethodConfig.pay || Za.payMethodConfig.wallet
+                    ? a()
+                    : a(new Error(xa("")));
+                },
+              },
+            ],
+          });
+        function Pi(e) {
+          let l = ra.value.planConfigList.find((l) => l.planConfigId === e);
+          return null == l ? void 0 : l.name;
+        }
+        async function Ai() {
+          ((Za.couponCode = Za.couponCode.replace(/[^a-zA-Z0-9]/g, "")),
+            await ba(Za.couponCode, Za.planConfigId),
+            (La.value = ka(Za.planConfigId, Za.lifeTime)),
+            bi());
+        }
+        return (e, l) => {
+          const a = f("el-scrollbar"),
+            i = f("el-button"),
+            n = f("el-popover"),
+            t = f("el-input-number"),
+            o = f("el-checkbox"),
+            u = f("el-option"),
+            d = f("el-select"),
+            r = f("CaretBottom"),
+            c = f("el-icon"),
+            g = f("el-input"),
+            y = f("el-dialog"),
+            B = w("loadingV2"),
+            G = w("prevent-label-click");
+          return (
+            x(),
+            h(
+              b,
+              null,
+              [
+                oa.value
+                  ? (x(),
+                    C(
+                      y,
+                      {
+                        key: 0,
+                        modelValue: oa.value,
+                        "onUpdate:modelValue":
+                          l[16] || (l[16] = (e) => (oa.value = e)),
+                        "align-center": !0,
+                        "before-close": Ti,
+                        "close-on-click-modal": !1,
+                        "close-on-press-escape": !1,
+                        loading: sa.value,
+                        "show-close": !0,
+                        title: T(xa)("cost.plan.dialog.updatePlan"),
+                        class: "plan-update-dialog tw-max-w-[1300px]",
+                        width: "98%",
+                      },
+                      {
+                        default: L(() => {
+                          var e,
+                            y,
+                            f,
+                            w,
+                            H,
+                            q,
+                            z,
+                            X,
+                            Z,
+                            Y,
+                            K,
+                            W,
+                            J,
+                            Q,
+                            ee,
+                            le,
+                            ne,
+                            oe,
+                            ue,
+                            pe,
+                            re,
+                            ce,
+                            ve;
+                          return [
+                            k("div", we, [
+                              k("div", xe, [
+                                k("div", he, [
+                                  _(
+                                    (x(),
+                                    C(
+                                      T(E),
+                                      {
+                                        ref_key: "ruleFormRef",
+                                        ref: ta,
+                                        model: Za,
+                                        rules: Ei,
+                                        "scroll-to-error": !0,
+                                        "label-position": "right",
+                                        "label-width": "auto",
+                                      },
+                                      {
+                                        default: L(() => [
+                                          P(
+                                            T(A),
+                                            {
+                                              label: T(xa)(
+                                                "cost.plan.dialog.plan",
+                                              ),
+                                              class: "plan",
+                                            },
+                                            {
+                                              default: L(() => [
+                                                _(
+                                                  (x(),
+                                                  h("div", be, [
+                                                    l[20] ||
+                                                      (l[20] = k(
+                                                        "div",
+                                                        {
+                                                          class:
+                                                            "tw-w-[55px] tw-z-[1] tw-h-full tw-absolute tw-right-0 tw-top-0 tw-bottom-0 [background:var(--bg-hover4)]",
+                                                        },
+                                                        null,
+                                                        -1,
+                                                      )),
+                                                    P(
+                                                      a,
+                                                      { always: "" },
+                                                      {
+                                                        default: L(() => [
+                                                          k("div", Ce, [
+                                                            P(
+                                                              T(I),
+                                                              {
+                                                                modelValue:
+                                                                  Za.planConfigId,
+                                                                "onUpdate:modelValue":
+                                                                  l[0] ||
+                                                                  (l[0] = (e) =>
+                                                                    (Za.planConfigId =
+                                                                      e)),
+                                                                onChange: xi,
+                                                              },
+                                                              {
+                                                                default: L(
+                                                                  () => [
+                                                                    (x(!0),
+                                                                    h(
+                                                                      b,
+                                                                      null,
+                                                                      N(
+                                                                        (
+                                                                          T(ra)
+                                                                            .planConfigList ||
+                                                                          []
+                                                                        ).filter(
+                                                                          (e) =>
+                                                                            e.type !==
+                                                                            T(s)
+                                                                              .CUSTOM_PLAN,
+                                                                        ),
+                                                                        (e) => (
+                                                                          x(),
+                                                                          C(
+                                                                            T(
+                                                                              D,
+                                                                            ),
+                                                                            {
+                                                                              id:
+                                                                                "plan" +
+                                                                                e.planConfigId,
+                                                                              key: e.planConfigId,
+                                                                              "data-id":
+                                                                                e.planConfigId,
+                                                                              value:
+                                                                                e.planConfigId,
+                                                                            },
+                                                                            {
+                                                                              default:
+                                                                                L(
+                                                                                  () => [
+                                                                                    V(
+                                                                                      M(
+                                                                                        e.name,
+                                                                                      ) +
+                                                                                        M(
+                                                                                          T(
+                                                                                            pa,
+                                                                                          )
+                                                                                            .planConfigId ===
+                                                                                            e.planConfigId
+                                                                                            ? `（${T(xa)("cost.plan.card.currentPlan")}）`
+                                                                                            : "",
+                                                                                        ),
+                                                                                      1,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              _: 2,
+                                                                            },
+                                                                            1032,
+                                                                            [
+                                                                              "id",
+                                                                              "data-id",
+                                                                              "value",
+                                                                            ],
+                                                                          )
+                                                                        ),
+                                                                      ),
+                                                                      128,
+                                                                    )),
+                                                                  ],
+                                                                ),
+                                                                _: 1,
+                                                              },
+                                                              8,
+                                                              ["modelValue"],
+                                                            ),
+                                                          ]),
+                                                        ]),
+                                                        _: 1,
+                                                      },
+                                                    ),
+                                                  ])),
+                                                  [[B, Wa.value]],
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["label"],
+                                          ),
+                                          P(T(A), null, {
+                                            label: L(() => [
+                                              ...(l[21] ||
+                                                (l[21] = [
+                                                  k(
+                                                    "div",
+                                                    {
+                                                      class:
+                                                        "tw-text-[#00000000]",
+                                                    },
+                                                    "_",
+                                                    -1,
+                                                  ),
+                                                ])),
+                                            ]),
+                                            default: L(() => [
+                                              _(
+                                                (x(),
+                                                h("div", Le, [
+                                                  k("div", ke, [
+                                                    k("div", _e, [
+                                                      k("div", Te, [
+                                                        k(
+                                                          "div",
+                                                          null,
+                                                          M(
+                                                            T(xa)(
+                                                              "cost.plan.dialog.env",
+                                                            ),
+                                                          ) +
+                                                            "：" +
+                                                            M(
+                                                              T(Qa) >= 0
+                                                                ? T(Qa) +
+                                                                    T(xa)(
+                                                                      "cost.plan.dialog.unit",
+                                                                    )
+                                                                : T(xa)(
+                                                                    "cost.plan.dialog.unlimited",
+                                                                  ),
+                                                            ),
+                                                          1,
+                                                        ),
+                                                        k(
+                                                          "div",
+                                                          null,
+                                                          M(
+                                                            T(xa)(
+                                                              "cost.plan.dialog.member",
+                                                            ),
+                                                          ) +
+                                                            "：" +
+                                                            M(
+                                                              T(ei) >= 0
+                                                                ? T(ei) +
+                                                                    T(xa)(
+                                                                      "cost.plan.dialog.unit",
+                                                                    )
+                                                                : T(xa)(
+                                                                    "cost.plan.dialog.unlimited",
+                                                                  ),
+                                                            ),
+                                                          1,
+                                                        ),
+                                                      ]),
+                                                      k(
+                                                        "div",
+                                                        Ee,
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.dialog.dayEnvAccessCount",
+                                                          ),
+                                                        ) +
+                                                          "：" +
+                                                          M(
+                                                            T(li) >= 0
+                                                              ? T(li) +
+                                                                  T(xa)(
+                                                                    "cost.plan.dialog.time",
+                                                                  )
+                                                              : T(xa)(
+                                                                  "cost.plan.dialog.unlimited",
+                                                                ),
+                                                          ),
+                                                        1,
+                                                      ),
+                                                    ]),
+                                                    k("div", Pe, [
+                                                      k(
+                                                        "span",
+                                                        Ae,
+                                                        "$" +
+                                                          M(
+                                                            T(ie)(
+                                                              za.value,
+                                                              !1,
+                                                              T(oi),
+                                                              !1,
+                                                            ),
+                                                          ) +
+                                                          "/" +
+                                                          M(
+                                                            T(xa)(
+                                                              "cost.plan.dialog.month",
+                                                            ),
+                                                          ),
+                                                        1,
+                                                      ),
+                                                      P(
+                                                        n,
+                                                        {
+                                                          placement: "bottom",
+                                                          "popper-class":
+                                                            "!tw-max-w-[800px] !tw-w-fit",
+                                                          trigger: "hover",
+                                                          "popper-options": Va,
+                                                        },
+                                                        {
+                                                          reference: L(() => [
+                                                            P(
+                                                              i,
+                                                              {
+                                                                link: "",
+                                                                style: {
+                                                                  "text-decoration":
+                                                                    "underline",
+                                                                },
+                                                                type: "info",
+                                                              },
+                                                              {
+                                                                default: L(
+                                                                  () => [
+                                                                    k(
+                                                                      "span",
+                                                                      Ie,
+                                                                      M(
+                                                                        Za.type ===
+                                                                          T(s)
+                                                                            .Free
+                                                                          ? T(
+                                                                              xa,
+                                                                            )(
+                                                                              "cost.plan.dialog.functionRightsLimited",
+                                                                            )
+                                                                          : T(
+                                                                              xa,
+                                                                            )(
+                                                                              "cost.plan.dialog.haveAllFunctionRightsLimited",
+                                                                            ),
+                                                                      ),
+                                                                      1,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                _: 1,
+                                                              },
+                                                            ),
+                                                          ]),
+                                                          default: L(() => [
+                                                            P(
+                                                              te,
+                                                              {
+                                                                id: za.value
+                                                                  .planConfigId,
+                                                                name: za.value
+                                                                  .name,
+                                                              },
+                                                              null,
+                                                              8,
+                                                              ["id", "name"],
+                                                            ),
+                                                          ]),
+                                                          _: 1,
+                                                        },
+                                                      ),
+                                                    ]),
+                                                  ]),
+                                                ])),
+                                                [[B, Wa.value]],
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          }),
+                                          P(
+                                            T(A),
+                                            { prop: "envLimit", class: "" },
+                                            {
+                                              label: L(() => [
+                                                k("div", Ne, [
+                                                  V(
+                                                    M(
+                                                      T(xa)(
+                                                        "cost.plan.dialog.browserEnvCount",
+                                                      ),
+                                                    ) + " ",
+                                                    1,
+                                                  ),
+                                                  P(
+                                                    ae,
+                                                    {
+                                                      text: T(xa)(
+                                                        "cost.plan.dialog.browserCntTip",
+                                                      ),
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["text"],
+                                                  ),
+                                                ]),
+                                              ]),
+                                              default: L(() => {
+                                                var e, a, u, s, d, p, r;
+                                                return [
+                                                  _(
+                                                    (x(),
+                                                    h("div", null, [
+                                                      T(Qa) >= 0 &&
+                                                      T(ui).envLimit
+                                                        ? (x(),
+                                                          C(
+                                                            t,
+                                                            {
+                                                              key: 0,
+                                                              modelValue:
+                                                                Za.envLimit,
+                                                              "onUpdate:modelValue":
+                                                                l[1] ||
+                                                                (l[1] = (e) =>
+                                                                  (Za.envLimit =
+                                                                    e)),
+                                                              disabled:
+                                                                !T(ui).envLimit,
+                                                              max: T(ui)
+                                                                .envLimit
+                                                                ? (T(ai).max ??
+                                                                  void 0)
+                                                                : void 0,
+                                                              min: T(ui)
+                                                                .envLimit
+                                                                ? (T(ai).min ??
+                                                                  void 0)
+                                                                : void 0,
+                                                              precision: 0,
+                                                              step: T(ui)
+                                                                .envLimit
+                                                                ? (T(ai).step ??
+                                                                  void 0)
+                                                                : void 0,
+                                                              "value-on-clear": 100,
+                                                              "controls-position":
+                                                                "right",
+                                                              "step-strictly":
+                                                                "",
+                                                              style: {
+                                                                "max-width":
+                                                                  "110px",
+                                                              },
+                                                              class:
+                                                                "tw-mr-[16px]",
+                                                              onChange:
+                                                                l[2] ||
+                                                                (l[2] = () => {
+                                                                  (T(bi)(),
+                                                                    T(wi)(
+                                                                      T(R)
+                                                                        .PLAN_VALUE_CHANGE,
+                                                                      T(S)
+                                                                        .CHANGE_ENV_COUNT,
+                                                                      Za.envLimit,
+                                                                    ));
+                                                                }),
+                                                            },
+                                                            null,
+                                                            8,
+                                                            [
+                                                              "modelValue",
+                                                              "disabled",
+                                                              "max",
+                                                              "min",
+                                                              "step",
+                                                            ],
+                                                          ))
+                                                        : (x(),
+                                                          h(
+                                                            "div",
+                                                            De,
+                                                            M(
+                                                              T(Qa) >= 0
+                                                                ? Za.envLimit
+                                                                : T(xa)(
+                                                                    "cost.plan.dialog.unlimited",
+                                                                  ),
+                                                            ),
+                                                            1,
+                                                          )),
+                                                      T(Qa) > 0
+                                                        ? (x(),
+                                                          h(
+                                                            b,
+                                                            { key: 2 },
+                                                            [
+                                                              T(ui).envLimit
+                                                                ? (x(),
+                                                                  h(
+                                                                    b,
+                                                                    { key: 0 },
+                                                                    [
+                                                                      k(
+                                                                        "span",
+                                                                        Ve,
+                                                                        [
+                                                                          qa
+                                                                            .value
+                                                                            .planType
+                                                                            ? (x(),
+                                                                              h(
+                                                                                b,
+                                                                                {
+                                                                                  key: 0,
+                                                                                },
+                                                                                [
+                                                                                  V(
+                                                                                    " $" +
+                                                                                      M(
+                                                                                        qa
+                                                                                          .value
+                                                                                          .envMonthPrice,
+                                                                                      ) +
+                                                                                      "/" +
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "cost.plan.dialog.month",
+                                                                                        ),
+                                                                                      ),
+                                                                                    1,
+                                                                                  ),
+                                                                                ],
+                                                                                64,
+                                                                              ))
+                                                                            : (x(),
+                                                                              h(
+                                                                                b,
+                                                                                {
+                                                                                  key: 1,
+                                                                                },
+                                                                                [
+                                                                                  V(
+                                                                                    " $" +
+                                                                                      M(
+                                                                                        (
+                                                                                          ((null ==
+                                                                                          (e =
+                                                                                            T(
+                                                                                              pa,
+                                                                                            ))
+                                                                                            ? void 0
+                                                                                            : e.monthPrice) ??
+                                                                                            0) -
+                                                                                          10 *
+                                                                                            (((null ==
+                                                                                            (a =
+                                                                                              T(
+                                                                                                pa,
+                                                                                              ))
+                                                                                              ? void 0
+                                                                                              : a.memberLimit) ??
+                                                                                              0) -
+                                                                                              1)
+                                                                                        ).toFixed(
+                                                                                          2,
+                                                                                        ),
+                                                                                      ) +
+                                                                                      "/" +
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "cost.plan.dialog.month",
+                                                                                        ),
+                                                                                      ),
+                                                                                    1,
+                                                                                  ),
+                                                                                ],
+                                                                                64,
+                                                                              )),
+                                                                        ],
+                                                                      ),
+                                                                      T(ti)
+                                                                        .envLimit
+                                                                        ? (x(),
+                                                                          h(
+                                                                            "span",
+                                                                            Me,
+                                                                            " (" +
+                                                                              M(
+                                                                                T(
+                                                                                  xa,
+                                                                                )(
+                                                                                  "cost.plan.dialog.planTip3",
+                                                                                  {
+                                                                                    num1:
+                                                                                      null ==
+                                                                                      (u =
+                                                                                        za
+                                                                                          .value
+                                                                                          .extendConfig)
+                                                                                        ? void 0
+                                                                                        : u.envPrice,
+                                                                                    num2:
+                                                                                      null ==
+                                                                                      (s =
+                                                                                        za
+                                                                                          .value
+                                                                                          .extendConfig)
+                                                                                        ? void 0
+                                                                                        : s.envNumber,
+                                                                                  },
+                                                                                ),
+                                                                              ) +
+                                                                              ") ",
+                                                                            1,
+                                                                          ))
+                                                                        : (x(),
+                                                                          C(
+                                                                            n,
+                                                                            {
+                                                                              key: 1,
+                                                                              "popper-class":
+                                                                                "!tw-max-w-[500px] !tw-w-fit",
+                                                                              placement:
+                                                                                "right",
+                                                                              trigger:
+                                                                                "hover",
+                                                                            },
+                                                                            {
+                                                                              reference:
+                                                                                L(
+                                                                                  () => [
+                                                                                    P(
+                                                                                      i,
+                                                                                      {
+                                                                                        link: "",
+                                                                                        type: "primary",
+                                                                                      },
+                                                                                      {
+                                                                                        default:
+                                                                                          L(
+                                                                                            () => [
+                                                                                              V(
+                                                                                                M(
+                                                                                                  T(
+                                                                                                    xa,
+                                                                                                  )(
+                                                                                                    "cost.plan.dialog.billingMethod",
+                                                                                                  ),
+                                                                                                ),
+                                                                                                1,
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        _: 1,
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              default:
+                                                                                L(
+                                                                                  () => {
+                                                                                    var e,
+                                                                                      l;
+                                                                                    return [
+                                                                                      k(
+                                                                                        "div",
+                                                                                        Re,
+                                                                                        M(
+                                                                                          null ==
+                                                                                            (l =
+                                                                                              null ==
+                                                                                              (e =
+                                                                                                za.value)
+                                                                                                ? void 0
+                                                                                                : e.extendConfig)
+                                                                                            ? void 0
+                                                                                            : l.envCostDesc,
+                                                                                        ),
+                                                                                        1,
+                                                                                      ),
+                                                                                    ];
+                                                                                  },
+                                                                                ),
+                                                                              _: 1,
+                                                                            },
+                                                                          )),
+                                                                    ],
+                                                                    64,
+                                                                  ))
+                                                                : (x(),
+                                                                  h(
+                                                                    "div",
+                                                                    Se,
+                                                                    M(
+                                                                      T(xa)(
+                                                                        "cost.plan.dialog.planTip2",
+                                                                      ),
+                                                                    ),
+                                                                    1,
+                                                                  )),
+                                                              (
+                                                                null ==
+                                                                (d =
+                                                                  za.value
+                                                                    .extendConfig)
+                                                                  ? void 0
+                                                                  : d.extendEncryptEnv
+                                                              )
+                                                                ? (x(),
+                                                                  h("div", Ue, [
+                                                                    k(
+                                                                      "span",
+                                                                      Fe,
+                                                                      [
+                                                                        P(
+                                                                          o,
+                                                                          {
+                                                                            label:
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "env.cookie.subPlanTitle",
+                                                                              ),
+                                                                            modelValue:
+                                                                              Za.encryptEnvCookieEnable,
+                                                                            "onUpdate:modelValue":
+                                                                              l[3] ||
+                                                                              (l[3] =
+                                                                                (
+                                                                                  e,
+                                                                                ) =>
+                                                                                  (Za.encryptEnvCookieEnable =
+                                                                                    e)),
+                                                                            onChange:
+                                                                              T(
+                                                                                bi,
+                                                                              ),
+                                                                          },
+                                                                          null,
+                                                                          8,
+                                                                          [
+                                                                            "label",
+                                                                            "modelValue",
+                                                                            "onChange",
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    k(
+                                                                      "span",
+                                                                      Oe,
+                                                                      "$" +
+                                                                        M(
+                                                                          qa
+                                                                            .value
+                                                                            .encryptEnvMonthPrice ||
+                                                                            0,
+                                                                        ) +
+                                                                        "/" +
+                                                                        M(
+                                                                          T(xa)(
+                                                                            "cost.plan.dialog.month",
+                                                                          ),
+                                                                        ),
+                                                                      1,
+                                                                    ),
+                                                                    k(
+                                                                      "span",
+                                                                      $e,
+                                                                      M(
+                                                                        T(xa)(
+                                                                          "env.cookie.subPlanDesc",
+                                                                          {
+                                                                            price:
+                                                                              null ==
+                                                                              (p =
+                                                                                za
+                                                                                  .value
+                                                                                  .extendConfig)
+                                                                                ? void 0
+                                                                                : p.encryptEnvPrice,
+                                                                            num:
+                                                                              null ==
+                                                                              (r =
+                                                                                za
+                                                                                  .value
+                                                                                  .extendConfig)
+                                                                                ? void 0
+                                                                                : r.encryptEnvNumber,
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                      1,
+                                                                    ),
+                                                                    P(
+                                                                      n,
+                                                                      {
+                                                                        width: 600,
+                                                                        placement:
+                                                                          "right",
+                                                                        "popper-style":
+                                                                          "box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;",
+                                                                      },
+                                                                      {
+                                                                        reference:
+                                                                          L(
+                                                                            () => [
+                                                                              P(
+                                                                                i,
+                                                                                {
+                                                                                  link: "",
+                                                                                  type: "primary",
+                                                                                },
+                                                                                {
+                                                                                  default:
+                                                                                    L(
+                                                                                      () => [
+                                                                                        V(
+                                                                                          M(
+                                                                                            T(
+                                                                                              xa,
+                                                                                            )(
+                                                                                              "org.apiCreateMember.params.desc",
+                                                                                            ),
+                                                                                          ),
+                                                                                          1,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  _: 1,
+                                                                                },
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        default:
+                                                                          L(
+                                                                            () => {
+                                                                              var e,
+                                                                                l;
+                                                                              return [
+                                                                                k(
+                                                                                  "div",
+                                                                                  je,
+                                                                                  [
+                                                                                    k(
+                                                                                      "span",
+                                                                                      Be,
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "env.cookie.functionDec",
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                    k(
+                                                                                      "p",
+                                                                                      null,
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "env.cookie.functionContent",
+                                                                                          {
+                                                                                            price:
+                                                                                              null ==
+                                                                                              (e =
+                                                                                                za
+                                                                                                  .value
+                                                                                                  .extendConfig)
+                                                                                                ? void 0
+                                                                                                : e.encryptEnvPrice,
+                                                                                            num:
+                                                                                              null ==
+                                                                                              (l =
+                                                                                                za
+                                                                                                  .value
+                                                                                                  .extendConfig)
+                                                                                                ? void 0
+                                                                                                : l.encryptEnvNumber,
+                                                                                          },
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                    k(
+                                                                                      "span",
+                                                                                      Ge,
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "env.cookie.actionHelp",
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                    k(
+                                                                                      "p",
+                                                                                      null,
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "env.cookie.actionStep1",
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                    k(
+                                                                                      "img",
+                                                                                      {
+                                                                                        src: Ia.value,
+                                                                                      },
+                                                                                      null,
+                                                                                      8,
+                                                                                      He,
+                                                                                    ),
+                                                                                    k(
+                                                                                      "p",
+                                                                                      null,
+                                                                                      M(
+                                                                                        T(
+                                                                                          xa,
+                                                                                        )(
+                                                                                          "env.cookie.actionStep2",
+                                                                                        ),
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                    k(
+                                                                                      "img",
+                                                                                      {
+                                                                                        src: Na.value,
+                                                                                      },
+                                                                                      null,
+                                                                                      8,
+                                                                                      qe,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ];
+                                                                            },
+                                                                          ),
+                                                                        _: 1,
+                                                                      },
+                                                                    ),
+                                                                  ]))
+                                                                : U("", !0),
+                                                            ],
+                                                            64,
+                                                          ))
+                                                        : U("", !0),
+                                                    ])),
+                                                    [[B, Wa.value]],
+                                                  ),
+                                                ];
+                                              }),
+                                              _: 1,
+                                            },
+                                          ),
+                                          P(
+                                            T(A),
+                                            {
+                                              prop: "memberLimit",
+                                              class:
+                                                "text-form-item tw-items-center",
+                                            },
+                                            {
+                                              label: L(() => [
+                                                k("div", ze, [
+                                                  V(
+                                                    M(
+                                                      T(xa)(
+                                                        "cost.plan.card.memberCount",
+                                                      ),
+                                                    ) + " ",
+                                                    1,
+                                                  ),
+                                                  P(
+                                                    ae,
+                                                    {
+                                                      text: T(xa)(
+                                                        "cost.plan.dialog.memberCntTip",
+                                                      ),
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["text"],
+                                                  ),
+                                                ]),
+                                              ]),
+                                              default: L(() => [
+                                                _(
+                                                  (x(),
+                                                  h("div", null, [
+                                                    T(ei) > 0 &&
+                                                    T(ui).memberLimit
+                                                      ? (x(),
+                                                        C(
+                                                          t,
+                                                          {
+                                                            key: 0,
+                                                            modelValue:
+                                                              Za.memberLimit,
+                                                            "onUpdate:modelValue":
+                                                              l[4] ||
+                                                              (l[4] = (e) =>
+                                                                (Za.memberLimit =
+                                                                  e)),
+                                                            disabled:
+                                                              !T(ui)
+                                                                .memberLimit,
+                                                            max: T(ui)
+                                                              .memberLimit
+                                                              ? T(ii).max
+                                                              : null,
+                                                            min: T(ui)
+                                                              .memberLimit
+                                                              ? T(ii).min
+                                                              : null,
+                                                            precision: 0,
+                                                            step: T(ui)
+                                                              .memberLimit
+                                                              ? T(ii).step
+                                                              : null,
+                                                            "value-on-clear": 1,
+                                                            "controls-position":
+                                                              "right",
+                                                            style: {
+                                                              "max-width":
+                                                                "110px",
+                                                            },
+                                                            class:
+                                                              "tw-mr-[16px]",
+                                                            onChange:
+                                                              l[5] ||
+                                                              (l[5] = () => {
+                                                                (T(bi)(),
+                                                                  T(wi)(
+                                                                    T(R)
+                                                                      .PLAN_VALUE_CHANGE,
+                                                                    T(S)
+                                                                      .CHANGE_MEMBER_COUNT,
+                                                                    Za.memberLimit,
+                                                                  ));
+                                                              }),
+                                                          },
+                                                          null,
+                                                          8,
+                                                          [
+                                                            "modelValue",
+                                                            "disabled",
+                                                            "max",
+                                                            "min",
+                                                            "step",
+                                                          ],
+                                                        ))
+                                                      : (x(),
+                                                        h(
+                                                          "div",
+                                                          Xe,
+                                                          M(
+                                                            T(ei) > 0
+                                                              ? Za.memberLimit
+                                                              : T(xa)(
+                                                                  "cost.plan.dialog.unlimited",
+                                                                ),
+                                                          ),
+                                                          1,
+                                                        )),
+                                                    T(ei) > 0
+                                                      ? (x(),
+                                                        h(
+                                                          b,
+                                                          { key: 2 },
+                                                          [
+                                                            T(ui).memberLimit &&
+                                                            T(ei) > 0
+                                                              ? (x(),
+                                                                h(
+                                                                  b,
+                                                                  { key: 0 },
+                                                                  [
+                                                                    k(
+                                                                      "span",
+                                                                      Ze,
+                                                                      " $" +
+                                                                        M(
+                                                                          qa
+                                                                            .value
+                                                                            .memberMonthPrice,
+                                                                        ) +
+                                                                        "/" +
+                                                                        M(
+                                                                          T(xa)(
+                                                                            "cost.plan.dialog.month",
+                                                                          ),
+                                                                        ),
+                                                                      1,
+                                                                    ),
+                                                                    T(ti)
+                                                                      .memberLimit
+                                                                      ? (x(),
+                                                                        h(
+                                                                          "span",
+                                                                          Ye,
+                                                                          "(" +
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.planTip4",
+                                                                                {
+                                                                                  num: za
+                                                                                    .value
+                                                                                    .extendConfig
+                                                                                    .memberPrice,
+                                                                                },
+                                                                              ),
+                                                                            ) +
+                                                                            ") ",
+                                                                          1,
+                                                                        ))
+                                                                      : (x(),
+                                                                        C(
+                                                                          n,
+                                                                          {
+                                                                            key: 1,
+                                                                            "popper-class":
+                                                                              "!tw-max-w-[500px] !tw-w-fit",
+                                                                            placement:
+                                                                              "right",
+                                                                            trigger:
+                                                                              "click",
+                                                                          },
+                                                                          {
+                                                                            reference:
+                                                                              L(
+                                                                                () => [
+                                                                                  P(
+                                                                                    i,
+                                                                                    {
+                                                                                      link: "",
+                                                                                      type: "primary",
+                                                                                    },
+                                                                                    {
+                                                                                      default:
+                                                                                        L(
+                                                                                          () => [
+                                                                                            V(
+                                                                                              M(
+                                                                                                T(
+                                                                                                  xa,
+                                                                                                )(
+                                                                                                  "cost.plan.dialog.billingMethod",
+                                                                                                ),
+                                                                                              ),
+                                                                                              1,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      _: 1,
+                                                                                    },
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            default:
+                                                                              L(
+                                                                                () => {
+                                                                                  var e,
+                                                                                    l;
+                                                                                  return [
+                                                                                    k(
+                                                                                      "div",
+                                                                                      Ke,
+                                                                                      M(
+                                                                                        null ==
+                                                                                          (l =
+                                                                                            null ==
+                                                                                            (e =
+                                                                                              za.value)
+                                                                                              ? void 0
+                                                                                              : e.extendConfig)
+                                                                                          ? void 0
+                                                                                          : l.memberCostDesc,
+                                                                                      ),
+                                                                                      1,
+                                                                                    ),
+                                                                                  ];
+                                                                                },
+                                                                              ),
+                                                                            _: 1,
+                                                                          },
+                                                                        )),
+                                                                    qa.value
+                                                                      .envGiveNumber
+                                                                      ? (x(),
+                                                                        h(
+                                                                          "div",
+                                                                          We,
+                                                                          M(
+                                                                            T(
+                                                                              xa,
+                                                                            )(
+                                                                              "cost.plan.dialog.giftEnv",
+                                                                              {
+                                                                                num: qa
+                                                                                  .value
+                                                                                  .envGiveNumber,
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          1,
+                                                                        ))
+                                                                      : U(
+                                                                          "",
+                                                                          !0,
+                                                                        ),
+                                                                  ],
+                                                                  64,
+                                                                ))
+                                                              : (x(),
+                                                                h(
+                                                                  "div",
+                                                                  Je,
+                                                                  M(
+                                                                    T(xa)(
+                                                                      "cost.plan.dialog.planTip",
+                                                                    ),
+                                                                  ),
+                                                                  1,
+                                                                )),
+                                                          ],
+                                                          64,
+                                                        ))
+                                                      : U("", !0),
+                                                  ])),
+                                                  [[B, Wa.value]],
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                          ),
+                                          P(
+                                            T(A),
+                                            {
+                                              label: T(xa)(
+                                                "cost.plan.dialog.dayEnvAccessCount",
+                                              ),
+                                              class:
+                                                "text-form-item tw-items-center",
+                                            },
+                                            {
+                                              label: L(() => [
+                                                k("div", Qe, [
+                                                  V(
+                                                    M(
+                                                      T(xa)(
+                                                        "cost.plan.dialog.dayEnvAccessCount",
+                                                      ),
+                                                    ) + " ",
+                                                    1,
+                                                  ),
+                                                  P(
+                                                    ae,
+                                                    {
+                                                      text: T(xa)(
+                                                        "cost.plan.dialog.everyDayOpenEnvCntTip",
+                                                      ),
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["text"],
+                                                  ),
+                                                ]),
+                                              ]),
+                                              default: L(() => {
+                                                var e, a;
+                                                return [
+                                                  _(
+                                                    (x(),
+                                                    h("div", null, [
+                                                      za.value.type !==
+                                                      T(s).XPlan
+                                                        ? (x(),
+                                                          h(
+                                                            b,
+                                                            { key: 0 },
+                                                            [
+                                                              T(li) > 0 &&
+                                                              T(ui).openLimit
+                                                                ? (x(),
+                                                                  C(
+                                                                    t,
+                                                                    {
+                                                                      key: 0,
+                                                                      modelValue:
+                                                                        Za.openLimit,
+                                                                      "onUpdate:modelValue":
+                                                                        l[6] ||
+                                                                        (l[6] =
+                                                                          (e) =>
+                                                                            (Za.openLimit =
+                                                                              e)),
+                                                                      disabled:
+                                                                        !T(ui)
+                                                                          .openLimit,
+                                                                      max: T(ni)
+                                                                        .max,
+                                                                      min: T(ni)
+                                                                        .min,
+                                                                      precision: 0,
+                                                                      step: T(
+                                                                        ni,
+                                                                      ).step,
+                                                                      "value-on-clear": 1,
+                                                                      "controls-position":
+                                                                        "right",
+                                                                      style: {
+                                                                        "max-width":
+                                                                          "110px",
+                                                                      },
+                                                                      class:
+                                                                        "tw-mr-[16px]",
+                                                                      onChange:
+                                                                        l[7] ||
+                                                                        (l[7] =
+                                                                          () => {
+                                                                            (T(
+                                                                              bi,
+                                                                            )(),
+                                                                              T(
+                                                                                wi,
+                                                                              )(
+                                                                                T(
+                                                                                  R,
+                                                                                )
+                                                                                  .PLAN_VALUE_CHANGE,
+                                                                                T(
+                                                                                  S,
+                                                                                )
+                                                                                  .CHANGE_ENV_OPEN_COUNT,
+                                                                                Za.openLimit,
+                                                                              ));
+                                                                          }),
+                                                                    },
+                                                                    null,
+                                                                    8,
+                                                                    [
+                                                                      "modelValue",
+                                                                      "disabled",
+                                                                      "max",
+                                                                      "min",
+                                                                      "step",
+                                                                    ],
+                                                                  ))
+                                                                : (x(),
+                                                                  h(
+                                                                    "div",
+                                                                    el,
+                                                                    M(
+                                                                      T(li) >= 0
+                                                                        ? (null ==
+                                                                          (e =
+                                                                            qa.value)
+                                                                            ? void 0
+                                                                            : e.openLimit) ||
+                                                                            Za.openLimit
+                                                                        : T(xa)(
+                                                                            "cost.plan.dialog.unlimited",
+                                                                          ),
+                                                                    ),
+                                                                    1,
+                                                                  )),
+                                                            ],
+                                                            64,
+                                                          ))
+                                                        : (x(),
+                                                          h(
+                                                            b,
+                                                            { key: 1 },
+                                                            [
+                                                              P(
+                                                                d,
+                                                                {
+                                                                  modelValue:
+                                                                    Za.openLimit,
+                                                                  "onUpdate:modelValue":
+                                                                    l[8] ||
+                                                                    (l[8] = (
+                                                                      e,
+                                                                    ) =>
+                                                                      (Za.openLimit =
+                                                                        e)),
+                                                                  style: {
+                                                                    "max-width":
+                                                                      "110px",
+                                                                  },
+                                                                  onChange: fi,
+                                                                },
+                                                                {
+                                                                  default: L(
+                                                                    () => [
+                                                                      (x(!0),
+                                                                      h(
+                                                                        b,
+                                                                        null,
+                                                                        N(
+                                                                          Da.value,
+                                                                          (
+                                                                            e,
+                                                                          ) => (
+                                                                            x(),
+                                                                            C(
+                                                                              u,
+                                                                              {
+                                                                                key: e.value,
+                                                                                label:
+                                                                                  e.label,
+                                                                                value:
+                                                                                  e.value,
+                                                                              },
+                                                                              null,
+                                                                              8,
+                                                                              [
+                                                                                "label",
+                                                                                "value",
+                                                                              ],
+                                                                            )
+                                                                          ),
+                                                                        ),
+                                                                        128,
+                                                                      )),
+                                                                    ],
+                                                                  ),
+                                                                  _: 1,
+                                                                },
+                                                                8,
+                                                                ["modelValue"],
+                                                              ),
+                                                              k(
+                                                                "span",
+                                                                ll,
+                                                                " $" +
+                                                                  M(
+                                                                    (
+                                                                      (null ==
+                                                                      (a =
+                                                                        qa.value)
+                                                                        ? void 0
+                                                                        : a.monthPrice) ??
+                                                                      14
+                                                                    ).toFixed(
+                                                                      2,
+                                                                    ),
+                                                                  ) +
+                                                                  "/" +
+                                                                  M(
+                                                                    T(xa)(
+                                                                      "cost.plan.dialog.month",
+                                                                    ),
+                                                                  ),
+                                                                1,
+                                                              ),
+                                                              P(
+                                                                n,
+                                                                {
+                                                                  "popper-class":
+                                                                    "!tw-max-w-[500px] !tw-w-fit",
+                                                                  placement:
+                                                                    "right",
+                                                                  trigger:
+                                                                    "hover",
+                                                                },
+                                                                {
+                                                                  reference: L(
+                                                                    () => [
+                                                                      P(
+                                                                        i,
+                                                                        {
+                                                                          link: "",
+                                                                          type: "primary",
+                                                                        },
+                                                                        {
+                                                                          default:
+                                                                            L(
+                                                                              () => [
+                                                                                V(
+                                                                                  M(
+                                                                                    T(
+                                                                                      xa,
+                                                                                    )(
+                                                                                      "cost.plan.dialog.billingMethod",
+                                                                                    ),
+                                                                                  ),
+                                                                                  1,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          _: 1,
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  default: L(
+                                                                    () => [
+                                                                      k(
+                                                                        "div",
+                                                                        al,
+                                                                        [
+                                                                          k(
+                                                                            "h5",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesTitle",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc1",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc2",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc3",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc4",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc5",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc6",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesDesc7",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesIllustrate",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                          k(
+                                                                            "p",
+                                                                            null,
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.xBillingRulesFormula",
+                                                                              ),
+                                                                            ),
+                                                                            1,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  _: 1,
+                                                                },
+                                                              ),
+                                                            ],
+                                                            64,
+                                                          )),
+                                                    ])),
+                                                    [[B, Wa.value]],
+                                                  ),
+                                                ];
+                                              }),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["label"],
+                                          ),
+                                          10001 === Za.openLimit
+                                            ? (x(),
+                                              C(
+                                                T(A),
+                                                {
+                                                  key: 0,
+                                                  label: "_",
+                                                  prop: "xOpenLimit",
+                                                  class:
+                                                    "form-item-label-hidden",
+                                                },
+                                                {
+                                                  default: L(() => [
+                                                    P(
+                                                      t,
+                                                      {
+                                                        modelValue:
+                                                          Za.xOpenLimit,
+                                                        "onUpdate:modelValue":
+                                                          l[9] ||
+                                                          (l[9] = (e) =>
+                                                            (Za.xOpenLimit =
+                                                              e)),
+                                                        max: 100,
+                                                        min: 1,
+                                                        precision: 1,
+                                                        "value-on-clear": 1,
+                                                        "controls-position":
+                                                          "right",
+                                                        style: {
+                                                          "max-width": "110px",
+                                                        },
+                                                        onChange:
+                                                          l[10] ||
+                                                          (l[10] = (e) =>
+                                                            T(bi)()),
+                                                      },
+                                                      null,
+                                                      8,
+                                                      ["modelValue"],
+                                                    ),
+                                                    k(
+                                                      "span",
+                                                      il,
+                                                      M(
+                                                        T(xa)(
+                                                          "cost.plan.dialog.thousand",
+                                                        ),
+                                                      ),
+                                                      1,
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                              ))
+                                            : U("", !0),
+                                          Ha.value.length && Ua.value
+                                            ? (x(),
+                                              C(
+                                                T(A),
+                                                {
+                                                  key: 1,
+                                                  label: T(xa)(
+                                                    "cost.plan.dialog.planUsagePeriod",
+                                                  ),
+                                                  class: "time-group",
+                                                },
+                                                {
+                                                  default: L(() => [
+                                                    k("div", nl, [
+                                                      (x(!0),
+                                                      h(
+                                                        b,
+                                                        null,
+                                                        N(
+                                                          Ha.value,
+                                                          (e) => (
+                                                            x(),
+                                                            h(
+                                                              "button",
+                                                              {
+                                                                key: e.duration,
+                                                                class: F(
+                                                                  Za.lifeTime ===
+                                                                    e.duration
+                                                                    ? "active"
+                                                                    : "",
+                                                                ),
+                                                                onClick: (l) =>
+                                                                  (async (
+                                                                    e,
+                                                                    l,
+                                                                  ) => {
+                                                                    (e.preventDefault(),
+                                                                      wi(
+                                                                        R.PLAN_VALUE_CHANGE,
+                                                                        S.CHANGE_PLAN_LIFE_TIME,
+                                                                        l,
+                                                                      ));
+                                                                    let a =
+                                                                      p.cloneDeep(
+                                                                        Za.lifeTime,
+                                                                      );
+                                                                    Za.lifeTime =
+                                                                      l;
+                                                                    let [i] =
+                                                                      await m(
+                                                                        bi(),
+                                                                      );
+                                                                    i &&
+                                                                      (Za.lifeTime =
+                                                                        a);
+                                                                  })(
+                                                                    l,
+                                                                    e.duration,
+                                                                  ),
+                                                              },
+                                                              [
+                                                                Za.type !==
+                                                                T(s)
+                                                                  .AIRDROP_PLAN
+                                                                  ? (x(),
+                                                                    h(
+                                                                      b,
+                                                                      {
+                                                                        key: 0,
+                                                                      },
+                                                                      [
+                                                                        7 ===
+                                                                        e.duration
+                                                                          ? (x(),
+                                                                            h(
+                                                                              "span",
+                                                                              ol,
+                                                                              "Try",
+                                                                            ))
+                                                                          : isNaN(
+                                                                                Number(
+                                                                                  e.discount,
+                                                                                ),
+                                                                              ) ||
+                                                                              1 ===
+                                                                                e.discount ||
+                                                                              0 ===
+                                                                                e.discount
+                                                                            ? U(
+                                                                                "",
+                                                                                !0,
+                                                                              )
+                                                                            : (x(),
+                                                                              h(
+                                                                                "span",
+                                                                                ul,
+                                                                                "-" +
+                                                                                  M(
+                                                                                    e.discount <
+                                                                                      0
+                                                                                      ? 100
+                                                                                      : Math.round(
+                                                                                          100 *
+                                                                                            (100 -
+                                                                                              100 *
+                                                                                                e.discount),
+                                                                                        ) /
+                                                                                          100,
+                                                                                  ) +
+                                                                                  "%",
+                                                                                1,
+                                                                              )),
+                                                                        V(
+                                                                          " " +
+                                                                            M(
+                                                                              e.duration,
+                                                                            ) +
+                                                                            " " +
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.day",
+                                                                              ),
+                                                                            ),
+                                                                          1,
+                                                                        ),
+                                                                      ],
+                                                                      64,
+                                                                    ))
+                                                                  : (x(),
+                                                                    h(
+                                                                      b,
+                                                                      {
+                                                                        key: 1,
+                                                                      },
+                                                                      [
+                                                                        isNaN(
+                                                                          Number(
+                                                                            e.discount,
+                                                                          ),
+                                                                        )
+                                                                          ? U(
+                                                                              "",
+                                                                              !0,
+                                                                            )
+                                                                          : (x(),
+                                                                            h(
+                                                                              "span",
+                                                                              sl,
+                                                                              "-$" +
+                                                                                M(
+                                                                                  e.discount,
+                                                                                ),
+                                                                              1,
+                                                                            )),
+                                                                        V(
+                                                                          " " +
+                                                                            M(
+                                                                              e.duration,
+                                                                            ) +
+                                                                            " " +
+                                                                            M(
+                                                                              T(
+                                                                                xa,
+                                                                              )(
+                                                                                "cost.plan.dialog.day",
+                                                                              ),
+                                                                            ),
+                                                                          1,
+                                                                        ),
+                                                                      ],
+                                                                      64,
+                                                                    )),
+                                                              ],
+                                                              10,
+                                                              tl,
+                                                            )
+                                                          ),
+                                                        ),
+                                                        128,
+                                                      )),
+                                                    ]),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                                8,
+                                                ["label"],
+                                              ))
+                                            : U("", !0),
+                                          P(
+                                            T(A),
+                                            {
+                                              label: T(xa)(
+                                                "cost.plan.dialog.expireDate",
+                                              ),
+                                              class: "text-form-item",
+                                            },
+                                            {
+                                              default: L(() => {
+                                                var e, l, a, t;
+                                                return [
+                                                  _(
+                                                    (x(),
+                                                    h("div", null, [
+                                                      V(
+                                                        M(
+                                                          Za.type === T(s).Free
+                                                            ? `${T(xa)("cost.plan.dialog.unlimited")}`
+                                                            : null ==
+                                                                (e = qa.value)
+                                                              ? void 0
+                                                              : e.expireDate,
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ])),
+                                                    [[B, Wa.value]],
+                                                  ),
+                                                  (null ==
+                                                  (a =
+                                                    null == (l = za.value)
+                                                      ? void 0
+                                                      : l.costConfig)
+                                                    ? void 0
+                                                    : a.joinActivity) &&
+                                                  T(ca)[Za.lifeTime]
+                                                    ? (x(),
+                                                      h(
+                                                        "div",
+                                                        dl,
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.dialog.moreDaysAdded",
+                                                            {
+                                                              days: T(ca)[
+                                                                Za.lifeTime
+                                                              ],
+                                                            },
+                                                          ),
+                                                        ),
+                                                        1,
+                                                      ))
+                                                    : U("", !0),
+                                                  za.value.type === T(s).Free ||
+                                                  (Ha.value.length &&
+                                                    Ua.value) ||
+                                                  !(null ==
+                                                  (t = za.value.costConfig)
+                                                    ? void 0
+                                                    : t.joinActivity)
+                                                    ? U("", !0)
+                                                    : (x(),
+                                                      C(
+                                                        n,
+                                                        {
+                                                          key: 1,
+                                                          width: 500,
+                                                          placement: "right",
+                                                          trigger: "hover",
+                                                        },
+                                                        {
+                                                          reference: L(() => [
+                                                            P(
+                                                              i,
+                                                              {
+                                                                class: "m-l-16",
+                                                                link: "",
+                                                                type: "primary",
+                                                              },
+                                                              {
+                                                                default: L(
+                                                                  () => [
+                                                                    V(
+                                                                      M(
+                                                                        T(xa)(
+                                                                          "cost.plan.dialog.updateDiscount",
+                                                                        ),
+                                                                      ),
+                                                                      1,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                _: 1,
+                                                              },
+                                                            ),
+                                                          ]),
+                                                          default: L(() => [
+                                                            k("div", pl, [
+                                                              (x(!0),
+                                                              h(
+                                                                b,
+                                                                null,
+                                                                N(
+                                                                  T(ra)
+                                                                    .alertDesc,
+                                                                  (e, l) => (
+                                                                    x(),
+                                                                    h(
+                                                                      b,
+                                                                      {
+                                                                        key: e,
+                                                                      },
+                                                                      [
+                                                                        l
+                                                                          ? (x(),
+                                                                            h(
+                                                                              "p",
+                                                                              cl,
+                                                                              M(
+                                                                                e,
+                                                                              ),
+                                                                              1,
+                                                                            ))
+                                                                          : (x(),
+                                                                            h(
+                                                                              "h5",
+                                                                              rl,
+                                                                              M(
+                                                                                e,
+                                                                              ),
+                                                                              1,
+                                                                            )),
+                                                                      ],
+                                                                      64,
+                                                                    )
+                                                                  ),
+                                                                ),
+                                                                128,
+                                                              )),
+                                                            ]),
+                                                          ]),
+                                                          _: 1,
+                                                        },
+                                                      )),
+                                                ];
+                                              }),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["label"],
+                                          ),
+                                          P(
+                                            T(A),
+                                            {
+                                              label: T(xa)(
+                                                "cost.plan.list.payType",
+                                              ),
+                                              prop: "payMethodConfig",
+                                            },
+                                            {
+                                              default: L(() => [
+                                                P(
+                                                  de,
+                                                  {
+                                                    costDetail: qa.value,
+                                                    payMethodConfig:
+                                                      Za.payMethodConfig,
+                                                    showTopUp: T(si),
+                                                    onRefresh: T(bi),
+                                                  },
+                                                  null,
+                                                  8,
+                                                  [
+                                                    "costDetail",
+                                                    "payMethodConfig",
+                                                    "showTopUp",
+                                                    "onRefresh",
+                                                  ],
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["label"],
+                                          ),
+                                          Za.payMethodConfig.pay
+                                            ? (x(),
+                                              C(
+                                                T(A),
+                                                {
+                                                  key: 2,
+                                                  label: T(xa)(
+                                                    "walletRecharge.paymentChannel",
+                                                  ),
+                                                  class:
+                                                    "wallet-payment-select-wrapper",
+                                                },
+                                                {
+                                                  default: L(() => [
+                                                    P(
+                                                      se,
+                                                      {
+                                                        ref_key: "paySelectRef",
+                                                        ref: Fa,
+                                                        activePayType:
+                                                          Za.payType,
+                                                        onChangePay: hi,
+                                                      },
+                                                      null,
+                                                      8,
+                                                      ["activePayType"],
+                                                    ),
+                                                  ]),
+                                                  _: 1,
+                                                },
+                                                8,
+                                                ["label"],
+                                              ))
+                                            : U("", !0),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["model", "rules"],
+                                    )),
+                                    [[G]],
+                                  ),
+                                ]),
+                              ]),
+                              k("div", vl, [
+                                k("div", ml, [
+                                  l[23] ||
+                                    (l[23] = k(
+                                      "div",
+                                      {
+                                        class:
+                                          "tw-absolute tw-top-0 tw-h-[10px] tw-left-0 tw-right-0 tw-bg-[var(--primary-card-color-light1)]",
+                                        style: {
+                                          "border-radius": "12px 12px 0px 0px",
+                                        },
+                                      },
+                                      null,
+                                      -1,
+                                    )),
+                                  k(
+                                    "h3",
+                                    gl,
+                                    M(T(xa)("cost.plan.dialog.priceDetail")),
+                                    1,
+                                  ),
+                                  k(
+                                    "div",
+                                    {
+                                      class: F([
+                                        (null == (e = T(pa))
+                                          ? void 0
+                                          : e.type) !== T(s).Free
+                                          ? "active"
+                                          : "",
+                                        "old-plan-detail",
+                                      ]),
+                                    },
+                                    [
+                                      k("div", null, [
+                                        k(
+                                          "div",
+                                          {
+                                            class:
+                                              "s-flex tw-gap-x-1 tw-cursor-pointer",
+                                            onClick:
+                                              l[11] || (l[11] = (e) => ja(1)),
+                                          },
+                                          [
+                                            k(
+                                              "span",
+                                              yl,
+                                              M(
+                                                T(xa)(
+                                                  "cost.plan.dialog.oldPlan",
+                                                ),
+                                              ),
+                                              1,
+                                            ),
+                                            k(
+                                              "span",
+                                              {
+                                                class: F(
+                                                  T(O)(
+                                                    "tw-duration-300 c-flex",
+                                                    $a.value(1)
+                                                      ? "tw-rotate-180"
+                                                      : "",
+                                                  ),
+                                                ),
+                                              },
+                                              [
+                                                P(c, null, {
+                                                  default: L(() => [P(r)]),
+                                                  _: 1,
+                                                }),
+                                              ],
+                                              2,
+                                            ),
+                                          ],
+                                        ),
+                                        k("span", fl, [
+                                          k(
+                                            "i",
+                                            {
+                                              class: F(
+                                                T(O)(
+                                                  (null == (y = T(pa))
+                                                    ? void 0
+                                                    : y.type) !== T(s).Free
+                                                    ? "new-active-logo"
+                                                    : "old-active-logo",
+                                                ),
+                                              ),
+                                            },
+                                            M(
+                                              Pi(
+                                                (null == (f = T(pa))
+                                                  ? void 0
+                                                  : f.planConfigId) || "",
+                                              ),
+                                            ),
+                                            3,
+                                          ),
+                                          V(
+                                            " $" +
+                                              M(
+                                                (
+                                                  (null == (w = T(pa))
+                                                    ? void 0
+                                                    : w.monthPrice) ?? 0
+                                                ).toFixed(2),
+                                              ) +
+                                              "/" +
+                                              M(
+                                                T(xa)("cost.plan.dialog.month"),
+                                              ),
+                                            1,
+                                          ),
+                                        ]),
+                                      ]),
+                                      $a.value(1)
+                                        ? (x(),
+                                          h(
+                                            b,
+                                            { key: 0 },
+                                            [
+                                              k("div", null, [
+                                                k(
+                                                  "span",
+                                                  null,
+                                                  M(
+                                                    T(xa)(
+                                                      "cost.plan.card.envCount",
+                                                    ),
+                                                  ),
+                                                  1,
+                                                ),
+                                                k(
+                                                  "span",
+                                                  null,
+                                                  M(
+                                                    T(va).envLimit > 0
+                                                      ? (null == (H = T(pa))
+                                                          ? void 0
+                                                          : H.envLimit) +
+                                                          T(xa)(
+                                                            "cost.plan.dialog.unit",
+                                                          )
+                                                      : T(xa)(
+                                                          "cost.plan.dialog.unlimited",
+                                                        ),
+                                                  ),
+                                                  1,
+                                                ),
+                                              ]),
+                                              k("div", null, [
+                                                k(
+                                                  "span",
+                                                  null,
+                                                  M(
+                                                    T(xa)(
+                                                      "cost.plan.card.memberCount",
+                                                    ),
+                                                  ),
+                                                  1,
+                                                ),
+                                                k(
+                                                  "span",
+                                                  null,
+                                                  M(
+                                                    T(va).memberLimit > 0
+                                                      ? (null == (q = T(pa))
+                                                          ? void 0
+                                                          : q.memberLimit) +
+                                                          T(xa)(
+                                                            "cost.plan.dialog.unit",
+                                                          )
+                                                      : T(xa)(
+                                                          "cost.plan.dialog.unlimited",
+                                                        ),
+                                                  ),
+                                                  1,
+                                                ),
+                                              ]),
+                                              k("div", null, [
+                                                k(
+                                                  "span",
+                                                  wl,
+                                                  M(
+                                                    T(xa)(
+                                                      "cost.plan.dialog.dayEnvAccessCount",
+                                                    ),
+                                                  ),
+                                                  1,
+                                                ),
+                                                k(
+                                                  "span",
+                                                  null,
+                                                  M(
+                                                    T(va).openLimit > 0
+                                                      ? (null == (z = T(pa))
+                                                          ? void 0
+                                                          : z.openLimit) +
+                                                          T(xa)(
+                                                            "cost.plan.dialog.time",
+                                                          )
+                                                      : T(xa)(
+                                                          "cost.plan.dialog.unlimited",
+                                                        ),
+                                                  ) + M(),
+                                                  1,
+                                                ),
+                                              ]),
+                                            ],
+                                            64,
+                                          ))
+                                        : U("", !0),
+                                    ],
+                                    2,
+                                  ),
+                                  k("div", xl, [
+                                    (
+                                      null == (X = qa.value)
+                                        ? void 0
+                                        : X.planType
+                                    )
+                                      ? (x(),
+                                        h(
+                                          b,
+                                          { key: 0 },
+                                          [
+                                            k(
+                                              "div",
+                                              {
+                                                class: F(
+                                                  (null == (Z = qa.value)
+                                                    ? void 0
+                                                    : Z.planType) !== T(s).Free
+                                                    ? "active"
+                                                    : "",
+                                                ),
+                                              },
+                                              [
+                                                k(
+                                                  "div",
+                                                  {
+                                                    class:
+                                                      "s-flex tw-gap-x-1 tw-cursor-pointer",
+                                                    onClick:
+                                                      l[12] ||
+                                                      (l[12] = (e) => ja(2)),
+                                                  },
+                                                  [
+                                                    k(
+                                                      "span",
+                                                      hl,
+                                                      M(
+                                                        T(xa)(
+                                                          "cost.plan.dialog.newPlan",
+                                                        ),
+                                                      ),
+                                                      1,
+                                                    ),
+                                                    k(
+                                                      "div",
+                                                      {
+                                                        class: F(
+                                                          T(O)(
+                                                            "tw-duration-300 c-flex",
+                                                            $a.value(2)
+                                                              ? "tw-rotate-180"
+                                                              : "",
+                                                          ),
+                                                        ),
+                                                      },
+                                                      [
+                                                        P(c, null, {
+                                                          default: L(() => [
+                                                            P(r),
+                                                          ]),
+                                                          _: 1,
+                                                        }),
+                                                      ],
+                                                      2,
+                                                    ),
+                                                  ],
+                                                ),
+                                                k("span", bl, [
+                                                  _(
+                                                    k(
+                                                      "i",
+                                                      {
+                                                        class:
+                                                          "new-active-logo",
+                                                      },
+                                                      M(
+                                                        Pi(
+                                                          qa.value.planConfigId,
+                                                        ),
+                                                      ),
+                                                      513,
+                                                    ),
+                                                    [
+                                                      [
+                                                        $,
+                                                        null == (Y = qa.value)
+                                                          ? void 0
+                                                          : Y.planType,
+                                                      ],
+                                                    ],
+                                                  ),
+                                                  V(
+                                                    " $" +
+                                                      M(
+                                                        (
+                                                          (null ==
+                                                          (K = qa.value)
+                                                            ? void 0
+                                                            : K.monthPrice) ?? 0
+                                                        ).toFixed(2),
+                                                      ) +
+                                                      "/" +
+                                                      M(
+                                                        T(xa)(
+                                                          "cost.plan.dialog.month",
+                                                        ),
+                                                      ),
+                                                    1,
+                                                  ),
+                                                ]),
+                                              ],
+                                              2,
+                                            ),
+                                            $a.value(2)
+                                              ? (x(),
+                                                h(
+                                                  b,
+                                                  { key: 0 },
+                                                  [
+                                                    k("div", null, [
+                                                      k(
+                                                        "span",
+                                                        null,
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.card.envCount",
+                                                          ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                      k(
+                                                        "span",
+                                                        null,
+                                                        M(
+                                                          T(Qa) >= 0
+                                                            ? (qa.value
+                                                                .envGiveNumber
+                                                                ? `${null == (W = qa.value) ? void 0 : W.envLimit}+${qa.value.envGiveNumber}`
+                                                                : null ==
+                                                                    (J =
+                                                                      qa.value)
+                                                                  ? void 0
+                                                                  : J.envLimit) +
+                                                                T(xa)(
+                                                                  "cost.plan.dialog.unit",
+                                                                )
+                                                            : T(xa)(
+                                                                "cost.plan.dialog.unlimited",
+                                                              ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ]),
+                                                    k("div", null, [
+                                                      k(
+                                                        "span",
+                                                        null,
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.card.memberCount",
+                                                          ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                      k(
+                                                        "span",
+                                                        null,
+                                                        M(
+                                                          T(ei) >= 0
+                                                            ? (null ==
+                                                              (Q = qa.value)
+                                                                ? void 0
+                                                                : Q.memberLimit) +
+                                                                T(xa)(
+                                                                  "cost.plan.dialog.unit",
+                                                                )
+                                                            : T(xa)(
+                                                                "cost.plan.dialog.unlimited",
+                                                              ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ]),
+                                                    k("div", null, [
+                                                      k(
+                                                        "span",
+                                                        Cl,
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.dialog.dayEnvAccessCount",
+                                                          ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                      k(
+                                                        "span",
+                                                        null,
+                                                        M(
+                                                          T(li) >= 0
+                                                            ? (null ==
+                                                              (ee = qa.value)
+                                                                ? void 0
+                                                                : ee.openLimit) +
+                                                                T(xa)(
+                                                                  "cost.plan.dialog.time",
+                                                                )
+                                                            : T(xa)(
+                                                                "cost.plan.dialog.unlimited",
+                                                              ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ]),
+                                                  ],
+                                                  64,
+                                                ))
+                                              : U("", !0),
+                                          ],
+                                          64,
+                                        ))
+                                      : U("", !0),
+                                    pi.value
+                                      ? (x(),
+                                        C(
+                                          n,
+                                          {
+                                            key: 1,
+                                            placement: "bottom",
+                                            "popper-class":
+                                              "!tw-max-w-[800px] !tw-w-fit",
+                                            trigger: "hover",
+                                            "popper-options": Va,
+                                          },
+                                          {
+                                            reference: L(() => [
+                                              k("div", Ll, [
+                                                l[22] ||
+                                                  (l[22] = k(
+                                                    "i",
+                                                    {
+                                                      class:
+                                                        "iconfont icon-tips tw-align-middle tw-mr-[4px] tw-text-[17px]",
+                                                    },
+                                                    null,
+                                                    -1,
+                                                  )),
+                                                V(
+                                                  " " +
+                                                    M(
+                                                      T(xa)(
+                                                        "cost.plan.dialog.featureLimited",
+                                                      ),
+                                                    ),
+                                                  1,
+                                                ),
+                                              ]),
+                                            ]),
+                                            default: L(() => [
+                                              P(
+                                                te,
+                                                {
+                                                  id: za.value.planConfigId,
+                                                  name: za.value.name,
+                                                  customShowListIds: ri.value,
+                                                },
+                                                null,
+                                                8,
+                                                [
+                                                  "id",
+                                                  "name",
+                                                  "customShowListIds",
+                                                ],
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          },
+                                        ))
+                                      : U("", !0),
+                                  ]),
+                                  k("div", kl, [
+                                    (
+                                      null == (le = qa.value)
+                                        ? void 0
+                                        : le.planType
+                                    )
+                                      ? (x(),
+                                        h("div", _l, [
+                                          k(
+                                            "span",
+                                            null,
+                                            M(
+                                              T(xa)(
+                                                "cost.plan.dialog.planUsagePeriod",
+                                              ),
+                                            ),
+                                            1,
+                                          ),
+                                          k(
+                                            "span",
+                                            null,
+                                            M(
+                                              (null == (ne = qa.value)
+                                                ? void 0
+                                                : ne.planType) === T(s).Free
+                                                ? T(xa)(
+                                                    "cost.plan.dialog.unlimited",
+                                                  )
+                                                : `${(null == (oe = qa.value) ? void 0 : oe.lifeTime) ?? 0} ${T(xa)("cost.plan.dialog.day")}`,
+                                            ),
+                                            1,
+                                          ),
+                                        ]))
+                                      : (x(),
+                                        h("div", Tl, [
+                                          k(
+                                            "span",
+                                            null,
+                                            M(
+                                              T(xa)(
+                                                "cost.plan.dialog.planUsagePeriod",
+                                              ),
+                                            ),
+                                            1,
+                                          ),
+                                          k(
+                                            "span",
+                                            null,
+                                            M(
+                                              (null == (ue = T(pa))
+                                                ? void 0
+                                                : ue.type) === T(s).Free
+                                                ? T(xa)(
+                                                    "cost.plan.dialog.unlimited",
+                                                  )
+                                                : `${(null == (pe = T(pa)) ? void 0 : pe.timeLimit) ?? 0} ${T(xa)("cost.plan.dialog.day")}`,
+                                            ),
+                                            1,
+                                          ),
+                                        ])),
+                                    k("div", null, [
+                                      k(
+                                        "span",
+                                        null,
+                                        M(
+                                          T(xa)(
+                                            "cost.plan.dialog.priceDifference",
+                                          ),
+                                        ),
+                                        1,
+                                      ),
+                                      k(
+                                        "span",
+                                        null,
+                                        "$" +
+                                          M(
+                                            (
+                                              (null == (re = qa.value)
+                                                ? void 0
+                                                : re.diffPrice) ?? 0
+                                            ).toFixed(2),
+                                          ),
+                                        1,
+                                      ),
+                                    ]),
+                                    k("div", null, [
+                                      k(
+                                        "span",
+                                        null,
+                                        M(T(xa)("cost.plan.dialog.discount")),
+                                        1,
+                                      ),
+                                      k(
+                                        "span",
+                                        null,
+                                        "-$" +
+                                          M(
+                                            (
+                                              (null == (ce = qa.value)
+                                                ? void 0
+                                                : ce.discountPrice) ?? 0
+                                            ).toFixed(2),
+                                          ),
+                                        1,
+                                      ),
+                                    ]),
+                                    k("div", null, [
+                                      k(
+                                        "span",
+                                        null,
+                                        M(
+                                          T(xa)(
+                                            "cost.plan.dialog.transactionFee",
+                                          ),
+                                        ),
+                                        1,
+                                      ),
+                                      k(
+                                        "span",
+                                        null,
+                                        "$" +
+                                          M(
+                                            (
+                                              (null == (ve = qa.value)
+                                                ? void 0
+                                                : ve.commission) ?? 0
+                                            ).toFixed(2),
+                                          ),
+                                        1,
+                                      ),
+                                    ]),
+                                  ]),
+                                  k("div", El, [
+                                    k("div", null, [
+                                      k(
+                                        "span",
+                                        null,
+                                        M(
+                                          T(xa)("cost.plan.dialog.orderAmount"),
+                                        ),
+                                        1,
+                                      ),
+                                      k(
+                                        "span",
+                                        null,
+                                        "$" +
+                                          M(
+                                            (qa.value.planPrice ?? 0).toFixed(
+                                              2,
+                                            ),
+                                          ),
+                                        1,
+                                      ),
+                                    ]),
+                                    k("div", null, [
+                                      k(
+                                        "span",
+                                        null,
+                                        M(T(xa)("walletRecharge.walletCredit")),
+                                        1,
+                                      ),
+                                      k(
+                                        "span",
+                                        null,
+                                        "$" +
+                                          M(
+                                            (
+                                              qa.value.walletDeductionAmount ??
+                                              0
+                                            ).toFixed(2),
+                                          ),
+                                        1,
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
+                                k("div", Pl, [
+                                  k("div", Al, [
+                                    k(
+                                      "span",
+                                      Il,
+                                      M(T(xa)("walletRecharge.directPayment")),
+                                      1,
+                                    ),
+                                    k(
+                                      "span",
+                                      Nl,
+                                      "$" +
+                                        M((qa.value.payment ?? 0).toFixed(2)),
+                                      1,
+                                    ),
+                                  ]),
+                                  Ua.value
+                                    ? (x(),
+                                      h("div", Dl, [
+                                        Ra.value
+                                          ? (x(),
+                                            h("div", Vl, [
+                                              P(
+                                                g,
+                                                {
+                                                  class: "primary-color-input",
+                                                  modelValue: Za.couponCode,
+                                                  "onUpdate:modelValue":
+                                                    l[14] ||
+                                                    (l[14] = (e) =>
+                                                      (Za.couponCode = e)),
+                                                  placeholder: T(xa)(
+                                                    "cost.plan.dialog.couponCode",
+                                                  ),
+                                                  onBlur: Ai,
+                                                },
+                                                null,
+                                                8,
+                                                ["modelValue", "placeholder"],
+                                              ),
+                                              T(Ca)
+                                                ? (x(),
+                                                  h("div", Ml, [
+                                                    k(
+                                                      "div",
+                                                      { class: F([T(Ta)()]) },
+                                                      [
+                                                        V(M(T(_a)()) + " ", 1),
+                                                        T(Ca).discountType ===
+                                                          T(j).PERCENTAGE &&
+                                                        T(Ca).result ===
+                                                          T(v).SUCCESS &&
+                                                        T(La)
+                                                          ? (x(),
+                                                            h(
+                                                              "span",
+                                                              Rl,
+                                                              "(" +
+                                                                M(
+                                                                  T(xa)(
+                                                                    "cost.plan.dialog.couponCodeTip3",
+                                                                    {
+                                                                      num:
+                                                                        Math.round(
+                                                                          1e4 *
+                                                                            T(
+                                                                              Ca,
+                                                                            )
+                                                                              .discountValue,
+                                                                        ) / 100,
+                                                                    },
+                                                                  ),
+                                                                ) +
+                                                                ")",
+                                                              1,
+                                                            ))
+                                                          : U("", !0),
+                                                      ],
+                                                      2,
+                                                    ),
+                                                  ]))
+                                                : U("", !0),
+                                            ]))
+                                          : (x(),
+                                            h(
+                                              "div",
+                                              {
+                                                key: 0,
+                                                class:
+                                                  "tw-text-[var(--primary-color-light5)] tw-text-[14px] tw-cursor-pointer hover:tw-underline hover:tw-text-[var(--menu-text-hover-color)]",
+                                                onClick:
+                                                  l[13] ||
+                                                  (l[13] = (e) =>
+                                                    (Ra.value = !Ra.value)),
+                                              },
+                                              M(
+                                                T(xa)(
+                                                  "cost.plan.dialog.myDiscountCode",
+                                                ),
+                                              ),
+                                              1,
+                                            )),
+                                      ]))
+                                    : U("", !0),
+                                  k("div", Sl, [
+                                    T(pa).type === T(s).Free &&
+                                    Za.type === T(s).Free
+                                      ? (x(),
+                                        C(
+                                          i,
+                                          {
+                                            key: 0,
+                                            class: "tw-w-full",
+                                            disabled: "",
+                                            type: "primary",
+                                          },
+                                          {
+                                            default: L(() => [
+                                              V(
+                                                M(
+                                                  T(xa)(
+                                                    "cost.plan.dialog.submitOrder",
+                                                  ),
+                                                ) + "1",
+                                                1,
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          },
+                                        ))
+                                      : (x(),
+                                        h(
+                                          b,
+                                          { key: 1 },
+                                          [
+                                            !Ba.value || T(si)
+                                              ? (x(),
+                                                C(
+                                                  i,
+                                                  {
+                                                    key: 0,
+                                                    class: "tw-w-full",
+                                                    disabled: "",
+                                                    type: "primary",
+                                                  },
+                                                  {
+                                                    default: L(() => [
+                                                      V(
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.dialog.submitOrder",
+                                                          ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                ))
+                                              : (x(),
+                                                C(
+                                                  i,
+                                                  {
+                                                    key: 1,
+                                                    class: "tw-w-full",
+                                                    type: "primary",
+                                                    loading: Ja.value,
+                                                    onClick:
+                                                      l[15] ||
+                                                      (l[15] = () => Ci()),
+                                                  },
+                                                  {
+                                                    default: L(() => [
+                                                      V(
+                                                        M(
+                                                          T(xa)(
+                                                            "cost.plan.dialog.submitOrder",
+                                                          ),
+                                                        ),
+                                                        1,
+                                                      ),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                  8,
+                                                  ["loading"],
+                                                )),
+                                          ],
+                                          64,
+                                        )),
+                                  ]),
+                                ]),
+                              ]),
+                            ]),
+                          ];
+                        }),
+                        _: 1,
+                      },
+                      8,
+                      ["modelValue", "loading", "title"],
+                    ))
+                  : U("", !0),
+                P(
+                  ee,
+                  { ref_key: "PayDialogRef", ref: ua, onConfirmPay: _i },
+                  null,
+                  512,
+                ),
+                P(
+                  y,
+                  {
+                    modelValue: da.value,
+                    "onUpdate:modelValue":
+                      l[19] || (l[19] = (e) => (da.value = e)),
+                    "align-center": !0,
+                    "close-on-click-modal": !1,
+                    "close-on-press-escape": !1,
+                    class: "confirm-order-dialog",
+                    width: "650px",
+                  },
+                  {
+                    default: L(() => {
+                      var e, a, n, t, o, u, s, d, p, v, m, g, y, f, w, C, _, E;
+                      return [
+                        k("div", Ul, [
+                          k("div", Fl, [
+                            l[24] ||
+                              (l[24] = k(
+                                "span",
+                                null,
+                                [k("i", { class: "iconfont icon-warning" })],
+                                -1,
+                              )),
+                            V(
+                              " " +
+                                M(T(xa)("cost.plan.dialog.areYouSubmitOrder")),
+                              1,
+                            ),
+                          ]),
+                          k("div", Ol, [
+                            k(
+                              "p",
+                              $l,
+                              M(T(xa)("cost.plan.dialog.confirmSubmitWrnTip")),
+                              1,
+                            ),
+                            ci.value.length
+                              ? (x(),
+                                h("div", jl, [
+                                  k(
+                                    "div",
+                                    Bl,
+                                    M(
+                                      T(xa)(
+                                        "cost.plan.dialog.featureRestrictedTitle",
+                                      ),
+                                    ),
+                                    1,
+                                  ),
+                                  (x(!0),
+                                  h(
+                                    b,
+                                    null,
+                                    N(
+                                      mi.value,
+                                      (e) => (
+                                        x(),
+                                        h("ul", { key: e }, [
+                                          k("li", null, M(e), 1),
+                                        ])
+                                      ),
+                                    ),
+                                    128,
+                                  )),
+                                  ci.value.length > 5
+                                    ? (x(),
+                                      h(
+                                        "div",
+                                        {
+                                          key: 0,
+                                          class: "lost-features__more",
+                                          onClick:
+                                            l[17] ||
+                                            (l[17] = (e) =>
+                                              (vi.value = !vi.value)),
+                                        },
+                                        [
+                                          k(
+                                            "span",
+                                            Gl,
+                                            M(
+                                              vi.value
+                                                ? T(xa)("base.fold")
+                                                : T(xa)("base.expand"),
+                                            ),
+                                            1,
+                                          ),
+                                          P(
+                                            c,
+                                            {
+                                              class: F([
+                                                vi.value ? "tw-rotate-180" : "",
+                                                "tw-duration-300",
+                                              ]),
+                                            },
+                                            { default: L(() => [P(r)]), _: 1 },
+                                            8,
+                                            ["class"],
+                                          ),
+                                        ],
+                                      ))
+                                    : U("", !0),
+                                ]))
+                              : U("", !0),
+                            k("div", Hl, [
+                              ((null == (e = T(pa)) ? void 0 : e.envLimit) ??
+                                0) !==
+                              ((null == (a = qa.value) ? void 0 : a.envLimit) ??
+                                0)
+                                ? (x(),
+                                  h("div", ql, [
+                                    k(
+                                      "span",
+                                      zl,
+                                      M(T(xa)("cost.plan.card.envCount")),
+                                      1,
+                                    ),
+                                    k("div", Xl, [
+                                      k(
+                                        "span",
+                                        Zl,
+                                        M(
+                                          T(va).envLimit < 0
+                                            ? T(xa)(
+                                                "cost.plan.dialog.unlimited",
+                                              )
+                                            : ((null == (n = T(pa))
+                                                ? void 0
+                                                : n.envLimit) ?? 0) +
+                                                T(xa)("cost.plan.dialog.unit"),
+                                        ),
+                                        1,
+                                      ),
+                                      l[25] ||
+                                        (l[25] = k(
+                                          "span",
+                                          { class: "change-arrow" },
+                                          "→",
+                                          -1,
+                                        )),
+                                      k(
+                                        "span",
+                                        {
+                                          class: F([
+                                            "change-new",
+                                            ki(
+                                              (null == (t = T(pa))
+                                                ? void 0
+                                                : t.envLimit) ?? 0,
+                                              (null == (o = qa.value)
+                                                ? void 0
+                                                : o.envLimit) ?? 0,
+                                              T(va).envLimit < 0,
+                                              T(Qa) < 0,
+                                            ),
+                                          ]),
+                                        },
+                                        M(
+                                          T(Qa) < 0
+                                            ? T(xa)(
+                                                "cost.plan.dialog.unlimited",
+                                              )
+                                            : ((null == (u = qa.value)
+                                                ? void 0
+                                                : u.envLimit) ?? 0) +
+                                                T(xa)("cost.plan.dialog.unit"),
+                                        ),
+                                        3,
+                                      ),
+                                    ]),
+                                  ]))
+                                : U("", !0),
+                              ((null == (s = T(pa)) ? void 0 : s.memberLimit) ??
+                                0) !==
+                              ((null == (d = qa.value)
+                                ? void 0
+                                : d.memberLimit) ?? 0)
+                                ? (x(),
+                                  h("div", Yl, [
+                                    k(
+                                      "span",
+                                      Kl,
+                                      M(T(xa)("cost.plan.card.memberCount")),
+                                      1,
+                                    ),
+                                    k("div", Wl, [
+                                      k(
+                                        "span",
+                                        Jl,
+                                        M(
+                                          T(va).memberLimit < 0
+                                            ? T(xa)(
+                                                "cost.plan.dialog.unlimited",
+                                              )
+                                            : ((null == (p = T(pa))
+                                                ? void 0
+                                                : p.memberLimit) ?? 0) +
+                                                T(xa)("cost.plan.dialog.unit"),
+                                        ),
+                                        1,
+                                      ),
+                                      l[26] ||
+                                        (l[26] = k(
+                                          "span",
+                                          { class: "change-arrow" },
+                                          "→",
+                                          -1,
+                                        )),
+                                      k(
+                                        "span",
+                                        {
+                                          class: F([
+                                            "change-new",
+                                            ki(
+                                              (null == (v = T(pa))
+                                                ? void 0
+                                                : v.memberLimit) ?? 0,
+                                              (null == (m = qa.value)
+                                                ? void 0
+                                                : m.memberLimit) ?? 0,
+                                              T(va).memberLimit < 0,
+                                              T(ei) < 0,
+                                            ),
+                                          ]),
+                                        },
+                                        M(
+                                          T(ei) < 0
+                                            ? T(xa)(
+                                                "cost.plan.dialog.unlimited",
+                                              )
+                                            : ((null == (g = qa.value)
+                                                ? void 0
+                                                : g.memberLimit) ?? 0) +
+                                                T(xa)("cost.plan.dialog.unit"),
+                                        ),
+                                        3,
+                                      ),
+                                    ]),
+                                  ]))
+                                : U("", !0),
+                              ((null == (y = T(pa)) ? void 0 : y.openLimit) ??
+                                0) !==
+                              ((null == (f = qa.value)
+                                ? void 0
+                                : f.openLimit) ?? 0)
+                                ? (x(),
+                                  h("div", Ql, [
+                                    k(
+                                      "span",
+                                      ea,
+                                      M(
+                                        T(xa)(
+                                          "cost.plan.dialog.dayEnvAccessCount",
+                                        ),
+                                      ),
+                                      1,
+                                    ),
+                                    k("div", la, [
+                                      k(
+                                        "span",
+                                        aa,
+                                        M(
+                                          T(va).openLimit < 0
+                                            ? T(xa)(
+                                                "cost.plan.dialog.unlimited",
+                                              )
+                                            : ((null == (w = T(pa))
+                                                ? void 0
+                                                : w.openLimit) ?? 0) +
+                                                T(xa)("cost.plan.dialog.time"),
+                                        ),
+                                        1,
+                                      ),
+                                      l[27] ||
+                                        (l[27] = k(
+                                          "span",
+                                          { class: "change-arrow" },
+                                          "→",
+                                          -1,
+                                        )),
+                                      k(
+                                        "span",
+                                        {
+                                          class: F([
+                                            "change-new",
+                                            ki(
+                                              (null == (C = T(pa))
+                                                ? void 0
+                                                : C.openLimit) ?? 0,
+                                              (null == (_ = qa.value)
+                                                ? void 0
+                                                : _.openLimit) ?? 0,
+                                              T(va).openLimit < 0,
+                                              T(li) < 0,
+                                            ),
+                                          ]),
+                                        },
+                                        M(
+                                          T(li) < 0
+                                            ? T(xa)(
+                                                "cost.plan.dialog.unlimited",
+                                              )
+                                            : ((null == (E = qa.value)
+                                                ? void 0
+                                                : E.openLimit) ?? 0) +
+                                                T(xa)("cost.plan.dialog.time"),
+                                        ),
+                                        3,
+                                      ),
+                                    ]),
+                                  ]))
+                                : U("", !0),
+                            ]),
+                          ]),
+                          k("div", ia, [
+                            P(
+                              i,
+                              {
+                                type: "info",
+                                onClick:
+                                  l[18] || (l[18] = (e) => (da.value = !1)),
+                              },
+                              {
+                                default: L(() => [
+                                  V(M(T(xa)("base.cancel")), 1),
+                                ]),
+                                _: 1,
+                              },
+                            ),
+                            P(
+                              i,
+                              {
+                                disabled: sa.value,
+                                loading: sa.value,
+                                type: "primary",
+                                onClick: Li,
+                              },
+                              {
+                                default: L(() => [
+                                  V(
+                                    M(
+                                      sa.value
+                                        ? T(xa)("cost.plan.dialog.submitting")
+                                        : T(xa)(
+                                            "cost.plan.dialog.confirmSubmit",
+                                          ),
+                                    ),
+                                    1,
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                              8,
+                              ["disabled", "loading"],
+                            ),
+                          ]),
+                        ]),
+                      ];
+                    }),
+                    _: 1,
+                  },
+                  8,
+                  ["modelValue"],
+                ),
+              ],
+              64,
+            )
+          );
+        };
+      },
+    }),
+    [["__scopeId", "data-v-da9cb1fe"]],
+  );
+export { na as default };

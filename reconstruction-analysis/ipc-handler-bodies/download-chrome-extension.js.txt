@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: download-chrome-extension
+ * Method: handle
+ * Source offset: 2358480
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async(_0x23ee65,_0x50d92f)=>{function _0x1dae96(_0x48ff77,_0x449540){return _0xa1ed2a(_0x48ff77-0x2ed,_0x449540);}function _0x320731(_0x53f969,_0x57ca13){return _0x5e82fa(_0x57ca13- -0xd7,_0x53f969);}try{return await SP(_0x50d92f);}catch(_0x1efb7a){return S[_0x1dae96(_0x248c1f._0x1d755b,_0x248c1f._0x39e135)](_0x320731(_0x248c1f._0x1247d8,_0x248c1f._0x1704ff)+_0x1efb7a),null;}}

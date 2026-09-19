@@ -1,0 +1,79 @@
+.social-media-file-list[data-v-03ea5a2a],
+.social-media-file-list__upload[data-v-03ea5a2a] .el-upload {
+  width: 100%;
+}
+.social-media-file-list__upload[data-v-03ea5a2a] .el-upload-dragger {
+  width: 100%;
+  min-height: 94px;
+  padding: 10px 20px;
+  border-color: var(--el-border-color);
+  border-radius: 8px;
+  background: var(--el-fill-color-extra-light);
+  color: var(--el-text-color-secondary);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.social-media-file-list__upload[data-v-03ea5a2a] .el-upload-dragger:hover {
+  border-color: var(--el-color-primary);
+  background: var(--el-fill-color-light);
+}
+.social-media-file-list__upload-tip[data-v-03ea5a2a] {
+  margin-top: 4px;
+  color: var(--el-text-color-placeholder);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.social-media-file-card[data-v-03ea5a2a] {
+  position: relative;
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  background: var(--el-fill-color-extra-light);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.social-media-file-card[data-v-03ea5a2a]:before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--el-color-warning);
+  content: "";
+}
+.social-media-file-card[data-v-03ea5a2a]:hover,
+.social-media-file-card[data-v-03ea5a2a]:focus-within {
+  border-color: var(--el-border-color);
+  background: var(--el-fill-color-light);
+}
+.social-media-file-card.is-configured[data-v-03ea5a2a]:before {
+  background: var(--el-color-success);
+}
+.social-media-file-card.is-error[data-v-03ea5a2a]:before {
+  background: var(--el-color-danger);
+}
+.social-media-file-card__type[data-v-03ea5a2a] {
+  display: grid;
+  flex: 0 0 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--el-border-color);
+  border-radius: 7px;
+  background: var(--el-fill-color);
+  color: var(--el-text-color-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.social-media-file-card__delete-button[data-v-03ea5a2a] {
+  border-color: var(--el-color-danger) !important;
+  background: transparent !important;
+  color: var(--el-color-danger) !important;
+}
+.social-media-file-card__delete-button[data-v-03ea5a2a]:hover,
+.social-media-file-card__delete-button[data-v-03ea5a2a]:focus {
+  border-color: var(--el-color-danger) !important;
+  background: var(--el-color-danger) !important;
+  color: var(--el-color-white) !important;
+}

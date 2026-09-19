@@ -1,0 +1,224 @@
+.app-web-sso-layout {
+  background: linear-gradient(188deg, #15e7b099 -375.32%, #1119 41.86%);
+}
+.app-web-sso-layout .el-form-item {
+  margin-bottom: 16px !important;
+}
+.app-web-sso-layout .el-form-item.is-error .el-form-item__error {
+  display: none;
+}
+.app-web-sso-layout
+  .el-form-item.is-error
+  .el-form-item__content:hover
+  .el-input-group__append {
+  border-color: var(--danger-color);
+}
+.app-web-sso-layout
+  .el-form-item.is-error
+  .el-form-item__content
+  .el-input-group__append {
+  border-bottom: 1px solid var(--danger-color);
+}
+.app-web-sso-layout .el-form-item .el-form-item__label {
+  color: #fff;
+}
+.app-web-sso-layout .el-form-item .el-form-item__label:before {
+  content: none !important;
+  margin: unset;
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content:hover
+  .el-input-group__append {
+  border-color: var(--primary-color);
+}
+.app-web-sso-layout .el-form-item .el-form-item__content .el-input__wrapper {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: unset;
+  padding: unset;
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-input__wrapper
+  .el-input__prefix-inner {
+  display: none;
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append {
+  height: 40px;
+  background-color: transparent;
+  box-shadow: unset;
+  border-bottom: 1px solid var(--dialog-border-color);
+  border-radius: unset;
+  box-sizing: border-box;
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append:hover {
+  border-color: var(--dialog-border-color);
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append
+  .el-button {
+  border: none;
+  color: var(--btn-primary-link-color);
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append
+  .el-button:hover {
+  color: var(--primary-color);
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-checkbox
+  .el-checkbox__inner {
+  border-color: var(--dialog-border-color);
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-checkbox.is-checked
+  .el-checkbox__input
+  .el-checkbox__inner:after {
+  border-color: var(--card-br-color);
+}
+.app-web-sso-layout
+  .el-form-item
+  .el-form-item__content
+  .el-checkbox.is-checked
+  .el-checkbox__label {
+  color: var(--text-color-base);
+}
+.app-web-sso-layout .btn-container {
+  width: 100%;
+}
+.app-web-sso-layout .btn-container .forget-password {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-web-sso-layout
+  .btn-container
+  .forget-password
+  .el-checkbox
+  .el-checkbox__inner {
+  border-color: var(--dialog-border-color);
+}
+.app-web-sso-layout
+  .btn-container
+  .forget-password
+  .el-checkbox.is-checked
+  .el-checkbox__input
+  .el-checkbox__inner:after {
+  border-color: var(--card-br-color);
+}
+.app-web-sso-layout
+  .btn-container
+  .forget-password
+  .el-checkbox.is-checked
+  .el-checkbox__label {
+  color: var(--text-color-base);
+}
+.app-web-sso-layout .btn-container .btn-action1 {
+  width: 100%;
+  margin: 16px 0;
+}
+.app-web-sso-layout .btn-container .btn-action1 .el-button {
+  width: 100%;
+}
+.app-web-sso-layout .btn-container .btn-action2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.app-web-sso-layout .btn-container .btn-action2 > span {
+  font-size: 14px;
+  line-height: 16.66px;
+  color: var(--text-color-light1);
+}
+.app-web-sso-layout .el-divider .el-divider__text {
+  background: var(--login-bg-light1);
+  border-color: var(--dialog-border-color);
+}
+.app-web-sso-layout .action-area {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  width: 40%;
+  height: 100%;
+  padding-left: 16px;
+  max-width: 500px;
+}
+.app-web-sso-layout .action-area h2 {
+  font-size: 24px;
+  line-height: 24px;
+  color: #fff;
+  margin-bottom: 18px;
+  font-weight: 400;
+}
+.app-web-sso-layout .action-area > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.app-web-sso-layout .action-area > div .other-login-type .google-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--text-color-light1);
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-high-light);
+}
+.app-web-sso-layout .action-area > div .other-login-type .google-btn:hover {
+  border-color: var(--btn-primary-color);
+  color: var(--btn-primary-color);
+}
+.app-web-sso-layout
+  .action-area
+  > div
+  .other-login-type
+  .el-divider
+  .el-divider__text {
+  background-color: #111514;
+}
+.app-web-sso-layout .action-area .agreement {
+  white-space: pre-wrap;
+}
+.app-web-sso-layout .account-reset {
+  padding: 0 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.app-web-sso-layout .account-reset .el-button {
+  margin-left: 0;
+  margin-bottom: 24px;
+}
+.app-web-sso-layout .account-reset .tips {
+  text-align: center;
+  font-size: 18px;
+}
+.app-web-sso-layout .account-reset .tips-desc {
+  font-size: 14px;
+  line-height: 21px;
+  text-align: center;
+  color: var(--text-color-base);
+  margin-bottom: 56px;
+}

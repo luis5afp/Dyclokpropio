@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: float-close-window
+ * Method: on
+ * Source offset: 2390677
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x4d8ece,_0x29646f)=>{_0xe896c=_0x29646f,_0x506c65==null||_0x506c65['close'](),_0xeb0035();}

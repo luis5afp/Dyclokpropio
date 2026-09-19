@@ -1,0 +1,14 @@
+.flex-el-dialog {
+  display: flex;
+  flex-direction: column;
+}
+.flex-el-dialog .txt-table .el-table__row {
+  height: 60px !important;
+}
+.flex-el-dialog .el-dialog__body {
+  flex: 1;
+  height: 0;
+}
+.flex-el-dialog .el-dialog__footer {
+  padding: 0 32px 15px !important;
+}

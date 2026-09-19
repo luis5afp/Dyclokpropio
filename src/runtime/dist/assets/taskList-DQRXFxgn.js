@@ -1,0 +1,944 @@
+import e from "./nameIdCell-BWLr8c3b.js";
+import {
+  kH as t,
+  kI as a,
+  kJ as s,
+  d as l,
+  v as r,
+  k1 as i,
+  G as n,
+  be as o,
+  ah as p,
+  jW as c,
+  W as u,
+  V as d,
+  P as m,
+  ag as v,
+  m as w,
+  jV as f,
+  r as k,
+  o as x,
+  c as E,
+  b as g,
+  w as T,
+  f as b,
+  h as y,
+  X as h,
+  a as _,
+  fC as C,
+  $ as A,
+  t as N,
+  n as R,
+  e as I,
+  k3 as P,
+  cD as L,
+  i as M,
+  ci as D,
+  af as Y,
+  C as j,
+  kK as S,
+  kL as O,
+  a3 as U,
+  ad as W,
+  jZ as G,
+  kf as H,
+  aL as X,
+  a5 as $,
+  jY as F,
+  s as z,
+  ab as Z,
+  jX as K,
+  i1 as B,
+  kk as J,
+} from "./index-BUIbb6Pa.js";
+import { E as V } from "./index-CLVJdR_V.js";
+import { E as q } from "./index-rtKG2tmD.js";
+import { T as Q } from "./TableExtend-CdmYngu2.js";
+import { _ as ee } from "./index.vue_vue_type_script_setup_true_lang-8hqXqXGq.js";
+import { _ as te } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import { u as ae } from "./useFetchTable-DUveM-tP.js";
+import se from "./logsDialog-CqRD-zFv.js";
+import { _ as le } from "./RpaSetting.vue_vue_type_script_setup_true_lang-DeBcBySm.js";
+import { s as re } from "./timeZone-D3UW65MQ.js";
+import { _ as ie } from "./RpaImportDlg.vue_vue_type_script_setup_true_lang-Dxo4t88C.js";
+import { u as ne } from "./index-CjqfvICL.js";
+import "./TableFieldDialog-BI1BUo05.js";
+import "./sortable.esm-DneA_jWz.js";
+import "./LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js";
+import "./index-UZcsr-ei.js";
+const oe = { key: "expired", statusTone: "info" },
+  pe = { key: "pending-scheduled", statusTone: "success" },
+  ce = {
+    PENDING: "success",
+    EXECUTE: "warning",
+    ALREADY: "info",
+    TERMINATE: "info",
+  },
+  ue = {
+    PENDING: "pending",
+    EXECUTE: "executing",
+    ALREADY: "completed",
+    TERMINATE: "terminated",
+  };
+function de(e, l = {}) {
+  if ("PENDING" !== e.status)
+    return {
+      key: ue[e.status || ""] || "pending",
+      statusTone: ce[e.status || ""] || "info",
+    };
+  if ("ONCE" === e.type && "IMMEDIATELY" === e.executeTimeType)
+    return { key: "pending-manual", statusTone: "warning" };
+  if ("ONCE" === e.type && "FIXED_TIME" === e.executeTimeType) {
+    const s = t(l.now),
+      r = a(e.executeTime, e.timeZone, s);
+    return r && r <= s ? oe : pe;
+  }
+  if ("CYCLE" === e.type) return s(e, l) ? pe : oe;
+  if ("REPEAT" === e.type) {
+    return ((e, t) => {
+      const s = a(e.executeTime, e.timeZone, t);
+      return Boolean(s && s <= t);
+    })(e, t(l.now))
+      ? oe
+      : pe;
+  }
+  return { key: "pending", statusTone: "success" };
+}
+const me = { class: "table-box" },
+  ve = { class: "tw-flex" },
+  we = { class: "!tw-mr-[-8px]" },
+  fe = {
+    class:
+      "tw-text-[var(--text-color-base)] tw-p-[8px] tw-flex tw-flex-col tw-items-center tw-w-[370px]",
+  },
+  ke = { class: "tw-text-[18px]" },
+  xe = {
+    class:
+      "tw-min-h-[108px] tw-flex !tw-justify-between tw-mt-[16px] tw-p-[16px] tw-round-[8px] tw-w-[100%] tw-border tw-border-solid tw-border-[var(--dialog-border-color)] tw-bg-[var(--card-bg-color)] hover:tw-border-[var(--primary-color)] tw-rounded-[8px]",
+  },
+  Ee = { class: "tw-mr-[30px] tw-w-0 tw-flex-1" },
+  ge = { class: "tw-mb-[4px]" },
+  Te = { class: "tw-text-[var(--text-color-light1)]" },
+  be = { class: "tw-h-[inherit] c-flex" },
+  ye = {
+    class:
+      "c-flex tw-min-h-[108px] !tw-justify-between tw-mt-[16px] tw-p-[16px] tw-round-[8px] tw-w-[100%] tw-border tw-border-solid tw-border-[var(--dialog-border-color)] tw-bg-[var(--card-bg-color)] hover:tw-border-[var(--primary-color)] tw-rounded-[8px]",
+  },
+  he = { class: "tw-mr-[30px] tw-w-0 tw-flex-1" },
+  _e = { class: "tw-mb-[4px]" },
+  Ce = { class: "tw-text-[var(--text-color-light1)]" },
+  Ae = { class: "tw-h-[inherit] c-flex" },
+  Ne = {
+    class:
+      "c-flex tw-min-h-[108px] !tw-justify-between tw-mt-[16px] tw-p-[16px] tw-round-[8px] tw-w-[100%] tw-border tw-border-solid tw-border-[var(--dialog-border-color)] tw-bg-[var(--card-bg-color)] hover:tw-border-[var(--primary-color)] tw-rounded-[8px]",
+  },
+  Re = { class: "tw-mr-[30px] tw-w-0 tw-flex-1" },
+  Ie = { class: "tw-mb-[4px]" },
+  Pe = { class: "tw-text-[var(--text-color-light1)]" },
+  Le = { class: "tw-h-[inherit] c-flex" },
+  Me = { class: "tw-flex" },
+  De = l({
+    __name: "taskList",
+    setup(t) {
+      const { t: a } = r.useI18n(),
+        { freeRpaCreateTip: s } = i(),
+        l = j(() => W().currentPlan),
+        oe = M(),
+        pe = n(),
+        ce = M(!1),
+        ue = { show: o(p.RPA_MARKET), label: a("rpa.task.list.createTask") },
+        {
+          loading: De,
+          pagination: Ye,
+          filters: je,
+          list: Se,
+          fetchList: Oe,
+          onSearch: Ue,
+          onPaginationSizeChange: We,
+          onPaginationCurrentChange: Ge,
+          onFiltersChangeByKey: He,
+          listErr: Xe,
+        } = ae({
+          fetch: (e) => {
+            const { date: t, ...a } = e,
+              [s, l] = t || [];
+            return (
+              pe.isSuperAdmin && void 0 === je.beMe && (je.beMe = !0),
+              S({
+                ...a,
+                detail: !0,
+                ...(s
+                  ? { startCreateTime: re(ne(s, "YYYY-MM-DD HH:mm:ss").value) }
+                  : {}),
+                ...(l
+                  ? { endCreateTime: re(ne(l, "YYYY-MM-DD HH:mm:ss").value) }
+                  : {}),
+              })
+            );
+          },
+          tableName: "taskList",
+        }),
+        $e = c(),
+        Fe = M(),
+        ze = M(),
+        Ze = M({});
+      u(
+        () => Se.value,
+        () => {
+          var e;
+          null == (e = null == Se ? void 0 : Se.value) ||
+            e.forEach((e) => {
+              Ze[e.id] = !1;
+            });
+        },
+      );
+      const Ke = () => {
+          var e;
+          null == (e = Fe.value) || e.open();
+        },
+        Be = d.debounce(async (e) => {
+          (await Oe(), await $e.getPendingTaskList(), null == e || e());
+        }, 500),
+        Je = () => {
+          pe.isSuperAdmin && (je.beMe = !0);
+        },
+        Ve = M(!1),
+        qe = async () => {
+          var e;
+          try {
+            if (
+              ((Ve.value = !0),
+              ((null == (e = null == l ? void 0 : l.value)
+                ? void 0
+                : e.timeLimit) ?? 0) < 0)
+            )
+              return void Y();
+            if (await s()) return;
+            ce.value = !ce.value;
+          } finally {
+            Ve.value = !1;
+          }
+        },
+        Qe = async (e) => {
+          var t;
+          if (
+            ((null == (t = null == l ? void 0 : l.value)
+              ? void 0
+              : t.timeLimit) ?? 0) < 0
+          )
+            Y();
+          else
+            try {
+              (await O(e).then(() => Be()), U.success(a("base.delSuccess")));
+            } catch (s) {}
+        },
+        et = () => {
+          (w.on(f.CHANGE_RPA_ITEM_STATE, (e) => {
+            let { status: t, taskId: a } = e,
+              s = Se.value.find((e) => e.id === a);
+            s && (s.status = t);
+          }),
+            w.on(f.UPDATE_RPA_LIST, () => {
+              Be();
+            }),
+            w.on(f.OPEN_LOG, (e) => {
+              ((e) => {
+                var t;
+                null == (t = oe.value) || t.attrsParams(e);
+              })(e);
+            }),
+            w.on(f.OPEN_RPA_SETTING, Ke));
+        };
+      const tt = j(() => {
+          const e = [
+            {
+              el: "select",
+              key: "beMe",
+              width: "150px",
+              options: [
+                { value: !0, label: a("rpaMarket.tip7") },
+                { value: !1, label: a("rpaMarket.tip8") },
+              ],
+            },
+            {
+              el: "input",
+              key: "workflowId",
+              label: a("rpa.task.list.rpaWorkflowId"),
+              clearable: !0,
+              placeholder: a("rpa.task.list.rpaWorkflowId"),
+              isPackUp: !0,
+              width: "200px",
+            },
+            {
+              el: "input",
+              key: "envName",
+              label: a("rpa.task.list.envName"),
+              clearable: !0,
+              placeholder: a("rpa.task.list.envName"),
+              isPackUp: !0,
+              width: "200px",
+            },
+            {
+              el: "select",
+              key: "type",
+              label: "",
+              filterable: !1,
+              clearable: !0,
+              width: "150px",
+              options: [
+                { value: G.ONCE, label: a("rpa.task.list.disposable") },
+                { value: G.CYCLE, label: a("rpa.task.list.cycle") },
+                { value: G.REPEAT, label: a("rpa2.tip1") },
+              ],
+              placeholder: a("rpa.task.list.taskType"),
+            },
+            {
+              el: "input",
+              key: "keyword",
+              label: a("rpa.task.list.keyWord"),
+              clearable: !0,
+              placeholder: a("rpa.task.list.keyWord"),
+              width: "200px",
+            },
+            {
+              el: "select",
+              key: "status",
+              label: a("rpa.task.list.status"),
+              filterable: !1,
+              clearable: !0,
+              width: "100px",
+              isPackUp: !0,
+              options: [
+                {
+                  value: H.PENDING,
+                  label: a("rpa.task.list.pendingExecution"),
+                },
+                { value: H.ALREADY, label: a("rpa.task.list.inProgress") },
+                { value: H.EXECUTE, label: a("rpa.task.list.execution") },
+                { value: H.TERMINATE, label: a("rpa.task.list.terminated") },
+              ],
+              placeholder: a("rpa.task.list.status"),
+            },
+            {
+              el: "datePicker",
+              label: a("base.createTime"),
+              key: "date",
+              clearable: !0,
+              isPackUp: !0,
+              type: "datetimerange",
+              format: "YYYY-MM-DD HH:mm",
+              valueFormat: "YYYY-MM-DD HH:mm",
+              width: "150px",
+              rangeSeparator: a("base.to"),
+            },
+          ];
+          return (pe.isSuperAdmin || e.shift(), e);
+        }),
+        at = j(() => [
+          {
+            prop: "name",
+            label: a("rpa.task.list.taskName"),
+            minWidth: 220,
+            showOverflowTooltip: !1,
+            render: ({ row: t }) => $(e, { name: t.name, id: t.id }),
+          },
+          {
+            prop: "workflowId",
+            label: a("rpa.task.list.rpaWorkflow"),
+            minWidth: 200,
+            showOverflowTooltip: !1,
+            render: ({ row: t }) =>
+              $(e, { name: t.workflowName || "--", id: t.workflowId }),
+          },
+          {
+            prop: "status",
+            label: a("rpa.task.list.status"),
+            minWidth: 150,
+            showOverflowTooltip: !1,
+            render: ({ row: e }) => {
+              var t, s;
+              if (!e.status) return $("span", "--");
+              const l = {
+                  [H.PENDING]: a("rpa.task.list.pendingExecution"),
+                  [H.EXECUTE]: a("rpa.task.list.execution"),
+                  [H.ALREADY]: a("rpa.task.list.inProgress"),
+                  [H.TERMINATE]: a("rpa.task.list.terminated"),
+                  "pending-manual": a("rpa.task.list.pendingManualRun"),
+                  "pending-scheduled": a("rpa.task.list.pendingScheduledRun"),
+                  expired: a("rpa.task.list.expired"),
+                },
+                r = de(e),
+                i = l[r.key] || l[e.status],
+                n = {
+                  success: "var(--tag-success-text-color)",
+                  warning: "var( --tag-warning-text-color)",
+                  info: "var(--tag-info-text-color)",
+                }[r.statusTone];
+              if (
+                [H.ALREADY, H.TERMINATE, H.EXECUTE].includes(e.status) &&
+                [G.ONCE, G.REPEAT].includes(e.type) &&
+                [F.IMMEDIATELY, F.FIXED_TIME].includes(e.executeTimeType)
+              ) {
+                const l =
+                    null ==
+                    (s =
+                      null == (t = z.state.rpaTaskManyMap[e.id ?? ""])
+                        ? void 0
+                        : t.repeat)
+                      ? void 0
+                      : s.count,
+                  r = l >= 0 ? e.executeNumber - l : "";
+                return $(
+                  C,
+                  { content: i, placement: "top" },
+                  $("span", { class: "tw-flex tw-flex-col" }, [
+                    $("span", { class: "task-status" }, [
+                      e.status !== H.EXECUTE
+                        ? $("span", { style: { backgroundColor: n } })
+                        : $("i", {
+                            class:
+                              "iconfont icon-opening dic-animate-spin tw-animate-spin tw-text-[var(--tag-warning-text-color)] tw-mr-[4px]",
+                          }),
+                      $("span", { style: { color: n } }, i),
+                    ]),
+                    e.status === H.EXECUTE &&
+                      e.type === G.REPEAT &&
+                      r &&
+                      $(
+                        "div",
+                        {
+                          style: { flex: "0 0 100%" },
+                          class: "tw-text-[var(--text-light3)]",
+                        },
+                        [a("rpa2.tip8", { count: r })],
+                      ),
+                  ]),
+                );
+              }
+              return $(
+                C,
+                { content: i, placement: "top" },
+                $("span", { class: "task-status tw-flex-wrap" }, [
+                  $("span", { style: { backgroundColor: n } }),
+                  $("span", { style: { color: n }, class: "tw-truncate" }, i),
+                  e.type === G.CYCLE && e.status === H.ALREADY && st(e),
+                ]),
+              );
+            },
+          },
+          {
+            prop: "envList",
+            label: a("rpa.task.list.rpaWorkflowEnv"),
+            minWidth: 160,
+            showOverflowTooltip: !1,
+            render: ({ row: e }) => {
+              var t, s, l;
+              if (!(null == (t = e.envList) ? void 0 : t.length))
+                return $("span", {}, "--");
+              if (e.envList.length <= 2)
+                return null == (l = null == (s = e.envList) ? void 0 : s.map)
+                  ? void 0
+                  : l.call(s, (t, a) =>
+                      $(
+                        Z,
+                        {
+                          placement: "top",
+                          content: `${t.envName}(${t.serialNum})`,
+                        },
+                        {
+                          reference: () =>
+                            $(
+                              "div",
+                              { class: "sle" },
+                              {
+                                default: () => {
+                                  var s;
+                                  return `${t.envName}(${t.serialNum})${a !== ((null == (s = e.envList) ? void 0 : s.length) ?? 0) - 1 ? "、" : ""}`;
+                                },
+                              },
+                            ),
+                        },
+                      ),
+                    );
+              {
+                const t = e.envList
+                    .slice(0, 2)
+                    .map((e) => e.envName + `(${e.serialNum})`)
+                    .join("、"),
+                  s = e.envList
+                    .map((e) => `${e.envName}(${e.serialNum})`)
+                    .join("、");
+                return $("div", [
+                  $("div", $("div", { class: "sle" }, [t])),
+                  $("div", a("base.etc", { N: e.envList.length })),
+                  $(
+                    "div",
+                    $(
+                      Z,
+                      {
+                        placement: "top",
+                        title: a("env.group.resp.envList"),
+                        width: "300",
+                        trigger: "click",
+                      },
+                      {
+                        reference: () =>
+                          $(
+                            A,
+                            { link: !0, type: "primary" },
+                            { default: () => a("base.view") },
+                          ),
+                        default: () =>
+                          $(
+                            "div",
+                            { class: "view-more-main" },
+                            { default: () => s },
+                          ),
+                      },
+                    ),
+                  ),
+                ]);
+              }
+            },
+          },
+          {
+            prop: "type",
+            label: a("rpa.task.list.taskType"),
+            minWidth: 100,
+            render: ({ row: e }) => {
+              if (!e.type || !e.executeTimeType) return $("span", "--");
+              if (e.type === G.ONCE && e.executeTimeType === F.IMMEDIATELY)
+                return $(
+                  "span",
+                  { class: "tw-whitespace-normal" },
+                  a("rpa.task.list.manualTask"),
+                );
+              const t = {
+                  [G.ONCE]: a("rpa.task.list.disposable"),
+                  [G.CYCLE]: a("rpa.task.list.cycle"),
+                  [G.REPEAT]: a("rpa2.tip1"),
+                },
+                s = {
+                  [F.IMMEDIATELY]: a("rpa2.manualStart"),
+                  [F.FIXED_TIME]: a("rpa.task.list.timer"),
+                },
+                l = { [K.EVERYDAY]: a("rpa.task.list.everyDay") };
+              return $("div", [
+                $("span", { class: "tw-whitespace-normal" }, t[e.type]),
+                e.type === G.REPEAT ? "" : $("span", "-"),
+                $("div"),
+                e.type == G.ONCE
+                  ? s[e.executeTimeType]
+                  : e.type === G.REPEAT
+                    ? ""
+                    : Reflect.get(l, e.executeFrequency) || "-",
+              ]);
+            },
+          },
+          {
+            prop: "createTime",
+            label: a("base.createTime"),
+            minWidth: 150,
+            specialType: X.TIME,
+            isTimeZoneChange: !0,
+          },
+          {
+            prop: "operation",
+            label: a("base.operation"),
+            fixed: "right",
+            width: 150,
+          },
+        ]),
+        st = (e) => {
+          let t = B().getTime(),
+            s = J(e.endTimeEffect, e.timeZone).getTime() || 0,
+            l = J(e.executeTime, e.timeZone).getTime() || 0;
+          if (e.status !== H.TERMINATE) {
+            if (s < t)
+              return $(
+                "span",
+                { class: "tw-text-[var(--text-light3)]" },
+                `(${a("rpa.task.list.end")})`,
+              );
+            if (l < t)
+              return $(
+                "span",
+                { class: "tw-text-[var(--text-light3)]" },
+                `(${a("rpa.task.list.nextRound")})`,
+              );
+          }
+        };
+      (m(() => {
+        (et(), window.addEventListener("resize", lt));
+      }),
+        v(() => {
+          (w.off(f.CHANGE_RPA_ITEM_STATE),
+            w.off(f.UPDATE_RPA_LIST),
+            w.off(f.OPEN_LOG),
+            w.off(f.OPEN_RPA_SETTING),
+            window.removeEventListener("resize", lt));
+        }));
+      const lt = d.debounce(() => {
+        ce.value &&
+          ((ce.value = !1),
+          setTimeout(() => {
+            ce.value = !0;
+          }, 500));
+      }, 300);
+      return (e, t) => {
+        const s = k("DArrowRight"),
+          r = k("el-icon");
+        return (
+          x(),
+          E("div", me, [
+            g(
+              q,
+              {
+                columns: at.value,
+                listErr: b(Xe),
+                list: b(Se),
+                loading: b(De),
+                conditionBoxPosition: "unset",
+                onRefresh: b(Oe),
+              },
+              {
+                extends: T(() => [
+                  _("div", ve, [
+                    _("div", we, [
+                      g(
+                        b(C),
+                        {
+                          visible: ce.value,
+                          "onUpdate:visible":
+                            t[3] || (t[3] = (e) => (ce.value = e)),
+                          trigger: "contextmenu",
+                          "show-arrow": !1,
+                          effect: "dark",
+                          placement: "bottom-start",
+                          "popper-class": "tw-rounded-[16px]",
+                        },
+                        {
+                          content: T(() => [
+                            _("div", fe, [
+                              _(
+                                "div",
+                                ke,
+                                N(b(a)("rpa.task.list.createTask")),
+                                1,
+                              ),
+                              _("div", xe, [
+                                _("div", Ee, [
+                                  _("div", ge, N(b(a)("rpa2.marketCreate")), 1),
+                                  _(
+                                    "div",
+                                    Te,
+                                    N(b(a)("rpa2.marketTemplates")),
+                                    1,
+                                  ),
+                                ]),
+                                _("div", be, [
+                                  g(
+                                    b(A),
+                                    {
+                                      type: "primary",
+                                      onClick:
+                                        t[0] ||
+                                        (t[0] = (e) =>
+                                          b(R).push("/rpa/market")),
+                                      plain: "",
+                                    },
+                                    {
+                                      default: T(() => [
+                                        I(N(b(a)("rpa2.goCreate")), 1),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ),
+                                ]),
+                              ]),
+                              _("div", ye, [
+                                _("div", he, [
+                                  _("div", _e, N(b(a)("rpa2.customRPA")), 1),
+                                  _(
+                                    "div",
+                                    Ce,
+                                    N(b(a)("rpa2.customRPA_desc")),
+                                    1,
+                                  ),
+                                  g(
+                                    b(A),
+                                    {
+                                      class:
+                                        "tw-text-[12px] tw-mt-[4px] tw-text-[var(--text-color-light1)]",
+                                      type: "info",
+                                      link: "",
+                                      onClick: b(P),
+                                    },
+                                    {
+                                      default: T(() => [
+                                        I(N(b(a)("crawler.view_tutorial")), 1),
+                                        g(
+                                          r,
+                                          { class: "tw-ml-[4px]" },
+                                          { default: T(() => [g(s)]), _: 1 },
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["onClick"],
+                                  ),
+                                ]),
+                                _("div", Ae, [
+                                  g(
+                                    b(A),
+                                    {
+                                      type: "primary",
+                                      onClick:
+                                        t[1] ||
+                                        (t[1] = (e) => {
+                                          var t;
+                                          null == (t = ze.value) ||
+                                            t.openDialog();
+                                        }),
+                                      plain: "",
+                                    },
+                                    {
+                                      default: T(() => [
+                                        I(N(b(a)("header.guide.createNow")), 1),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ),
+                                ]),
+                              ]),
+                              _("div", Ne, [
+                                _("div", Re, [
+                                  _(
+                                    "div",
+                                    Ie,
+                                    N(b(a)("rpa2.customizeTask")),
+                                    1,
+                                  ),
+                                  _("div", Pe, N(b(a)("rpa2.contactTip")), 1),
+                                ]),
+                                _("div", Le, [
+                                  g(
+                                    b(A),
+                                    {
+                                      type: "primary",
+                                      onClick: t[2] || (t[2] = (e) => b(L)()),
+                                      plain: "",
+                                    },
+                                    {
+                                      default: T(() => [
+                                        I(
+                                          N(b(a)("cost.plan.dialog.service")),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ),
+                                ]),
+                              ]),
+                            ]),
+                          ]),
+                          default: T(() => [
+                            g(
+                              Q,
+                              {
+                                createProps: ue,
+                                onOnCreate: qe,
+                                createLoading: Ve.value,
+                              },
+                              null,
+                              8,
+                              ["createLoading"],
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["visible"],
+                      ),
+                    ]),
+                    g(
+                      ee,
+                      {
+                        content: b(a)("rpa2.taskSettings"),
+                        "button-class": "tw-w-[40px] tw-ml-[10px]",
+                        icon: "icon-setting",
+                        "icon-class":
+                          "tw-text-[18px] tw-duration-300 group-hover:tw-opacity-100 tw-opacity-80",
+                        onClick: Ke,
+                      },
+                      null,
+                      8,
+                      ["content"],
+                    ),
+                  ]),
+                ]),
+                filters: T(() => [
+                  g(
+                    V,
+                    {
+                      config: tt.value,
+                      "model-value": b(je),
+                      onReset: Je,
+                      onSearch: b(Ue),
+                      "onField:change": b(He),
+                    },
+                    null,
+                    8,
+                    ["config", "model-value", "onSearch", "onField:change"],
+                  ),
+                ]),
+                operation: T((e) => {
+                  var s;
+                  return [
+                    _("div", Me, [
+                      b(pe).isSuperAdmin &&
+                      !0 !== (null == (s = b(je)) ? void 0 : s.beMe)
+                        ? h("", !0)
+                        : (x(),
+                          y(
+                            b(C),
+                            {
+                              key: 0,
+                              content: b(a)("rpa2.taskDetails"),
+                              placement: "top",
+                            },
+                            {
+                              default: T(() => [
+                                g(
+                                  b(A),
+                                  {
+                                    link: "",
+                                    type: "info",
+                                    onClick: (t) =>
+                                      (async (e) => {
+                                        var t;
+                                        ((null ==
+                                        (t = null == l ? void 0 : l.value)
+                                          ? void 0
+                                          : t.timeLimit) ?? 0) < 0
+                                          ? Y()
+                                          : R.push({
+                                              path: "/rpa/rpaTaskEdit",
+                                              query: { taskId: e.id },
+                                            });
+                                      })(e.row),
+                                  },
+                                  {
+                                    default: T(() => [
+                                      ...(t[4] ||
+                                        (t[4] = [
+                                          _(
+                                            "i",
+                                            { class: "iconfont icon-details" },
+                                            null,
+                                            -1,
+                                          ),
+                                        ])),
+                                    ]),
+                                    _: 1,
+                                  },
+                                  8,
+                                  ["onClick"],
+                                ),
+                              ]),
+                              _: 2,
+                            },
+                            1032,
+                            ["content"],
+                          )),
+                      g(
+                        b(C),
+                        {
+                          content: b(a)("rpaMarket.taskDelTip"),
+                          placement: "top",
+                        },
+                        {
+                          default: T(() => {
+                            var s;
+                            return [
+                              b(pe).isSuperAdmin &&
+                              !0 !== (null == (s = b(je)) ? void 0 : s.beMe)
+                                ? h("", !0)
+                                : (x(),
+                                  y(
+                                    b(A),
+                                    {
+                                      key: 0,
+                                      link: "",
+                                      type: "info",
+                                      onClick: (t) => {
+                                        return (
+                                          (s = e.row.id),
+                                          void D(
+                                            a("rpa.task.list.delHint"),
+                                            () => Qe(s),
+                                          )
+                                        );
+                                        var s;
+                                      },
+                                    },
+                                    {
+                                      default: T(() => [
+                                        ...(t[5] ||
+                                          (t[5] = [
+                                            _(
+                                              "i",
+                                              { class: "iconfont icon-delete" },
+                                              null,
+                                              -1,
+                                            ),
+                                          ])),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["onClick"],
+                                  )),
+                            ];
+                          }),
+                          _: 2,
+                        },
+                        1032,
+                        ["content"],
+                      ),
+                    ]),
+                  ];
+                }),
+                pagination: T(() => [
+                  b(Se).length
+                    ? (x(),
+                      y(
+                        te,
+                        {
+                          key: 0,
+                          handleCurrentChange: b(Ge),
+                          handleSizeChange: b(We),
+                          pageable: b(Ye),
+                        },
+                        null,
+                        8,
+                        ["handleCurrentChange", "handleSizeChange", "pageable"],
+                      ))
+                    : h("", !0),
+                ]),
+                _: 1,
+              },
+              8,
+              ["columns", "listErr", "list", "loading", "onRefresh"],
+            ),
+            g(se, { ref_key: "logsDialogRef", ref: oe }, null, 512),
+            g(le, { ref_key: "rpaSettingRef", ref: Fe }, null, 512),
+            g(ie, { ref_key: "rpaImportDlgRef", ref: ze }, null, 512),
+          ])
+        );
+      };
+    },
+  });
+export { De as default };

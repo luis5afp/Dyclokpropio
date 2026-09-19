@@ -1,0 +1,6 @@
+.expansionCard .el-card__body {
+  height: 100%;
+}
+.expan-dropdown-item .el-dropdown-menu__item {
+  padding: 0 !important;
+}

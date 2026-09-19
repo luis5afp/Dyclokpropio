@@ -1,0 +1,360 @@
+import {
+  d as e,
+  v as s,
+  r as n,
+  o,
+  h as a,
+  w as i,
+  a as l,
+  t,
+  f as c,
+  O as r,
+  e as d,
+  c as u,
+  X as k,
+  F as v,
+  z as g,
+  b as p,
+  bo as m,
+  bp as h,
+  bq as y,
+  br as w,
+  bs as b,
+  C as f,
+  _ as N,
+} from "./index-BUIbb6Pa.js";
+const D = { class: "open-env-network-diagnosis" },
+  E = { class: "diagnosis-profile" },
+  P = { class: "label" },
+  x = { class: "diagnosis-section" },
+  V = { class: "section-title" },
+  _ = { class: "action" },
+  O = { class: "diagnosis-section" },
+  C = { class: "section-title" },
+  $ = { class: "check-list" },
+  A = { class: "check-copy" },
+  B = { class: "check-title" },
+  I = { class: "check-message" },
+  T = { key: 2 },
+  j = N(
+    e({
+      __name: "OpenEnvNetworkDiagnosisDialog",
+      props: {
+        modelValue: { type: Boolean },
+        loading: { type: Boolean },
+        diagnosis: {},
+        row: {},
+      },
+      emits: ["update:modelValue", "recheck", "recheck-and-open", "feedback"],
+      setup(e, { emit: N }) {
+        const j = e,
+          q = N,
+          { t: z } = s.useI18n(),
+          F = f({
+            get: () => j.modelValue,
+            set: (e) => q("update:modelValue", e),
+          }),
+          L = f(() => {
+            var e;
+            return j.loading
+              ? z("openEnvNetworkDiagnosis.detectingTitle")
+              : "success" ===
+                  (null == (e = j.diagnosis) ? void 0 : e.conclusion.level)
+                ? z("openEnvNetworkDiagnosis.recoveredTitle")
+                : z("openEnvNetworkDiagnosis.title");
+          }),
+          R = (e) => {
+            const s = z(
+              "openEnvNetworkDiagnosis.troubleshootingSuggestionLabel",
+            );
+            if (!(null == e ? void 0 : e.includes(s))) return null;
+            const [n, o = ""] = e.split(s);
+            return { before: n, strong: s, after: o };
+          },
+          S = f(() => {
+            var e, s, n;
+            return [
+              {
+                key: "localNetwork",
+                label: z("openEnvNetworkDiagnosis.localNetwork"),
+                check:
+                  null == (e = j.diagnosis) ? void 0 : e.checks.localNetwork,
+              },
+              {
+                key: "systemProxyOrVpn",
+                label: z("openEnvNetworkDiagnosis.systemProxyOrVpn"),
+                check:
+                  null == (s = j.diagnosis)
+                    ? void 0
+                    : s.checks.systemProxyOrVpn,
+              },
+              {
+                key: "clientProxy",
+                label: z("openEnvNetworkDiagnosis.clientProxy"),
+                check:
+                  null == (n = j.diagnosis) ? void 0 : n.checks.clientProxy,
+              },
+            ].map((e) => {
+              var s;
+              return {
+                ...e,
+                messageParts: R(null == (s = e.check) ? void 0 : s.message),
+              };
+            });
+          });
+        return (s, f) => {
+          const N = n("el-icon"),
+            j = n("el-button"),
+            q = n("el-dialog");
+          return (
+            o(),
+            a(
+              q,
+              {
+                modelValue: F.value,
+                "onUpdate:modelValue": f[3] || (f[3] = (e) => (F.value = e)),
+                title: L.value,
+                width: "min(720px, calc(100vw - 48px))",
+              },
+              {
+                footer: i(() => [
+                  p(
+                    j,
+                    { onClick: f[1] || (f[1] = (e) => s.$emit("feedback")) },
+                    {
+                      default: i(() => [
+                        d(t(c(z)("openEnvNetworkDiagnosis.feedback")), 1),
+                      ]),
+                      _: 1,
+                    },
+                  ),
+                  p(
+                    j,
+                    {
+                      type: "primary",
+                      loading: e.loading,
+                      onClick:
+                        f[2] || (f[2] = (e) => s.$emit("recheck-and-open")),
+                    },
+                    {
+                      default: i(() => [
+                        d(t(c(z)("openEnvNetworkDiagnosis.recheckAndOpen")), 1),
+                      ]),
+                      _: 1,
+                    },
+                    8,
+                    ["loading"],
+                  ),
+                ]),
+                default: i(() => {
+                  var n, j, q, F, L;
+                  return [
+                    l("div", D, [
+                      l("div", E, [
+                        l(
+                          "span",
+                          P,
+                          t(c(z)("openEnvNetworkDiagnosis.environment")),
+                          1,
+                        ),
+                        l(
+                          "span",
+                          null,
+                          t((null == (n = e.row) ? void 0 : n.name) || "--") +
+                            " (" +
+                            t(
+                              (null == (j = e.row) ? void 0 : j.serialNum) ||
+                                "--",
+                            ) +
+                            ")",
+                          1,
+                        ),
+                      ]),
+                      l("div", x, [
+                        l(
+                          "div",
+                          V,
+                          t(c(z)("openEnvNetworkDiagnosis.conclusion")),
+                          1,
+                        ),
+                        l(
+                          "div",
+                          {
+                            class: r([
+                              "conclusion",
+                              null == (q = e.diagnosis)
+                                ? void 0
+                                : q.conclusion.level,
+                            ]),
+                          },
+                          [
+                            d(
+                              t(
+                                (null == (F = e.diagnosis)
+                                  ? void 0
+                                  : F.conclusion.primaryReason) || "--",
+                              ) + " ",
+                              1,
+                            ),
+                            l(
+                              "div",
+                              _,
+                              t(
+                                (null == (L = e.diagnosis)
+                                  ? void 0
+                                  : L.conclusion.userAction) || "",
+                              ),
+                              1,
+                            ),
+                          ],
+                          2,
+                        ),
+                      ]),
+                      l("div", O, [
+                        l("div", C, [
+                          d(t(c(z)("openEnvNetworkDiagnosis.checks")) + " ", 1),
+                          e.diagnosis && !e.loading
+                            ? (o(),
+                              u(
+                                "span",
+                                {
+                                  key: 0,
+                                  class: "recheck-link",
+                                  onClick:
+                                    f[0] || (f[0] = (e) => s.$emit("recheck")),
+                                },
+                                t(c(z)("openEnvNetworkDiagnosis.recheck")),
+                                1,
+                              ))
+                            : k("", !0),
+                        ]),
+                        l("div", $, [
+                          (o(!0),
+                          u(
+                            v,
+                            null,
+                            g(S.value, (e) => {
+                              var s, n, g, f;
+                              return (
+                                o(),
+                                u("div", { key: e.key, class: "check-row" }, [
+                                  p(
+                                    N,
+                                    {
+                                      class: r([
+                                        "status-icon",
+                                        [
+                                          (null == (s = e.check)
+                                            ? void 0
+                                            : s.status) || "skipped",
+                                          {
+                                            "tw-animate-spin":
+                                              "pending" ===
+                                              (null == (n = e.check)
+                                                ? void 0
+                                                : n.status),
+                                          },
+                                        ],
+                                      ]),
+                                    },
+                                    {
+                                      default: i(() => {
+                                        var s, n, i, l;
+                                        return [
+                                          "pending" ===
+                                          (null == (s = e.check)
+                                            ? void 0
+                                            : s.status)
+                                            ? (o(), a(c(m), { key: 0 }))
+                                            : "success" ===
+                                                (null == (n = e.check)
+                                                  ? void 0
+                                                  : n.status)
+                                              ? (o(), a(c(h), { key: 1 }))
+                                              : "warning" ===
+                                                  (null == (i = e.check)
+                                                    ? void 0
+                                                    : i.status)
+                                                ? (o(), a(c(y), { key: 2 }))
+                                                : "failed" ===
+                                                    (null == (l = e.check)
+                                                      ? void 0
+                                                      : l.status)
+                                                  ? (o(), a(c(w), { key: 3 }))
+                                                  : (o(), a(c(b), { key: 4 })),
+                                        ];
+                                      }),
+                                      _: 2,
+                                    },
+                                    1032,
+                                    ["class"],
+                                  ),
+                                  l("div", A, [
+                                    l("div", B, t(e.label), 1),
+                                    l("div", I, [
+                                      e.messageParts
+                                        ? (o(),
+                                          u(
+                                            v,
+                                            { key: 0 },
+                                            [
+                                              d(t(e.messageParts.before), 1),
+                                              l(
+                                                "strong",
+                                                null,
+                                                t(e.messageParts.strong),
+                                                1,
+                                              ),
+                                              d(t(e.messageParts.after), 1),
+                                            ],
+                                            64,
+                                          ))
+                                        : (o(),
+                                          u(
+                                            v,
+                                            { key: 1 },
+                                            [
+                                              d(
+                                                t(
+                                                  (null == (g = e.check)
+                                                    ? void 0
+                                                    : g.message) || "--",
+                                                ),
+                                                1,
+                                              ),
+                                            ],
+                                            64,
+                                          )),
+                                      (null == (f = e.check) ? void 0 : f.rtt)
+                                        ? (o(),
+                                          u(
+                                            "span",
+                                            T,
+                                            "(" + t(e.check.rtt) + "ms)",
+                                            1,
+                                          ))
+                                        : k("", !0),
+                                    ]),
+                                  ]),
+                                ])
+                              );
+                            }),
+                            128,
+                          )),
+                        ]),
+                      ]),
+                    ]),
+                  ];
+                }),
+                _: 1,
+              },
+              8,
+              ["modelValue", "title"],
+            )
+          );
+        };
+      },
+    }),
+    [["__scopeId", "data-v-be8a2bf6"]],
+  );
+export { j as default };

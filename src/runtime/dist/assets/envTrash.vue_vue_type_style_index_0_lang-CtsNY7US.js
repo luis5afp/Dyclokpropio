@@ -1,0 +1,694 @@
+import {
+  d as e,
+  v as a,
+  G as t,
+  R as l,
+  aW as n,
+  be as i,
+  ah as s,
+  q as r,
+  o,
+  c as p,
+  b as c,
+  f as u,
+  w as v,
+  a as d,
+  t as m,
+  h as f,
+  X as g,
+  x as h,
+  $ as y,
+  i as b,
+  cE as x,
+  ak as w,
+  df as T,
+  dg as E,
+  af as N,
+  ci as _,
+  gl as S,
+  gm as k,
+  g1 as C,
+  aQ as L,
+  a1 as M,
+  gn as D,
+  a3 as O,
+  a5 as R,
+  dh as Y,
+  go as I,
+  fK as H,
+  C as W,
+  ad as j,
+  aL as P,
+  ab as B,
+  am as A,
+  ao as F,
+} from "./index-BUIbb6Pa.js";
+import { E as V } from "./index-CLVJdR_V.js";
+import { E as G } from "./index-rtKG2tmD.js";
+import { _ as z } from "./index.vue_vue_type_style_index_0_lang-CoddPsWR.js";
+import { u as J, S as U } from "./useFetchTable-DUveM-tP.js";
+import { _ as Z } from "./batchOperationBar.vue_vue_type_script_setup_true_lang-Dy5lyCwg.js";
+import { s as K } from "./timeZone-D3UW65MQ.js";
+import { e as $ } from "./asyncMessage-B3VVipK9.js";
+import { u as q } from "./index-CjqfvICL.js";
+const Q = { class: "table-box" },
+  X = { class: "b-flex tw-w-full" },
+  ee = {
+    class:
+      "tw-text-[14px] tw-flex tw-items-center tw-ml-[8px] tw-leading-[1.2] tw-text-[var(--text-color-light1)]",
+  },
+  ae = e({
+    __name: "envTrash",
+    setup(e) {
+      const { t: ae } = a.useI18n();
+      t();
+      const te = W(() => j().currentPlan),
+        le = b([]),
+        ne = b(),
+        { linkAccounts: ie } = l(n()),
+        {
+          loading: se,
+          pagination: re,
+          filters: oe,
+          list: pe,
+          fetchList: ce,
+          onSearch: ue,
+          sortData: ve,
+          listErr: de,
+          onPaginationSizeChange: me,
+          onPaginationCurrentChange: fe,
+          onFiltersChangeByKey: ge,
+        } = J({
+          fetch: (e) => {
+            const a = JSON.parse(JSON.stringify(e)),
+              { date: t } = a,
+              [l, n] = t || [];
+            return (
+              l && (a.startCreateTime = K(q(l, "YYYY-MM-DD HH:mm:ss").value)),
+              n && (a.endCreateTime = K(q(n, "YYYY-MM-DD HH:mm:ss").value)),
+              delete a.date,
+              (a.detail = !0),
+              (a.status = x.DISABLED),
+              a.groupIds && (a.groupIds = [a.groupIds]),
+              w(a)
+            );
+          },
+          tableName: "envTrash",
+        }),
+        he = [
+          {
+            text: ae("env.env.batchRecover"),
+            icon: "icon-recover",
+            value: "recover",
+            type: "default",
+            isShow: () => i(s.RESTORE_ENVIRONMENT),
+          },
+          {
+            text: ae("env.env.batchDelete"),
+            icon: "icon-delete",
+            value: "delete",
+            type: "default",
+            isShow: () => i(s.COMPLETELY_DELETE_ENVIRONMENT),
+          },
+        ],
+        ye = ie.value.reduce((e, a) => ({ ...e, [a.value]: a }), {}),
+        be = () => {
+          var e;
+          null == (e = ne.value) || e.clearSelection();
+        },
+        xe = (e) => {
+          (be(), fe(e));
+        },
+        we = (e) => {
+          (be(), me(e));
+        },
+        Te = async () => {
+          const e = await F({ all: !0, detail: !1 });
+          le.value = e.list.map((e) => ({ value: e.id, label: e.name }));
+        };
+      function Ee({ prop: e, order: a }) {
+        (a
+          ? ((ve.value.sort = "ascending" === a ? U.ASC : U.DESC),
+            (ve.value.orderBy = H[e]))
+          : (ve.value.orderBy = ""),
+          ce());
+      }
+      const Ne = W(() => [
+          {
+            el: "inputGroup",
+            key: "inputGroup",
+            label: "",
+            clearable: !0,
+            igOptions: [
+              { value: "serialNum", label: ae("env.env.filter.serialNum") },
+              { value: "name", label: ae("env.env.filter.name") },
+              {
+                value: "platformUser",
+                label: ae("env.env.filter.platformUser"),
+              },
+              { value: "proxyHost", label: ae("env.env.filter.proxyHost") },
+              { value: "remark", label: ae("base.remark") },
+            ],
+          },
+          {
+            el: "select",
+            key: "groupIds",
+            label: "",
+            placeholder: ae("env.env.filter.groupId"),
+            filterable: !1,
+            clearable: !0,
+            options: le.value,
+            getOptionsFn: Te,
+            loadOnMount: !0,
+          },
+          {
+            el: "datePicker",
+            key: "date",
+            label: "",
+            placeholder: ae("env.env.filter.date"),
+            type: "datetimerange",
+            format: "YYYY-MM-DD HH:mm",
+            valueFormat: "YYYY-MM-DD HH:mm",
+            clearable: !0,
+            rangeSeparator: ae("base.to"),
+          },
+        ]),
+        _e = () => {
+          ((oe.name = void 0),
+            (oe.envName = void 0),
+            (oe.memberName = void 0),
+            (oe.remark = void 0));
+        },
+        Se = W(() => [
+          { type: "selection" },
+          {
+            prop: "serialNum",
+            label: ae("env.env.resp.serialNum"),
+            fixed: "left",
+            minWidth: 80,
+            width: 80,
+            sortable: !0,
+            render: ({ row: e }) => {
+              const a = [R("span", e.serialNum)];
+              if ("NEW_ENCRYPT" === e.cookieEncryptStatus) {
+                i(s.GLOBAL_SETTING) &&
+                  a.push(
+                    R(
+                      B,
+                      {
+                        placement: "top",
+                        content: ae("env.cookie.iconTip"),
+                        width: "unset",
+                        popperStyle: { textAlign: "center", maxWidth: "50%" },
+                      },
+                      {
+                        reference: () =>
+                          R("i", {
+                            class:
+                              "iconfont icon-anquanbaohu tw-text-[var(--icon-font-color1)] tw-text-[18px]",
+                          }),
+                      },
+                    ),
+                  );
+              }
+              return R("div", { class: "s-flex tw-gap-x-1" }, a);
+            },
+          },
+          {
+            prop: "name",
+            label: ae("env.env.resp.name"),
+            fixed: "left",
+            minWidth: 150,
+            sortable: !0,
+          },
+          {
+            prop: "remark",
+            label: ae("base.remark"),
+            minWidth: 120,
+            sortable: !0,
+          },
+          {
+            prop: "groupName",
+            label: ae("env.env.resp.groupName"),
+            minWidth: 150,
+            render: ({ row: e }) => {
+              var a;
+              if (!e.groups) return R("span", "--");
+              if (e.groups.length <= 2)
+                return R(
+                  "span",
+                  { style: "overflow: hidden; text-overflow: ellipsis;" },
+                  null == (a = e.groups)
+                    ? void 0
+                    : a.map((e) => e.name).join("、"),
+                );
+              {
+                const a = e.groups
+                    .slice(0, 2)
+                    .map((e) => e.name)
+                    .join("、"),
+                  t = e.groups.map((e) => e.name).join("、");
+                return R("div", [
+                  R(
+                    "div",
+                    { style: "overflow: hidden; text-overflow: ellipsis;" },
+                    R("span", [a, ae("base.etc", { N: e.groups.length })]),
+                  ),
+                  R(
+                    "div",
+                    R(
+                      B,
+                      {
+                        placement: "top",
+                        title: ae("menu.env.groupList"),
+                        width: "300",
+                        trigger: "click",
+                      },
+                      {
+                        reference: () =>
+                          R(
+                            y,
+                            { link: !0, type: "primary" },
+                            { default: () => ae("base.view") },
+                          ),
+                        default: () =>
+                          R(
+                            "div",
+                            { class: "view-more-main" },
+                            { default: () => t },
+                          ),
+                      },
+                    ),
+                  ),
+                ]);
+              }
+            },
+          },
+          {
+            prop: "accountList",
+            label: ae("env.env.resp.accountList"),
+            minWidth: 120,
+            render: ({ row: e }) => {
+              if (!e.accountList) return R("span", "--");
+              if (e.accountList.length <= 2)
+                return e.accountList.map((e) =>
+                  R(
+                    "div",
+                    {
+                      style:
+                        "font-size: 12px; display: flex; align-items: center",
+                    },
+                    [
+                      e.platform && ye[e.platform]
+                        ? R("img", {
+                            src: ye[e.platform].logo,
+                            style:
+                              "height: 16px; margin-right: 5px; border-radius: 4px;",
+                          })
+                        : R("span"),
+                      R("span", e.userName),
+                    ],
+                  ),
+                );
+              {
+                const a = e.accountList.slice(0, 2);
+                return R("div", [
+                  ...a.map((e) =>
+                    R(
+                      "div",
+                      {
+                        style:
+                          "font-size: 12px; display: flex; align-items: center",
+                      },
+                      [
+                        e.platform && ye[e.platform]
+                          ? R("img", {
+                              src: ye[e.platform].logo,
+                              style:
+                                "height: 16px; margin-right: 5px; border-radius: 4px;",
+                            })
+                          : R("span"),
+                        R("span", e.userName),
+                      ],
+                    ),
+                  ),
+                  R(
+                    "div",
+                    {
+                      style: "font-size: 12px; color: var(--text-color-light1)",
+                    },
+                    ae("base.etc", { N: e.accountList.length }),
+                  ),
+                ]);
+              }
+            },
+          },
+          {
+            prop: "proxyWay",
+            label: ae("env.env.resp.proxyWay"),
+            minWidth: 150,
+            render: ({ row: e }) =>
+              e.proxyType === A.NonUse
+                ? R("span", ae("env.env.resp.noProxy"))
+                : R("div", [
+                    R("div", e.proxyType),
+                    R("div", `${e.proxyHost}:${e.proxyPort}`),
+                  ]),
+          },
+          {
+            prop: "updateTime",
+            label: ae("env.env.resp.delTime"),
+            minWidth: 120,
+            specialType: P.TIME,
+            isTimeZoneChange: !0,
+            sortable: !0,
+          },
+          {
+            prop: "lastOpenTime",
+            label: ae("env.env.resp.lastOpenTime"),
+            minWidth: 120,
+            specialType: P.TIME,
+            isTimeZoneChange: !0,
+            sortable: !0,
+          },
+          {
+            prop: "createTime",
+            label: ae("base.createTime"),
+            minWidth: 120,
+            specialType: P.TIME,
+            isTimeZoneChange: !0,
+            sortable: !0,
+          },
+          {
+            prop: "operation",
+            label: ae("base.operation"),
+            fixed: "right",
+            minWidth: 120,
+          },
+        ]);
+      return (
+        ce(),
+        (e, a) => {
+          const t = r("auth");
+          return (
+            o(),
+            p("div", Q, [
+              c(
+                G,
+                {
+                  columns: Se.value,
+                  onSortChange: Ee,
+                  list: u(pe),
+                  loading: u(se),
+                  onRefresh: u(ce),
+                  ref_key: "eTableRef",
+                  ref: ne,
+                  listErr: u(de),
+                  selectedListShowFilter: !0,
+                },
+                {
+                  tableOther: v((e) => [
+                    e.selectedList.length
+                      ? (o(),
+                        f(
+                          Z,
+                          {
+                            key: 0,
+                            "selected-list": e.selectedList,
+                            "btn-arr": he,
+                            onDeselect: e.clearSelectionFn,
+                            onBatch: (a) =>
+                              (async (e, a) => {
+                                var t, l, n;
+                                if (T(E.BASIC_BATCH_OPERATIONS)) {
+                                  if (
+                                    ((null ==
+                                    (t = null == te ? void 0 : te.value)
+                                      ? void 0
+                                      : t.timeLimit) ?? 0) < 0
+                                  )
+                                    return N();
+                                  try {
+                                    switch (a) {
+                                      case "recover":
+                                        await _(
+                                          ae("env.env.restoreHint", {
+                                            serialNum:
+                                              (null ==
+                                              (l =
+                                                null == e
+                                                  ? void 0
+                                                  : e.map((e) => e.serialNum))
+                                                ? void 0
+                                                : l.join(",")) ?? "",
+                                          }),
+                                          async () => {
+                                            (await k({
+                                              ids:
+                                                (null == e
+                                                  ? void 0
+                                                  : e.map(
+                                                      (e) =>
+                                                        (null == e
+                                                          ? void 0
+                                                          : e.id) ?? "",
+                                                    )) ?? [],
+                                            }),
+                                              ue(),
+                                              be());
+                                          },
+                                          {
+                                            successMsg: ae("message.success"),
+                                            title: ae(
+                                              "env.env.shareDialog.operatorTips",
+                                            ),
+                                          },
+                                        );
+                                        break;
+                                      case "delete":
+                                        await _(
+                                          ae("env.env.completelyDelHint", {
+                                            serialNum:
+                                              (null ==
+                                              (n =
+                                                null == e
+                                                  ? void 0
+                                                  : e.map((e) => e.serialNum))
+                                                ? void 0
+                                                : n.join(",")) ?? "",
+                                          }),
+                                          async () => {
+                                            (await S({
+                                              ids:
+                                                (null == e
+                                                  ? void 0
+                                                  : e.map(
+                                                      (e) =>
+                                                        (null == e
+                                                          ? void 0
+                                                          : e.id) ?? "",
+                                                    )) ?? [],
+                                            }),
+                                              ue(),
+                                              be());
+                                          },
+                                        );
+                                    }
+                                  } catch (i) {}
+                                }
+                              })(e.selectedList, a.value),
+                          },
+                          null,
+                          8,
+                          ["selected-list", "onDeselect", "onBatch"],
+                        ))
+                      : g("", !0),
+                  ]),
+                  filters: v((e) => [
+                    e.selectedList.length
+                      ? g("", !0)
+                      : (o(),
+                        f(
+                          V,
+                          {
+                            key: 0,
+                            autoSearch: !1,
+                            config: Ne.value,
+                            labelWidth: 80,
+                            "model-value": u(oe),
+                            onReset: _e,
+                            onSearch: u(ue),
+                            "onField:change": u(ge),
+                          },
+                          null,
+                          8,
+                          [
+                            "config",
+                            "model-value",
+                            "onSearch",
+                            "onField:change",
+                          ],
+                        )),
+                  ]),
+                  operation: v((e) => [
+                    h(
+                      (o(),
+                      f(
+                        u(y),
+                        {
+                          link: "",
+                          type: "info",
+                          onClick: (a) =>
+                            (async (e, a) => {
+                              if (!C() && T(E.RESTORE_ENVIRONMENT))
+                                try {
+                                  let t = b(L().noPromptMap.recoverEnv);
+                                  if (t.value)
+                                    return (
+                                      await $(async () => k({ ids: [e] })),
+                                      ue(),
+                                      void be()
+                                    );
+                                  M({
+                                    title: ae(
+                                      "env.env.shareDialog.operatorTips",
+                                    ),
+                                    message: () =>
+                                      R("div", [
+                                        R(
+                                          "div",
+                                          ae("env.env.restoreHint", {
+                                            serialNum: a,
+                                          }),
+                                        ),
+                                        R(
+                                          Y,
+                                          {
+                                            class: "tw-mt-2",
+                                            modelValue: t.value,
+                                            "onUpdate:modelValue": (e) =>
+                                              (t.value = e),
+                                          },
+                                          () => ae("rpaMarket.tip18"),
+                                        ),
+                                      ]),
+                                    confirmCb: async () => {
+                                      (await D(e),
+                                        ue(),
+                                        be(),
+                                        (L().noPromptMap.recoverEnv = t.value),
+                                        O.success(
+                                          ae(
+                                            "env.env.shareDialog.operatorSuccess",
+                                          ),
+                                        ));
+                                    },
+                                  });
+                                } catch (t) {}
+                            })(e.row.id, e.row.serialNum),
+                        },
+                        {
+                          default: v(() => [
+                            ...(a[0] ||
+                              (a[0] = [
+                                d(
+                                  "i",
+                                  { class: "iconfont icon-recover" },
+                                  null,
+                                  -1,
+                                ),
+                              ])),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["onClick"],
+                      )),
+                      [[t, u(s).RESTORE_ENVIRONMENT]],
+                    ),
+                    h(
+                      (o(),
+                      f(
+                        u(y),
+                        {
+                          link: "",
+                          type: "info",
+                          onClick: (a) =>
+                            (async (e, a) => {
+                              if (!C())
+                                try {
+                                  await _(
+                                    ae("env.env.completelyDelHint", {
+                                      serialNum: a,
+                                    }),
+                                    async () => {
+                                      (await I(e), be(), ue());
+                                    },
+                                  );
+                                } catch (t) {}
+                            })(e.row.id, e.row.serialNum),
+                        },
+                        {
+                          default: v(() => [
+                            ...(a[1] ||
+                              (a[1] = [
+                                d(
+                                  "i",
+                                  { class: "iconfont icon-delete" },
+                                  null,
+                                  -1,
+                                ),
+                              ])),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["onClick"],
+                      )),
+                      [[t, u(s).COMPLETELY_DELETE_ENVIRONMENT]],
+                    ),
+                  ]),
+                  pagination: v(() => [
+                    d("div", X, [
+                      d("div", ee, [
+                        a[2] ||
+                          (a[2] = d(
+                            "i",
+                            {
+                              class:
+                                "iconfont icon-tips tw-pr-[4px] tw-text-[20px]",
+                            },
+                            null,
+                            -1,
+                          )),
+                        d("span", null, m(u(ae)("env.env.envTrashDataTip")), 1),
+                      ]),
+                    ]),
+                    u(pe).length
+                      ? (o(),
+                        f(
+                          z,
+                          {
+                            key: 0,
+                            handleCurrentChange: xe,
+                            handleSizeChange: we,
+                            pageable: u(re),
+                          },
+                          null,
+                          8,
+                          ["pageable"],
+                        ))
+                      : g("", !0),
+                  ]),
+                  _: 1,
+                },
+                8,
+                ["columns", "list", "loading", "onRefresh", "listErr"],
+              ),
+            ])
+          );
+        }
+      );
+    },
+  });
+export { ae as _ };

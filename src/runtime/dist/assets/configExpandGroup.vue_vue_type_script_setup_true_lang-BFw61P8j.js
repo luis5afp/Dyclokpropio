@@ -1,0 +1,494 @@
+import {
+  d as e,
+  gq as l,
+  v as a,
+  i as n,
+  gr as s,
+  at as t,
+  V as u,
+  r as o,
+  q as i,
+  o as d,
+  c as p,
+  F as r,
+  b as v,
+  f as x,
+  w as m,
+  x as c,
+  h as f,
+  a as b,
+  t as G,
+  z as y,
+  X as _,
+  e as g,
+  gs as I,
+  gt as E,
+  dc as $,
+} from "./index-BUIbb6Pa.js";
+import { _ as V } from "./editExpandGroup.vue_vue_type_script_setup_true_lang-B25t6R8t.js";
+const k = { class: "tw-leading-[18px]" },
+  C = { class: "tw-leading-[18px]" },
+  L = e({
+    __name: "configExpandGroup",
+    emits: ["submit"],
+    setup(e, { expose: L, emit: O }) {
+      const T = {
+          extensionsGroupIds: [],
+          extensionsType: l.ALLOW,
+          name: "",
+          extensionsGroupId: "",
+        },
+        { t: F } = a.useI18n(),
+        N = O,
+        w = n(),
+        D = n(!1),
+        A = n(!1),
+        h = n(s.CONFIG),
+        U = t({ ...u.cloneDeep(T) }),
+        W = n(),
+        j = n(!1),
+        q = () => {
+          w.value.validate(async (e) => {
+            if (e)
+              try {
+                ((j.value = !0),
+                  h.value === s.CONFIG &&
+                    (await I((null == U ? void 0 : U.id) ?? "", {
+                      extensionsGroupIds: U.extensionsGroupIds,
+                    })),
+                  h.value === s.DELETE &&
+                    (await E((null == U ? void 0 : U.id) ?? "", {
+                      ...(U.extensionsType === l.ALLOW
+                        ? { extensionsGroupId: U.extensionsGroupId }
+                        : {}),
+                      extensionsType: U.extensionsType,
+                    })),
+                  N("submit"),
+                  P());
+              } finally {
+                j.value = !1;
+              }
+          });
+        },
+        P = () => {
+          var e;
+          (null == (e = w.value) || e.resetFields(),
+            Object.assign(U, u.cloneDeep(T)),
+            (A.value = !1),
+            (D.value = !1));
+        },
+        R = () => {
+          var e;
+          null == (e = W.value) || e.acceptParams();
+        },
+        S = n([]),
+        z = () => {
+          $({ all: !0, detail: !1 }).then((e) => {
+            var l, a, n;
+            ((S.value = e.list.map((e) => ({
+              value: (null == e ? void 0 : e.id) ?? "",
+              label: (null == e ? void 0 : e.name) ?? "",
+            }))),
+              h.value === s.DELETE &&
+                ((S.value =
+                  (null == (l = null == S ? void 0 : S.value)
+                    ? void 0
+                    : l.filter((e) => e.value !== U.id)) ?? []),
+                (U.extensionsGroupId =
+                  (null ==
+                  (n =
+                    null == (a = null == e ? void 0 : e.list)
+                      ? void 0
+                      : a.find((e) => e.isDefault))
+                    ? void 0
+                    : n.id) ?? "")));
+          });
+        },
+        B = t({
+          extensionsGroupIds: [
+            { required: !0, message: F("expan.expandGroupHold") },
+          ],
+        });
+      return (
+        L({
+          acceptParams: async (e, l) => {
+            var a;
+            if (e === s.CONFIG) {
+              let e = l;
+              ((U.name = e.extensionsName),
+                (U.id = e.id),
+                (U.extensionsGroupIds =
+                  (null == (a = null == e ? void 0 : e.groups)
+                    ? void 0
+                    : a.map((e) => (null == e ? void 0 : e.id) ?? "")) ?? []));
+            }
+            if (e === s.DELETE) {
+              let e = l;
+              U.id = e.id;
+            }
+            (z(), (h.value = e), (D.value = !0));
+          },
+        }),
+        (e, a) => {
+          const n = o("el-form-item"),
+            t = o("el-option"),
+            u = o("el-button"),
+            I = o("el-select"),
+            E = o("el-radio-button"),
+            $ = o("el-radio-group"),
+            L = o("el-form"),
+            O = o("el-dialog"),
+            T = i("prevent-label-click");
+          return (
+            d(),
+            p(
+              r,
+              null,
+              [
+                v(
+                  O,
+                  {
+                    modelValue: D.value,
+                    "onUpdate:modelValue":
+                      a[3] || (a[3] = (e) => (D.value = e)),
+                    title:
+                      h.value === x(s).CONFIG
+                        ? `${e.$t("expan.setExpandGroup")}`
+                        : `${e.$t("expan.delConfirm")}`,
+                    "close-on-click-modal": !1,
+                    "close-on-press-escape": !1,
+                    "align-center": !0,
+                    close: P,
+                    width: "550px",
+                  },
+                  {
+                    footer: m(() => [
+                      v(
+                        u,
+                        { type: "info", onClick: P },
+                        {
+                          default: m(() => [g(G(e.$t("base.cancel")), 1)]),
+                          _: 1,
+                        },
+                      ),
+                      v(
+                        u,
+                        {
+                          type: h.value === x(s).CONFIG ? "primary" : "danger",
+                          loading: j.value,
+                          onClick: q,
+                        },
+                        {
+                          default: m(() => [
+                            g(
+                              G(
+                                h.value === x(s).CONFIG
+                                  ? e.$t("base.confirm")
+                                  : e.$t("expan.delAndConfirm"),
+                              ),
+                              1,
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["type", "loading"],
+                      ),
+                    ]),
+                    default: m(() => [
+                      c(
+                        (d(),
+                        f(
+                          L,
+                          {
+                            ref_key: "ruleFormRef",
+                            ref: w,
+                            "label-position": "right",
+                            model: U,
+                            rules: B,
+                            "label-width": "auto",
+                          },
+                          {
+                            default: m(() => [
+                              h.value === x(s).CONFIG
+                                ? (d(),
+                                  p(
+                                    r,
+                                    { key: 0 },
+                                    [
+                                      v(
+                                        n,
+                                        { label: e.$t("expan.expandName") },
+                                        {
+                                          default: m(() => [
+                                            b("span", k, G(U.name), 1),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      v(
+                                        n,
+                                        {
+                                          label: e.$t("expan.expandGroup"),
+                                          prop: "extensionsGroupIds",
+                                        },
+                                        {
+                                          default: m(() => [
+                                            v(
+                                              I,
+                                              {
+                                                modelValue:
+                                                  U.extensionsGroupIds,
+                                                "onUpdate:modelValue":
+                                                  a[0] ||
+                                                  (a[0] = (e) =>
+                                                    (U.extensionsGroupIds = e)),
+                                                "max-collapse-tags": 1,
+                                                "collapse-tags": "",
+                                                "collapse-tags-tooltip": "",
+                                                multiple: "",
+                                                filterable: "",
+                                              },
+                                              {
+                                                footer: m(() => [
+                                                  v(
+                                                    u,
+                                                    {
+                                                      link: "",
+                                                      type: "primary",
+                                                      onClick: R,
+                                                    },
+                                                    {
+                                                      default: m(() => [
+                                                        a[4] ||
+                                                          (a[4] = b(
+                                                            "i",
+                                                            {
+                                                              class:
+                                                                "iconfont icon-plus tw-mr-[4px]",
+                                                            },
+                                                            null,
+                                                            -1,
+                                                          )),
+                                                        b(
+                                                          "span",
+                                                          null,
+                                                          G(
+                                                            e.$t(
+                                                              "expan.createExpandGroup",
+                                                            ),
+                                                          ),
+                                                          1,
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                  ),
+                                                ]),
+                                                default: m(() => [
+                                                  (d(!0),
+                                                  p(
+                                                    r,
+                                                    null,
+                                                    y(
+                                                      S.value,
+                                                      (e) => (
+                                                        d(),
+                                                        f(
+                                                          t,
+                                                          {
+                                                            key: e.value,
+                                                            label: e.label,
+                                                            value: e.value,
+                                                          },
+                                                          null,
+                                                          8,
+                                                          ["label", "value"],
+                                                        )
+                                                      ),
+                                                    ),
+                                                    128,
+                                                  )),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                    ],
+                                    64,
+                                  ))
+                                : _("", !0),
+                              h.value === x(s).DELETE
+                                ? (d(),
+                                  p(
+                                    r,
+                                    { key: 1 },
+                                    [
+                                      v(n, null, {
+                                        default: m(() => [
+                                          b(
+                                            "span",
+                                            C,
+                                            G(e.$t("expan.delTips2")),
+                                            1,
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      }),
+                                      v(
+                                        n,
+                                        { label: e.$t("expan.expandSettings") },
+                                        {
+                                          default: m(() => [
+                                            v(
+                                              $,
+                                              {
+                                                modelValue: U.extensionsType,
+                                                "onUpdate:modelValue":
+                                                  a[1] ||
+                                                  (a[1] = (e) =>
+                                                    (U.extensionsType = e)),
+                                              },
+                                              {
+                                                default: m(() => [
+                                                  v(
+                                                    E,
+                                                    {
+                                                      label:
+                                                        e.$t("expan.tip25"),
+                                                      value: x(l).ALLOW,
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["label", "value"],
+                                                  ),
+                                                  v(
+                                                    E,
+                                                    {
+                                                      label:
+                                                        e.$t(
+                                                          "env.env.btnClose",
+                                                        ),
+                                                      value: x(l).BAN,
+                                                    },
+                                                    null,
+                                                    8,
+                                                    ["label", "value"],
+                                                  ),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      U.extensionsType === x(l).ALLOW
+                                        ? (d(),
+                                          f(
+                                            n,
+                                            {
+                                              key: 0,
+                                              label: e.$t("expan.expandGroup"),
+                                            },
+                                            {
+                                              default: m(() => [
+                                                v(
+                                                  I,
+                                                  {
+                                                    modelValue:
+                                                      U.extensionsGroupId,
+                                                    "onUpdate:modelValue":
+                                                      a[2] ||
+                                                      (a[2] = (e) =>
+                                                        (U.extensionsGroupId =
+                                                          e)),
+                                                    filterable: "",
+                                                  },
+                                                  {
+                                                    default: m(() => [
+                                                      (d(!0),
+                                                      p(
+                                                        r,
+                                                        null,
+                                                        y(
+                                                          S.value,
+                                                          (e) => (
+                                                            d(),
+                                                            f(
+                                                              t,
+                                                              {
+                                                                key: e.value,
+                                                                label: e.label,
+                                                                value: e.value,
+                                                              },
+                                                              null,
+                                                              8,
+                                                              [
+                                                                "label",
+                                                                "value",
+                                                              ],
+                                                            )
+                                                          ),
+                                                        ),
+                                                        128,
+                                                      )),
+                                                    ]),
+                                                    _: 1,
+                                                  },
+                                                  8,
+                                                  ["modelValue"],
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["label"],
+                                          ))
+                                        : _("", !0),
+                                    ],
+                                    64,
+                                  ))
+                                : _("", !0),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["model", "rules"],
+                        )),
+                        [[T]],
+                      ),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["modelValue", "title"],
+                ),
+                v(
+                  V,
+                  { ref_key: "editExpandGroupRef", ref: W, onSubmit: z },
+                  null,
+                  512,
+                ),
+              ],
+              64,
+            )
+          );
+        }
+      );
+    },
+  });
+export { L as _ };

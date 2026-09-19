@@ -1,0 +1,249 @@
+import {
+  d as e,
+  v as a,
+  i as l,
+  dx as t,
+  r as s,
+  q as o,
+  o as u,
+  h as i,
+  f as d,
+  w as r,
+  x as n,
+  eZ as g,
+  b as c,
+  a as v,
+  c as m,
+  F as p,
+  z as f,
+  ax as y,
+  X as w,
+  e as x,
+  t as b,
+  dy as _,
+  V as k,
+  e_ as N,
+  e7 as h,
+  a3 as S,
+} from "./index-BUIbb6Pa.js";
+const C = { class: "tw-flex tw-gap-2" },
+  V = ["onClick"],
+  O = e({
+    __name: "createEnvTag",
+    emits: ["success"],
+    setup(e, { expose: O, emit: T }) {
+      let { t: q } = a.useI18n();
+      const { tagColorList: E } = _(),
+        L = l(!1),
+        R = l(),
+        F = l({ id: "", tagName: "", tagStyle: t.COLOR_ONE }),
+        U = l(!1),
+        j = T,
+        z = l({
+          tagName: [
+            {
+              required: !0,
+              message: q("env.tag.tagNameTips"),
+              trigger: "blur",
+            },
+          ],
+          tagStyle: [
+            {
+              required: !0,
+              message: q("env.tag.tagStyleTips"),
+              trigger: "blur",
+            },
+          ],
+        });
+      async function D() {
+        var e;
+        await (null == (e = R.value) ? void 0 : e.validate());
+        try {
+          U.value = !0;
+          let e = k.omit(F.value, "id");
+          (F.value.id ? await N(F.value.id, e) : await h(e),
+            (L.value = !1),
+            S.success(q("env.env.shareDialog.operatorSuccess")),
+            j("success"));
+        } finally {
+          U.value = !1;
+        }
+      }
+      return (
+        O({
+          open: (e) => {
+            var a;
+            ((L.value = !0),
+              null == (a = R.value) || a.resetFields(),
+              e
+                ? (F.value = {
+                    id: e.id,
+                    tagName: e.tagName,
+                    tagStyle: e.tagStyle,
+                  })
+                : ((F.value.tagStyle = t.COLOR_ONE),
+                  (F.value.tagName = ""),
+                  (F.value.id = "")));
+          },
+        }),
+        (e, a) => {
+          const l = s("el-input"),
+            t = s("el-form-item"),
+            _ = s("Check"),
+            k = s("el-icon"),
+            N = s("el-button"),
+            h = s("el-dialog"),
+            S = o("prevent-label-click");
+          return (
+            u(),
+            i(
+              h,
+              {
+                modelValue: L.value,
+                "onUpdate:modelValue": a[2] || (a[2] = (e) => (L.value = e)),
+                title: F.value.id
+                  ? d(q)("env.tag.editTag")
+                  : d(q)("env.tag.createTag"),
+                width: "50%",
+                class: "tw-max-w-[630px]",
+                "close-on-click-modal": !1,
+                "align-center": "",
+              },
+              {
+                footer: r(() => [
+                  c(
+                    N,
+                    {
+                      type: "info",
+                      onClick: a[1] || (a[1] = (e) => (L.value = !1)),
+                    },
+                    { default: r(() => [x(b(d(q)("base.cancel")), 1)]), _: 1 },
+                  ),
+                  c(
+                    N,
+                    { type: "primary", onClick: D, loading: U.value },
+                    { default: r(() => [x(b(d(q)("base.confirm")), 1)]), _: 1 },
+                    8,
+                    ["loading"],
+                  ),
+                ]),
+                default: r(() => [
+                  n(
+                    (u(),
+                    i(
+                      d(g),
+                      {
+                        model: F.value,
+                        ref_key: "formRef",
+                        ref: R,
+                        rules: z.value,
+                        "label-position": "left",
+                        "label-width": "auto",
+                      },
+                      {
+                        default: r(() => [
+                          c(
+                            t,
+                            { label: d(q)("env.tag.tagName"), prop: "tagName" },
+                            {
+                              default: r(() => [
+                                c(
+                                  l,
+                                  {
+                                    modelValue: F.value.tagName,
+                                    "onUpdate:modelValue":
+                                      a[0] ||
+                                      (a[0] = (e) => (F.value.tagName = e)),
+                                    placeholder: d(q)("rpa.task.req.enter"),
+                                    maxlength: "50",
+                                    "show-word-limit": "",
+                                  },
+                                  null,
+                                  8,
+                                  ["modelValue", "placeholder"],
+                                ),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["label"],
+                          ),
+                          c(
+                            t,
+                            {
+                              label: d(q)("env.tag.tagStyle"),
+                              prop: "tagStyle",
+                            },
+                            {
+                              default: r(() => [
+                                v("div", C, [
+                                  (u(!0),
+                                  m(
+                                    p,
+                                    null,
+                                    f(
+                                      d(E),
+                                      (e) => (
+                                        u(),
+                                        m(
+                                          "div",
+                                          {
+                                            key: e.code,
+                                            class:
+                                              "tw-w-[24px] tw-h-[24px] tw-rounded-[4px] c-flex",
+                                            style: y({
+                                              backgroundColor: e.color,
+                                            }),
+                                            onClick: (a) =>
+                                              (F.value.tagStyle = e.code),
+                                          },
+                                          [
+                                            F.value.tagStyle === e.code
+                                              ? (u(),
+                                                i(
+                                                  k,
+                                                  {
+                                                    key: 0,
+                                                    class: "tw-text-white",
+                                                  },
+                                                  {
+                                                    default: r(() => [c(_)]),
+                                                    _: 1,
+                                                  },
+                                                ))
+                                              : w("", !0),
+                                          ],
+                                          12,
+                                          V,
+                                        )
+                                      ),
+                                    ),
+                                    128,
+                                  )),
+                                ]),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["label"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["model", "rules"],
+                    )),
+                    [[S]],
+                  ),
+                ]),
+                _: 1,
+              },
+              8,
+              ["modelValue", "title"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { O as _ };

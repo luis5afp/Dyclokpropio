@@ -1,0 +1,263 @@
+html.dark .el-form--label-top.register-form .el-form-item {
+  margin-bottom: 32px;
+}
+html.dark .el-form--label-top.register-form .el-form-item.password,
+html.dark .el-form--label-top.register-form .el-form-item:last-child {
+  margin-bottom: 16px;
+}
+html.dark .el-form--label-top.register-form .el-form-item .el-form-item__label {
+  margin: unset;
+}
+.register-container .register-form .el-form-item.is-error .el-form-item__error {
+  display: none;
+}
+.register-container
+  .register-form
+  .el-form-item.is-error
+  .el-form-item__content:hover
+  .el-input-group__append {
+  border-color: var(--danger-color);
+}
+.register-container
+  .register-form
+  .el-form-item.is-error
+  .el-form-item__content
+  .el-input-group__append {
+  border-bottom: 1px solid var(--danger-color);
+}
+.register-container .register-form .el-form-item .el-form-item__label:before {
+  content: none !important;
+  margin: unset;
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content:hover
+  .el-input-group__append {
+  border-color: var(--primary-color);
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-input__wrapper {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: unset;
+  padding: unset;
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-input__wrapper
+  .el-input__prefix-inner {
+  display: none;
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append {
+  height: 40px;
+  background-color: transparent;
+  box-shadow: unset;
+  border-bottom: 1px solid var(--dialog-border-color);
+  border-radius: unset;
+  box-sizing: border-box;
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append:hover {
+  border-color: var(--dialog-border-color);
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append
+  .el-button {
+  border: none;
+  color: var(--btn-primary-link-color);
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-input-group__append
+  .el-button:hover {
+  color: var(--primary-color);
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-checkbox
+  .el-checkbox__inner {
+  border-color: var(--dialog-border-color);
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-checkbox.is-checked
+  .el-checkbox__input
+  .el-checkbox__inner:after {
+  border-color: var(--card-br-color);
+}
+.register-container
+  .register-form
+  .el-form-item
+  .el-form-item__content
+  .el-checkbox.is-checked
+  .el-checkbox__label {
+  color: var(--text-color-base);
+}
+.register-container .register-form .btn-container {
+  width: 100%;
+}
+.register-container .register-form .btn-container .forget-password {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.register-container .register-form .btn-container .register {
+  width: 100%;
+  margin: 30px 0 16px;
+}
+.register-container .register-form .btn-container .register .el-button {
+  width: 100%;
+}
+.register-container .register-form .btn-container .login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.register-container .register-form .btn-container .login > span {
+  font-size: 14px;
+  line-height: 16.66px;
+  color: var(--text-color-light1);
+}
+.register-container .el-divider .el-divider__text {
+  background: var(--login-bg-light1);
+  border-color: var(--dialog-border-color);
+}
+.register-container[data-v-fd6c7cf9] {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: var(--login-base-bg);
+}
+.register-container .fl[data-v-fd6c7cf9] {
+  position: relative;
+  width: 60%;
+  text-align: center;
+}
+.register-container .fl .bg-img[data-v-fd6c7cf9] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.register-container .fl .bg-img img[data-v-fd6c7cf9] {
+  width: 100%;
+}
+.register-container .fl span[data-v-fd6c7cf9] {
+  position: absolute;
+  width: 500px;
+  display: inline-block;
+  bottom: 20%;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 26px;
+  line-height: 35.7px;
+  color: var(--text-color-base);
+}
+.register-container .rl[data-v-fd6c7cf9] {
+  width: 40%;
+  height: 100%;
+  background: var(--login-bg-light1);
+  border-left: 1px solid var(--login-br-color);
+  padding: 0 8%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.register-container .rl .title[data-v-fd6c7cf9] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.register-container .rl .title .el-dropdown-link[data-v-fd6c7cf9] {
+  display: flex;
+  align-items: center;
+}
+.register-container .rl .title .el-dropdown-link > span[data-v-fd6c7cf9] {
+  margin: 0 4px;
+}
+.register-container .rl > div[data-v-fd6c7cf9] {
+  width: 100%;
+}
+.register-container .rl > div > h2[data-v-fd6c7cf9] {
+  font-size: 24px;
+  line-height: 24px;
+  color: var(--text-color-base);
+  margin-bottom: 32px;
+  font-weight: 400;
+}
+.register-container .rl > div .other-login-type[data-v-fd6c7cf9] {
+  margin-bottom: 32px;
+}
+.register-container .rl > div .other-login-type .google-btn[data-v-fd6c7cf9] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--text-color-light1);
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-high-light);
+}
+.register-container
+  .rl
+  > div
+  .other-login-type
+  .google-btn[data-v-fd6c7cf9]:hover {
+  border-color: var(--btn-primary-color);
+  color: var(--btn-primary-color);
+}
+.register-container
+  .rl
+  > div
+  .other-login-type
+  .el-divider
+  .el-divider__text[data-v-fd6c7cf9] {
+  background-color: transparent;
+}
+.register-container .rl .agreement[data-v-fd6c7cf9] {
+  white-space: pre-wrap;
+}
+.codeTip[data-v-fd6c7cf9] {
+  margin-top: 8px;
+  color: #ffffffe6;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  cursor: pointer;
+}
+.inviteCode-box.is-disabled[data-v-fd6c7cf9] .el-input__inner {
+  background-color: var(--login-bg-light1) !important;
+}

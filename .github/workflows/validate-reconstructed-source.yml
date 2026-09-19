@@ -57,6 +57,29 @@ jobs:
           Set-Location source
           npm run build:reconstructed:win
 
+      - name: Smoke-launch reconstructed executable
+        shell: pwsh
+        run: |
+          Set-Location source
+          $exe = Join-Path (Get-Location) "release-reconstructed\win-unpacked\Dyclokpropio.exe"
+          if (-not (Test-Path $exe)) {
+            throw "Reconstructed unpacked executable was not generated: $exe"
+          }
+
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+
+          if ($proc.HasExited) {
+            if ($proc.ExitCode -ne 0) {
+              throw "Reconstructed executable exited early with code $($proc.ExitCode)."
+            }
+            Write-Host "Executable exited cleanly during smoke launch."
+          } else {
+            Write-Host "Executable remained alive during smoke launch; terminating test process."
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          }
+
       - name: Record reconstructed build status
         shell: pwsh
         run: |
@@ -91,5 +114,21 @@ jobs:
             exit 0
           }
           git commit -m "[reconstruction-bot] Validate editable runtime build"
-          git pull --rebase origin reconstruction-source
-          git push origin reconstruction-source
+          $pushed = $false
+          for ($attempt = 1; $attempt -le 5; $attempt++) {
+            git pull --rebase origin reconstruction-source
+            if ($LASTEXITCODE -ne 0) { throw "git pull --rebase failed" }
+
+            git push origin reconstruction-source
+            if ($LASTEXITCODE -eq 0) {
+              $pushed = $true
+              break
+            }
+
+            Write-Host "Push race detected; retrying attempt $attempt/5..."
+            Start-Sleep -Seconds (2 * $attempt)
+          }
+
+          if (-not $pushed) {
+            throw "Could not push generated reconstruction changes after retries."
+          }

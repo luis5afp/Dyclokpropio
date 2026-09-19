@@ -1,0 +1,19 @@
+.choose-proxy[data-v-0b14e214] {
+  display: flex;
+  width: 100%;
+}
+.choose-proxy .el-select[data-v-0b14e214] {
+  width: calc(100% - 40px);
+}
+.choose-proxy .el-button[data-v-0b14e214] {
+  margin-left: 10px;
+}
+.popper-content-wrapper[data-v-0b14e214] {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.custom-proxy-form[data-v-0b14e214] .el-form-item {
+  margin-bottom: 18px !important;
+}

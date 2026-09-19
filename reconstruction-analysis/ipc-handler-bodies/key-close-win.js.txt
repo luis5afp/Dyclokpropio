@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: key-close-win
+ * Method: on
+ * Source offset: 3539143
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x5ca139,_0x25de70)=>{ak(_0x25de70);}

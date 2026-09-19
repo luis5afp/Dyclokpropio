@@ -1,0 +1,847 @@
+import {
+  d as e,
+  v as l,
+  at as a,
+  r,
+  q as o,
+  o as t,
+  h as s,
+  w as p,
+  x as u,
+  b as n,
+  c as i,
+  F as d,
+  z as c,
+  f as v,
+  am as m,
+  cS as y,
+  e as w,
+  t as x,
+  X as h,
+  a as f,
+  fF as b,
+  dG as k,
+  i as _,
+  cj as g,
+  dF as V,
+  I as $,
+  dC as q,
+  a5 as T,
+  D as N,
+  E as P,
+  A as C,
+  dB as I,
+  bQ as U,
+  bS as H,
+  cR as R,
+  an as A,
+  bR as S,
+} from "./index-BUIbb6Pa.js";
+import { _ as E } from "./envAutoInputProxy.vue_vue_type_script_setup_true_lang-CKSB7kpP.js";
+import { T as F } from "./proxyUtil-OnkkuXcX.js";
+import { _ as j } from "./index.vue_vue_type_script_setup_true_lang-A7OAkZwm.js";
+import "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+const B = { key: 0 },
+  O = { class: "tw-flex" },
+  M = { class: "paste-hint tw-leading-[1.1]" },
+  D = { class: "paste-hint tw-leading-[1.1]" },
+  J = { class: "w-max" },
+  z = { key: 0, class: "w-max flex-top" },
+  L = { key: 0, class: "proxy-check m-t-12" },
+  X = { key: 1, class: "proxy-check-error m-t-12" },
+  Y = { key: 0 },
+  K = { key: 1 },
+  G = e({
+    __name: "proxyEdit",
+    emits: ["submit"],
+    setup(e, { expose: G, emit: Q }) {
+      const W = _(null),
+        Z = Q,
+        { t: ee } = l.useI18n(),
+        le = _(!1),
+        ae = _(),
+        re = _({ isView: !1, title: "env.env.createTitle", row: {} }),
+        oe = _([]),
+        te = _([]),
+        { checkProxyResult: se, checkProxyFromApp: pe } = g(),
+        ue = a({
+          type: [{ required: !0, message: ee("env.env.req.proxyTypeHolder") }],
+          host: [
+            {
+              required: !0,
+              validator: (e, l, a) => {
+                l ? a() : a(new Error(ee("env.env.req.proxyHostRule")));
+              },
+            },
+          ],
+          port: [
+            {
+              required: !0,
+              validator: (e, l, a) => {
+                l ? a() : a(new Error(ee("env.env.req.proxyPortRule")));
+              },
+            },
+          ],
+          proxyId: [{ required: !0, message: ee("env.env.req.proxyIdRule") }],
+        }),
+        ne = _(!1),
+        ie = (e) => {
+          var l, a, r, o;
+          let t = e.clipboardData.getData("text/plain");
+          e.preventDefault();
+          const s = ce(t);
+          ((re.value.row.host = s.ip),
+            Number(s.port) && (re.value.row.port = Number(s.port)),
+            (null == (l = s.username) ? void 0 : l.replace(/[\s\r\n]/g, "")) &&
+              (re.value.row.userName =
+                null == (a = s.username) ? void 0 : a.replace(/[\s\r\n]/g, "")),
+            (null == (r = s.password) ? void 0 : r.replace(/[\s\r\n]/g, "")) &&
+              (re.value.row.passwd =
+                null == (o = s.password)
+                  ? void 0
+                  : o.replace(/[\s\r\n]/g, "")));
+        },
+        de = (e) => {
+          ((re.value.row.host = e.proxyHost),
+            (re.value.row.port = +e.proxyPort),
+            (re.value.row.userName = e.proxyUserName),
+            (re.value.row.passwd = e.proxyPasswd),
+            e.proxyType &&
+              e.proxyType !== m.Placeholder &&
+              (re.value.row.type = e.proxyType));
+        },
+        ce = (e) => {
+          let l;
+          if (V.test(e)) return { ip: e };
+          if (e.includes(":") && e.includes(".")) {
+            l = e.split(":");
+            return { ip: l[0], port: l[1], username: l[2], password: l[3] };
+          }
+          if (e.includes(":")) {
+            const a = e.match(/^(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}/i) || [],
+              r = a.length ? a[0] : e;
+            l = (e.split(r)[1] || "").split(":");
+            return { ip: r, port: l[1], username: l[2], password: l[3] };
+          }
+          return { ip: e };
+        },
+        ve = () => {
+          var e;
+          ((le.value = !1),
+            ae.value.clearValidate(),
+            null == (e = null == W ? void 0 : W.value) ||
+              e.setAutoInputContent(""));
+        },
+        me = () => {
+          var e;
+          null == (e = ae.value) ||
+            e.validate(async (e) => {
+              var l;
+              if (!e) return;
+              ne.value = !0;
+              const {
+                  id: a,
+                  type: r,
+                  host: o,
+                  port: t,
+                  userName: s,
+                  passwd: p,
+                  ipType: u,
+                  remark: n,
+                } = JSON.parse(JSON.stringify(re.value.row)),
+                i = {
+                  type: r,
+                  host: o,
+                  port: t,
+                  userName: s,
+                  passwd: p,
+                  ipType: u,
+                  remark: n,
+                };
+              if (a)
+                $.confirm(
+                  ee("proxy.proxy.dialog.editContent"),
+                  ee("proxy.proxy.dialog.editTitle"),
+                  {
+                    confirmButtonText: "",
+                    cancelButtonText: ee("base.cancel"),
+                    icon: T("span", { class: "icon-warn-wrap " }, [
+                      T("i", { class: "iconfont icon-warning" }),
+                    ]),
+                    beforeClose: async (e, l, r) => {
+                      ("confirm" === e &&
+                        (await q(a, i), (le.value = !1), Z("submit")),
+                        r());
+                    },
+                  },
+                );
+              else {
+                N.api.trackEvent({
+                  type: C.PROXY_CLICK,
+                  action: P.CLICK_CREATE_PROXY,
+                  params: i,
+                });
+                let e = await I(i);
+                ((le.value = !1), Z("submit", e));
+              }
+              null == (l = null == W ? void 0 : W.value) ||
+                l.setAutoInputContent("");
+            });
+        },
+        ye = async () => {
+          const {
+            type: e,
+            host: l,
+            port: a,
+            userName: r,
+            passwd: o,
+            ipType: t,
+            remark: s,
+          } = JSON.parse(JSON.stringify(re.value.row));
+          pe(
+            {
+              type: e,
+              host: l,
+              port: a,
+              userName: r,
+              passwd: o,
+              ipType: t,
+              remark: s,
+            },
+            A.Custom,
+            "",
+          );
+        };
+      return (
+        (oe.value = U(S)),
+        (te.value = U(H, [m.Ssh]).filter(
+          (e) => ![...R, m.NonUse].includes(e.value),
+        )),
+        G({
+          acceptParams: (e) => {
+            ((se.value = { checked: !1, success: !1 }),
+              (le.value = !0),
+              (re.value = e),
+              setTimeout(() => {
+                ae.value.clearValidate();
+              }));
+          },
+        }),
+        (e, l) => {
+          const a = r("el-option"),
+            _ = r("el-select"),
+            g = r("el-button"),
+            V = r("el-form-item"),
+            $ = r("el-input"),
+            q = r("el-form"),
+            T = r("el-dialog"),
+            N = o("prevent-label-click");
+          return (
+            t(),
+            s(
+              T,
+              {
+                modelValue: le.value,
+                "onUpdate:modelValue": l[11] || (l[11] = (e) => (le.value = e)),
+                "align-center": !0,
+                "close-on-click-modal": !1,
+                "close-on-press-escape": !1,
+                loading: ne.value,
+                title: `${e.$t(re.value.title)}`,
+                class: "proxy-dialog",
+                onClose: ve,
+                width: "650px",
+              },
+              {
+                footer: p(() => [
+                  n(
+                    g,
+                    { type: "info", onClick: ve },
+                    { default: p(() => [w(x(e.$t("base.cancel")), 1)]), _: 1 },
+                  ),
+                  n(
+                    g,
+                    { type: "primary", onClick: me },
+                    { default: p(() => [w(x(e.$t("base.confirm")), 1)]), _: 1 },
+                  ),
+                ]),
+                default: p(() => [
+                  u(
+                    (t(),
+                    s(
+                      q,
+                      {
+                        ref_key: "formRef",
+                        ref: ae,
+                        disabled: re.value.isView,
+                        "hide-required-asterisk": re.value.isView,
+                        model: re.value.row,
+                        rules: ue,
+                        "label-position": "right",
+                        "label-width": "auto",
+                      },
+                      {
+                        default: p(() => [
+                          n(
+                            E,
+                            {
+                              ref_key: "envAutoInputRef",
+                              ref: W,
+                              callback: de,
+                            },
+                            null,
+                            512,
+                          ),
+                          n(
+                            V,
+                            {
+                              label: e.$t("env.env.req.proxyType"),
+                              prop: "type",
+                            },
+                            {
+                              default: p(() => [
+                                n(
+                                  _,
+                                  {
+                                    modelValue: re.value.row.type,
+                                    "onUpdate:modelValue":
+                                      l[0] ||
+                                      (l[0] = (e) => (re.value.row.type = e)),
+                                    placeholder: e.$t(
+                                      "env.env.req.proxyTypeHolder",
+                                    ),
+                                    filterable: "",
+                                  },
+                                  {
+                                    default: p(() => [
+                                      (t(!0),
+                                      i(
+                                        d,
+                                        null,
+                                        c(
+                                          te.value,
+                                          (e) => (
+                                            t(),
+                                            s(
+                                              a,
+                                              {
+                                                key: e.value,
+                                                label: e.label,
+                                                value: e.value,
+                                              },
+                                              null,
+                                              8,
+                                              ["label", "value"],
+                                            )
+                                          ),
+                                        ),
+                                        128,
+                                      )),
+                                    ]),
+                                    _: 1,
+                                  },
+                                  8,
+                                  ["modelValue", "placeholder"],
+                                ),
+                                re.value.row.type === v(m).IPFLY
+                                  ? (t(),
+                                    i("div", B, [
+                                      n(
+                                        g,
+                                        {
+                                          link: "",
+                                          type: "primary",
+                                          onClick:
+                                            l[1] ||
+                                            (l[1] = (e) =>
+                                              v(y)(re.value.row.type)),
+                                        },
+                                        {
+                                          default: p(() => [
+                                            w(
+                                              x(
+                                                e.$t(
+                                                  "env.env.req.gotoThirdPartyProxy",
+                                                  {
+                                                    name: v(F)[
+                                                      re.value.row.type
+                                                    ],
+                                                  },
+                                                ),
+                                              ),
+                                              1,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      ),
+                                    ]))
+                                  : h("", !0),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["label"],
+                          ),
+                          re.value.row.type !== v(m).NonUse
+                            ? (t(),
+                              i(
+                                d,
+                                { key: 0 },
+                                [
+                                  f("div", O, [
+                                    n(
+                                      V,
+                                      {
+                                        label: e.$t("env.env.req.host_port"),
+                                        prop: "host",
+                                        style: { width: "100%" },
+                                        class: "tw-flex-[5] !tw-mb-0",
+                                      },
+                                      {
+                                        default: p(() => [
+                                          n(
+                                            $,
+                                            {
+                                              modelValue: re.value.row.host,
+                                              "onUpdate:modelValue":
+                                                l[2] ||
+                                                (l[2] = (e) =>
+                                                  (re.value.row.host = e)),
+                                              modelModifiers: { trim: !0 },
+                                              maxlength: 100,
+                                              placeholder: e.$t(
+                                                "env.env.req.proxyHost",
+                                              ),
+                                              class: "proxy-host",
+                                              clearable: "",
+                                              onBlur:
+                                                l[3] ||
+                                                (l[3] = () => {
+                                                  var e;
+                                                  return (re.value.row.host =
+                                                    null ==
+                                                    (e = re.value.row.host)
+                                                      ? void 0
+                                                      : e.replace(
+                                                          /[\r\n]+/g,
+                                                          "",
+                                                        ));
+                                                }),
+                                              onPaste: ie,
+                                            },
+                                            null,
+                                            8,
+                                            ["modelValue", "placeholder"],
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["label"],
+                                    ),
+                                    l[12] ||
+                                      (l[12] = f(
+                                        "div",
+                                        {
+                                          class:
+                                            "tw-w-[22px] tw-h-[42px] c-flex tw-text-[var(--default-white-50)]",
+                                        },
+                                        ":",
+                                        -1,
+                                      )),
+                                    n(
+                                      V,
+                                      {
+                                        prop: "port",
+                                        style: { width: "100%" },
+                                        class: "tw-flex-[3] !tw-mb-0",
+                                      },
+                                      {
+                                        default: p(() => [
+                                          n(
+                                            $,
+                                            {
+                                              modelValue: re.value.row.port,
+                                              "onUpdate:modelValue":
+                                                l[4] ||
+                                                (l[4] = (e) =>
+                                                  (re.value.row.port = e)),
+                                              modelModifiers: {
+                                                number: !0,
+                                                trim: !0,
+                                              },
+                                              maxlength: 5,
+                                              placeholder: e.$t(
+                                                "env.env.req.proxyPort",
+                                              ),
+                                              class: "proxy-port",
+                                              clearable: "",
+                                            },
+                                            null,
+                                            8,
+                                            ["modelValue", "placeholder"],
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                    ),
+                                  ]),
+                                  f(
+                                    "div",
+                                    M,
+                                    x(e.$t("proxy.proxy.dialog.pasteHint")),
+                                    1,
+                                  ),
+                                  n(
+                                    V,
+                                    {
+                                      label: "1",
+                                      class:
+                                        "form-item-label-hidden tw-h-[32px]",
+                                    },
+                                    {
+                                      default: p(() => [
+                                        f(
+                                          "div",
+                                          D,
+                                          x(
+                                            e.$t(
+                                              "proxy.proxy.dialog.pasteHint",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ),
+                                  n(
+                                    V,
+                                    {
+                                      label: e.$t("env.env.req.proxyUserName"),
+                                      prop: "userName",
+                                    },
+                                    {
+                                      default: p(() => [
+                                        n(
+                                          $,
+                                          {
+                                            modelValue: re.value.row.userName,
+                                            "onUpdate:modelValue":
+                                              l[5] ||
+                                              (l[5] = (e) =>
+                                                (re.value.row.userName = e)),
+                                            modelModifiers: { trim: !0 },
+                                            maxlength: 300,
+                                            placeholder: e.$t(
+                                              "env.env.req.proxyUserNameHolder",
+                                            ),
+                                            clearable: "",
+                                            onBlur:
+                                              l[6] ||
+                                              (l[6] = () =>
+                                                (re.value.row.userName =
+                                                  re.value.row.userName.replace(
+                                                    /[\r\n]+/g,
+                                                    "",
+                                                  ))),
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "placeholder"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ),
+                                  n(
+                                    V,
+                                    {
+                                      label: e.$t("env.env.req.proxyPasswd"),
+                                      prop: "passwd",
+                                    },
+                                    {
+                                      default: p(() => [
+                                        n(
+                                          $,
+                                          {
+                                            modelValue: re.value.row.passwd,
+                                            "onUpdate:modelValue":
+                                              l[7] ||
+                                              (l[7] = (e) =>
+                                                (re.value.row.passwd = e)),
+                                            modelModifiers: { trim: !0 },
+                                            placeholder: e.$t(
+                                              "env.env.req.proxyPasswdHolder",
+                                            ),
+                                            clearable: "",
+                                            "show-password": "",
+                                            type: "password",
+                                            onBlur:
+                                              l[8] ||
+                                              (l[8] = () =>
+                                                (re.value.row.passwd =
+                                                  re.value.row.passwd.replace(
+                                                    /[\r\n]+/g,
+                                                    "",
+                                                  ))),
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "placeholder"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ),
+                                  n(
+                                    V,
+                                    {
+                                      label: e.$t("env.env.req.remark"),
+                                      prop: "remark",
+                                    },
+                                    {
+                                      default: p(() => [
+                                        n(
+                                          $,
+                                          {
+                                            modelValue: re.value.row.remark,
+                                            "onUpdate:modelValue":
+                                              l[9] ||
+                                              (l[9] = (e) =>
+                                                (re.value.row.remark = e)),
+                                            modelModifiers: { trim: !0 },
+                                            maxlength: 200,
+                                            placeholder:
+                                              e.$t("env.env.req.remark"),
+                                            clearable: "",
+                                            "show-word-limit": "",
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "placeholder"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ),
+                                ],
+                                64,
+                              ))
+                            : h("", !0),
+                          n(
+                            V,
+                            {
+                              label: e.$t("env.env.req.proxyIpType"),
+                              prop: "ipType",
+                            },
+                            {
+                              default: p(() => [
+                                f("div", J, [
+                                  n(
+                                    j,
+                                    {
+                                      modelValue: re.value.row.ipType,
+                                      "onUpdate:modelValue":
+                                        l[10] ||
+                                        (l[10] = (e) =>
+                                          (re.value.row.ipType = e)),
+                                      placeholder: e.$t(
+                                        "env.env.req.proxyIpTypeHolder",
+                                      ),
+                                      filterable: "",
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue", "placeholder"],
+                                  ),
+                                ]),
+                                v(b)()
+                                  ? (t(),
+                                    i("div", z, [
+                                      n(
+                                        g,
+                                        {
+                                          class: "m-t-12",
+                                          plain: "",
+                                          type: "primary",
+                                          onClick: ye,
+                                        },
+                                        {
+                                          default: p(() => [
+                                            w(
+                                              x(e.$t("env.env.req.checkProxy")),
+                                              1,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                      ),
+                                      v(se).checked && v(se).success
+                                        ? (t(),
+                                          i("div", L, [
+                                            l[13] ||
+                                              (l[13] = f(
+                                                "span",
+                                                null,
+                                                [
+                                                  f("i", {
+                                                    class:
+                                                      "iconfont icon-check",
+                                                  }),
+                                                ],
+                                                -1,
+                                              )),
+                                            w(
+                                              " " +
+                                                x(
+                                                  e.$t(
+                                                    "proxy.proxy.check.success",
+                                                  ),
+                                                ),
+                                              1,
+                                            ),
+                                            l[14] ||
+                                              (l[14] = f("br", null, null, -1)),
+                                            w(" IP: " + x(v(se).ip), 1),
+                                            l[15] ||
+                                              (l[15] = f("br", null, null, -1)),
+                                            w(
+                                              " " +
+                                                x(
+                                                  e.$t(
+                                                    "proxy.proxy.check.country",
+                                                  ),
+                                                ) +
+                                                ": " +
+                                                x(v(se).country),
+                                              1,
+                                            ),
+                                            l[16] ||
+                                              (l[16] = f("br", null, null, -1)),
+                                            w(
+                                              " " +
+                                                x(
+                                                  e.$t(
+                                                    "env.env.req.state_province",
+                                                  ),
+                                                ) +
+                                                ": " +
+                                                x(v(se).region),
+                                              1,
+                                            ),
+                                            l[17] ||
+                                              (l[17] = f("br", null, null, -1)),
+                                            w(
+                                              " " +
+                                                x(e.$t("env.env.req.city")) +
+                                                ": " +
+                                                x(v(se).city),
+                                              1,
+                                            ),
+                                            l[18] ||
+                                              (l[18] = f("br", null, null, -1)),
+                                            w(
+                                              " " +
+                                                x(
+                                                  e.$t(
+                                                    "proxy.proxy.check.timezone",
+                                                  ),
+                                                ) +
+                                                ": " +
+                                                x(v(se).timezone),
+                                              1,
+                                            ),
+                                          ]))
+                                        : v(se).checked && !v(se).success
+                                          ? (t(),
+                                            i("div", X, [
+                                              l[19] ||
+                                                (l[19] = f(
+                                                  "span",
+                                                  null,
+                                                  [
+                                                    f("i", {
+                                                      class:
+                                                        "iconfont icon-fail",
+                                                    }),
+                                                  ],
+                                                  -1,
+                                                )),
+                                              w(
+                                                " " +
+                                                  x(
+                                                    e.$t(
+                                                      "proxy.proxy.check.fail",
+                                                    ),
+                                                  ) +
+                                                  " ",
+                                                1,
+                                              ),
+                                              l[20] ||
+                                                (l[20] = f(
+                                                  "br",
+                                                  null,
+                                                  null,
+                                                  -1,
+                                                )),
+                                              v(k)(re.value.row.host)
+                                                ? (t(),
+                                                  i(
+                                                    "div",
+                                                    Y,
+                                                    x(
+                                                      e.$t(
+                                                        "proxy.proxy.check.ipv6Tip",
+                                                      ),
+                                                    ),
+                                                    1,
+                                                  ))
+                                                : (t(),
+                                                  i(
+                                                    "div",
+                                                    K,
+                                                    x(
+                                                      e.$t(
+                                                        "proxy.proxy.check.failHint",
+                                                      ),
+                                                    ),
+                                                    1,
+                                                  )),
+                                            ]))
+                                          : h("", !0),
+                                    ]))
+                                  : h("", !0),
+                              ]),
+                              _: 1,
+                            },
+                            8,
+                            ["label"],
+                          ),
+                        ]),
+                        _: 1,
+                      },
+                      8,
+                      ["disabled", "hide-required-asterisk", "model", "rules"],
+                    )),
+                    [[N]],
+                  ),
+                ]),
+                _: 1,
+              },
+              8,
+              ["modelValue", "loading", "title"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { G as default };

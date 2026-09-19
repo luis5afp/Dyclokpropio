@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-current-platform
+ * Method: handle
+ * Source offset: 3506378
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>process[_0x3ef37d('0xbf8','0xf60')]

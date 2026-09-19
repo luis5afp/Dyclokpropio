@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-running-map
+ * Method: handle
+ * Source offset: 5287292
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>JSON[_0x31ee1f(0xea2,'0x3b28')](JSON[_0x3f3e18('0x39f6','0xd09')](tt))

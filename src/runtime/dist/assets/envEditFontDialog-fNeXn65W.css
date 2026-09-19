@@ -1,0 +1,21 @@
+.font-container[data-v-dfa302b5] {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 8px;
+}
+.font-container[data-v-dfa302b5]::-webkit-scrollbar {
+  width: 6px;
+}
+.font-container[data-v-dfa302b5]::-webkit-scrollbar-track {
+  background: transparent;
+}
+.font-container[data-v-dfa302b5]::-webkit-scrollbar-thumb {
+  background: var(--thumb-dark-color);
+}
+.font-container[data-v-dfa302b5]::-webkit-scrollbar-thumb:hover {
+  background: var(--thumb-dark-color);
+}
+.font-container .el-checkbox[data-v-dfa302b5] {
+  width: 100%;
+}

@@ -1,0 +1,411 @@
+import {
+  d as e,
+  bP as l,
+  P as i,
+  r as s,
+  o as a,
+  h as t,
+  w as r,
+  f as o,
+  c as n,
+  F as v,
+  z as u,
+  a as d,
+  t as p,
+  D as w,
+  gK as c,
+  O as y,
+  bM as g,
+  b as x,
+  bo as L,
+  X as b,
+  C as f,
+  dP as T,
+  m,
+  i as K,
+} from "./index-BUIbb6Pa.js";
+const k = { key: 0, class: "tw-flex tw-flex-col tw-gap-y-3" },
+  B = { class: "tw-text-[13px]" },
+  C = { class: "s-flex tw-flex-col !tw-items-start tw-gap-x-2" },
+  $ = { class: "tw-flex tw-flex-col tw-gap-y-1 tw-w-full" },
+  h = { class: "b-flex !tw-items-start tw-w-full" },
+  O = ["onClick"],
+  _ = { class: "s-flex tw-gap-x-1" },
+  G = { key: 0 },
+  P = { key: 1, class: "tw-text-[13px]" },
+  V = { key: 0 },
+  D = { key: 1 },
+  E = e({
+    __name: "CoreVersion",
+    setup(e) {
+      const E = K([]),
+        j = l(),
+        q = f(() => (e) => j.localBrowserList.find((l) => l.topVersion === e)),
+        z = (e) => {
+          var l;
+          return (null == (l = e.split("_")) ? void 0 : l.at(-1)) ?? "";
+        },
+        F = (e) => ({ GOOGLE: "Chrome" })[e],
+        M = f(() => (e) => E.value.includes(e)),
+        R = (e) => {
+          E.value.includes(e) || E.value.push(e);
+        },
+        X = (e) => {
+          E.value = E.value.filter((l) => l !== e);
+        };
+      return (
+        i(() => {
+          (j.getBrowserList(), j.getLocalBrowserList());
+        }),
+        (e, l) => {
+          const i = s("el-icon"),
+            f = s("el-card");
+          return (
+            a(),
+            t(
+              f,
+              {
+                class:
+                  "tw-max-w-[500px] tw-rounded-[8px] !tw-shadow-none tw-bg-[var(--card-base-bg-color)]",
+              },
+              {
+                default: r(() => {
+                  var l,
+                    s,
+                    f,
+                    K,
+                    E,
+                    A,
+                    H,
+                    I,
+                    J,
+                    N,
+                    Q,
+                    S,
+                    U,
+                    W,
+                    Y,
+                    Z,
+                    ee,
+                    le,
+                    ie;
+                  return [
+                    o(j).browserList.length > 1
+                      ? (a(),
+                        n("div", k, [
+                          (a(!0),
+                          n(
+                            v,
+                            null,
+                            u(o(j).browserList, (l, s) => {
+                              var v, u, f, K, k, P, V;
+                              return (
+                                a(),
+                                n("div", { key: s }, [
+                                  d("div", B, [
+                                    d("div", C, [
+                                      d(
+                                        "div",
+                                        null,
+                                        p(z(l.originalKernelType)) +
+                                          " " +
+                                          p(e.$t("update.tip11")),
+                                        1,
+                                      ),
+                                      d("div", $, [
+                                        d("div", h, [
+                                          d(
+                                            "div",
+                                            null,
+                                            p(e.$t("update.tip12")) +
+                                              " " +
+                                              p(F(l.browserKernelType)) +
+                                              " " +
+                                              p(l.version) +
+                                              " (" +
+                                              p(
+                                                null == (v = l.createTime)
+                                                  ? void 0
+                                                  : v
+                                                      .replace(/-/g, "")
+                                                      .split(" ")[0],
+                                              ) +
+                                              ") ",
+                                            1,
+                                          ),
+                                          !o(w).isClient ||
+                                          (q.value(z(l.originalKernelType)) &&
+                                            1 !==
+                                              o(c)(
+                                                l.version,
+                                                q.value(z(l.originalKernelType))
+                                                  .version,
+                                              ))
+                                            ? b("", !0)
+                                            : (a(),
+                                              n(
+                                                "p",
+                                                {
+                                                  key: 0,
+                                                  class: y(
+                                                    o(g)(
+                                                      "tw-text-main tw-duration-300",
+                                                      M.value(l.version)
+                                                        ? "tw-cursor-not-allowed tw-opacity-45"
+                                                        : "tw-cursor-pointer hover:tw-opacity-90",
+                                                    ),
+                                                  ),
+                                                  onClick: (e) =>
+                                                    (async (e) => {
+                                                      if (!M.value(e.version)) {
+                                                        R(e.version);
+                                                        try {
+                                                          const l = T(
+                                                              e,
+                                                              "kernel-settings",
+                                                              j.domainList,
+                                                            ),
+                                                            i =
+                                                              w.api.installRequestedKernel(
+                                                                l,
+                                                              );
+                                                          (m.emit(
+                                                            "openOrCloseTip",
+                                                            !0,
+                                                          ),
+                                                            await i,
+                                                            await j.getLocalBrowserList());
+                                                        } finally {
+                                                          X(e.version);
+                                                        }
+                                                      }
+                                                    })(l),
+                                                },
+                                                [
+                                                  d("span", _, [
+                                                    M.value(l.version)
+                                                      ? (a(),
+                                                        t(
+                                                          i,
+                                                          {
+                                                            key: 0,
+                                                            class:
+                                                              "tw-animate-spin",
+                                                          },
+                                                          {
+                                                            default: r(() => [
+                                                              x(o(L)),
+                                                            ]),
+                                                            _: 1,
+                                                          },
+                                                        ))
+                                                      : b("", !0),
+                                                    d(
+                                                      "span",
+                                                      null,
+                                                      p(
+                                                        M.value(l.version)
+                                                          ? e.$t(
+                                                              "kernelDownload.tip2",
+                                                            )
+                                                          : e.$t(
+                                                              "update.download",
+                                                            ),
+                                                      ),
+                                                      1,
+                                                    ),
+                                                  ]),
+                                                ],
+                                                10,
+                                                O,
+                                              )),
+                                        ]),
+                                        q.value(z(l.originalKernelType))
+                                          ? (a(),
+                                            n(
+                                              "div",
+                                              G,
+                                              p(e.$t("update.tip13")) +
+                                                " " +
+                                                p(F(l.browserKernelType)) +
+                                                " " +
+                                                p(
+                                                  null ==
+                                                    (u = q.value(
+                                                      z(l.originalKernelType),
+                                                    ))
+                                                    ? void 0
+                                                    : u.version,
+                                                ) +
+                                                " (" +
+                                                p(
+                                                  null ==
+                                                    (V =
+                                                      null ==
+                                                      (P =
+                                                        null ==
+                                                        (k =
+                                                          null ==
+                                                          (K =
+                                                            null ==
+                                                            (f = q.value(
+                                                              z(
+                                                                l.originalKernelType,
+                                                              ),
+                                                            ))
+                                                              ? void 0
+                                                              : f.createTime)
+                                                            ? void 0
+                                                            : K.replace(
+                                                                /-/g,
+                                                                "",
+                                                              ))
+                                                          ? void 0
+                                                          : k.split(" "))
+                                                        ? void 0
+                                                        : P[0])
+                                                    ? void 0
+                                                    : V.slice(0, 8),
+                                                ) +
+                                                ") ",
+                                              1,
+                                            ))
+                                          : b("", !0),
+                                      ]),
+                                    ]),
+                                  ]),
+                                ])
+                              );
+                            }),
+                            128,
+                          )),
+                        ]))
+                      : (a(),
+                        n("div", P, [
+                          (null ==
+                          (s = null == (l = o(j)) ? void 0 : l.browserList)
+                            ? void 0
+                            : s[0]) &&
+                          q.value(
+                            z(
+                              null ==
+                                (E =
+                                  null ==
+                                  (K =
+                                    null == (f = o(j)) ? void 0 : f.browserList)
+                                    ? void 0
+                                    : K[0])
+                                ? void 0
+                                : E.originalKernelType,
+                            ),
+                          )
+                            ? (a(),
+                              n(
+                                "div",
+                                V,
+                                p(e.$t("update.tip13")) +
+                                  " " +
+                                  p(F(o(j).browserList[0].browserKernelType)) +
+                                  " " +
+                                  p(
+                                    null ==
+                                      (A = q.value(
+                                        z(
+                                          o(j).browserList[0]
+                                            .originalKernelType,
+                                        ),
+                                      ))
+                                      ? void 0
+                                      : A.version,
+                                  ) +
+                                  " (" +
+                                  p(
+                                    null ==
+                                      (Q =
+                                        null ==
+                                        (N =
+                                          null ==
+                                          (J =
+                                            null ==
+                                            (I =
+                                              null ==
+                                              (H = q.value(
+                                                z(
+                                                  o(j).browserList[0]
+                                                    .originalKernelType,
+                                                ),
+                                              ))
+                                                ? void 0
+                                                : H.createTime)
+                                              ? void 0
+                                              : I.replace(/-/g, ""))
+                                            ? void 0
+                                            : J.split(" "))
+                                          ? void 0
+                                          : N[0])
+                                      ? void 0
+                                      : Q.slice(0, 8),
+                                  ) +
+                                  ") ",
+                                1,
+                              ))
+                            : (null ==
+                                (U =
+                                  null == (S = o(j))
+                                    ? void 0
+                                    : S.localBrowserList)
+                                  ? void 0
+                                  : U[0]) &&
+                                q.value(
+                                  null == (W = o(j))
+                                    ? void 0
+                                    : W.localBrowserList[0].topVersion,
+                                )
+                              ? (a(),
+                                n(
+                                  "div",
+                                  D,
+                                  p(e.$t("update.tip13")) +
+                                    " " +
+                                    p(F("GOOGLE")) +
+                                    " " +
+                                    p(o(j).localBrowserList[0].version) +
+                                    " (" +
+                                    p(
+                                      null ==
+                                        (ie =
+                                          null ==
+                                          (le =
+                                            null ==
+                                            (ee =
+                                              null ==
+                                              (Z =
+                                                null ==
+                                                (Y = o(j).localBrowserList[0])
+                                                  ? void 0
+                                                  : Y.createTime)
+                                                ? void 0
+                                                : Z.replace(/-/g, ""))
+                                              ? void 0
+                                              : ee.split(" "))
+                                            ? void 0
+                                            : le[0])
+                                        ? void 0
+                                        : ie.slice(0, 8),
+                                    ) +
+                                    ") ",
+                                  1,
+                                ))
+                              : b("", !0),
+                        ])),
+                  ];
+                }),
+                _: 1,
+              },
+            )
+          );
+        }
+      );
+    },
+  });
+export { E as _ };

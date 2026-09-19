@@ -1,0 +1,23 @@
+.choose-proxy[data-v-968df46a] {
+  display: flex;
+  width: 100%;
+}
+.choose-proxy .el-select[data-v-968df46a] {
+  width: calc(100% - 40px);
+}
+.choose-proxy .el-button[data-v-968df46a] {
+  margin-left: 10px;
+}
+.popper-content-wrapper[data-v-968df46a] {
+  width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.custom-proxy-form[data-v-968df46a] .el-form-item {
+  margin-bottom: 24px !important;
+}
+.proxyWayItem[data-v-968df46a] {
+  margin-bottom: 0 !important;
+}

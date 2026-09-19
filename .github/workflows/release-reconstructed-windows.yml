@@ -1,0 +1,114 @@
+name: Release Reconstructed Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - reconstruction-source
+    tags:
+      - "reconstructed-v*"
+    paths:
+      - "src/**"
+      - "tools/**"
+      - "electron-builder.reconstructed.yml"
+      - "package.json"
+      - ".github/workflows/release-reconstructed-windows.yml"
+
+concurrency:
+  group: reconstructed-release-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone repository
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch "${{ github.ref_name }}" --depth 1
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm install --legacy-peer-deps
+
+      - name: Rebuild native Electron dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npx electron-builder install-app-deps
+
+      - name: Verify editable reconstruction
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run verify:reconstruction
+
+      - name: Build reconstructed installer
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run build:reconstructed:win
+
+      - name: Smoke-launch reconstructed executable
+        shell: pwsh
+        run: |
+          Set-Location source
+          $exe = Join-Path (Get-Location) "release-reconstructed\win-unpacked\Dyclokpropio.exe"
+          if (-not (Test-Path $exe)) {
+            throw "Reconstructed executable not found: $exe"
+          }
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) {
+            throw "Reconstructed executable exited with code $($proc.ExitCode)."
+          }
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Write checksums
+        shell: pwsh
+        run: |
+          Set-Location source
+          $installers = Get-ChildItem "release-reconstructed\*.exe"
+          if (-not $installers) { throw "No reconstructed installer generated." }
+          $lines = foreach ($file in $installers) {
+            $hash = (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLower()
+            "$hash  $($file.Name)"
+          }
+          $lines | Set-Content "release-reconstructed\SHA256SUMS.txt" -Encoding ASCII
+          Get-Content "release-reconstructed\SHA256SUMS.txt"
+
+      - name: Upload reconstructed installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyclokpropio-reconstructed-windows
+          path: |
+            source/release-reconstructed/*.exe
+            source/release-reconstructed/SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: Publish GitHub release for reconstructed tag
+        if: startsWith(github.ref, 'refs/tags/reconstructed-v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $files = Get-ChildItem "source\release-reconstructed\*.exe" | ForEach-Object { $_.FullName }
+          $files += (Resolve-Path "source\release-reconstructed\SHA256SUMS.txt").Path
+          gh release view $tag --repo "${{ github.repository }}" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $files --repo "${{ github.repository }}" --clobber
+          } else {
+            gh release create $tag $files --repo "${{ github.repository }}" --title "Dyclokpropio reconstructed $tag" --generate-notes
+          }

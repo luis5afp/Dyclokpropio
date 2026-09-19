@@ -1,0 +1,35 @@
+import { aB as s, a3 as e, a5 as o } from "./index-BUIbb6Pa.js";
+async function n(n, t = {}) {
+  const {
+    loadingText: a = s.t("base.in_operation"),
+    successText: r = s.t("env.env.shareDialog.operatorSuccess"),
+    errorText: i = s.t("sync.tip68"),
+    successDuration: c = 2e3,
+    errorDuration: u = 3e3,
+    showErrorDetail: l = !0,
+  } = t;
+  let p = null;
+  try {
+    p = e({
+      message: a,
+      type: "success",
+      duration: 0,
+      showClose: !1,
+      icon: o("i", {
+        class: "iconfont icon-opening dic-animate-spin tw-animate-spin",
+      }),
+      grouping: !0,
+    });
+    const s = await n();
+    return (
+      null == p || p.close(),
+      e({ message: r, type: "success", duration: c, grouping: !0 }),
+      s
+    );
+  } catch (g) {
+    null == p || p.close();
+    const s = l && (null == g ? void 0 : g.message) ? `${i}: ${g.message}` : i;
+    throw (e({ message: s, type: "error", duration: u }), g);
+  }
+}
+export { n as e };

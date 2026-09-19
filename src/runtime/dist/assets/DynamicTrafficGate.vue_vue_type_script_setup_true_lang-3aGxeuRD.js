@@ -1,0 +1,284 @@
+import {
+  d as e,
+  v as t,
+  i as a,
+  be as r,
+  ah as o,
+  P as s,
+  g as l,
+  r as i,
+  o as c,
+  c as n,
+  b as u,
+  w,
+  e as p,
+  t as d,
+  f as b,
+  F as v,
+  a as f,
+  h as m,
+  X as y,
+  ai as x,
+  cQ as g,
+  C as h,
+} from "./index-BUIbb6Pa.js";
+import { b as k } from "./ipResourceMock-CCd7H3CQ.js";
+import { _ as R } from "./IpResourcePurchaseDialog.vue_vue_type_script_setup_true_lang-DcxcArWP.js";
+const _ = "" + new URL("ip-resource-empty-PZ1UCczZ.png", import.meta.url).href,
+  T = { class: "tw-w-full tw-text-[var(--text-color-base)]" },
+  C = {
+    key: 0,
+    class:
+      "tw-rounded-lg tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-base)] tw-p-4",
+  },
+  j = {
+    key: 1,
+    class:
+      "tw-rounded-lg tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-base)] tw-p-4",
+  },
+  P = {
+    key: 0,
+    class:
+      "tw-mb-4 tw-flex tw-min-h-[48px] tw-items-center tw-justify-between tw-gap-4 tw-border-y tw-border-[var(--border-color-base2)] tw-py-3",
+  },
+  D = { class: "tw-flex tw-items-baseline tw-gap-2" },
+  L = { class: "tw-text-sm tw-text-[var(--text-color-light2)]" },
+  A = { class: "tw-text-xl tw-font-semibold tw-text-[var(--primary-color)]" },
+  E = {
+    key: 2,
+    class:
+      "tw-flex tw-min-h-[360px] tw-flex-col tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-[var(--border-color-base)] tw-bg-[var(--bg-base)] tw-px-6 tw-py-10 tw-text-center",
+    role: "status",
+  },
+  F = ["src"],
+  G = {
+    class:
+      "tw-mt-5 tw-text-xl tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  I = { class: "tw-mt-2 tw-text-sm tw-text-[var(--text-color-light2)]" },
+  S = e({
+    __name: "DynamicTrafficGate",
+    props: { autoLoad: { type: Boolean, default: !0 } },
+    emits: ["availability-change", "purchase-success"],
+    setup(e, { expose: S, emit: B }) {
+      const H = B,
+        O = e,
+        { t: U } = t.useI18n(),
+        Z = a(),
+        z = a(O.autoLoad),
+        M = a(""),
+        Q = a(),
+        V = r(o.VIEW_ORDER_RECORDS),
+        W = h(() => "number" == typeof Z.value && Z.value > 0);
+      let X,
+        $ = 0;
+      const q = async () => {
+          null == X || X.abort();
+          const e = ++$,
+            t = new AbortController();
+          X = t;
+          const a = window.setTimeout(() => t.abort(), 1e4);
+          ((z.value = !0), (M.value = ""));
+          try {
+            const e = await k({}, t.signal);
+            Z.value = e.remainingFlowGb;
+          } catch (r) {
+            if (e !== $) return;
+            (console.error(
+              "[ipResource] failed to load dynamic traffic before proxy creation",
+              r,
+            ),
+              (Z.value = void 0),
+              (M.value = t.signal.aborted
+                ? U("ipResource.loadTimeout")
+                : U("ipResource.loadFailed")));
+          } finally {
+            if ((window.clearTimeout(a), e !== $)) return;
+            ((X = void 0), (z.value = !1), H("availability-change", W.value));
+          }
+        },
+        J = () => {
+          var e;
+          return null == (e = Q.value) ? void 0 : e.open("dynamic");
+        },
+        K = async () => {
+          (await q(), H("purchase-success"));
+        };
+      return (
+        s(() => {
+          O.autoLoad && q();
+        }),
+        l(() => {
+          (($ += 1), null == X || X.abort(), (X = void 0));
+        }),
+        S({ loadSummary: q, hasTraffic: W, loading: z }),
+        (e, t) => {
+          const a = i("el-skeleton"),
+            r = i("el-alert"),
+            o = i("el-button");
+          return (
+            c(),
+            n("div", T, [
+              z.value
+                ? (c(), n("div", C, [u(a, { animated: "", rows: 3 })]))
+                : M.value
+                  ? (c(),
+                    n("div", j, [
+                      u(
+                        r,
+                        {
+                          closable: !1,
+                          title: M.value,
+                          type: "error",
+                          "show-icon": "",
+                        },
+                        null,
+                        8,
+                        ["title"],
+                      ),
+                      u(
+                        o,
+                        {
+                          class: "tw-mt-3",
+                          type: "primary",
+                          plain: "",
+                          onClick: q,
+                        },
+                        {
+                          default: w(() => [p(d(b(U)("ipResource.retry")), 1)]),
+                          _: 1,
+                        },
+                      ),
+                    ]))
+                  : (c(),
+                    n(
+                      v,
+                      { key: 2 },
+                      [
+                        W.value
+                          ? (c(),
+                            n("div", P, [
+                              f("div", D, [
+                                f(
+                                  "span",
+                                  L,
+                                  d(b(U)("ipResource.availableTraffic")),
+                                  1,
+                                ),
+                                f("strong", A, d(Z.value) + " GB", 1),
+                              ]),
+                              b(V)
+                                ? (c(),
+                                  m(
+                                    o,
+                                    {
+                                      key: 0,
+                                      link: "",
+                                      type: "primary",
+                                      onClick: J,
+                                    },
+                                    {
+                                      default: w(() => [
+                                        p(
+                                          d(
+                                            b(U)(
+                                              "ipResource.buyTrafficPackage",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                  ))
+                                : y("", !0),
+                            ]))
+                          : y("", !0),
+                        W.value
+                          ? x(e.$slots, "default", { key: 1 })
+                          : (c(),
+                            n("div", E, [
+                              f(
+                                "img",
+                                {
+                                  src: b(_),
+                                  alt: "",
+                                  class:
+                                    "tw-h-[112px] tw-w-[168px] tw-object-contain",
+                                  "aria-hidden": "true",
+                                },
+                                null,
+                                8,
+                                F,
+                              ),
+                              f(
+                                "h3",
+                                G,
+                                d(b(U)("ipResource.noAvailableTraffic")),
+                                1,
+                              ),
+                              f(
+                                "p",
+                                I,
+                                d(
+                                  b(V)
+                                    ? b(U)("ipResource.noAvailableTrafficHint")
+                                    : b(U)(
+                                        "ipResource.noPermissionTrafficHint",
+                                      ),
+                                ),
+                                1,
+                              ),
+                              b(V)
+                                ? (c(),
+                                  m(
+                                    o,
+                                    {
+                                      key: 0,
+                                      class: "tw-mt-6 tw-min-w-[156px]",
+                                      type: "primary",
+                                      icon: b(g),
+                                      onClick: J,
+                                    },
+                                    {
+                                      default: w(() => [
+                                        p(
+                                          d(
+                                            b(U)(
+                                              "ipResource.buyTrafficPackage",
+                                            ),
+                                          ),
+                                          1,
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["icon"],
+                                  ))
+                                : y("", !0),
+                            ])),
+                      ],
+                      64,
+                    )),
+              b(V)
+                ? (c(),
+                  m(
+                    R,
+                    {
+                      key: 3,
+                      ref_key: "purchaseDialogRef",
+                      ref: Q,
+                      onSuccess: K,
+                    },
+                    null,
+                    512,
+                  ))
+                : y("", !0),
+            ])
+          );
+        }
+      );
+    },
+  });
+export { S as _ };

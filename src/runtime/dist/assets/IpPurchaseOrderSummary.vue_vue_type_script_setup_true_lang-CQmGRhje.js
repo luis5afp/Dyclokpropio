@@ -1,0 +1,272 @@
+import {
+  d as e,
+  v as t,
+  ad as a,
+  R as l,
+  i as o,
+  W as s,
+  P as r,
+  r as n,
+  c as u,
+  a as i,
+  t as d,
+  f as w,
+  X as c,
+  b as p,
+  w as m,
+  e as v,
+  h as x,
+  C as y,
+  o as b,
+} from "./index-BUIbb6Pa.js";
+import g from "./paySelect-CHLWtiLZ.js";
+const f = {
+    class:
+      "tw-min-h-[560px] tw-rounded-[10px] tw-border tw-border-[var(--card-br-color)] tw-bg-[var(--card-bg-color)] tw-p-6 tw-text-[var(--text-color-base)] tw-shadow-[0_2px_10px_rgb(22_35_68_/_4%)] [&_.el-checkbox__label]:tw-text-[var(--text-color-base)]",
+  },
+  h = {
+    class:
+      "tw-flex tw-min-h-[26px] tw-items-center tw-justify-between tw-gap-3",
+  },
+  _ = { class: "tw-text-lg tw-font-semibold tw-text-[var(--text-color-base)]" },
+  V = {
+    key: 0,
+    class: "tw-text-xl tw-font-semibold tw-text-[var(--primary-color)]",
+  },
+  R = { key: 1, class: "tw-text-xs tw-text-[var(--primary-color)]" },
+  P = { key: 0, class: "tw-mt-4 tw-flex tw-flex-col" },
+  k = {
+    class:
+      "tw-flex tw-min-h-[56px] tw-items-center tw-justify-between tw-gap-4 tw-border-t tw-border-[var(--border-color-base)] tw-text-sm tw-text-[var(--text-color-light2)]",
+  },
+  C = { class: "tw-min-w-0 tw-truncate" },
+  T = { class: "tw-flex-none tw-text-[var(--text-color-base)]" },
+  A = {
+    class:
+      "tw-flex tw-min-h-[60px] tw-items-center tw-justify-between tw-gap-4 tw-border-t tw-border-[var(--border-color-base)] tw-text-sm",
+  },
+  j = { class: "tw-flex-none tw-text-[var(--text-color-base)]" },
+  q = {
+    class:
+      "tw-flex tw-min-h-[60px] tw-items-center tw-justify-between tw-gap-4 tw-border-t tw-border-[var(--border-color-base)] tw-text-sm tw-text-[var(--text-color-base)]",
+  },
+  B = { class: "tw-flex-none tw-font-medium tw-text-[var(--primary-color)]" },
+  I = {
+    key: 0,
+    class: "tw-border-t tw-border-[var(--border-color-base)] tw-pt-5",
+  },
+  S = {
+    class:
+      "tw-mb-4 tw-text-sm tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  W = e({
+    __name: "IpPurchaseOrderSummary",
+    props: {
+      quote: {},
+      modelValue: {},
+      loading: { type: Boolean },
+      submitting: { type: Boolean },
+    },
+    emits: ["update:modelValue"],
+    setup(e, { emit: W }) {
+      const D = e,
+        F = W,
+        { t: $ } = t.useI18n(),
+        L = a(),
+        { payList: N, walletInfo: z } = l(L),
+        E = o(!1),
+        O = o(D.quote),
+        X = y(() => {
+          var e;
+          return (
+            !!(null == (e = O.value) ? void 0 : e.expiresAt) &&
+            new Date(O.value.expiresAt).getTime() <= Date.now()
+          );
+        }),
+        G = y(() => {
+          var e;
+          return E.value
+            ? z.value.balance
+            : (null == (e = O.value) ? void 0 : e.walletBalance) || 0;
+        }),
+        H = (e) => `$${Number(e || 0).toFixed(2)}`,
+        J = (e) => {
+          F("update:modelValue", { ...D.modelValue, useWallet: Boolean(e) });
+        },
+        K = (e) => {
+          F("update:modelValue", { ...D.modelValue, usePay: Boolean(e) });
+        },
+        M = (e) => {
+          const t = N.value.find((t) => t.payType === e);
+          F("update:modelValue", {
+            ...D.modelValue,
+            payType: e,
+            payChannel: null == t ? void 0 : t.payChannel,
+            currency: null == t ? void 0 : t.currency,
+          });
+        };
+      return (
+        s(
+          () => D.quote,
+          (e) => {
+            e && (O.value = e);
+          },
+          { immediate: !0 },
+        ),
+        r(async () => {
+          var e;
+          const t = [
+            L.getWalletInfoFn()
+              .then(() => {
+                E.value = !0;
+              })
+              .catch((e) => {
+                console.error("[ipResource] failed to load wallet info", e);
+              }),
+            L.getPayListFn(),
+          ];
+          await Promise.allSettled(t);
+          !N.value.some((e) => e.payType === D.modelValue.payType) &&
+            (null == (e = N.value[0]) ? void 0 : e.payType) &&
+            M(N.value[0].payType);
+        }),
+        (t, a) => {
+          const l = n("el-checkbox"),
+            o = n("el-alert"),
+            s = n("el-empty");
+          return (
+            b(),
+            u("aside", f, [
+              i("div", h, [
+                i("h3", _, d(w($)("ipResource.orderSummary")), 1),
+                O.value
+                  ? (b(),
+                    u(
+                      "strong",
+                      V,
+                      d(H(O.value.totalAmount ?? O.value.originalAmount)),
+                      1,
+                    ))
+                  : e.loading
+                    ? (b(), u("span", R, d(w($)("ipResource.quoting")), 1))
+                    : c("", !0),
+              ]),
+              O.value
+                ? (b(),
+                  u("div", P, [
+                    i("div", k, [
+                      i(
+                        "span",
+                        C,
+                        d(O.value.productName || w($)("ipResource.product")),
+                        1,
+                      ),
+                      i("span", T, d(H(O.value.originalAmount)), 1),
+                    ]),
+                    i("div", A, [
+                      p(
+                        l,
+                        {
+                          "model-value": e.modelValue.useWallet,
+                          disabled: e.submitting,
+                          onChange: J,
+                        },
+                        {
+                          default: m(() => [
+                            v(
+                              d(
+                                w($)("ipResource.walletPayment", {
+                                  amount: H(G.value),
+                                }),
+                              ),
+                              1,
+                            ),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["model-value", "disabled"],
+                      ),
+                      i(
+                        "span",
+                        j,
+                        "-" + d(H(O.value.walletDeductionAmount)),
+                        1,
+                      ),
+                    ]),
+                    i("div", q, [
+                      p(
+                        l,
+                        {
+                          "model-value": e.modelValue.usePay,
+                          disabled: e.submitting,
+                          onChange: K,
+                        },
+                        {
+                          default: m(() => [
+                            v(d(w($)("ipResource.directPayment")), 1),
+                          ]),
+                          _: 1,
+                        },
+                        8,
+                        ["model-value", "disabled"],
+                      ),
+                      i("span", B, d(H(O.value.paymentAmount)), 1),
+                    ]),
+                    e.modelValue.usePay
+                      ? (b(),
+                        u("div", I, [
+                          i("div", S, d(w($)("ipResource.paymentChannel")), 1),
+                          p(
+                            g,
+                            {
+                              "active-pay-type": e.modelValue.payType || "",
+                              "show-payment-tip": !1,
+                              onChangePay: M,
+                            },
+                            null,
+                            8,
+                            ["active-pay-type"],
+                          ),
+                        ]))
+                      : c("", !0),
+                    X.value
+                      ? (b(),
+                        x(
+                          o,
+                          {
+                            key: 1,
+                            class: "tw-mt-4",
+                            closable: !1,
+                            title: w($)("ipResource.quoteExpired"),
+                            type: "warning",
+                            "show-icon": "",
+                          },
+                          null,
+                          8,
+                          ["title"],
+                        ))
+                      : c("", !0),
+                  ]))
+                : (b(),
+                  x(
+                    s,
+                    {
+                      key: 1,
+                      class: "tw-min-h-[330px]",
+                      description: e.loading
+                        ? w($)("ipResource.quoting")
+                        : w($)("ipResource.selectConfiguration"),
+                      "image-size": 72,
+                    },
+                    null,
+                    8,
+                    ["description"],
+                  )),
+            ])
+          );
+        }
+      );
+    },
+  });
+export { W as _ };

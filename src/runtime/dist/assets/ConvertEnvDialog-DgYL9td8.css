@@ -1,0 +1,14 @@
+.progress-container[data-v-adf524b4] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+.progress-text[data-v-adf524b4] {
+  margin-bottom: 20px;
+}
+.progress-container .el-progress--line[data-v-adf524b4] {
+  margin-bottom: 15px;
+  width: 100%;
+}

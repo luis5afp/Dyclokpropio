@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-send-text-more
+ * Method: handle
+ * Source offset: 2548588
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0xf264be,_0x22b571,_0x4aa8b3,_0x54db67=-0x1b9e+0x1145*-0x1+0x2ce3)=>vR(_0x22b571,_0x4aa8b3,_0x54db67)

@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-stop
+ * Method: handle
+ * Source offset: 2548083
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async()=>(await ct['getInstanc'+'e']()[_0x4fac61(0x10ad,-0x1380)+_0x5e7156(0x4d9f,'0x6007')](),gR())

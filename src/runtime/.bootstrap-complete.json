@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-09-19T02:35:55.891Z",
+  "purpose": "Editable functional source mirror reconstructed from recovered runtime code.",
+  "exactOriginalSource": false,
+  "rendererEditableFiles": 561,
+  "electronEditableFiles": 21,
+  "mainBundleSource": "reconstruction-work/main.stage1.js",
+  "preloadSource": "src/preload/index.js"
+}

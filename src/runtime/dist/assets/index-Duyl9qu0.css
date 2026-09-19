@@ -1,0 +1,4 @@
+.primary-hover.el-button[data-v-de6ef85e]:hover {
+  background: var(--primary-color);
+  color: var(--bg-base);
+}

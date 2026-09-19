@@ -1,0 +1,88 @@
+import {
+  d as e,
+  v as t,
+  r as l,
+  o as a,
+  h as r,
+  f as s,
+  w as u,
+  b as o,
+  a as i,
+  e as n,
+  t as d,
+  C as p,
+} from "./index-BUIbb6Pa.js";
+import { _ as m } from "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+const v = { class: "envV2-input-layout" },
+  V = e({
+    __name: "fixedUrlsFormItem",
+    props: { modelValue: {} },
+    emits: ["update:modelValue"],
+    setup(e, { emit: V }) {
+      let { t: f } = t.useI18n(),
+        _ = e,
+        x = V;
+      const c = p({
+        get() {
+          var e;
+          return null == (e = _.modelValue) ? void 0 : e.join("\n");
+        },
+        set(e) {
+          x("update:modelValue", e.split("\n"));
+        },
+      });
+      let h = [
+        {
+          validator: (e, t, l) => {
+            let a = (_.modelValue || []).filter((e) => e);
+            if (
+              (x("update:modelValue", a),
+              !a.every((e) => e.startsWith("http") || e.startsWith("chrome")))
+            )
+              return l(new Error(f("env.env.req.urlsCorrectRule")));
+            l();
+          },
+          trigger: "blur",
+        },
+      ];
+      return (e, t) => {
+        const p = l("el-input"),
+          V = l("el-form-item");
+        return (
+          a(),
+          r(
+            V,
+            { prop: "fixedUrls", rules: s(h) },
+            {
+              label: u(() => [
+                i("div", v, [
+                  n(d(e.$t("envV2.fixedUrls")), 1),
+                  o(m, { text: e.$t("envV2.tip26") }, null, 8, ["text"]),
+                ]),
+              ]),
+              default: u(() => [
+                o(
+                  p,
+                  {
+                    modelValue: c.value,
+                    "onUpdate:modelValue":
+                      t[0] || (t[0] = (e) => (c.value = e)),
+                    autosize: { minRows: 3, maxRows: 5 },
+                    type: "textarea",
+                    placeholder: e.$t("envV2.fixedUrlsTip1"),
+                  },
+                  null,
+                  8,
+                  ["modelValue", "placeholder"],
+                ),
+              ]),
+              _: 1,
+            },
+            8,
+            ["rules"],
+          )
+        );
+      };
+    },
+  });
+export { V as _ };

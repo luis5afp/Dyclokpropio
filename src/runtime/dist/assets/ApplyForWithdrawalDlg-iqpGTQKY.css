@@ -1,0 +1,10 @@
+.new-input-number[data-v-804a3b91] input {
+  padding-left: 10px;
+}
+.el-form--label-top .el-form-item[data-v-804a3b91] {
+  margin-bottom: 20px !important;
+}
+.withdraw-method-buttons .el-button.active[data-v-804a3b91] {
+  background: var(--primary-card-color);
+  border-color: var(--btn-primary-plain-color);
+}

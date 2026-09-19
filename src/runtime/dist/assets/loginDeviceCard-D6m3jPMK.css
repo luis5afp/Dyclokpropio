@@ -1,0 +1,6 @@
+.device-tag[data-v-6dcdbefb] .el-tag__content {
+  padding-left: 0 !important;
+}
+.device-tag[data-v-6dcdbefb] .el-tag__content:before {
+  display: none !important;
+}

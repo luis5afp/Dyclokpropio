@@ -1,0 +1,1524 @@
+import {
+  l9 as e,
+  d as a,
+  la as l,
+  lb as n,
+  hQ as s,
+  v as o,
+  at as t,
+  G as i,
+  lc as r,
+  ag as u,
+  kY as c,
+  k5 as d,
+  P as p,
+  D as m,
+  ld as g,
+  le as w,
+  a1 as v,
+  lf as f,
+  n as y,
+  r as _,
+  q as h,
+  c as k,
+  f as b,
+  fF as C,
+  h as I,
+  w as T,
+  a as $,
+  t as x,
+  o as L,
+  F as A,
+  z as R,
+  it as U,
+  O,
+  is as S,
+  X as V,
+  b as E,
+  e as N,
+  x as D,
+  b7 as P,
+  y as B,
+  lg as q,
+  b8 as j,
+  l5 as G,
+  lh as J,
+  i as K,
+  C as F,
+  li as M,
+  I as z,
+  L as W,
+  ga as Q,
+  A as H,
+  lj as X,
+  lk as Y,
+  ll as Z,
+  lm as ee,
+  hK as ae,
+  hL as le,
+  l as ne,
+  l7 as se,
+  l8 as oe,
+  ln as te,
+  lo as ie,
+  lp as re,
+  lq as ue,
+  lr as ce,
+  ls as de,
+  jw as pe,
+  a5 as me,
+  lt as ge,
+  iv as we,
+  lu as ve,
+  lv as fe,
+  lw as ye,
+  ix as _e,
+  iy as he,
+  k as ke,
+  hJ as be,
+  lx as Ce,
+  _ as Ie,
+} from "./index-BUIbb6Pa.js";
+import Te from "./openLoginVerifyDialog-BNranNve.js";
+import { _ as $e } from "./appWebSSOLayout.vue_vue_type_style_index_0_lang-CATkF7rq.js";
+import { u as xe } from "./usePreLoginLineDiagnosis-CL2ALneS.js";
+import "./headerBar.vue_vue_type_script_setup_true_lang-CJ3mJ7qU.js";
+import "./changeLangDropdown-BSfyP-Xg.js";
+import "./leftSideBar.vue_vue_type_script_setup_true_lang-cw_y4wj7.js";
+import "./typewriterEffect.vue_vue_type_script_setup_true_lang-G-DpXigX.js";
+function Le(e) {
+  const a = Array.isArray(e) ? e[0] : e;
+  return "string" == typeof a ? a.trim() : "";
+}
+function Ae(e) {
+  const { errorCode: a, msg: l, ...n } = e;
+  return n;
+}
+const Re = { class: "tw-relative tw-translate-y-[-5%]" },
+  Ue = { class: "logo-text" },
+  Oe = { key: 0, class: "other-login-type" },
+  Se = { class: "tw-grid tw-grid-cols-5 tw-gap-[16px] tw-grid-auto" },
+  Ve = ["onClick"],
+  Ee = ["src"],
+  Ne = { key: 0, class: "tw-ml-[8px]" },
+  De = { key: 0, class: "account-empty" },
+  Pe = { class: "drop-item" },
+  Be = { class: "drop-item-account" },
+  qe = ["onClick"],
+  je = { class: "btn-container" },
+  Ge = { class: "forget-password" },
+  Je = { class: "btn-action1" },
+  Ke = { class: "btn-action2" },
+  Fe = { key: 1, class: "login-container" },
+  Me = { class: "fl" },
+  ze = { class: "bg-img" },
+  We = { class: "rl" },
+  Qe = { class: "title" },
+  He = { class: "el-dropdown-link" },
+  Xe = { style: { "text-decoration": "underline" } },
+  Ye = { class: "flx-justify-between" },
+  Ze = { key: 0, class: "iconfont icon-check" },
+  ea = { class: "logo-text" },
+  aa = { class: "other-login-type" },
+  la = { class: "tw-grid tw-grid-cols-5 tw-gap-[16px] tw-grid-auto" },
+  na = ["onClick"],
+  sa = ["src"],
+  oa = { key: 0, class: "tw-ml-[8px]" },
+  ta = { key: 0, class: "account-empty" },
+  ia = { class: "drop-item" },
+  ra = { class: "drop-item-account" },
+  ua = ["onClick"],
+  ca = { class: "btn-container" },
+  da = { class: "forget-password" },
+  pa = { class: "login" },
+  ma = { class: "register" },
+  ga = Ie(
+    a({
+      __name: "login",
+      setup(a) {
+        const Ie = K(),
+          ga = K(),
+          { handlePreLoginLineError: wa } = xe(ga);
+        let va = !1;
+        l();
+        const { getWebAttributionParams: fa } = n(),
+          ya = s(),
+          _a = o.useI18n(),
+          { t: ha } = _a,
+          ka = t({ email: "", passwd: "" }),
+          ba = t({
+            email: [
+              {
+                required: !0,
+                trigger: "blur",
+                message: ha("login.emailAndAccountRules"),
+              },
+            ],
+            passwd: [
+              {
+                required: !0,
+                message: ha("login.passwordRule"),
+                trigger: "blur",
+              },
+            ],
+          }),
+          Ca = K(),
+          Ia = K(!1),
+          Ta = i(),
+          $a = F(() => Ta.language),
+          xa = K(!1),
+          La = K(),
+          Aa = F(() => !!ya.meta.isAds && !m.isClient),
+          Ra = r("app.loginAccountRecords"),
+          Ua = K(Ra ?? []),
+          Oa = new Map(Ua.value.map((e) => [e.email, e])),
+          Sa = () => {
+            var e;
+            null == (e = La.value) || e.handleOpen();
+          },
+          Va = (e) => {
+            var a;
+            ((Ua.value = Ua.value.filter((a) => a.email !== e)),
+              Oa.delete(e),
+              Ua.value.length || null == (a = La.value) || a.handleClose(),
+              M("app.loginAccountRecords", Ua.value));
+          },
+          Ea = (e) => {
+            var a;
+            ((ka.email = decodeURIComponent(e)),
+              (ka.passwd =
+                (null == (a = Oa.get(e)) ? void 0 : a.passwd) ?? ""));
+          },
+          Na = async (e) => {
+            const a = Ua.value.findIndex((a) => a.email === e.email);
+            (-1 !== a ? (Ua.value[a] = e) : Ua.value.push(e),
+              Ua.value.sort(
+                (e, a) => Number(a.loginTime) - Number(e.loginTime),
+              ));
+            const l = Ua.value.slice(0, 15);
+            M("app.loginAccountRecords", l);
+          },
+          Da = async () => {
+            Ja();
+            const e = ya.fullPath;
+            (await y.push(ve(C(), ya)), ya.fullPath !== e && (await fe()));
+          };
+        let Pa = null,
+          Ba = null;
+        const qa = () => {
+            ((Pa = null), (Ba = null));
+          },
+          ja = (a) => {
+            (function (a) {
+              return !a || !e(a);
+            })(a) &&
+              W(
+                (function (
+                  e,
+                  a,
+                  l = "undefined" == typeof navigator ||
+                    "boolean" != typeof navigator.onLine ||
+                    navigator.onLine,
+                ) {
+                  var n, s;
+                  if (
+                    (function (e, a) {
+                      return !1 === a;
+                    })(0, l)
+                  )
+                    return a.offline;
+                  const o =
+                    null == (n = null == e ? void 0 : e.response)
+                      ? void 0
+                      : n.status;
+                  if (502 === o) return a.badGateway;
+                  if (504 === o) return a.gatewayTimeout;
+                  const t =
+                    null == (s = null == e ? void 0 : e.message)
+                      ? void 0
+                      : s.trim();
+                  return t || a.unknown;
+                })(a, {
+                  unknown: ha("message.api.unknown"),
+                  offline: ha("netWorkError.loginOfflineTip"),
+                  badGateway: ha("message.api.502"),
+                  gatewayTimeout: ha("message.api.504"),
+                }),
+                "error",
+                !0,
+                !0,
+              );
+          },
+          Ga = async () => {
+            await y.replace({ query: Ae(ya.query) });
+          },
+          Ja = () => {
+            ((va = !0),
+              z.close(),
+              queueMicrotask(() => {
+                va = !1;
+              }));
+          },
+          Ka = (e) => {
+            e &&
+              !Ia.value &&
+              ((Ia.value = !0),
+              e.validate(async (e) => {
+                if (e) {
+                  if (Pa && Date.now() - Pa < 6e4)
+                    return (W(Ba ?? "", "error", !0, !0), void (Ia.value = !1));
+                  try {
+                    const e = JSON.parse(JSON.stringify(ka)),
+                      a = JSON.parse(JSON.stringify(e));
+                    ((a.email = encodeURIComponent(e.email)),
+                      (e.passwd = Q(e.passwd)),
+                      (e.deviceId = await m.api.getDeviceId()),
+                      (e.oneId = await m.api.getNewDeviceId()),
+                      (e.pcUserName = await m.api.getDeviceUserName()));
+                    const l = async () => {
+                      var e;
+                      if (xa.value) {
+                        const l = {
+                          email: a.email,
+                          passwd: a.passwd,
+                          createTime:
+                            (null == (e = Oa.get(a.email))
+                              ? void 0
+                              : e.createTime) || new Date().getTime(),
+                          loginTime: new Date().getTime(),
+                        };
+                        await Na(l);
+                      }
+                    };
+                    (Wa(ka),
+                      m.api.trackEvent({ type: H.LOGIN, params: e }),
+                      await X(e)
+                        .then(async (n) => {
+                          var s, o;
+                          if (Y(n)) {
+                            if (wa(Z())) return;
+                            throw new Error(ha("message.api.unknown"));
+                          }
+                          if (n.status === ee.VALIDATE)
+                            return (
+                              null == (s = Ie.value) ||
+                                s.acceptParams(
+                                  {
+                                    ...n.validateRule,
+                                    account: e.email,
+                                    passwd: e.passwd,
+                                    deviceId: e.deviceId,
+                                    oneId: e.oneId,
+                                    pcUserName: e.pcUserName,
+                                  },
+                                  l,
+                                ),
+                              void (n.token && Ta.setTempToken(n.token))
+                            );
+                          if (
+                            !(function (e) {
+                              return (
+                                !!(null == e ? void 0 : e.token) &&
+                                !!(null == e ? void 0 : e.user)
+                              );
+                            })(n)
+                          )
+                            throw new Error(ha("message.api.unknown"));
+                          const { token: t, user: i, loginMember: r } = n;
+                          if (!t || !i)
+                            throw new Error(ha("message.api.unknown"));
+                          (ae(le.TOKEN_STATE, i.expiredTime), Ta.setToken(t));
+                          const u = Ta.formatUserInfo(i, r);
+                          if (
+                            ((Ta.isFirstLogin =
+                              (null == n ? void 0 : n.firstLogin) ?? !1),
+                            Ta.setUserInfo(u),
+                            await ne(),
+                            await l(),
+                            xa.value)
+                          ) {
+                            const e = {
+                              email: a.email,
+                              passwd: a.passwd,
+                              createTime:
+                                (null == (o = Oa.get(a.email))
+                                  ? void 0
+                                  : o.createTime) || new Date().getTime(),
+                              loginTime: new Date().getTime(),
+                            };
+                            await Na(e);
+                          }
+                          (m.isClient && se(oe(), ha("login.successHint")),
+                            await Da(),
+                            (Pa = null),
+                            (Ba = null));
+                        })
+                        .catch((e) => {
+                          if (
+                            (console.error(e),
+                            300139 === e.code || 300102 === e.code)
+                          )
+                            return ((Ba = e.message), void (Pa = Date.now()));
+                          wa(e) || ja(e);
+                        }));
+                  } finally {
+                    Ia.value = !1;
+                  }
+                } else Ia.value = !1;
+              }));
+          },
+          Fa = (e) => {
+            e !== $a.value &&
+              (Ta.setGlobalState("language", e), window.location.reload());
+          },
+          Ma = () => {
+            Aa.value ? y.push(te) : y.push(ie);
+          },
+          za = () => {
+            Aa.value ? y.push(re) : y.push(ue);
+          },
+          Wa = (e) => {
+            if (!xa.value) return void ce(le.PASS);
+            const a = ye(3, 8),
+              l = `${a}${de().replaceAll("-", "").slice(0, a)}${btoa(encodeURIComponent(JSON.stringify(e)))}`;
+            ae(le.PASS, l);
+          };
+        let Qa;
+        const Ha = K(""),
+          Xa = async (e) => {
+            null !== Qa && clearInterval(Qa);
+            const a = setTimeout(() => {
+              z.confirm(me("div", {}, ha("login.authTip2")), {
+                title: ha("login.authTip", {
+                  third: e
+                    .toLowerCase()
+                    .replace(/^(.)/, (e, a) => a.toUpperCase()),
+                }),
+                type: "warning",
+                customClass: "tw-max-w-[560px]",
+                showCancelButton: !1,
+                confirmButtonText: ha("login.authOk"),
+              });
+            }, 1500);
+            try {
+              const l = fa(!0),
+                n = await m.api.getNewDeviceId();
+              await ge({ type: we.LOGIN, authType: e, oneId: n, ...l }).then(
+                (e) => {
+                  if (Y(e)) {
+                    if ((clearTimeout(a), wa(Z()))) return;
+                    throw new Error(ha("message.api.unknown"));
+                  }
+                  if (!e.redirectUri)
+                    throw new Error(ha("message.api.unknown"));
+                  (console.log(e, "getThirdAuthUrlApi"),
+                    window.openUrl(e.redirectUri),
+                    (Ha.value = (null == e ? void 0 : e.state) ?? ""),
+                    (Qa = setInterval(() => {
+                      (async (e) => {
+                        if (e)
+                          try {
+                            await _e(e).then(async (a) => {
+                              if (Y(a))
+                                return (
+                                  wa(Z()),
+                                  void (null !== Qa && clearInterval(Qa))
+                                );
+                              switch (a.status) {
+                                case he.CREATE_OR_BIND:
+                                  (z.close(),
+                                    y.push({ path: Ce, query: { state: e } }));
+                                  break;
+                                case he.LOGIN:
+                                  Ta.setToken(a.token ?? "");
+                                  const l = await ke(),
+                                    n = be(l);
+                                  if (!n) break;
+                                  ae(le.TOKEN_STATE, n.user.expiredTime);
+                                  const s = Ta.formatUserInfo(
+                                    n.user,
+                                    n.loginMember,
+                                    n.isBindEmail,
+                                    n.thirdUserInfoList,
+                                  );
+                                  ((Ta.isFirstLogin = a.firstLogin ?? !1),
+                                    Ta.setUserInfo(s),
+                                    await ne(),
+                                    await Da());
+                                  break;
+                                case he.ERROR:
+                                  null !== Qa && clearInterval(Qa);
+                              }
+                            });
+                          } catch (a) {
+                            (wa(a), null !== Qa && clearInterval(Qa));
+                          }
+                      })(Ha.value);
+                    }, 2e3)));
+                },
+              );
+            } catch (l) {
+              (clearTimeout(a), wa(l), null !== Qa && clearInterval(Qa));
+            }
+          };
+        (u(() => {
+          (null !== Qa && clearInterval(Qa), Ja());
+        }),
+          c(() => {
+            Ja();
+          }));
+        const Ya = d();
+        return (
+          p(() => {
+            var e, a, l;
+            m.send(g, JSON.stringify(Ya.$state));
+            const n =
+              "300003" !== Le((s = ya.query).errorCode) ? "" : Le(s.msg);
+            var s;
+            if (n) {
+              if (w()) return;
+              v({
+                title: ha("env.env.shareDialog.operatorTips"),
+                message: n,
+                showCancelButton: !1,
+                closeCb: async () => {
+                  va || (await Ga());
+                },
+                confirmCb: async () => {
+                  await Ga();
+                },
+              });
+            } else if (
+              (null == (e = ya.query) ? void 0 : e.errorCode) ===
+              f.IP_LIMIT_ERROR.toString()
+            ) {
+              v({
+                title: ha("env.env.shareDialog.operatorTips"),
+                message:
+                  (null == (l = null == (a = ya.query) ? void 0 : a.msg)
+                    ? void 0
+                    : l.toString()) || "",
+                showCancelButton: !1,
+              });
+              const { errorCode: e, msg: n, ...s } = ya.query;
+              y.replace({ query: s });
+            }
+          }),
+          (() => {
+            try {
+              const e = pe(le.PASS);
+              if (!e) return;
+              const a = 1 * e.substring(0, 1),
+                l = JSON.parse(decodeURIComponent(atob(e.substring(a + 1))));
+              ((ka.email = l.email), (ka.passwd = l.passwd), (xa.value = !0));
+            } catch (e) {}
+          })(),
+          (e, a) => {
+            const l = _("el-divider"),
+              n = _("el-icon"),
+              s = _("el-input"),
+              o = _("el-dropdown-item"),
+              t = _("el-dropdown-menu"),
+              i = _("el-dropdown"),
+              r = _("el-form-item"),
+              u = _("el-checkbox"),
+              c = _("el-button"),
+              d = _("el-form"),
+              p = _("ThemeImage"),
+              m = h("prevent-label-click"),
+              g = h("trim");
+            return (
+              L(),
+              k(
+                A,
+                null,
+                [
+                  b(C)()
+                    ? (L(),
+                      k("div", Fe, [
+                        $("div", Me, [
+                          $("div", ze, [
+                            E(p, {
+                              alt: "",
+                              src: "@/assets/images/login-bg.png",
+                            }),
+                          ]),
+                          $("span", null, x(e.$t("login.bgDesc")), 1),
+                        ]),
+                        $("div", We, [
+                          $("div", Qe, [
+                            E(p, {
+                              alt: "logo",
+                              src: "@/assets/images/login-logo.svg",
+                            }),
+                            E(
+                              i,
+                              {
+                                "popper-class": "language-dropdown",
+                                trigger: "click",
+                                onCommand: Fa,
+                              },
+                              {
+                                dropdown: T(() => [
+                                  E(t, null, {
+                                    default: T(() => [
+                                      (L(!0),
+                                      k(
+                                        A,
+                                        null,
+                                        R(
+                                          b(G),
+                                          (e) => (
+                                            L(),
+                                            I(
+                                              o,
+                                              {
+                                                key: e.value,
+                                                command: e.value,
+                                              },
+                                              {
+                                                default: T(() => [
+                                                  $("div", Ye, [
+                                                    $(
+                                                      "span",
+                                                      null,
+                                                      x(e.label),
+                                                      1,
+                                                    ),
+                                                    $("span", null, [
+                                                      $a.value === e.value
+                                                        ? (L(), k("i", Ze))
+                                                        : V("", !0),
+                                                    ]),
+                                                  ]),
+                                                ]),
+                                                _: 2,
+                                              },
+                                              1032,
+                                              ["command"],
+                                            )
+                                          ),
+                                        ),
+                                        128,
+                                      )),
+                                    ]),
+                                    _: 1,
+                                  }),
+                                ]),
+                                default: T(() => {
+                                  var e;
+                                  return [
+                                    $("span", He, [
+                                      a[18] ||
+                                        (a[18] = $(
+                                          "i",
+                                          { class: "iconfont icon-language" },
+                                          null,
+                                          -1,
+                                        )),
+                                      $(
+                                        "span",
+                                        Xe,
+                                        x(
+                                          null == (e = $a.value)
+                                            ? void 0
+                                            : e.toUpperCase(),
+                                        ),
+                                        1,
+                                      ),
+                                      a[19] ||
+                                        (a[19] = $(
+                                          "i",
+                                          { class: "iconfont icon-arrow" },
+                                          null,
+                                          -1,
+                                        )),
+                                    ]),
+                                  ];
+                                }),
+                                _: 1,
+                              },
+                            ),
+                          ]),
+                          $("div", null, [
+                            $("h2", ea, x(e.$t("login.welcome")), 1),
+                            $("div", aa, [
+                              $("div", la, [
+                                (L(!0),
+                                k(
+                                  A,
+                                  null,
+                                  R(
+                                    b(U),
+                                    (a, l) => (
+                                      L(),
+                                      k(
+                                        "div",
+                                        {
+                                          key: l,
+                                          class: O([
+                                            0 === l
+                                              ? [
+                                                  "tw-col-start-1",
+                                                  b(U).length > 2
+                                                    ? "tw-col-end-4"
+                                                    : "tw-col-end-5",
+                                                ]
+                                              : [],
+                                            "google-btn",
+                                          ]),
+                                          onClick: (e) => Xa(a.type),
+                                        },
+                                        [
+                                          $(
+                                            "img",
+                                            {
+                                              src: a.logoImg,
+                                              class: "tw-w-[20px] tw-h-[20px]",
+                                            },
+                                            null,
+                                            8,
+                                            sa,
+                                          ),
+                                          a.type === b(S).GOOGLE
+                                            ? (L(),
+                                              k(
+                                                "div",
+                                                oa,
+                                                x(
+                                                  e.$t(
+                                                    `login.${a.name.toLowerCase()}Login`,
+                                                  ),
+                                                ),
+                                                1,
+                                              ))
+                                            : V("", !0),
+                                        ],
+                                        10,
+                                        na,
+                                      )
+                                    ),
+                                  ),
+                                  128,
+                                )),
+                              ]),
+                              E(l, null, {
+                                default: T(() => [
+                                  ...(a[20] || (a[20] = [N(" OR", -1)])),
+                                ]),
+                                _: 1,
+                              }),
+                            ]),
+                            D(
+                              (L(),
+                              I(
+                                d,
+                                {
+                                  ref_key: "loginFormRef",
+                                  ref: Ca,
+                                  model: ka,
+                                  rules: ba,
+                                  class: "login-form",
+                                  "label-position": "top",
+                                  size: "large",
+                                },
+                                {
+                                  default: T(() => [
+                                    E(
+                                      r,
+                                      {
+                                        label: e.$t("login.emailAndAccount"),
+                                        class: "user-name",
+                                        prop: "email",
+                                      },
+                                      {
+                                        default: T(() => [
+                                          E(
+                                            i,
+                                            {
+                                              ref_key: "dropdown",
+                                              ref: La,
+                                              class: "account-input-dropdown",
+                                              "popper-class": "dropdown-popper",
+                                              trigger: "contextmenu",
+                                              onCommand: Ea,
+                                            },
+                                            {
+                                              dropdown: T(() => [
+                                                E(t, null, {
+                                                  default: T(() => [
+                                                    Ua.value.length
+                                                      ? V("", !0)
+                                                      : (L(),
+                                                        k(
+                                                          "div",
+                                                          ta,
+                                                          x(
+                                                            e.$t("login.empty"),
+                                                          ),
+                                                          1,
+                                                        )),
+                                                    (L(!0),
+                                                    k(
+                                                      A,
+                                                      null,
+                                                      R(
+                                                        Ua.value,
+                                                        (e) => (
+                                                          L(),
+                                                          I(
+                                                            o,
+                                                            {
+                                                              key: e.email,
+                                                              command: e.email,
+                                                            },
+                                                            {
+                                                              default: T(() => [
+                                                                $("div", ia, [
+                                                                  $(
+                                                                    "span",
+                                                                    ra,
+                                                                    x(
+                                                                      decodeURIComponent(
+                                                                        e.email,
+                                                                      ),
+                                                                    ),
+                                                                    1,
+                                                                  ),
+                                                                  $(
+                                                                    "div",
+                                                                    {
+                                                                      class:
+                                                                        "dropdown-icon",
+                                                                      onClick:
+                                                                        B(
+                                                                          (a) =>
+                                                                            Va(
+                                                                              e.email,
+                                                                            ),
+                                                                          [
+                                                                            "stop",
+                                                                          ],
+                                                                        ),
+                                                                    },
+                                                                    [
+                                                                      E(
+                                                                        n,
+                                                                        {
+                                                                          class:
+                                                                            "el-input__icon",
+                                                                        },
+                                                                        {
+                                                                          default:
+                                                                            T(
+                                                                              () => [
+                                                                                E(
+                                                                                  b(
+                                                                                    j,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          _: 1,
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                    8,
+                                                                    ua,
+                                                                  ),
+                                                                ]),
+                                                              ]),
+                                                              _: 2,
+                                                            },
+                                                            1032,
+                                                            ["command"],
+                                                          )
+                                                        ),
+                                                      ),
+                                                      128,
+                                                    )),
+                                                  ]),
+                                                  _: 1,
+                                                }),
+                                              ]),
+                                              default: T(() => [
+                                                D(
+                                                  (L(),
+                                                  I(
+                                                    s,
+                                                    {
+                                                      modelValue: ka.email,
+                                                      "onUpdate:modelValue":
+                                                        a[8] ||
+                                                        (a[8] = (e) =>
+                                                          (ka.email = e)),
+                                                      placeholder: `${e.$t("login.emailAndAccountRules")}`,
+                                                      class: "account-input",
+                                                      spellcheck: "false",
+                                                      onKeyup:
+                                                        a[9] ||
+                                                        (a[9] = P(
+                                                          (e) => Ka(Ca.value),
+                                                          ["enter"],
+                                                        )),
+                                                      onBlur: qa,
+                                                    },
+                                                    {
+                                                      suffix: T(() => [
+                                                        $(
+                                                          "div",
+                                                          {
+                                                            class:
+                                                              "dropdown-icon",
+                                                            onClick: B(Sa, [
+                                                              "stop",
+                                                            ]),
+                                                          },
+                                                          [
+                                                            E(
+                                                              n,
+                                                              {
+                                                                class:
+                                                                  "el-input__icon",
+                                                              },
+                                                              {
+                                                                default: T(
+                                                                  () => [
+                                                                    E(b(q)),
+                                                                  ],
+                                                                ),
+                                                                _: 1,
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    [
+                                                      "modelValue",
+                                                      "placeholder",
+                                                    ],
+                                                  )),
+                                                  [[g]],
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            512,
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["label"],
+                                    ),
+                                    E(
+                                      r,
+                                      {
+                                        label: e.$t("login.pwd"),
+                                        class: "password",
+                                        prop: "passwd",
+                                      },
+                                      {
+                                        default: T(() => [
+                                          D(
+                                            (L(),
+                                            I(
+                                              s,
+                                              {
+                                                modelValue: ka.passwd,
+                                                "onUpdate:modelValue":
+                                                  a[10] ||
+                                                  (a[10] = (e) =>
+                                                    (ka.passwd = e)),
+                                                placeholder: `${e.$t("login.password")}`,
+                                                autocomplete: "new-password",
+                                                "show-password": "",
+                                                type: "passwd",
+                                                onKeyup:
+                                                  a[11] ||
+                                                  (a[11] = P(
+                                                    (e) => Ka(Ca.value),
+                                                    ["enter"],
+                                                  )),
+                                                onBlur: qa,
+                                              },
+                                              {
+                                                prefix: T(() => [
+                                                  ...(a[21] ||
+                                                    (a[21] = [
+                                                      $(
+                                                        "i",
+                                                        {
+                                                          class:
+                                                            "iconfont icon-mima-01",
+                                                        },
+                                                        null,
+                                                        -1,
+                                                      ),
+                                                    ])),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue", "placeholder"],
+                                            )),
+                                            [[g]],
+                                          ),
+                                        ]),
+                                        _: 1,
+                                      },
+                                      8,
+                                      ["label"],
+                                    ),
+                                    $("div", ca, [
+                                      $("div", da, [
+                                        E(
+                                          u,
+                                          {
+                                            modelValue: xa.value,
+                                            "onUpdate:modelValue":
+                                              a[12] ||
+                                              (a[12] = (e) => (xa.value = e)),
+                                            label: `${e.$t("login.rememberPass")}`,
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "label"],
+                                        ),
+                                        E(
+                                          c,
+                                          {
+                                            link: "",
+                                            type: "primary",
+                                            onClick:
+                                              a[13] || (a[13] = (e) => za()),
+                                          },
+                                          {
+                                            default: T(() => [
+                                              N(
+                                                x(e.$t("login.forgetPassword")),
+                                                1,
+                                              ),
+                                            ]),
+                                            _: 1,
+                                          },
+                                        ),
+                                      ]),
+                                      $("div", pa, [
+                                        E(
+                                          c,
+                                          {
+                                            loading: Ia.value,
+                                            type: "primary",
+                                            onClick:
+                                              a[14] ||
+                                              (a[14] = (e) => Ka(Ca.value)),
+                                          },
+                                          {
+                                            default: T(() => [
+                                              N(x(e.$t("login.loginBtn")), 1),
+                                            ]),
+                                            _: 1,
+                                          },
+                                          8,
+                                          ["loading"],
+                                        ),
+                                      ]),
+                                      $("div", ma, [
+                                        $(
+                                          "span",
+                                          null,
+                                          x(e.$t("login.noUser")),
+                                          1,
+                                        ),
+                                        E(
+                                          c,
+                                          {
+                                            link: "",
+                                            type: "primary",
+                                            onClick:
+                                              a[15] || (a[15] = (e) => Ma()),
+                                          },
+                                          {
+                                            default: T(() => [
+                                              N(x(e.$t("login.register")), 1),
+                                            ]),
+                                            _: 1,
+                                          },
+                                        ),
+                                      ]),
+                                    ]),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["model", "rules"],
+                              )),
+                              [[m]],
+                            ),
+                          ]),
+                        ]),
+                      ]))
+                    : (L(),
+                      I(
+                        $e,
+                        { key: 0 },
+                        {
+                          default: T(() => [
+                            $("div", Re, [
+                              $("h2", Ue, x(e.$t("login.welcome")), 1),
+                              Aa.value
+                                ? V("", !0)
+                                : (L(),
+                                  k("div", Oe, [
+                                    $("div", Se, [
+                                      (L(!0),
+                                      k(
+                                        A,
+                                        null,
+                                        R(
+                                          b(U),
+                                          (a, l) => (
+                                            L(),
+                                            k(
+                                              "div",
+                                              {
+                                                key: l,
+                                                class: O([
+                                                  0 === l
+                                                    ? [
+                                                        "tw-col-start-1",
+                                                        b(U).length > 2
+                                                          ? "tw-col-end-4"
+                                                          : "tw-col-end-5",
+                                                      ]
+                                                    : [],
+                                                  "google-btn",
+                                                ]),
+                                                onClick: (e) => Xa(a.type),
+                                              },
+                                              [
+                                                $(
+                                                  "img",
+                                                  {
+                                                    src: a.logoImg,
+                                                    class:
+                                                      "tw-w-[20px] tw-h-[20px]",
+                                                  },
+                                                  null,
+                                                  8,
+                                                  Ee,
+                                                ),
+                                                a.type === b(S).GOOGLE
+                                                  ? (L(),
+                                                    k(
+                                                      "div",
+                                                      Ne,
+                                                      x(
+                                                        e.$t(
+                                                          `login.${a.name.toLowerCase()}Login`,
+                                                        ),
+                                                      ),
+                                                      1,
+                                                    ))
+                                                  : V("", !0),
+                                              ],
+                                              10,
+                                              Ve,
+                                            )
+                                          ),
+                                        ),
+                                        128,
+                                      )),
+                                    ]),
+                                    E(l, null, {
+                                      default: T(() => [
+                                        ...(a[16] || (a[16] = [N(" OR", -1)])),
+                                      ]),
+                                      _: 1,
+                                    }),
+                                  ])),
+                              D(
+                                (L(),
+                                I(
+                                  d,
+                                  {
+                                    ref_key: "loginFormRef",
+                                    ref: Ca,
+                                    model: ka,
+                                    rules: ba,
+                                    class: "login-form",
+                                    "label-position": "top",
+                                    size: "large",
+                                  },
+                                  {
+                                    default: T(() => [
+                                      E(
+                                        r,
+                                        {
+                                          label: e.$t("login.emailAndAccount"),
+                                          class: "user-name",
+                                          prop: "email",
+                                        },
+                                        {
+                                          default: T(() => [
+                                            E(
+                                              i,
+                                              {
+                                                ref_key: "dropdown",
+                                                ref: La,
+                                                class: "account-input-dropdown",
+                                                "popper-class":
+                                                  "dropdown-popper",
+                                                trigger: "contextmenu",
+                                                onCommand: Ea,
+                                              },
+                                              {
+                                                dropdown: T(() => [
+                                                  E(t, null, {
+                                                    default: T(() => [
+                                                      Ua.value.length
+                                                        ? V("", !0)
+                                                        : (L(),
+                                                          k(
+                                                            "div",
+                                                            De,
+                                                            x(
+                                                              e.$t(
+                                                                "login.empty",
+                                                              ),
+                                                            ),
+                                                            1,
+                                                          )),
+                                                      (L(!0),
+                                                      k(
+                                                        A,
+                                                        null,
+                                                        R(
+                                                          Ua.value,
+                                                          (e) => (
+                                                            L(),
+                                                            I(
+                                                              o,
+                                                              {
+                                                                key: e.email,
+                                                                command:
+                                                                  e.email,
+                                                              },
+                                                              {
+                                                                default: T(
+                                                                  () => [
+                                                                    $(
+                                                                      "div",
+                                                                      Pe,
+                                                                      [
+                                                                        $(
+                                                                          "span",
+                                                                          Be,
+                                                                          x(
+                                                                            decodeURIComponent(
+                                                                              e.email,
+                                                                            ),
+                                                                          ),
+                                                                          1,
+                                                                        ),
+                                                                        $(
+                                                                          "div",
+                                                                          {
+                                                                            class:
+                                                                              "dropdown-icon",
+                                                                            onClick:
+                                                                              B(
+                                                                                (
+                                                                                  a,
+                                                                                ) =>
+                                                                                  Va(
+                                                                                    e.email,
+                                                                                  ),
+                                                                                [
+                                                                                  "stop",
+                                                                                ],
+                                                                              ),
+                                                                          },
+                                                                          [
+                                                                            E(
+                                                                              n,
+                                                                              {
+                                                                                class:
+                                                                                  "el-input__icon",
+                                                                              },
+                                                                              {
+                                                                                default:
+                                                                                  T(
+                                                                                    () => [
+                                                                                      E(
+                                                                                        b(
+                                                                                          j,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                _: 1,
+                                                                              },
+                                                                            ),
+                                                                          ],
+                                                                          8,
+                                                                          qe,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                _: 2,
+                                                              },
+                                                              1032,
+                                                              ["command"],
+                                                            )
+                                                          ),
+                                                        ),
+                                                        128,
+                                                      )),
+                                                    ]),
+                                                    _: 1,
+                                                  }),
+                                                ]),
+                                                default: T(() => [
+                                                  E(
+                                                    s,
+                                                    {
+                                                      modelValue: ka.email,
+                                                      "onUpdate:modelValue":
+                                                        a[0] ||
+                                                        (a[0] = (e) =>
+                                                          (ka.email = e)),
+                                                      placeholder: `${e.$t("login.emailAndAccountRules")}`,
+                                                      class: "account-input",
+                                                      spellcheck: "false",
+                                                      onKeyup:
+                                                        a[1] ||
+                                                        (a[1] = P(
+                                                          (e) => Ka(Ca.value),
+                                                          ["enter"],
+                                                        )),
+                                                      onBlur: qa,
+                                                    },
+                                                    {
+                                                      suffix: T(() => [
+                                                        $(
+                                                          "div",
+                                                          {
+                                                            class:
+                                                              "dropdown-icon",
+                                                            onClick: B(Sa, [
+                                                              "stop",
+                                                            ]),
+                                                          },
+                                                          [
+                                                            E(
+                                                              n,
+                                                              {
+                                                                class:
+                                                                  "el-input__icon",
+                                                              },
+                                                              {
+                                                                default: T(
+                                                                  () => [
+                                                                    E(b(q)),
+                                                                  ],
+                                                                ),
+                                                                _: 1,
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    [
+                                                      "modelValue",
+                                                      "placeholder",
+                                                    ],
+                                                  ),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              512,
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      E(
+                                        r,
+                                        {
+                                          label: e.$t("login.pwd"),
+                                          class: "password",
+                                          prop: "passwd",
+                                        },
+                                        {
+                                          default: T(() => [
+                                            E(
+                                              s,
+                                              {
+                                                modelValue: ka.passwd,
+                                                "onUpdate:modelValue":
+                                                  a[2] ||
+                                                  (a[2] = (e) =>
+                                                    (ka.passwd = e)),
+                                                placeholder: `${e.$t("login.password")}`,
+                                                autocomplete: "new-password",
+                                                "show-password": "",
+                                                type: "passwd",
+                                                onKeyup:
+                                                  a[3] ||
+                                                  (a[3] = P(
+                                                    (e) => Ka(Ca.value),
+                                                    ["enter"],
+                                                  )),
+                                                onBlur: qa,
+                                              },
+                                              {
+                                                prefix: T(() => [
+                                                  ...(a[17] ||
+                                                    (a[17] = [
+                                                      $(
+                                                        "i",
+                                                        {
+                                                          class:
+                                                            "iconfont icon-mima-01",
+                                                        },
+                                                        null,
+                                                        -1,
+                                                      ),
+                                                    ])),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue", "placeholder"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      $("div", je, [
+                                        $("div", Ge, [
+                                          E(
+                                            u,
+                                            {
+                                              modelValue: xa.value,
+                                              "onUpdate:modelValue":
+                                                a[4] ||
+                                                (a[4] = (e) => (xa.value = e)),
+                                              label: `${e.$t("login.rememberPass")}`,
+                                            },
+                                            null,
+                                            8,
+                                            ["modelValue", "label"],
+                                          ),
+                                          E(
+                                            c,
+                                            {
+                                              link: "",
+                                              type: "primary",
+                                              onClick:
+                                                a[5] || (a[5] = (e) => za()),
+                                            },
+                                            {
+                                              default: T(() => [
+                                                N(
+                                                  x(
+                                                    e.$t(
+                                                      "login.forgetPassword",
+                                                    ),
+                                                  ),
+                                                  1,
+                                                ),
+                                              ]),
+                                              _: 1,
+                                            },
+                                          ),
+                                        ]),
+                                        $("div", Je, [
+                                          E(
+                                            c,
+                                            {
+                                              loading: Ia.value,
+                                              type: "primary",
+                                              onClick:
+                                                a[6] ||
+                                                (a[6] = (e) => Ka(Ca.value)),
+                                            },
+                                            {
+                                              default: T(() => [
+                                                N(x(e.$t("login.loginBtn")), 1),
+                                              ]),
+                                              _: 1,
+                                            },
+                                            8,
+                                            ["loading"],
+                                          ),
+                                        ]),
+                                        $("div", Ke, [
+                                          $(
+                                            "span",
+                                            null,
+                                            x(e.$t("login.noUser")),
+                                            1,
+                                          ),
+                                          E(
+                                            c,
+                                            {
+                                              link: "",
+                                              type: "primary",
+                                              onClick:
+                                                a[7] || (a[7] = (e) => Ma()),
+                                            },
+                                            {
+                                              default: T(() => [
+                                                N(x(e.$t("login.register")), 1),
+                                              ]),
+                                              _: 1,
+                                            },
+                                          ),
+                                        ]),
+                                      ]),
+                                    ]),
+                                    _: 1,
+                                  },
+                                  8,
+                                  ["model", "rules"],
+                                )),
+                                [[m]],
+                              ),
+                            ]),
+                          ]),
+                          _: 1,
+                        },
+                      )),
+                  E(Te, { ref_key: "openLoginVerifyRef", ref: Ie }, null, 512),
+                  E(
+                    J,
+                    { ref_key: "preLoginLineDiagnosisRef", ref: ga },
+                    null,
+                    512,
+                  ),
+                ],
+                64,
+              )
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-7fce7a5a"]],
+  );
+export { ga as default };

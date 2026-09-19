@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-overlap-layout
+ * Method: handle
+ * Source offset: 2544725
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x125b8c,_0x2ecb83)=>uR(_0x2ecb83)

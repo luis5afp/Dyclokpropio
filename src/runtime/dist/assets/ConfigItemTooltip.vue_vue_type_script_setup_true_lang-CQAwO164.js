@@ -1,0 +1,38 @@
+import {
+  d as t,
+  r as a,
+  o as s,
+  h as e,
+  aJ as o,
+  w as n,
+  ai as l,
+  C as d,
+  df as i,
+  dg as p,
+  ad as r,
+} from "./index-BUIbb6Pa.js";
+const u = t({
+  __name: "ConfigItemTooltip",
+  setup(t) {
+    const u = d(() => i(p.GLOBAL_SETTINGS, !1)),
+      c = d(() => r().planTooltipContentText);
+    return (t, d) => {
+      const i = a("el-tooltip");
+      return (
+        s(),
+        e(
+          i,
+          o(t.$attrs, {
+            content: c.value,
+            disabled: u.value,
+            placement: "top",
+          }),
+          { default: n(() => [l(t.$slots, "default")]), _: 3 },
+          16,
+          ["content", "disabled"],
+        )
+      );
+    };
+  },
+});
+export { u as _ };

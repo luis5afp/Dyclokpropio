@@ -1,0 +1,229 @@
+import {
+  d as e,
+  v as t,
+  P as a,
+  D as i,
+  r as l,
+  o as s,
+  c as o,
+  a as n,
+  y as c,
+  b as r,
+  X as d,
+  O as p,
+  t as w,
+  w as v,
+  e as u,
+  f as m,
+  h as f,
+  i as x,
+  _ as y,
+} from "./index-BUIbb6Pa.js";
+import { e as g } from "./country-flag.esm-Bg8BdAZu.js";
+import { g as b } from "./timeZone-D3UW65MQ.js";
+import { _ } from "./TruncateText.vue_vue_type_script_setup_true_lang-wXc_gDkK.js";
+const D = {
+    class:
+      "tw-rounded-[16px] tw-p-[20px] tw-w-inherit tw-relative tw-text-[14px] tw-text-[var(--text-color-base)] tw-transition-all tw-bg-[var(--card-base-bg-color)]",
+  },
+  V = { class: "tw-flex tw-justify-between tw-mb-[15px]" },
+  h = { class: "tw-flex tw-items-start tw-w-full" },
+  k = { class: "tw-w-[50px] tw-h-[50px] c-flex tw-mr-[12px] tw-shrink-0" },
+  I = { class: "tw-flex-1" },
+  j = { class: "tw-flex" },
+  C = { class: "tw-flex-1 tw-mr-[10px] tw-w-[0]" },
+  L = { class: "tw-flex tw-items-center" },
+  M = {
+    class:
+      "tw-flex tw-justify-between tw-items-center tw-text-[var(--text-color-light1)]",
+  },
+  N = { class: "tw-h-fit tw-mr-[20px]" },
+  B = y(
+    e({
+      __name: "loginDeviceCard",
+      props: {
+        deviceData: {},
+        isMember: { type: Boolean },
+        selectable: { type: Boolean },
+        modelValue: { type: Boolean },
+      },
+      emits: ["downLine", "update:modelValue"],
+      setup(e, { emit: y }) {
+        let { t: B } = t.useI18n(),
+          T = e,
+          $ = x("");
+        const O = y;
+        function U() {
+          O("downLine", T.deviceData);
+        }
+        function z(e) {
+          O("update:modelValue", e);
+        }
+        function K() {
+          const { ipInfo: e } = T.deviceData,
+            { country: t, region: a, city: i } = e;
+          return `${t ?? a}-${i}`;
+        }
+        return (
+          a(async () => {
+            $.value = await i.api.getDeviceId();
+          }),
+          (t, a) => {
+            var i;
+            const x = l("el-checkbox"),
+              y = l("el-tag"),
+              T = l("el-button");
+            return (
+              s(),
+              o("div", D, [
+                n("div", V, [
+                  n("div", h, [
+                    e.selectable
+                      ? (s(),
+                        o(
+                          "div",
+                          {
+                            key: 0,
+                            class: "tw-mr-[12px] tw-mt-[4px]",
+                            onClick: a[0] || (a[0] = c(() => {}, ["stop"])),
+                          },
+                          [
+                            r(
+                              x,
+                              { "model-value": e.modelValue, onChange: z },
+                              null,
+                              8,
+                              ["model-value"],
+                            ),
+                          ],
+                        ))
+                      : d("", !0),
+                    n("div", k, [
+                      n(
+                        "i",
+                        {
+                          class: p(
+                            `iconfont icon-${null == (i = e.deviceData.os) ? void 0 : i.toLowerCase()} tw-text-[var(--primary-color)] tw-text-[40px]`,
+                          ),
+                        },
+                        null,
+                        2,
+                      ),
+                    ]),
+                    n("div", I, [
+                      n("div", j, [
+                        n("div", C, [
+                          n("div", null, w(e.deviceData.deviceName), 1),
+                          r(
+                            _,
+                            { lineNumber: 1 },
+                            {
+                              default: v(() => [
+                                u(
+                                  w(m(B)("org.loginVerify.pcUserName")) +
+                                    ": " +
+                                    w(e.deviceData.pcUserName || "--"),
+                                  1,
+                                ),
+                              ]),
+                              _: 1,
+                            },
+                          ),
+                        ]),
+                        e.isMember || m($) !== e.deviceData.deviceId
+                          ? e.isMember
+                            ? (s(),
+                              f(
+                                y,
+                                {
+                                  key: 1,
+                                  class: "device-tag",
+                                  effect: "plain",
+                                },
+                                {
+                                  default: v(() => [
+                                    u(
+                                      w(
+                                        e.deviceData.beOnline
+                                          ? m(B)("org.loginVerify.tip3")
+                                          : m(B)("org.loginVerify.tip2"),
+                                      ),
+                                      1,
+                                    ),
+                                  ]),
+                                  _: 1,
+                                },
+                              ))
+                            : d("", !0)
+                          : (s(),
+                            f(
+                              y,
+                              { key: 0, class: "device-tag", effect: "plain" },
+                              {
+                                default: v(() => [
+                                  u(w(m(B)("org.loginVerify.tip1")), 1),
+                                ]),
+                                _: 1,
+                              },
+                            )),
+                      ]),
+                      n("div", L, [
+                        r(
+                          m(g),
+                          {
+                            class: "!tw-scale-[0.4] !tw-m-0 !tw-ml-[-14px]",
+                            size: "normal",
+                            country: e.deviceData.ipInfo.countryCode,
+                          },
+                          null,
+                          8,
+                          ["country"],
+                        ),
+                        n("div", null, [
+                          n("div", null, w(K()), 1),
+                          n("div", null, w(e.deviceData.ipInfo.ip), 1),
+                        ]),
+                      ]),
+                    ]),
+                  ]),
+                ]),
+                n("div", M, [
+                  n(
+                    "div",
+                    N,
+                    w(
+                      m(B)("org.loginVerify.tip4") +
+                        " " +
+                        m(b)(e.deviceData.lastLoginTime),
+                    ),
+                    1,
+                  ),
+                  e.isMember || m($) !== e.deviceData.deviceId
+                    ? (s(),
+                      f(
+                        T,
+                        {
+                          key: 0,
+                          class: "tw-h-[32px]",
+                          plain: "",
+                          type: "primary",
+                          onClick: U,
+                        },
+                        {
+                          default: v(() => [
+                            u(w(m(B)("org.loginVerify.tip5")), 1),
+                          ]),
+                          _: 1,
+                        },
+                      ))
+                    : d("", !0),
+                ]),
+              ])
+            );
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-6dcdbefb"]],
+  );
+export { B as default };

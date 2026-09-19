@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="logo.ico" rel="icon" type="image/svg+xml" />
+    <title>DICloak</title>
+  </head>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0px;
+      background: #111;
+    }
+
+    .wrapper {
+      box-sizing: border-box;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      background: linear-gradient(
+        204deg,
+        rgba(21, 231, 176, 0.6) -277.22%,
+        rgba(17, 17, 17, 0.6) 78.78%
+      );
+      padding-top: 62px;
+
+      .rpa-img-box {
+        width: 25%;
+
+        img {
+          width: 100%;
+          height: fit-content;
+        }
+
+        .text {
+          margin-top: 16px;
+          font-size: 14px;
+          text-align: center;
+          color: #e6e6e6;
+        }
+      }
+    }
+  </style>
+  <body>
+    <div class="wrapper">
+      <div class="rpa-img-box">
+        <img src="./RpaRunning.png" alt="" />
+        <div class="text"></div>
+      </div>
+    </div>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const Language = urlParams.get("language");
+      let textMap = {
+        zh: "正在运行RPA，请勿操作当前浏览器页面，以免影响运行",
+        en: "RPA is in progress. Please avoid using the browser to prevent interference",
+        ru: "RPA в процессе. Пожалуйста, не используйте браузер, чтобы избежать сбоев",
+        vi: "RPA đang chạy. Vui lòng không sử dụng trình duyệt để tránh gián đoạn",
+        pt: "O RPA está em execução. Evite usar o navegador para não interferir",
+      };
+      console.log(textMap[Language], "textMap[language]");
+      let dom = document.querySelector(".rpa-img-box .text");
+      dom.innerText = textMap[Language] || textMap.en;
+    </script>
+  </body>
+</html>

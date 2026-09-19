@@ -1,0 +1,14 @@
+.container .label[data-v-f8c6dac3] {
+  font-size: 20px;
+  line-height: 20px;
+  color: var(--text-color-base);
+  margin-bottom: 16px;
+}
+.container .tips[data-v-f8c6dac3] {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-color-light1);
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: normal;
+}

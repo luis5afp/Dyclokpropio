@@ -1,0 +1,40 @@
+.min-table[data-v-f7c213c7] {
+  height: 500px;
+}
+.min-table[data-v-f7c213c7] .table-extend {
+  justify-content: left;
+}
+.min-table[data-v-f7c213c7] .table-main {
+  height: 460px;
+}
+.min-table[data-v-f7c213c7] .el-table tr {
+  height: 60px;
+}
+.min-table[data-v-f7c213c7] .el-table thead tr {
+  height: 40px;
+}
+.min-table[data-v-f7c213c7] .el-table thead tr th {
+  padding: 0;
+  height: 40px;
+}
+.min-table[data-v-f7c213c7] .el-pagination {
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+}
+.min-table[data-v-f7c213c7] .el-pagination .el-pagination__sizes,
+.min-table[data-v-f7c213c7] .el-pagination .el-pagination__sizes .el-select,
+.min-table[data-v-f7c213c7] .el-pagination .el-select__wrapper {
+  width: 104px;
+}
+.min-table[data-v-f7c213c7] .el-pagination .el-pager .number {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+}
+.min-table[data-v-f7c213c7] .filters {
+  width: 100%;
+}
+.upload-res-table-wrapper .el-dialog__footer {
+  padding: 0 32px 20px !important;
+}

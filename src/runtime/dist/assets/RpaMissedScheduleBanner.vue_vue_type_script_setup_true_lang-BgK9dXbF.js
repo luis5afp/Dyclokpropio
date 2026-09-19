@@ -1,0 +1,99 @@
+import {
+  d as s,
+  v as a,
+  u as e,
+  bt as t,
+  f as n,
+  o as i,
+  h as o,
+  w as c,
+  e as l,
+  t as r,
+  b as u,
+  $ as d,
+  O as p,
+  a as m,
+  X as _,
+} from "./index-BUIbb6Pa.js";
+import { _ as k } from "./EnvironmentWarningNoticeBanner.vue_vue_type_script_setup_true_lang-CnmLlY1e.js";
+const y = s({
+  __name: "RpaMissedScheduleBanner",
+  setup(s) {
+    const { t: y } = a.useI18n(),
+      g = e(),
+      f = t(),
+      h = () => {
+        (f.dismissInSession(), g.push({ name: "taskManage" }));
+      },
+      S = () => {
+        f.muteToday();
+      };
+    return (s, a) =>
+      n(f).visible && n(f).count > 0
+        ? (i(),
+          o(
+            k,
+            {
+              key: 0,
+              onClose: a[0] || (a[0] = (s) => n(f).dismissInSession()),
+            },
+            {
+              actions: c(({ classes: s }) => [
+                u(
+                  n(d),
+                  { class: p(s.button), link: "", type: "primary", onClick: h },
+                  {
+                    default: c(() => [
+                      m(
+                        "span",
+                        { class: p(s.text) },
+                        r(
+                          n(y)("rpa.setting.missedLocalScheduledTaskViewTasks"),
+                        ),
+                        3,
+                      ),
+                    ]),
+                    _: 2,
+                  },
+                  1032,
+                  ["class"],
+                ),
+                u(
+                  n(d),
+                  { class: p(s.button), link: "", type: "primary", onClick: S },
+                  {
+                    default: c(() => [
+                      m(
+                        "span",
+                        { class: p(s.text) },
+                        r(
+                          n(y)(
+                            "rpa.setting.missedLocalScheduledTaskNoPromptToday",
+                          ),
+                        ),
+                        3,
+                      ),
+                    ]),
+                    _: 2,
+                  },
+                  1032,
+                  ["class"],
+                ),
+              ]),
+              default: c(() => [
+                l(
+                  r(
+                    n(y)("rpa.setting.missedLocalScheduledTaskBannerMessage", {
+                      count: n(f).count,
+                    }),
+                  ) + " ",
+                  1,
+                ),
+              ]),
+              _: 1,
+            },
+          ))
+        : _("", !0);
+  },
+});
+export { y as _ };

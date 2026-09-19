@@ -1,0 +1,775 @@
+import {
+  d as e,
+  v as a,
+  R as t,
+  aW as r,
+  r as l,
+  q as o,
+  o as s,
+  h as u,
+  w as i,
+  x as p,
+  y as n,
+  f as v,
+  b as c,
+  a as m,
+  t as d,
+  X as y,
+  c as _,
+  F as g,
+  ge as x,
+  e as f,
+  aq as h,
+  i as k,
+  at as b,
+  C as j,
+  d4 as w,
+  co as I,
+  bQ as R,
+  bR as P,
+  am as T,
+  bS as S,
+  as as V,
+  a3 as O,
+  ci as E,
+  gf as C,
+  c_ as L,
+  d3 as A,
+  bX as D,
+  bO as q,
+  an as $,
+  bY as U,
+  c4 as F,
+  gg as M,
+  gh as N,
+  gi as W,
+  gj as H,
+  gk as G,
+  _ as B,
+} from "./index-BUIbb6Pa.js";
+import X from "./envEditAccountForm-WSrZTnvX.js";
+import Y from "./envEditProxyForm-BbH2PHWU.js";
+import { g as z } from "./proxyProviderAvailability-Dl68x0Bx.js";
+import Q from "./envTagSelect-BOvyEvCo.js";
+import "./fixedUrlsFormItem.vue_vue_type_script_setup_true_lang-J-frhu2d.js";
+import "./Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js";
+import "./proxyEditV2-PrFoTQ5r.js";
+import "./ipResourceMock-CCd7H3CQ.js";
+import "./index.vue_vue_type_script_setup_true_lang-CIPUEjpB.js";
+import "./index.vue_vue_type_script_setup_true_lang-A7OAkZwm.js";
+import "./CustomRadioGroup-Dk-imFdD.js";
+import "./editProxySoftDlg.vue_vue_type_script_setup_true_lang-D9otwVyq.js";
+import "./proxySoftItem-B7tAwO_8.js";
+import "./envProxyItems-DIhzCyp-.js";
+import "./proxyCheckButton-qJacjpSf.js";
+import "./proxyUtil-OnkkuXcX.js";
+import "./envAutoInputProxy.vue_vue_type_script_setup_true_lang-CKSB7kpP.js";
+import "./proxyApiExtraction-CcAfvVt-.js";
+import "./ProxyGroupSelect.vue_vue_type_script_setup_true_lang-CTswbFOC.js";
+import "./envSerialNums-BjlyggGT.js";
+import "./ParaturboProxyConfig.vue_vue_type_script_setup_true_lang-DnrGQZKb.js";
+import "./DynamicProxyForm.vue_vue_type_script_setup_true_lang-BLDcp8Iw.js";
+import "./ipResourceCatalog-CJEdeRbI.js";
+import "./IpCountryFlag.vue_vue_type_script_setup_true_lang-DgLdnpgH.js";
+import "./country-flag.esm-Bg8BdAZu.js";
+import "./IpResourceSelector.vue_vue_type_script_setup_true_lang-Dxuw76Sd.js";
+import "./DynamicTrafficGate.vue_vue_type_script_setup_true_lang-3aGxeuRD.js";
+import "./IpResourcePurchaseDialog.vue_vue_type_script_setup_true_lang-DcxcArWP.js";
+import "./envSegmentedTabs-B8OKb7JK.js";
+import "./DynamicTrafficPurchase.vue_vue_type_script_setup_true_lang-BAxyvPun.js";
+import "./ipResourcePayment-DW1eNDIC.js";
+import "./payDialog.vue_vue_type_style_index_0_lang-BmKrLnEo.js";
+import "./browser-DEPKJqf2.js";
+import "./IpPurchaseImportantNotice.vue_vue_type_script_setup_true_lang-umWhcEQR.js";
+import "./IpPurchaseCheckoutFooter.vue_vue_type_script_setup_true_lang-Boqn4piK.js";
+import "./IpPurchaseOrderSummary.vue_vue_type_script_setup_true_lang-CQmGRhje.js";
+import "./paySelect-CHLWtiLZ.js";
+import "./StaticIpPurchase.vue_vue_type_script_setup_true_lang-Cjw6R1ER.js";
+import "./common-_BPSz0Vp.js";
+const J = [
+    "proxyWay",
+    "proxySelectWay",
+    "proxyGroupIds",
+    "proxyId",
+    "proxySoftEnable",
+    "proxySoft",
+    "proxySoftInfo",
+    "proxyApiInfo",
+    "proxyType",
+    "proxyHost",
+    "proxyPort",
+    "proxyUserName",
+    "proxyPasswd",
+    "proxyIpType",
+    "proxyIpAddrType",
+    "proxyIpInfo",
+    "lastProxyIpInfo",
+    "ipResourceType",
+    "ipResourceConfig",
+  ],
+  K = { key: 0, class: "tw-mt-[4px]" },
+  Z = B(
+    e({
+      __name: "envUpdate",
+      emits: ["submit"],
+      setup(e, { expose: B, emit: Z }) {
+        const { t: ee } = a.useI18n(),
+          ae = k(),
+          te = Z,
+          re = k(!1),
+          le = k(""),
+          oe = k("name"),
+          se = k(!1),
+          ue = k(),
+          ie = k(),
+          pe = k([]),
+          ne = k([]),
+          ve = k([]),
+          ce = k([]),
+          me = k({}),
+          de = k(new Set()),
+          ye = { proxyHost: 1, proxyId: 1, accountList: 2 },
+          _e = k(!1),
+          { listingLinkAccounts: ge } = t(r());
+        let xe = b({});
+        const fe = () => {
+            Object.keys(xe).forEach((e) => Reflect.deleteProperty(xe, e));
+          },
+          he = j(() =>
+            "envTag" === oe.value
+              ? "600px"
+              : "proxy" === oe.value
+                ? "859px"
+                : ["name", "remark", "batchRemark", "envTag"].includes(oe.value)
+                  ? "500px"
+                  : "750px",
+          ),
+          ke = () => {
+            ((ne.value = R(P)),
+              (ve.value = R(S, [T.Ssh, ...z(xe.proxyType)])),
+              (pe.value = []),
+              ge.value.forEach((e) => {
+                pe.value.push({
+                  value: e.value,
+                  label:
+                    "other" === e.value
+                      ? ee("env.env.req.customPlatform")
+                      : e.value,
+                  logo: e.logo,
+                });
+              }));
+          },
+          be = async () => {
+            var e, a, t;
+            const r = (null == xe ? void 0 : xe.id) ?? "";
+            switch (oe.value) {
+              case "name":
+                return void (await G(r, { name: xe.name }, !0));
+              case "remark":
+                return void (await H(
+                  r,
+                  ((l = xe.remark), { remark: l ?? "" }),
+                  !0,
+                ));
+              case "envTag":
+                return void (await W(
+                  r,
+                  { envTagIds: (xe.envTagList || []).map((e) => e.id) },
+                  !0,
+                ));
+              case "proxy": {
+                const t = await D(xe, q.Single);
+                return (
+                  t.proxyWay !== $.FROM_API ||
+                    (null == (e = t.proxyApiInfo) ? void 0 : e.ip) ||
+                    (await U(t)),
+                  void (await N(
+                    r,
+                    ((e) =>
+                      J.reduce(
+                        (a, t) => (
+                          Object.prototype.hasOwnProperty.call(e, t) &&
+                            (a[t] = e[t]),
+                          a
+                        ),
+                        {},
+                      ))({
+                      ...t,
+                      proxySelectWay:
+                        null == (a = t.proxyOwnType) ? void 0 : a.toUpperCase(),
+                    }),
+                    !0,
+                  ))
+                );
+              }
+              default: {
+                const e = await D(xe, q.Single);
+                ((e.envTagIds = (xe.envTagList || []).map((e) => e.id)),
+                  e.proxyWay !== $.FROM_API ||
+                    (null == (t = e.proxyApiInfo) ? void 0 : t.ip) ||
+                    (await U(e)),
+                  await F(
+                    (null == xe ? void 0 : xe.id) ?? "",
+                    M(e, ["envTagList"]),
+                  ));
+              }
+            }
+            var l;
+          };
+        let je = k(!1);
+        const we = async () => {
+            var e;
+            if (!je.value) {
+              je.value = !0;
+              try {
+                if ("account" === oe.value) {
+                  let [a] = await V(
+                    null == (e = ue.value) ? void 0 : e.validateAccountList(),
+                  );
+                  if (a)
+                    return (
+                      (je.value = !1),
+                      O.warning(ee("env.env.req.pleaseCheck"))
+                    );
+                } else {
+                  let [e] = await V(ae.value.validate());
+                  if (e)
+                    return (
+                      (je.value = !1),
+                      O.warning(ee("env.env.req.pleaseCheck"))
+                    );
+                }
+                const a = {};
+                switch (oe.value) {
+                  case "name":
+                    a.name = xe.name;
+                    break;
+                  case "remark":
+                    a.remark = xe.remark;
+                    break;
+                  case "batchRemark":
+                    ((a.remark = xe.remark ?? ""),
+                      (a.ids = xe.ids),
+                      (a.type = xe.type));
+                    break;
+                  case "account":
+                    a.accountList = xe.accountList;
+                }
+                "batchRemark" === oe.value
+                  ? await E(
+                      ee("env.env.batchRemark.tipsContent"),
+                      async () => {
+                        (await C(a),
+                          O.success(ee("env.env.shareDialog.operatorSuccess")),
+                          te("submit"),
+                          Ie());
+                      },
+                      {
+                        isIcon: !0,
+                        title: ee("env.env.batchRemark.tipsTitle"),
+                        successMsg: ee("env.env.shareDialog.shareSuccessMsg"),
+                      },
+                    )
+                  : (await be(),
+                    O.success(ee("env.env.shareDialog.operatorSuccess")),
+                    Ie(),
+                    te("submit"));
+              } finally {
+                je.value = !1;
+              }
+            }
+          },
+          Ie = () => {
+            (fe(), (xe.remark = ""), (xe.type = x.COVER), (re.value = !1));
+          },
+          Re = async () => {
+            _e.value = !0;
+            try {
+              const e = await L({ all: !0, detail: !0 });
+              ((me.value = A(e.list)),
+                (ce.value = e.list.map((e) => ({
+                  ...e,
+                  value: e.id,
+                  label: e.host,
+                }))));
+            } finally {
+              setTimeout(() => {
+                _e.value = !1;
+              }, 300);
+            }
+          },
+          Pe = () => {
+            ae.value.validate((e, a) => {
+              !e && a
+                ? ((de.value = new Set()),
+                  Object.keys(a).forEach((e) => {
+                    const a = ye[e];
+                    de.value.add(a);
+                  }))
+                : (de.value = new Set());
+            });
+          },
+          Te = j(() => {
+            var e;
+            return { ...(null == (e = ie.value) ? void 0 : e.rules) };
+          });
+        return (
+          B({
+            acceptParams: async (e, a, t, r) => {
+              if ((console.log(e, a, t, "acceptParams"), "batchRemark" !== e)) {
+                if (!r.length) return;
+                const e = r[0];
+                (fe(),
+                  Object.assign(xe, w(e)),
+                  e.envTagList || (xe.envTagList = []),
+                  !xe.proxyApiInfo &&
+                    (xe.proxyApiInfo = {
+                      ipMethod: I.EVERY_TIME,
+                      url: "",
+                      ip: "",
+                      port: "",
+                      checkDuplicate: !1,
+                    }),
+                  console.log(xe, e, "handleEchoData"));
+              } else
+                ((xe.serialNum =
+                  null == r ? void 0 : r.map((e) => e.serialNum).join(", ")),
+                  (xe.type = x.COVER),
+                  (xe.ids = a));
+              switch (e) {
+                case "name":
+                  le.value = ee("env.env.req.editEnvName");
+                  break;
+                case "remark":
+                case "batchRemark":
+                  le.value = ee("env.env.req.editEnvRemark");
+                  break;
+                case "account":
+                  le.value = ee("env.env.req.editEnvAccount");
+                  break;
+                case "proxy":
+                  le.value = ee("env.env.req.editEnvProxy");
+                  break;
+                case "envTag":
+                  le.value = ee("env.tag.editTag");
+              }
+              (["account", "proxy"].includes(e) && ke(),
+                (se.value = t),
+                (oe.value = e),
+                (re.value = !0));
+            },
+          }),
+          (e, a) => {
+            const t = l("el-form-item"),
+              r = l("el-input"),
+              k = l("el-radio"),
+              b = l("el-radio-group"),
+              j = l("el-form"),
+              w = l("el-button"),
+              I = l("el-dialog"),
+              R = o("trim"),
+              P = o("prevent-label-click");
+            return re.value
+              ? (s(),
+                u(
+                  I,
+                  {
+                    key: 0,
+                    modelValue: re.value,
+                    "onUpdate:modelValue":
+                      a[8] || (a[8] = (e) => (re.value = e)),
+                    "align-center": !0,
+                    close: Ie,
+                    "close-on-click-modal": !1,
+                    "close-on-press-escape": !1,
+                    title: le.value,
+                    class: "env-update-dialog",
+                    width: he.value,
+                  },
+                  {
+                    footer: i(() => [
+                      c(
+                        w,
+                        { type: "info", onClick: Ie },
+                        {
+                          default: i(() => [f(d(e.$t("base.cancel")), 1)]),
+                          _: 1,
+                        },
+                      ),
+                      c(
+                        w,
+                        { type: "primary", onClick: we, loading: v(je) },
+                        {
+                          default: i(() => [f(d(e.$t("base.confirm")), 1)]),
+                          _: 1,
+                        },
+                        8,
+                        ["loading"],
+                      ),
+                    ]),
+                    default: i(() => [
+                      p(
+                        (s(),
+                        u(
+                          j,
+                          {
+                            ref_key: "ruleFormRef",
+                            ref: ae,
+                            model: v(xe),
+                            rules: Te.value,
+                            "label-position": "right",
+                            onSubmit: a[7] || (a[7] = n(() => {}, ["prevent"])),
+                            "label-width": "auto",
+                          },
+                          {
+                            default: i(() => [
+                              c(
+                                t,
+                                { label: e.$t("env.env.clone.serialNum") },
+                                {
+                                  default: i(() => [
+                                    m("div", null, d(v(xe).serialNum), 1),
+                                  ]),
+                                  _: 1,
+                                },
+                                8,
+                                ["label"],
+                              ),
+                              "name" === oe.value
+                                ? (s(),
+                                  u(
+                                    t,
+                                    { key: 0, label: e.$t("env.env.req.name") },
+                                    {
+                                      default: i(() => [
+                                        p(
+                                          c(
+                                            r,
+                                            {
+                                              modelValue: v(xe).name,
+                                              "onUpdate:modelValue":
+                                                a[0] ||
+                                                (a[0] = (e) =>
+                                                  (v(xe).name = e)),
+                                              placeholder: e.$t(
+                                                "env.env.req.nameHolder",
+                                              ),
+                                              clearable: "",
+                                              maxlength: "100",
+                                              "show-word-limit": "",
+                                            },
+                                            null,
+                                            8,
+                                            ["modelValue", "placeholder"],
+                                          ),
+                                          [[R]],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ))
+                                : y("", !0),
+                              "remark" === oe.value
+                                ? (s(),
+                                  u(
+                                    t,
+                                    {
+                                      key: 1,
+                                      label: e.$t("env.env.req.remark"),
+                                    },
+                                    {
+                                      default: i(() => [
+                                        c(
+                                          r,
+                                          {
+                                            modelValue: v(xe).remark,
+                                            "onUpdate:modelValue":
+                                              a[1] ||
+                                              (a[1] = (e) =>
+                                                (v(xe).remark = e)),
+                                            placeholder: e.$t(
+                                              "env.env.req.remarkHolder",
+                                            ),
+                                            clearable: "",
+                                            maxlength: "500",
+                                            "show-word-limit": "",
+                                            type: "textarea",
+                                            rows: 4,
+                                            resize: "none",
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "placeholder"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ))
+                                : y("", !0),
+                              "batchRemark" === oe.value
+                                ? (s(),
+                                  _(
+                                    g,
+                                    { key: 2 },
+                                    [
+                                      c(
+                                        t,
+                                        {
+                                          label: e.$t(
+                                            "env.env.batchRemark.updateType",
+                                          ),
+                                        },
+                                        {
+                                          default: i(() => [
+                                            c(
+                                              b,
+                                              {
+                                                modelValue: v(xe).type,
+                                                "onUpdate:modelValue":
+                                                  a[2] ||
+                                                  (a[2] = (e) =>
+                                                    (v(xe).type = e)),
+                                              },
+                                              {
+                                                default: i(() => [
+                                                  c(
+                                                    k,
+                                                    { value: v(x).COVER },
+                                                    {
+                                                      default: i(() => [
+                                                        f(
+                                                          d(
+                                                            e.$t(
+                                                              "env.env.batchRemark.cover",
+                                                            ),
+                                                          ),
+                                                          1,
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    ["value"],
+                                                  ),
+                                                  c(
+                                                    k,
+                                                    { value: v(x).APPEND },
+                                                    {
+                                                      default: i(() => [
+                                                        f(
+                                                          d(
+                                                            e.$t(
+                                                              "env.env.batchRemark.append",
+                                                            ),
+                                                          ),
+                                                          1,
+                                                        ),
+                                                      ]),
+                                                      _: 1,
+                                                    },
+                                                    8,
+                                                    ["value"],
+                                                  ),
+                                                ]),
+                                                _: 1,
+                                              },
+                                              8,
+                                              ["modelValue"],
+                                            ),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                      c(
+                                        t,
+                                        { label: e.$t("env.env.req.remark") },
+                                        {
+                                          default: i(() => [
+                                            c(
+                                              r,
+                                              {
+                                                type: "textarea",
+                                                rows: 4,
+                                                resize: "none",
+                                                modelValue: v(xe).remark,
+                                                "onUpdate:modelValue":
+                                                  a[3] ||
+                                                  (a[3] = (e) =>
+                                                    (v(xe).remark = e)),
+                                                placeholder: e.$t(
+                                                  "env.env.req.remarkHolder",
+                                                ),
+                                                clearable: "",
+                                                maxlength: "500",
+                                                "show-word-limit": "",
+                                              },
+                                              null,
+                                              8,
+                                              ["modelValue", "placeholder"],
+                                            ),
+                                            v(xe).type === v(x).COVER
+                                              ? (s(),
+                                                _(
+                                                  "div",
+                                                  K,
+                                                  d(
+                                                    e.$t(
+                                                      "env.env.batchRemark.tips",
+                                                    ),
+                                                  ),
+                                                  1,
+                                                ))
+                                              : y("", !0),
+                                          ]),
+                                          _: 1,
+                                        },
+                                        8,
+                                        ["label"],
+                                      ),
+                                    ],
+                                    64,
+                                  ))
+                                : y("", !0),
+                              "account" === oe.value
+                                ? (s(),
+                                  u(
+                                    X,
+                                    {
+                                      key: 3,
+                                      ref_key: "accountFormRef",
+                                      ref: ue,
+                                      modelValue: v(xe),
+                                      "onUpdate:modelValue":
+                                        a[4] ||
+                                        (a[4] = (e) =>
+                                          h(xe) ? (xe.value = e) : (xe = e)),
+                                      accountPlatformOptions: pe.value,
+                                      batchData: {},
+                                      importData: {},
+                                      "is-share": se.value,
+                                      isBatch: !1,
+                                      isBulkImport: !1,
+                                      isEdit: !0,
+                                      isSingle: !0,
+                                      isUpdate: !0,
+                                      onCheckStep: Pe,
+                                    },
+                                    null,
+                                    8,
+                                    [
+                                      "modelValue",
+                                      "accountPlatformOptions",
+                                      "is-share",
+                                    ],
+                                  ))
+                                : y("", !0),
+                              "proxy" === oe.value
+                                ? (s(),
+                                  _(
+                                    g,
+                                    { key: 4 },
+                                    [
+                                      re.value
+                                        ? (s(),
+                                          u(
+                                            Y,
+                                            {
+                                              key: 0,
+                                              ref_key: "envEditProxyFormRef",
+                                              ref: ie,
+                                              modelValue: v(xe),
+                                              "onUpdate:modelValue":
+                                                a[5] ||
+                                                (a[5] = (e) =>
+                                                  h(xe)
+                                                    ? (xe.value = e)
+                                                    : (xe = e)),
+                                              batchData: {},
+                                              importData: {},
+                                              "is-batch": !1,
+                                              "is-edit": !0,
+                                              "is-share": se.value,
+                                              isBulkImport: !1,
+                                              isSingle: !0,
+                                              proxyIdOptions: ce.value,
+                                              proxyListMap: me.value,
+                                              proxyTypeOptions: ve.value,
+                                              proxyWayOptions: ne.value,
+                                              proxyIdOptionsLoading: _e.value,
+                                              onGetProxyList: Re,
+                                            },
+                                            null,
+                                            8,
+                                            [
+                                              "modelValue",
+                                              "is-share",
+                                              "proxyIdOptions",
+                                              "proxyListMap",
+                                              "proxyTypeOptions",
+                                              "proxyWayOptions",
+                                              "proxyIdOptionsLoading",
+                                            ],
+                                          ))
+                                        : y("", !0),
+                                    ],
+                                    64,
+                                  ))
+                                : y("", !0),
+                              "envTag" === oe.value
+                                ? (s(),
+                                  u(
+                                    t,
+                                    {
+                                      key: 5,
+                                      label: e.$t("env.tag.selectTag"),
+                                    },
+                                    {
+                                      default: i(() => [
+                                        c(
+                                          Q,
+                                          {
+                                            modelValue: v(xe).envTagList,
+                                            "onUpdate:modelValue":
+                                              a[6] ||
+                                              (a[6] = (e) =>
+                                                (v(xe).envTagList = e)),
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue"],
+                                        ),
+                                      ]),
+                                      _: 1,
+                                    },
+                                    8,
+                                    ["label"],
+                                  ))
+                                : y("", !0),
+                            ]),
+                            _: 1,
+                          },
+                          8,
+                          ["model", "rules"],
+                        )),
+                        [[P]],
+                      ),
+                    ]),
+                    _: 1,
+                  },
+                  8,
+                  ["modelValue", "title", "width"],
+                ))
+              : y("", !0);
+          }
+        );
+      },
+    }),
+    [["__scopeId", "data-v-1c95a1f0"]],
+  );
+export { Z as default };

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "sha256",
+  "files": {
+    "dist-electron/worker/downloadWorker.js": "cffba059fc7d5030e66a3ec1409f991b67890097dd23ee25a6273cbb7e61f3a4"
+  }
+}

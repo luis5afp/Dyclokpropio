@@ -1,0 +1,34 @@
+import { i as r, C as s, be as a } from "./index-BUIbb6Pa.js";
+function e(e) {
+  const { permissions: n, showTip: i = !1, tipMessage: o } = e,
+    u = r(!1),
+    t = s(() => a(n));
+  return {
+    hasPermission: t,
+    isLoading: u,
+    guard: (r, s) =>
+      t.value
+        ? r()
+        : (i &&
+            console.warn(`[PermissionGuard] 无权限执行操作，需要权限: ${n}`),
+          void (null == s || s())),
+    guardedFetch: async (r, s) => {
+      if (!t.value)
+        return (
+          i && console.warn(`[PermissionGuard] 无权限加载数据，需要权限: ${n}`),
+          s
+        );
+      try {
+        return ((u.value = !0), await r());
+      } catch (a) {
+        return (console.error("[PermissionGuard] 数据加载失败:", a), s);
+      } finally {
+        u.value = !1;
+      }
+    },
+  };
+}
+function n(r, s) {
+  return r ? (Array.isArray(s) ? s : [s]) : [];
+}
+export { n as c, e as u };

@@ -1,0 +1,210 @@
+import {
+  d as e,
+  v as t,
+  dL as a,
+  be as l,
+  ah as s,
+  r as o,
+  h as u,
+  w as r,
+  c as n,
+  b as c,
+  aj as i,
+  X as p,
+  a as w,
+  t as m,
+  f as d,
+  i as v,
+  C as f,
+  o as x,
+} from "./index-BUIbb6Pa.js";
+import b from "./envSegmentedTabs-B8OKb7JK.js";
+import { _ } from "./DynamicTrafficPurchase.vue_vue_type_script_setup_true_lang-BAxyvPun.js";
+import { _ as g } from "./StaticIpPurchase.vue_vue_type_script_setup_true_lang-Cjw6R1ER.js";
+const h = "" + new URL("puraroute-logo-CwwMXB4a.png", import.meta.url).href,
+  y = "" + new URL("puraroute-logo-dark-CnXwnWil.png", import.meta.url).href,
+  R = { key: 0, class: "tw-flex tw-w-full tw-justify-start tw-pl-6" },
+  k = {
+    href: "https://go.dicloak.net/c/10027?slot=buy_form",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    class:
+      "tw-inline-flex tw-items-center tw-gap-3 tw-rounded-lg tw-text-left tw-no-underline focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-[var(--primary-color)]",
+  },
+  V = ["src"],
+  j = {
+    key: 1,
+    class:
+      "tw-block tw-text-center tw-text-lg tw-font-semibold tw-text-[var(--text-color-base)]",
+  },
+  S = {
+    key: 0,
+    class:
+      "tw-max-h-[calc(100vh-120px)] tw-overflow-y-auto tw-text-[var(--text-color-base)]",
+  },
+  I = e({
+    __name: "IpResourcePurchaseDialog",
+    emits: ["success"],
+    setup(e, { expose: I, emit: P }) {
+      const U = P,
+        { t: C } = t.useI18n(),
+        { themeMode: D } = a(),
+        E = v(!1),
+        L = v("static"),
+        M = v(),
+        X = l(s.VIEW_ORDER_RECORDS),
+        O = f(() => ("dark" === D.value ? y : h)),
+        T = f(() => [
+          { label: C("ipResource.static"), value: "static" },
+          { label: C("ipResource.dynamic"), value: "dynamic" },
+        ]),
+        W = () => {
+          ((E.value = !1), U("success"));
+        };
+      return (
+        I({
+          open: (e = "static", t) => {
+            X && ((M.value = t), (L.value = t ? "static" : e), (E.value = !0));
+          },
+        }),
+        (e, t) => {
+          const a = o("el-dialog");
+          return (
+            x(),
+            u(
+              a,
+              {
+                modelValue: E.value,
+                "onUpdate:modelValue": t[2] || (t[2] = (e) => (E.value = e)),
+                width: "min(1400px, calc(100vw - 32px))",
+                "align-center": "",
+                "append-to-body": "",
+              },
+              {
+                header: r(() => [
+                  M.value
+                    ? (x(),
+                      n("span", j, m(d(C)("ipResource.renewStaticIp")), 1))
+                    : (x(),
+                      n("div", R, [
+                        w("a", k, [
+                          w(
+                            "img",
+                            {
+                              src: O.value,
+                              alt: "PuraRoute",
+                              class:
+                                "tw-h-11 tw-w-11 tw-flex-none tw-object-contain",
+                            },
+                            null,
+                            8,
+                            V,
+                          ),
+                          t[3] ||
+                            (t[3] = w(
+                              "span",
+                              {
+                                class:
+                                  "tw-flex tw-min-w-0 tw-flex-col tw-gap-1",
+                              },
+                              [
+                                w(
+                                  "span",
+                                  {
+                                    class:
+                                      "tw-text-lg tw-font-semibold tw-leading-5 tw-text-[var(--text-color-base)]",
+                                  },
+                                  "PuraRoute",
+                                ),
+                                w(
+                                  "span",
+                                  {
+                                    class:
+                                      "tw-text-[13px] tw-leading-4 tw-text-[var(--text-color-light2)] hover:tw-text-[var(--primary-color)]",
+                                  },
+                                  " https://puraroute.com/ ",
+                                ),
+                              ],
+                              -1,
+                            )),
+                        ]),
+                      ])),
+                ]),
+                default: r(() => [
+                  E.value
+                    ? (x(),
+                      n("div", S, [
+                        "dynamic" !== L.value || M.value
+                          ? (x(),
+                            u(
+                              g,
+                              {
+                                key: 1,
+                                embedded: "",
+                                "renew-item": M.value,
+                                onSuccess: W,
+                              },
+                              i({ _: 2 }, [
+                                M.value
+                                  ? void 0
+                                  : {
+                                      name: "purchase-type-tabs",
+                                      fn: r(() => [
+                                        c(
+                                          b,
+                                          {
+                                            modelValue: L.value,
+                                            "onUpdate:modelValue":
+                                              t[1] ||
+                                              (t[1] = (e) => (L.value = e)),
+                                            options: T.value,
+                                            class: "tw-mb-6",
+                                          },
+                                          null,
+                                          8,
+                                          ["modelValue", "options"],
+                                        ),
+                                      ]),
+                                      key: "0",
+                                    },
+                              ]),
+                              1032,
+                              ["renew-item"],
+                            ))
+                          : (x(),
+                            u(
+                              _,
+                              { key: 0, embedded: "", onSuccess: W },
+                              {
+                                "purchase-type-tabs": r(() => [
+                                  c(
+                                    b,
+                                    {
+                                      modelValue: L.value,
+                                      "onUpdate:modelValue":
+                                        t[0] || (t[0] = (e) => (L.value = e)),
+                                      options: T.value,
+                                      class: "tw-mb-6",
+                                    },
+                                    null,
+                                    8,
+                                    ["modelValue", "options"],
+                                  ),
+                                ]),
+                                _: 1,
+                              },
+                            )),
+                      ]))
+                    : p("", !0),
+                ]),
+                _: 1,
+              },
+              8,
+              ["modelValue"],
+            )
+          );
+        }
+      );
+    },
+  });
+export { I as _ };

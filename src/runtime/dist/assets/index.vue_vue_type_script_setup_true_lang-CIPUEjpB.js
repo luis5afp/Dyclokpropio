@@ -1,0 +1,63 @@
+import {
+  d as t,
+  r as e,
+  o as s,
+  h as a,
+  aj as o,
+  w as n,
+  a as l,
+  ai as c,
+  O as i,
+  aJ as r,
+} from "./index-BUIbb6Pa.js";
+const p = { class: "tw-text-[var(--text-color-base)] tw-whitespace-pre-line" },
+  w = t({
+    __name: "index",
+    props: {
+      icon: { default: "icon-help-circle1" },
+      iconClass: { default: "" },
+    },
+    setup: (t) => (w, d) => {
+      const x = e("el-tooltip");
+      return (
+        s(),
+        a(
+          x,
+          r(w.$attrs, {
+            placement: "top",
+            "popper-class": "!tw-max-w-[300px] tw-whitespace-pre-line",
+          }),
+          o(
+            {
+              default: n(() => [
+                c(w.$slots, "default", {}, () => [
+                  l(
+                    "i",
+                    {
+                      class: i(
+                        `iconfont ${t.icon} tw-cursor-pointer tw-align-middle tw-text-subText hover:tw-text-black ${t.iconClass}`,
+                      ),
+                    },
+                    null,
+                    2,
+                  ),
+                ]),
+              ]),
+              _: 2,
+            },
+            [
+              w.$attrs.content
+                ? void 0
+                : {
+                    name: "content",
+                    fn: n(() => [l("div", p, [c(w.$slots, "content")])]),
+                    key: "0",
+                  },
+            ],
+          ),
+          1040,
+        )
+      );
+    },
+  });
+export { w as _ };

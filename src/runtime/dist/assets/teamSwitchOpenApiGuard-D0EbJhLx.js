@@ -1,0 +1,165 @@
+import {
+  aE as e,
+  aF as s,
+  aG as t,
+  n as a,
+  H as i,
+  aH as n,
+  aI as h,
+} from "./index-BUIbb6Pa.js";
+const r = e({
+    id: "fire-article-keepAlive",
+    state: () => ({ keepAliveName: [] }),
+    actions: {
+      async addKeepAliveName(e) {
+        !this.keepAliveName.includes(e) && this.keepAliveName.push(e);
+      },
+      async removeKeepAliveName(e) {
+        this.keepAliveName = this.keepAliveName.filter((s) => s !== e);
+      },
+      async setKeepAliveName(e = []) {
+        this.keepAliveName = e;
+      },
+    },
+  }),
+  l = r(),
+  o = e({
+    id: "gin-tabs",
+    state: () => ({ tabsMenuList: [] }),
+    actions: {
+      async addTabs(e) {
+        (this.tabsMenuList.every((s) => s.path !== e.path) &&
+          (e.path === i || e.path.endsWith(n) || this.tabsMenuList.push(e)),
+          !l.keepAliveName.includes(e.name) &&
+            e.isKeepAlive &&
+            l.addKeepAliveName(e.path));
+      },
+      async removeTabs(e, s = !0) {
+        s &&
+          this.tabsMenuList.forEach((s, t) => {
+            if (s.path !== e) return;
+            const i = this.tabsMenuList[t + 1] || this.tabsMenuList[t - 1];
+            i && a.push(i.path);
+          });
+        const t = this.tabsMenuList.find((s) => s.path === e);
+        ((null == t ? void 0 : t.isKeepAlive) && l.removeKeepAliveName(t.path),
+          (this.tabsMenuList = this.tabsMenuList.filter((s) => s.path !== e)));
+      },
+      async closeTabsOnSide(e, s) {
+        const t = this.tabsMenuList.findIndex((s) => s.path === e);
+        if (-1 !== t) {
+          const e = "left" === s ? [0, t] : [t + 1, this.tabsMenuList.length];
+          this.tabsMenuList = this.tabsMenuList.filter(
+            (s, t) => t < e[0] || t >= e[1] || !s.close,
+          );
+        }
+        const a = this.tabsMenuList.filter((e) => e.isKeepAlive);
+        l.setKeepAliveName(a.map((e) => e.path));
+      },
+      async closeMultipleTab(e) {
+        this.tabsMenuList = this.tabsMenuList.filter(
+          (s) => s.path === e || !s.close,
+        );
+        const s = this.tabsMenuList.filter((e) => e.isKeepAlive);
+        l.setKeepAliveName(s.map((e) => e.path));
+      },
+      async setTabs(e) {
+        this.tabsMenuList = e;
+      },
+      async setTabsTitle(e) {
+        this.tabsMenuList.forEach((s) => {
+          s.path == t() && (s.title = e);
+        });
+      },
+    },
+    persist: s("gin-tabs"),
+  });
+let c = null;
+const d = e({
+  id: "orgList",
+  state: () => ({
+    list: [],
+    status: "idle",
+    hasLoaded: !1,
+    lastLoadedAt: 0,
+    error: "",
+  }),
+  getters: {
+    shouldShowSkeleton: (e) =>
+      ((e) => !e.hasLoaded && "loading" === e.status)(e),
+  },
+  actions: {
+    async load(e = {}) {
+      return this.hasLoaded && !e.force
+        ? (this.refresh().catch(() => {}), this.list)
+        : this.refresh();
+    },
+    async refresh() {
+      return (
+        c ||
+        (Object.assign(
+          this,
+          ((e = this.$state),
+          { ...e, status: e.hasLoaded ? "refreshing" : "loading", error: "" }),
+        ),
+        (c = h({ all: !0 })
+          .then(
+            (e) => (
+              Object.assign(
+                this,
+                ((e, s, t = Date.now()) => ({
+                  ...e,
+                  list: s,
+                  status: "done",
+                  hasLoaded: !0,
+                  lastLoadedAt: t,
+                  error: "",
+                }))(this.$state, e),
+              ),
+              e
+            ),
+          )
+          .catch((e) => {
+            throw (
+              Object.assign(
+                this,
+                ((e, s) => ({
+                  ...e,
+                  status: e.hasLoaded ? "done" : "error",
+                  error: s instanceof Error ? s.message : String(s || ""),
+                }))(this.$state, e),
+              ),
+              e
+            );
+          })
+          .finally(() => {
+            c = null;
+          })),
+        c)
+      );
+      var e;
+    },
+    invalidate() {
+      (Object.assign(this, {
+        list: [],
+        status: "idle",
+        hasLoaded: !1,
+        lastLoadedAt: 0,
+        error: "",
+      }),
+        (c = null));
+    },
+  },
+});
+class p extends Error {
+  constructor() {
+    (super(
+      "Local API service could not be confirmed stopped before team switch",
+    ),
+      (this.name = "TeamSwitchOpenApiStopError"));
+  }
+}
+async function u(e) {
+  if (!(await e())) throw new p();
+}
+export { o as a, r as b, u as e, d as u };
