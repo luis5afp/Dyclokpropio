@@ -2,6 +2,9 @@ appId: com.dyclokpropio.desktop
 productName: Dyclokpropio
 artifactName: Dyclokpropio_${version}_${os}_${arch}_reconstructed.${ext}
 
+extraMetadata:
+  main: src/main/index.js
+
 asar: true
 
 asarUnpack:
@@ -16,6 +19,7 @@ files:
     to: dist
   - from: build/reconstructed-runtime/dist-electron
     to: dist-electron
+  - src/main/**/*
   - package.json
   - node_modules/**/*
 
