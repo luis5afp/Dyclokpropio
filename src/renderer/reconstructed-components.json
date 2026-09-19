@@ -57,6 +57,24 @@
       ],
       "confidence": "high",
       "status": "reconstructed"
+    },
+    {
+      "name": "LazyRow",
+      "source": "src/renderer/components/reconstructed/LazyRow.vue",
+      "compiledFiles": [
+        "dist/assets/LazyRow.vue_vue_type_script_setup_true_lang-C9dK0oMf.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "ImportInstructions",
+      "source": "src/renderer/components/reconstructed/ImportInstructions.vue",
+      "compiledFiles": [
+        "dist/assets/ImportInstructions.vue_vue_type_script_setup_true_lang-B6-YEbCB.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
     }
   ]
 }
