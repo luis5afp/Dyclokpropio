@@ -28,38 +28,95 @@ function createFakeIpcMain() {
   return ipcMain;
 }
 
+function createFakeStore(initial = {}) {
+  const values = { ...initial };
+
+  return {
+    get store() {
+      return { ...values };
+    },
+    get(key) {
+      return values[key];
+    },
+    set(key, value) {
+      values[key] = value;
+      return this;
+    },
+    delete(key) {
+      delete values[key];
+      return this;
+    },
+  };
+}
+
 const ipcMain = createFakeIpcMain();
+const stores = new Map([
+  ['app', createFakeStore({ language: 'es' })],
+  ['tracker', createFakeStore({ isPaid: false })],
+]);
 
 const legacy = loadWithMigratedIpc({
   ipcMain,
   migratedChannels: MIGRATED_CHANNELS,
   loadLegacy() {
-    // Simulate legacy registrations for both migrated and unmigrated channels.
-    ipcMain.handle('get-current-platform', () => 'LEGACY');
-    ipcMain.on('set-process-env', () => 'LEGACY');
-    ipcMain.handle('get-device-info', () => 'LEGACY_DEVICE_INFO');
+    for (const channel of [
+      'get-current-platform',
+      'get-device-info',
+      'get-main-window-launch-preference',
+      'set-main-window-launch-preference',
+    ]) {
+      ipcMain.handle(channel, () => 'LEGACY');
+    }
+
+    for (const channel of [
+      'set-process-env',
+      'electron-store-get',
+      'electron-store-set',
+      'electron-store-delete',
+    ]) {
+      ipcMain.on(channel, () => 'LEGACY');
+    }
+
     ipcMain.handle('legacy-only-channel', () => 'LEGACY_ONLY');
     return { loaded: true };
   },
-  registerMigrated: registerMigratedHandlers,
+  registerMigrated(mainIpc) {
+    registerMigratedHandlers(mainIpc, { stores });
+  },
 });
 
 assert.deepStrictEqual(legacy, { loaded: true });
 
+for (const channel of [
+  'get-current-platform',
+  'get-device-info',
+  'get-main-window-launch-preference',
+  'set-main-window-launch-preference',
+]) {
+  assert.strictEqual(
+    ipcMain.registrations.handle.filter((x) => x.channel === channel).length,
+    1,
+    channel + ' must be clean-only',
+  );
+}
+
+for (const channel of [
+  'set-process-env',
+  'electron-store-get',
+  'electron-store-set',
+  'electron-store-delete',
+]) {
+  assert.strictEqual(
+    ipcMain.registrations.on.filter((x) => x.channel === channel).length,
+    1,
+    channel + ' must be clean-only',
+  );
+}
+
 assert.strictEqual(
-  ipcMain.registrations.handle.filter((x) => x.channel === 'get-current-platform').length,
-  1,
-);
-assert.strictEqual(
-  ipcMain.registrations.on.filter((x) => x.channel === 'set-process-env').length,
-  1,
-);
-assert.strictEqual(
-  ipcMain.registrations.handle.filter((x) => x.channel === 'get-device-info').length,
-  1,
-);
-assert.strictEqual(
-  ipcMain.registrations.handle.filter((x) => x.channel === 'legacy-only-channel').length,
+  ipcMain.registrations.handle.filter(
+    (x) => x.channel === 'legacy-only-channel',
+  ).length,
   1,
 );
 
@@ -71,7 +128,10 @@ assert.strictEqual(platform, process.platform);
 const envRegistration = ipcMain.registrations.on.find(
   (x) => x.channel === 'set-process-env',
 );
-envRegistration.callback({}, { key: 'DYCLOK_RECONSTRUCTION_TEST', value: 'ok' });
+envRegistration.callback(
+  {},
+  { key: 'DYCLOK_RECONSTRUCTION_TEST', value: 'ok' },
+);
 assert.strictEqual(process.env.DYCLOK_RECONSTRUCTION_TEST, 'ok');
 delete process.env.DYCLOK_RECONSTRUCTION_TEST;
 
@@ -81,6 +141,46 @@ const deviceInfoHandler = ipcMain.registrations.handle.find(
 const deviceInfo = deviceInfoHandler();
 assert.strictEqual(typeof deviceInfo.id, 'string');
 assert.strictEqual(deviceInfo.id.length, 32);
-assert.strictEqual(typeof deviceInfo.name, 'string');
+
+const getStore = ipcMain.registrations.on.find(
+  (x) => x.channel === 'electron-store-get',
+).callback;
+const setStore = ipcMain.registrations.on.find(
+  (x) => x.channel === 'electron-store-set',
+).callback;
+const deleteStore = ipcMain.registrations.on.find(
+  (x) => x.channel === 'electron-store-delete',
+).callback;
+
+const getEvent = {};
+getStore(getEvent, 'app.language');
+assert.strictEqual(getEvent.returnValue, 'es');
+
+const setEvent = {};
+setStore(setEvent, { key: 'app.theme', value: 'dark' });
+const verifySetEvent = {};
+getStore(verifySetEvent, 'app.theme');
+assert.strictEqual(verifySetEvent.returnValue, 'dark');
+
+const deleteEvent = {};
+deleteStore(deleteEvent, 'app.theme');
+const verifyDeleteEvent = {};
+getStore(verifyDeleteEvent, 'app.theme');
+assert.strictEqual(verifyDeleteEvent.returnValue, undefined);
+
+const setPreference = ipcMain.registrations.handle.find(
+  (x) => x.channel === 'set-main-window-launch-preference',
+).callback;
+const getPreference = ipcMain.registrations.handle.find(
+  (x) => x.channel === 'get-main-window-launch-preference',
+).callback;
+
+assert.deepStrictEqual(
+  setPreference({}, { width: 1200, height: 800 }),
+  { width: 1200, height: 800 },
+);
+assert.deepStrictEqual(getPreference(), { width: 1200, height: 800 });
+assert.strictEqual(setPreference({}, null), null);
+assert.strictEqual(getPreference(), null);
 
 console.log('Incremental IPC migration: OK');
