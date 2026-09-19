@@ -11,7 +11,7 @@ on:
       - "src/preload/index.js"
       - "tools/analyze-recovered-bundles.js"
       - "tools/compare-preload-contract.js"
-      - "tools/deobfuscate-main-stage1.js"
+      - "tools/deobfuscate-main-stage1.js"\n      - "tools/extract-main-ipc-handlers.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -45,6 +45,12 @@ jobs:
         run: |
           Set-Location source
           node tools/deobfuscate-main-stage1.js
+
+      - name: Extract main IPC handlers
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-main-ipc-handlers.js
 
       - name: Compare recovered and reconstructed preload
         shell: pwsh
