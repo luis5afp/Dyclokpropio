@@ -230,16 +230,20 @@ const allRendererChannels = uniq([
   ...rendererSummary.flatMap((x) => x.channelLikeStrings || []),
 ]).filter((value) => /^[a-z][a-z0-9]*(?:[-:][a-z0-9_]+)+$/.test(value));
 
+const mainTextCache = Object.fromEntries(
+  main.map((file) => [file.file, read(file.file)]),
+);
+
 const crossProcessIpc = {};
 for (const channel of allRendererChannels) {
   const locations = [];
   for (const file of main) {
+    const text = mainTextCache[file.file];
     let from = 0;
     let count = 0;
     while (count < 20) {
-      const offset = read(file.file).indexOf(channel, from);
+      const offset = text.indexOf(channel, from);
       if (offset < 0) break;
-      const text = read(file.file);
       locations.push({
         file: file.file,
         offset,
