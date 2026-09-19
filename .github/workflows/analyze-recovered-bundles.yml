@@ -14,6 +14,8 @@ on:
       - "tools/deobfuscate-main-stage1.js"
       - "tools/extract-main-ipc-handlers.js"
       - "tools/extract-main-ipc-handler-bodies.js"
+      - "tools/reconstruction-symbol-seeds.json"
+      - "tools/extract-main-symbol-definitions.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -59,6 +61,12 @@ jobs:
         run: |
           Set-Location source
           node tools/extract-main-ipc-handler-bodies.js
+
+      - name: Extract main symbol definitions
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-main-symbol-definitions.js
 
       - name: Compare recovered and reconstructed preload
         shell: pwsh
