@@ -1,6 +1,6 @@
 'use strict';
 
-const { BrowserWindow, ipcMain } = require('electron');
+const { BrowserWindow, ipcMain, screen } = require('electron');
 
 // Preserve dependency-loading behavior observed in the recovered wrapper.
 require('path');
@@ -36,6 +36,7 @@ const legacy = loadWithMigratedIpc({
   registerMigrated: (mainIpc) =>
     registerMigratedHandlers(mainIpc, {
       stores: capturedStores,
+      screen,
     }),
 });
 
