@@ -1,12 +1,11 @@
 {
-  "note": "Domain grouping reconstructed from observable channel names; not guaranteed to match original source module boundaries.",
-  "totalChannels": 75,
-  "groups": {
+  "note": "Functional domain grouping reconstructed from observed IPC names; not the original source module layout.",
+  "totalChannels": 117,
+  "domains": {
     "app": [
-      "checker-resource-update",
-      "get-app-title",
+      "change-language",
       "get-local-server-status",
-      "open-url",
+      "quit-app",
       "version-local-info"
     ],
     "crypto": [
@@ -21,28 +20,48 @@
       "get-device-info",
       "get-device-name",
       "get-device-user-name",
-      "get-mac-address",
       "get-system-idle-time",
       "get-system-memory-info",
+      "heartbeat-activity-ping",
       "start-memory-monitor",
       "start-power-save-blocker",
       "stop-memory-monitor",
       "stop-power-save-blocker"
     ],
-    "environmentProxy": [
+    "environment": [
       "check-proxy-for-gost",
       "clear-env-server-cache-for-indexed-db",
       "clear-env-server-cache-for-local-storage",
+      "close-envs",
+      "env-open-rule-check-cancel",
+      "env-open-rule-check-schedule",
       "get-local-proxy",
       "open-env-res",
+      "openapi-update-base-url",
       "probe-gost-start",
       "retry-detect-proxy",
       "run-env",
       "run-env-for-convert",
       "set-process-env",
+      "stop-all-env",
       "stop-detect-proxy",
       "stop-env",
       "update-proxy-detector-config"
+    ],
+    "filesStorage": [
+      "check-local-expansion-md5",
+      "clear-electron-store",
+      "electron-store-delete",
+      "electron-store-get",
+      "electron-store-set",
+      "generate-sha256-hash",
+      "generate-sha256-hash-for-plugins",
+      "get-expansion-version-from-expan-id",
+      "get-sha256-hash-folder",
+      "open-folder-path",
+      "read-file",
+      "read-json-file",
+      "user-save-file"
     ],
     "kernel": [
       "kernel-cancel",
@@ -54,51 +73,77 @@
     ],
     "network": [
       "get-network-identity",
-      "get-public-ip",
       "http:log",
       "network-probe"
     ],
-    "process": [],
     "rpa": [
-      "del-rpa-task-log",
+      "get-rpa-bearing-page",
       "get-rpa-index-page",
-      "get-rpa-task-log",
+      "rpa-scheduled-task-exit-risk-result",
+      "run-rpa",
       "set-rpa-task-config",
+      "stop-rpa",
       "write-rpa-log"
     ],
-    "storageFiles": [
-      "clear-electron-store",
-      "electron-store-delete",
-      "electron-store-get",
-      "electron-store-set",
-      "generate-sha256-hash",
-      "generate-sha256-hash-for-plugins",
-      "get-last-modified-time",
-      "read-json-file",
-      "user-save-file"
+    "sync": [
+      "sync-active-win",
+      "sync-clear-text-content",
+      "sync-clipboard",
+      "sync-close-syncHelp",
+      "sync-data",
+      "sync-lattice-layout",
+      "sync-open-syncHelp",
+      "sync-overlap-layout",
+      "sync-request-permission",
+      "sync-send-text-more",
+      "sync-start",
+      "sync-stop",
+      "synchronizer-store-change-to-child",
+      "synchronizer-store-change-to-parent"
     ],
     "telemetry": [
       "set-user-plan",
-      "track-event"
+      "track-event",
+      "write-app-log"
     ],
-    "window": [
+    "update": [
+      "checker-resource-update",
+      "update-app",
+      "update-app-cancel-download",
+      "update-app-patch-update",
+      "update-app-restart"
+    ],
+    "windows": [
       "active-window",
-      "close-all-win",
-      "get-all-displays",
-      "get-current-main-window-size",
-      "get-desktop-sources",
+      "close-main-window",
+      "float-close-window",
+      "float-is-open",
+      "float-save-state",
+      "float-set-size",
+      "get-all-display",
       "get-main-window-launch-preference",
       "get-window-by-pid",
-      "open-application-window",
+      "input-text-to-custom-windows",
+      "key-close-win",
+      "open-app",
+      "open-safari",
+      "open-url",
       "set-main-window-launch-preference",
       "window-test"
     ],
     "other": [
+      "auto-del-install-pack",
       "change-org-res",
+      "close-all-win",
       "common-request-for-local-api-response",
-      "get-new-device-id",
-      "get-sha256-hash-folder",
-      "install-chrome-extension-for-open-api-response"
+      "download-chrome-extension",
+      "get-desktop-sources",
+      "get-download-app-list",
+      "get-last-modified-time",
+      "get-mac-address",
+      "get-running-map",
+      "install-chrome-extension-for-open-api-response",
+      "limit-download-start"
     ]
   }
 }
