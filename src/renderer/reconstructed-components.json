@@ -75,6 +75,24 @@
       ],
       "confidence": "high",
       "status": "reconstructed"
+    },
+    {
+      "name": "Tip",
+      "source": "src/renderer/components/reconstructed/Tip.vue",
+      "compiledFiles": [
+        "dist/assets/Tip.vue_vue_type_script_setup_true_lang-DBJcGLEl.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "fixedUrlsFormItem",
+      "source": "src/renderer/components/reconstructed/fixedUrlsFormItem.vue",
+      "compiledFiles": [
+        "dist/assets/fixedUrlsFormItem.vue_vue_type_script_setup_true_lang-J-frhu2d.js"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
     }
   ]
 }
