@@ -50,4 +50,10 @@ module.exports = Object.freeze({
   GET_MAC_ADDRESS: "get-mac-address",
   GET_SYSTEM_IDLE_TIME: "get-system-idle-time",
   SET_PROCESS_ENV: "set-process-env",
+  UPDATE_APP: "update-app",
+  UPDATE_APP_CHECK_PACK: "update-app-check-pack",
+  UPDATE_APP_FULL_UPDATE: "update-app-full-update",
+  UPDATE_APP_PATCH_UPDATE: "update-app-patch-update",
+  UPDATE_APP_CANCEL_DOWNLOAD: "update-app-cancel-download",
+  UPDATE_APP_RESTART: "update-app-restart",
 });

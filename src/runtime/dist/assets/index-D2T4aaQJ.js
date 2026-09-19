@@ -5284,117 +5284,16 @@ const go = { class: "tw-py-2 tw-px-2 tw-flex tw-flex-col notice-content" },
             (null == (e = w.value) ? void 0 : e.version) &&
               A.updateCoreRead(null == (t = w.value) ? void 0 : t.version, !0));
         };
-      const De = async (e) => {
-          var t, a, l, n, o, i, s, r, u, c, d;
-          ((B.value = -1),
+      const De = async () => {
+          (B.value = -1),
             (K.value = -1),
-            (q.value = await X.api.getLocalVersionInfo()));
-          const {
-              version: p,
-              platform: v,
-              arch: m,
-              patchVersion: f,
-              browserVersion: g,
-            } = q.value,
-            x = {
-              patchVersion: f,
-              version: p,
-              osType: ze[v.toUpperCase()],
-              bitType: tt[`${v}_${m}`.toUpperCase()],
-              kernelVersion: g || "99999.99999.999999",
-            },
-            h =
-              ((y = {
-                ...x,
-                orgId: null == (t = N.userInfo) ? void 0 : t.orgId,
-                teamId: null == (a = N.userInfo) ? void 0 : a.teamId,
-              }),
-              JSON.stringify(y));
-          var y;
-          let k = await (async function (
-            e,
-            t,
-            { dedupeMs: a = 5e3, now: l = Date.now } = {},
-          ) {
-            const n = l(),
-              o = vo.get(e);
-            if (o) {
-              if (o.expiresAt > n) return o.value;
-              vo.delete(e);
-            }
-            const i = po.get(e);
-            if (i) return i;
-            const s = Promise.resolve(t()).then(
-              (t) => (a > 0 && vo.set(e, { expiresAt: l() + a, value: t }), t),
-            );
-            po.set(e, s);
-            try {
-              return await s;
-            } finally {
-              po.get(e) === s && po.delete(e);
-            }
-          })(h, () =>
-            (async (e) =>
-              (await Fe.get(Be("/v1/app/notice"), e, { noLoading: !0 })).data)(
-              x,
-            ),
-          );
-          if (
-            (A.setNoticeData(k),
-            (te.value = k),
-            (T.value = k.appVersion),
-            (w.value = k.kernelVersion),
-            (async function () {
-              var e;
-              let t = (
-                (null == (e = te.value) ? void 0 : e.notices) || []
-              ).find((e) => e.tipType === ln.Center);
-              if (t && !A.allRead.noticeRead[t.id]) {
-                const e = await Nn(t.id);
-                A.handleNoticeDetail(t, e.content);
-              }
-            })(),
-            setTimeout(() => {
-              var e;
-              !Ie() &&
-                (null == (e = k.appVersion) ? void 0 : e.version) &&
-                (A.read[k.appVersion.version] = !0);
-            }),
-            ((null == (l = T.value) ? void 0 : l.version) &&
-              1 === Ye(p, null == (n = T.value) ? void 0 : n.version)) ||
-              ((null == (o = T.value) ? void 0 : o.patchVersion) &&
-                1 === Ye(f, null == (i = T.value) ? void 0 : i.patchVersion)))
-          )
-            return wt();
-          if (pe.value || ve.value) {
-            if ((null == (s = T.value) ? void 0 : s.version) === p) return wt();
-          } else if ((null == (r = T.value) ? void 0 : r.patchVersion) === f)
-            return wt();
-          if (
-            (ve.value &&
-              1 === Ye(T.value.version, p) &&
-              1 === Ye(p, T.value.parentVersion) &&
-              (T.value.parentVersion = p),
-            !pe.value && !fe.value && !xe.value)
-          ) {
-            const e =
-              (null == (u = T.value) ? void 0 : u.parentContent) ||
-              (null == (c = T.value) ? void 0 : c.content);
-            e && (T.value.content = e);
-          }
-          switch (
-            null == (d = null == T ? void 0 : T.value) ? void 0 : d.packageType
-          ) {
-            case je.LARGE:
-              await Le();
-              break;
-            case je.SMALL:
-              await Ae();
-              break;
-            case je.PATCH:
-              await Ne();
-          }
-        },
+            (q.value = await X.api.getLocalVersionInfo());
+          const e = { appVersion: null, kernelVersion: null, notices: [] };
+          (A.setNoticeData(e),
+            (te.value = e),
+            (T.value = void 0),
+            (w.value = void 0));
+        }        },
         Le = async () => {
           var e, t, a;
           if (!T.value) return wt();
@@ -5769,17 +5668,9 @@ const go = { class: "tw-py-2 tw-px-2 tw-flex tw-flex-col notice-content" },
       V(() => {
         (X.on(Ze, We),
           X.on(Qe, ct),
-          De().then(() => {
-            ht();
-          }),
+          De(),
           Y.value && clearInterval(Y.value),
-          (Y.value = setInterval(
-            () =>
-              De().then(() => {
-                ht();
-              }),
-            6e5,
-          )),
+          (Y.value = void 0),
           v.on("check-install-pack", yt),
           v.on("start-download", kt));
       });

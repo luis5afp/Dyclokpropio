@@ -17,6 +17,10 @@ const {
 const {
   registerDisplayHandlers,
 } = require('./handlers/display');
+const {
+  UPDATE_CHANNELS,
+  registerDisabledUpdateHandlers,
+} = require('./handlers/update-policy');
 
 const MIGRATED_CHANNELS = Object.freeze([
   PROCESS_CHANNELS.GET_CURRENT_PLATFORM,
@@ -28,6 +32,7 @@ const MIGRATED_CHANNELS = Object.freeze([
   'get-main-window-launch-preference',
   'set-main-window-launch-preference',
   'get-all-display',
+  ...UPDATE_CHANNELS,
 ]);
 
 function getCapturedStore(stores, name) {
@@ -39,6 +44,7 @@ function registerMigratedHandlers(ipcMain, context = {}) {
   registerProcessHandlers(ipcMain);
   registerDeviceInfoHandlers(ipcMain);
   registerDisplayHandlers(ipcMain, context.screen);
+  registerDisabledUpdateHandlers(ipcMain);
 
   const appStore = getCapturedStore(context.stores, 'app');
   const trackerStore = getCapturedStore(context.stores, 'tracker');
