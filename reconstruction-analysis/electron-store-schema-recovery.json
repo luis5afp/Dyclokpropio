@@ -1,0 +1,473 @@
+{
+  "generatedAt": "2026-09-19T03:14:36.810Z",
+  "app": {
+    "name": "app",
+    "encryptionKey": "d81aaab2094eef341d5f987fe0f89da0c25f611acce75e8171da1216a1ec70a1",
+    "defaults": {},
+    "fields": [
+      {
+        "key": "userInfo",
+        "keyExpression": "\"userInfo\"",
+        "descriptorSymbol": "_0x277d50",
+        "prettyOffset": 19995,
+        "definition": {
+          "offset": 12182,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "inputDelay",
+        "keyExpression": "\"inputDelay\"",
+        "descriptorSymbol": "_0x16b017",
+        "prettyOffset": 20034,
+        "definition": {
+          "offset": 12252,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "language",
+        "keyExpression": "\"language\"",
+        "descriptorSymbol": "_0x2bb24a",
+        "prettyOffset": 20075,
+        "definition": {
+          "offset": 12298,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "token",
+        "keyExpression": "\"token\"",
+        "descriptorSymbol": "_0x12848a",
+        "prettyOffset": 20114,
+        "definition": {
+          "offset": 12344,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "apiUrl",
+        "keyExpression": "\"apiUrl\"",
+        "descriptorSymbol": "_0x23e90c",
+        "prettyOffset": 20150,
+        "definition": {
+          "offset": 12390,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "homeUrl",
+        "keyExpression": "\"homeUrl\"",
+        "descriptorSymbol": "_0x323e75",
+        "prettyOffset": 20187,
+        "definition": {
+          "offset": 12436,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "userOpenList",
+        "keyExpression": "\"userOpenLi\" + \"st\"",
+        "descriptorSymbol": "_0x31f99e",
+        "prettyOffset": 20225,
+        "definition": {
+          "offset": 12482,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "closeWindowChoice",
+        "keyExpression": "\"closeWindo\" + \"wChoice\"",
+        "descriptorSymbol": "_0x55052e",
+        "prettyOffset": 20273,
+        "definition": {
+          "offset": 12527,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "loginAccountRecords",
+        "keyExpression": "\"loginAccou\" + \"ntRecords\"",
+        "descriptorSymbol": "_0x3e2f9b",
+        "prettyOffset": 20326,
+        "definition": {
+          "offset": 12573,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "baseURLKey",
+        "keyExpression": "\"baseURLKey\"",
+        "descriptorSymbol": "_0x54f56c",
+        "prettyOffset": 20381,
+        "definition": {
+          "offset": 12618,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "cacheBaseDir",
+        "keyExpression": "\"cacheBaseD\" + \"ir\"",
+        "descriptorSymbol": "_0x105b2e",
+        "prettyOffset": 20422,
+        "definition": {
+          "offset": 12692,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "pluginPath",
+        "keyExpression": "\"pluginPath\"",
+        "descriptorSymbol": "_0x3c0323",
+        "prettyOffset": 20470,
+        "definition": {
+          "offset": 12762,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "status",
+        "keyExpression": "\"status\"",
+        "descriptorSymbol": "_0x52757b",
+        "prettyOffset": 20511,
+        "definition": {
+          "offset": 12832,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "day",
+        "keyExpression": "\"day\"",
+        "descriptorSymbol": "_0xa02318",
+        "prettyOffset": 20548,
+        "definition": {
+          "offset": 12879,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "cacheBaseDirs",
+        "keyExpression": "\"cacheBaseD\" + \"irs\"",
+        "descriptorSymbol": "_0x2382ef",
+        "prettyOffset": 20582,
+        "definition": {
+          "offset": 12951,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "migrateType",
+        "keyExpression": "\"migrateTyp\" + \"e\"",
+        "descriptorSymbol": "_0x12c524",
+        "prettyOffset": 20631,
+        "definition": {
+          "offset": 12996,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "migrateDir",
+        "keyExpression": "\"migrateDir\"",
+        "descriptorSymbol": "_0x16d517",
+        "prettyOffset": 20678,
+        "definition": {
+          "offset": 13042,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "currentOpenApiConfig",
+        "keyExpression": "\"currentOpe\" + \"nApiConfig\"",
+        "descriptorSymbol": "_0x3f4fa0",
+        "prettyOffset": 20719,
+        "definition": {
+          "offset": 13195,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "currentOpenApiV2Config",
+        "keyExpression": "\"currentOpe\" + \"nApiV2Conf\" + \"ig\"",
+        "descriptorSymbol": "_0x5731d2",
+        "prettyOffset": 20775,
+        "definition": {
+          "offset": 13361,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "useSystemProxyForPersonal",
+        "keyExpression": "\"useSystemP\" + \"roxyForPer\" + \"sonal\"",
+        "descriptorSymbol": "_0x3691cd",
+        "prettyOffset": 20838,
+        "definition": {
+          "offset": 13438,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "deviceId",
+        "keyExpression": "\"deviceId\"",
+        "descriptorSymbol": "_0x1dc614",
+        "prettyOffset": 20904,
+        "definition": {
+          "offset": 13540,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "isIpLimitVpn",
+        "keyExpression": "\"isIpLimitV\" + \"pn\"",
+        "descriptorSymbol": "_0x5debf9",
+        "prettyOffset": 20943,
+        "definition": {
+          "offset": 13610,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "cookieEncryptTypeMapForEnvIds",
+        "keyExpression": "\"cookieEncr\" + \"yptTypeMap\" + \"ForEnvIds\"",
+        "descriptorSymbol": "_0x3894d2",
+        "prettyOffset": 20991,
+        "definition": {
+          "offset": 13716,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "useHardwareAcceleration",
+        "keyExpression": "\"useHardwar\" + \"eAccelerat\" + \"ion\"",
+        "descriptorSymbol": "_0x2d235c",
+        "prettyOffset": 21061,
+        "definition": {
+          "offset": 13786,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "lastCheckSoftwareTimestamp",
+        "keyExpression": "\"lastCheckS\" + \"oftwareTim\" + \"estamp\"",
+        "descriptorSymbol": "_0x3831df",
+        "prettyOffset": 21125,
+        "definition": {
+          "offset": 13885,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "downloadDomainPolicyV2",
+        "keyExpression": "\"downloadDo\" + \"mainPolicy\" + \"V2\"",
+        "descriptorSymbol": "_0x2865cb",
+        "prettyOffset": 21192,
+        "definition": {
+          "offset": 13956,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "apiLine",
+        "keyExpression": "\"apiLine\"",
+        "descriptorSymbol": "_0x3d1c22",
+        "prettyOffset": 21255,
+        "definition": {
+          "offset": 14026,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "lineUrlList",
+        "keyExpression": "\"lineUrlLis\" + \"t\"",
+        "descriptorSymbol": "_0x45ab6d",
+        "prettyOffset": 21293,
+        "definition": {
+          "offset": 14101,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "eventVersions",
+        "keyExpression": "\"eventVersi\" + \"ons\"",
+        "descriptorSymbol": "_0x40bee5",
+        "prettyOffset": 21340,
+        "definition": {
+          "offset": 14170,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "trackingPoint",
+        "keyExpression": "\"trackingPo\" + \"int\"",
+        "descriptorSymbol": "_0x2e0585",
+        "prettyOffset": 21389,
+        "definition": {
+          "offset": 14240,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "mainWindowState",
+        "keyExpression": "\"mainWindow\" + \"State\"",
+        "descriptorSymbol": "_0x473ec2",
+        "prettyOffset": 21438,
+        "definition": {
+          "offset": 14566,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "mainWindowLaunchPreference",
+        "keyExpression": "\"mainWindow\" + \"LaunchPref\" + \"erence\"",
+        "descriptorSymbol": "_0x30bf42",
+        "prettyOffset": 21489,
+        "definition": {
+          "offset": 14942,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      }
+    ]
+  },
+  "tracker": {
+    "name": "tracker",
+    "encryptionKey": "03c15ab2b80588706644f91cf2fab6c20e42eb4db2b0d1a00665d1f5353fa83a",
+    "defaults": {},
+    "fields": [
+      {
+        "key": "isPaid",
+        "keyExpression": "\"isPaid\"",
+        "descriptorSymbol": "_0x5943f8",
+        "prettyOffset": 23525,
+        "definition": {
+          "offset": 17656,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "installDate",
+        "keyExpression": "\"installDat\" + \"e\"",
+        "descriptorSymbol": "_0xcb79b9",
+        "prettyOffset": 23562,
+        "definition": {
+          "offset": 17703,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "dailyCount",
+        "keyExpression": "\"dailyCount\"",
+        "descriptorSymbol": "_0x143441",
+        "prettyOffset": 23609,
+        "definition": {
+          "offset": 17749,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "events",
+        "keyExpression": "\"events\"",
+        "descriptorSymbol": "_0x4b0dde",
+        "prettyOffset": 23650,
+        "definition": {
+          "offset": 17795,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "reliableEvents",
+        "keyExpression": "\"reliableEv\" + \"ents\"",
+        "descriptorSymbol": "_0x442089",
+        "prettyOffset": 23687,
+        "definition": {
+          "offset": 17864,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      },
+      {
+        "key": "lastResetDate",
+        "keyExpression": "\"lastResetD\" + \"ate\"",
+        "descriptorSymbol": "_0x451a7b",
+        "prettyOffset": 23737,
+        "definition": {
+          "offset": 17933,
+          "likelyDeclaration": true,
+          "expression": "{}",
+          "bytes": 2
+        }
+      }
+    ]
+  }
+}
