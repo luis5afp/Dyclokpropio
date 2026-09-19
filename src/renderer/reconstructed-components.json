@@ -1,0 +1,25 @@
+{
+  "note": "Reconstructed Vue SFCs with direct evidence from compiled JS/CSS. compiledFiles remain the regression reference until the renderer build switches to source.",
+  "components": [
+    {
+      "name": "envSerialNums",
+      "source": "src/renderer/components/reconstructed/envSerialNums.vue",
+      "compiledFiles": [
+        "dist/assets/envSerialNums-BjlyggGT.js",
+        "dist/assets/envSerialNums-Deo1pJoV.css"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    },
+    {
+      "name": "CustomRadioGroup",
+      "source": "src/renderer/components/reconstructed/CustomRadioGroup.vue",
+      "compiledFiles": [
+        "dist/assets/CustomRadioGroup-Dk-imFdD.js",
+        "dist/assets/CustomRadioGroup-BBakkZxB.css"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
+    }
+  ]
+}
