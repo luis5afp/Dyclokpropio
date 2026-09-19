@@ -54,4 +54,5 @@ jobs:
             exit 0
           }
           git commit -m "[reconstruction-bot] Update bundle analysis"
+          git pull --rebase origin reconstruction-source
           git push origin reconstruction-source
