@@ -4,7 +4,7 @@ Generated from the compiled application bundles.
 
 - Main-process JS files scanned: 4
 - Renderer JS files summarized: 164
-- IPC channels mapped: 44
+- IPC channels mapped: 50
 - Candidate route/path strings: 23
 - Direct renderer IPC channels: 54
 - Renderer channels also found in main bundle: 17

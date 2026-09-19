@@ -275,5 +275,97 @@
       "offset": 2383265,
       "context": "),getSystemIdleTime:()=>this.synHandelIpcEvents(async()=>await this.ipcRenderer.invoke(\"get-system-idle-time\"),()=>0),changeAppApiLine:e=>{this.handelIpcEvents(()=>{window.DIC.api.changeAppApiLine(e)})},getSystemVersion:()=>this.handelIpcEvents(()=>window.DIC.api.getSystemVersion(),()=>\"\"),certPinSet:e=>this.handelIpcEvents(()=>this.ipcRenderer.invoke(\"cert-pin-set\",e),()=>{}),setProcessEnv:(e,t)=>this.handelIpcEvents(()=>{this.ipcRenderer.send(\"set-process-env\",{key:e,value:t})}),getNetworkIdentity:()=>this.handelIpcEvents(async()=>{try{return await this.ipcRenderer.invoke(\"get-network-identity\")}catch{return{canCache:!1,signature:\"\"}}},()=>Promise.resolve({canCache:!1,signature:\"\"}))}),this.deviceId=\"\",this.newDeviceId=\"\",this.deviceName=\"\",this.deviceUserName=\"\",this.deviceInfo={name:\"\",timeZone:\"\",language:\"\",id:\"\"},this.localVersionInfo={version:\"\",platform:\"\",arch:\"\",patchVersion:\""
     }
+  ],
+  "update-app": [
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "offset": 29214,
+      "context": "0xa2a')+'s',TS='open-urls',CS=_0x1acd6a(-0x21d7,0x513)+_0x1acd6a(0x797b,0x4732),PS=_0x28d9a9(-0x16fb,'0x1007')+'tall-reque'+_0x28d9a9('0x8842',0x5459),IS='kernel-lis'+_0x28d9a9(0x5459,'0x3d47')+'d',RS='kernel-get'+'-progress',kS='kernel-can'+_0x1acd6a('0x5984','0x698c'),AS=_0x28d9a9(0x36ed,0xb91)+_0x1acd6a(0x3839,'0x4d06')+_0x28d9a9('0x2515',0x4377),NS=_0x28d9a9(0x6378,0x6412)+_0x28d9a9(0x3763,0x313a),OS='kernel-pro'+_0x28d9a9(0x39ae,0x5c95),DS='update-app',LS=_0x1acd6a(-0x1fe0,'0x1056')+_0x28d9a9(0x2c03,'0x4c54')+'k',$S=_0x28d9a9(-0x19a8,0xece)+'-full-upda'+'te',MS=_0x28d9a9('0x287f','0xece')+_0x28d9a9(0x1adc,0x2d96)+_0x28d9a9('0x5bc8',0x6545),FS='version-lo'+_0x1acd6a('0x8c33','0x65e8'),BS=_0x1acd6a('0x20ca','0x1056')+_0x1acd6a('0x12c3','0x1448')+_0x1acd6a(0x3098,0x1af9),US=_0x28d9a9('0x1a0f','0xece')+'-restart',VS=_0x28d9a9('0x510','0x5cc')+_0x28d9a9('0x3d6',0x2459)+'t',jS='limit-chec"
+    },
+    {
+      "file": "dist-electron/main-CuCOh59n.js",
+      "offset": 31542,
+      "context": "c1)+'indow-laun'+_0x28d9a9(0x70d7,'0x3e21')+_0x28d9a9(0x54d1,0x2ec2),px=_0x1acd6a('0x55a9','0x4082')+'t-main-win'+_0x28d9a9(0x51a6,0x44ae),dx=_0x28d9a9(-'0x1ab3',0x106c)+'t',fx='set-user-p'+_0x1acd6a(0x446d,0x4f26),Fd=_0x28d9a9('0x456d',0x2d9d)+'tt',Nn='run-env-ca'+_0x28d9a9('0x8664','0x68e0'),Dh=_0x28d9a9(0x10d1,'0x2138')+_0x1acd6a('0x4dc8',0x6b3f),mx='set-sync-s'+_0x1acd6a('0x36a5',0x4c61),Bd=_0x28d9a9(0xa76,0xece)+_0x1acd6a(0x130f,0x2bc6),hx='update-app'+_0x1acd6a('0x5b2d','0x5bbf'),gx=_0x1acd6a(0x4836,0x313c)+_0x28d9a9(0x85b9,'0x5cbb')+_0x28d9a9('0x4b70','0x2b81'),yx=_0x1acd6a(0x816a,'0x6ab7')+_0x1acd6a(0x2d8a,'0x46fa')+_0x28d9a9(0x4053,'0x52fa'),Ud=_0x28d9a9('0x1dc2',0x1170)+_0x28d9a9(0x23d4,0x3fc7)+_0x1acd6a(0x2009,'0x29d6'),Vd=_0x28d9a9(0x331a,'0x1170')+'ule-check-'+_0x28d9a9(0x40e7,'0x3da5'),bx=_0x28d9a9('0x3e36','0x1170')+_0x28d9a9(0x72ae,'0x3fc7')+_0x28d9a9('0x301b','0x3a71'),w"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373017,
+      "context": "rpa-schedule-poll\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expans"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373033,
+      "context": "l\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"flo"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373060,
+      "context": "a\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-op"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373088,
+      "context": "e-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373117,
+      "context": "\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"f"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373149,
+      "context": "b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-sav"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373658,
+      "context": "p-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-save-state\",n8=\"electron-store-set\",a8=\"run-env-progress\",o8=\"update-app-completed\",i8=\"update-app-progress\",r8=\"env-sleep-recovery-result\",s8=\"env-open-rule-check-due\",l8=\"close-environment\",c8=\"float-focus\",u8=\"float-blur\",d8=\"get-expansion-version-from-expan-id\",p8=\"get-expansion-version-from-zip\",m8=\"delete-expansion\",h8=\"get-env-count-for-migrate\",f8=\"start-migrate-env\",g8=\"stop-migrate-env\",v8=\"fast-click-event\",y8=\"refresh-all-expansion-sha256-hash\",b8=\"software-monitor-check-result\",w8=\"write-app-lo"
+    },
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373684,
+      "context": "t-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-save-state\",n8=\"electron-store-set\",a8=\"run-env-progress\",o8=\"update-app-completed\",i8=\"update-app-progress\",r8=\"env-sleep-recovery-result\",s8=\"env-open-rule-check-due\",l8=\"close-environment\",c8=\"float-focus\",u8=\"float-blur\",d8=\"get-expansion-version-from-expan-id\",p8=\"get-expansion-version-from-zip\",m8=\"delete-expansion\",h8=\"get-env-count-for-migrate\",f8=\"start-migrate-env\",g8=\"stop-migrate-env\",v8=\"fast-click-event\",y8=\"refresh-all-expansion-sha256-hash\",b8=\"software-monitor-check-result\",w8=\"write-app-log\";class T8{constructor(){"
+    },
+    {
+      "file": "dist/assets/index-D2T4aaQJ.js",
+      "offset": 42918,
+      "context": "t(\"update.readAndClose\"),customClass:\"!tw-max-w-[720px] notice-dialog-pro !tw-pb-[12px] !tw-pt-[12px] content-fit\",modalClass:\"!tw-z-[3100]\",cancelCb:()=>{De({evenType:Le.NOTICE_CLICK,data:{noticeTitle:e.title,clickAction:on.MARK_AS_READ}})}})},updateExistCoreVersionMap(e,t){this.existCoreVersionMap[e]=t},setNoticeData(e){this.noticeData=e}},getters:{allRead(){return{read:this.read,coreRead:this.coreRead,noticeRead:this.noticeRead}}},persist:Ne(\"update-app\",[\"read\",\"coreRead\",\"isUpdateDot\",\"appReadStatus\",\"noticeRead\"])}),cn={key:0,class:\"s-flex tw-gap-x-2 tw-text-[14px]\"},dn={key:0,class:\"tw-w-2 tw-h-2 tw-rounded-full tw-bg-[#ea362d]\"},pn={class:\"tw-text-black\"},vn={class:\"tw-text-black tw-opacity-90 tw-text-xs\"},wn={class:\"tw-pt-2 tw-pb-4 tw-grid tw-grid-cols-1 tw-gap-y-[3px]\"},mn={key:0},fn={class:\"tw-text-black tw-opacity-50 tw-text-[12px] tw-leading-[18px] tw-pr-3\"},gn={class:\"tw-pt"
+    }
+  ],
+  "update-app-check-pack": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373033,
+      "context": "l\",m6=\"run-rpa\",h6=\"stop-rpa\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"flo"
+    }
+  ],
+  "update-app-full-update": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373060,
+      "context": "a\",f6=\"open-safari\",g6=\"close-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-op"
+    }
+  ],
+  "update-app-patch-update": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373088,
+      "context": "e-main-window\",v6=\"export-log\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size"
+    }
+  ],
+  "update-app-cancel-download": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373117,
+      "context": "\",y6=\"delete-file-or-directory\",b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"f"
+    }
+  ],
+  "update-app-restart": [
+    {
+      "file": "dist/assets/index-BUIbb6Pa.js",
+      "offset": 2373149,
+      "context": "b6=\"open-app\",w6=\"active-window\",T6=\"change-language\",C6=\"close-all-win\",E6=\"sync-open-syncHelp\",x6=\"synchronizer-store-change-to-child\",_6=\"sync-request-permission\",k6=\"sync-close-pages\",S6=\"sync-send-text-more\",R6=\"sync-data\",P6=\"layout-windows\",I6=\"sync-active-win-v3\",A6=\"close-tab-pages\",L6=\"kernel-progress\",N6=\"update-app\",O6=\"update-app-check-pack\",D6=\"update-app-full-update\",M6=\"update-app-patch-update\",B6=\"update-app-cancel-download\",V6=\"update-app-restart\",U6=\"get-download-app-list\",F6=\"proxy-app-detect-intercept\",H6=\"get-expansion-md5\",z6=\"check-local-expansion\",G6=\"get-file-md5\",q6=\"check-google-network\",K6=\"download-chrome-extension\",$6=\"upload-expansion-to-oss\",j6=\"download-chrome-unzip-extension\",W6=\"get-extension-detail\",Y6=\"check-local-expansion-md5\",X6=\"float-is-open\",J6=\"float-is-open-reply\",Q6=\"float-set-size\",Z6=\"float-min-window\",e8=\"float-close-window\",t8=\"float-sav"
+    }
   ]
 }
