@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T03:04:11.864Z",
+  "generatedAt": "2026-09-19T03:06:30.613Z",
   "source": "reconstruction-work/main.stage1.js",
   "symbols": {
     "fs": [
@@ -248,6 +248,239 @@
         ]
       }
     ],
-    "_0x5bc46d": []
+    "_0x5bc46d": [],
+    "Ni": [
+      {
+        "kind": "assignment",
+        "offset": 25199,
+        "likelyDeclaration": true,
+        "bytes": 22,
+        "expression": "{'app':B,'tracker':Dt}",
+        "dependencies": [
+          "app",
+          "tracker",
+          "Dt"
+        ]
+      }
+    ],
+    "B": [
+      {
+        "kind": "assignment",
+        "offset": 18442,
+        "likelyDeclaration": true,
+        "bytes": 204,
+        "expression": "new Oh({'name':\"app\",'encryptionKey':\"d81aaab209\"+'4eef341d5f'+\"987fe0f89d\"+\"a0c25f611a\"+\"cce75e8171\"+'da1216a1ec'+\"70a1\",'schema':Rv,'clearInvalidConfig':!(0xd*-0x279+0x78a+0x189b),'defaults':_0x4c199e})",
+        "dependencies": [
+          "Oh",
+          "name",
+          "app",
+          "encryptionKey",
+          "d81aaab209",
+          "a0c25f611a",
+          "cce75e8171",
+          "da1216a1ec",
+          "schema",
+          "Rv",
+          "clearInvalidConfig",
+          "defaults",
+          "_0x4c199e"
+        ]
+      }
+    ],
+    "lt": [
+      {
+        "kind": "assignment",
+        "offset": 4393,
+        "likelyDeclaration": true,
+        "bytes": 17,
+        "expression": "require('crypto')",
+        "dependencies": [
+          "require",
+          "crypto"
+        ]
+      }
+    ],
+    "bp": [
+      {
+        "kind": "assignment",
+        "offset": 3899335,
+        "likelyDeclaration": true,
+        "bytes": 27,
+        "expression": "0x11b1+-0x53d*0x6+0xd*0x135",
+        "dependencies": []
+      }
+    ],
+    "uN": [
+      {
+        "kind": "assignment",
+        "offset": 3899398,
+        "likelyDeclaration": true,
+        "bytes": 23,
+        "expression": "0x5ed*0x1+0x22e5+-0x1c2",
+        "dependencies": []
+      }
+    ],
+    "wp": [
+      {
+        "kind": "assignment",
+        "offset": 3899366,
+        "likelyDeclaration": true,
+        "bytes": 28,
+        "expression": "0x1*-0x76f+-0x3*0xb47+0x2b38",
+        "dependencies": []
+      }
+    ],
+    "pN": [
+      {
+        "kind": "assignment",
+        "offset": 3899425,
+        "likelyDeclaration": true,
+        "bytes": 27,
+        "expression": "0x418a+0x9b*-0x43+0xe17*0x1",
+        "dependencies": []
+      }
+    ],
+    "ik": [
+      {
+        "kind": "function-declaration",
+        "offset": 3273187,
+        "bytes": 766,
+        "code": "function ik(){const _0x325ffa={_0x27cefb:'0x1363'},_0x4d99e3={_0x483bd5:0x7b3,_0x3afaa3:'0x3783'},_0x2dde55={_0x52118c:0x19b};function _0x3bd11f(_0x160523,_0x11a0e6){return _0x1acd6a(_0x160523,_0x11a0e6- -0x127);}const _0x3ec8fa={};_0x3ec8fa[_0x36967f('0x1888',-_0x325ffa._0x27cefb)]=_0x36967f('0x4b6f',0x44ab);const _0x22cf2a=_0x3ec8fa;function _0x36967f(_0x19f8aa,_0x4d3782){return _0x1acd6a(_0x4d3782,_0x19f8aa- -_0x2dde55._0x52118c);}os['forEach'](_0x444e5e=>{function _0xffe7db(_0x2f408d,_0xe5825d){return _0x36967f(_0x2f408d-0x17e,_0xe5825d);}function _0x1e09db(_0x5928de,_0x13e62a){return _0x36967f(_0x5928de-0x149,_0x13e62a);}console['log'](_0x444e5e,_0x22cf2a[_0xffe7db('0x1a06',_0x4d99e3._0x483bd5)]),_0x444e5e[_0x1e09db(_0x4d99e3._0x3afaa3,0x66d9)]();});}",
+        "dependencies": [
+          "_0x325ffa",
+          "_0x27cefb",
+          "_0x4d99e3",
+          "_0x483bd5",
+          "_0x3afaa3",
+          "_0x2dde55",
+          "_0x52118c",
+          "_0x3bd11f",
+          "_0x160523",
+          "_0x11a0e6",
+          "_0x1acd6a",
+          "_0x3ec8fa",
+          "_0x36967f",
+          "_0x22cf2a",
+          "_0x19f8aa",
+          "_0x4d3782",
+          "os",
+          "forEach",
+          "_0x444e5e",
+          "_0xffe7db",
+          "_0x2f408d",
+          "_0xe5825d",
+          "_0x1e09db",
+          "_0x5928de",
+          "_0x13e62a",
+          "console",
+          "log"
+        ]
+      }
+    ],
+    "Ri": [
+      {
+        "kind": "assignment",
+        "offset": 5012594,
+        "likelyDeclaration": true,
+        "bytes": 1737,
+        "expression": "new zO({'execute':_0x204843=>qO(_0x204843,{'getCurrentVersion':(_0x2d6150,_0x42582e)=>eL(_0x2d6150,_0x42582e),'uploadToServer':fL,'uploadToOss':mL,'confirmOssConfig':hL,'extractVersions':MO,'persistVersion':(_0x1848cb,_0x1ef9b1,_0x57e529)=>fb(_0x1848cb,_0x1ef9b1,{'metaByType':_0x57e529}),'onCommitSuccess':(_0x8f3929,_0x49bb0c)=>ps(_0x8f3929,'commit-suc'+\"cess\",\"info\",_0x49bb0c)}),'cleanup':pL,'onAction':(_0x62f1a7,_0x5a856b)=>ps(_0x5a856b,_0x62f1a7),'onBatchAction':(_0xac22b4,_0x2a779b)=>dL(_0x2a779b,_0xac22b4),'onError':_0x296c0a=>{const _0x535678={_0x136a10:'0x4996',_0x4ae947:'0xe98',_0x5ab6e4:'0x555b',_0x4bf270:'0x61b3',_0x4c3c16:'0x5cd2',_0x3ee4be:'0x780a',_0x17761a:'0x2cb6',_0x3d07bf:'0x5d4f',_0x4f1519:0x37fd,_0x429583:0x76b,_0xf8fc0c:'0x2bff'},_0x1b04f1={_0x3ab4f1:0x425},_0x4082d6={'uSDHv':function(_0x555d49,_0x277a75){return _0x555d49===_0x277a75;},'TdyXT':_0x29ae48(_0x535678._0x136a10,'0x367d'),'CqRCR':function(_0x2a9e44,_0x59f039,_0x2b971d,_0x1e7451){return _0x2a9e44(_0x59f039,_0x2b971d,_0x1e7451);},'lOWRn':'error'};function _0x29ae48(_0x286427,_0x40af7a){return _0x28d9a9(_0x40af7a,_0x286427- -_0x1b04f1._0x3ab4f1);}function _0x3a1cdd(_0xe9b2d8,_0x413f86){return _0x1acd6a(_0x413f86,_0xe9b2d8- -'0x27b');}const _0x51d339=_0x4082d6[_0x3a1cdd(_0x535678._0x4ae947,'0x3b93')](_0x296c0a[_0x3a1cdd(_0x535678._0x5ab6e4,'0x81e2')],_0x4082d6[_0x3a1cdd('0x591f','0x3131')])?_0x3a1cdd(0x2f7c,_0x535678._0x4bf270):_0x3a1cdd(_0x535678._0x4c3c16,_0x535678._0x3ee4be);_0x4082d6[_0x3a1cdd(0x57fc,_0x535678._0x17761a)](ps,_0x296c0a,_0x51d339===_0x3a1cdd('0x2f7c',_0x535678._0x3d07bf)?_0x3a1cdd(_0x535678._0x4f1519,_0x535678._0x429583)+_0x29ae48(0x3f52,'0x466a'):_0x29ae48(0x4c3,_0x535678._0xf8fc0c)+'led',_0x4082d6['lOWRn']);}})",
+        "dependencies": [
+          "zO",
+          "execute",
+          "_0x204843",
+          "qO",
+          "getCurrentVersion",
+          "_0x2d6150",
+          "_0x42582e",
+          "eL",
+          "uploadToServer",
+          "fL",
+          "uploadToOss",
+          "mL",
+          "confirmOssConfig",
+          "hL",
+          "extractVersions",
+          "persistVersion",
+          "_0x1848cb",
+          "_0x1ef9b1",
+          "_0x57e529",
+          "fb",
+          "metaByType",
+          "onCommitSuccess",
+          "_0x8f3929",
+          "_0x49bb0c",
+          "ps",
+          "commit",
+          "suc",
+          "cess",
+          "info",
+          "cleanup",
+          "pL",
+          "onAction",
+          "_0x62f1a7",
+          "_0x5a856b",
+          "onBatchAction",
+          "_0xac22b4",
+          "_0x2a779b",
+          "dL",
+          "onError",
+          "_0x296c0a",
+          "_0x535678",
+          "_0x136a10",
+          "_0x4ae947",
+          "_0x5ab6e4",
+          "_0x4bf270",
+          "_0x4c3c16",
+          "_0x3ee4be",
+          "_0x17761a",
+          "_0x3d07bf",
+          "_0x4f1519",
+          "_0x429583",
+          "_0xf8fc0c",
+          "_0x1b04f1",
+          "_0x3ab4f1",
+          "_0x4082d6",
+          "uSDHv",
+          "_0x555d49",
+          "_0x277a75",
+          "TdyXT",
+          "_0x29ae48",
+          "CqRCR",
+          "_0x2a9e44",
+          "_0x59f039",
+          "_0x2b971d",
+          "_0x1e7451",
+          "lOWRn",
+          "error",
+          "_0x286427",
+          "_0x40af7a",
+          "_0x28d9a9",
+          "_0x3a1cdd",
+          "_0xe9b2d8",
+          "_0x413f86",
+          "_0x1acd6a",
+          "_0x51d339",
+          "led"
+        ]
+      }
+    ],
+    "rh": [
+      {
+        "kind": "function-declaration",
+        "offset": 4590829,
+        "bytes": 214,
+        "code": "function rh(_0x2fb56a,_0x5ceccb){const _0x4053b7={_0x5aa083:0x9};function _0x1f0d70(_0x2411f8,_0x395e11){return _0x28d9a9(_0x395e11,_0x2411f8-_0x4053b7._0x5aa083);}_0x5ceccb&&_0x2fb56a[_0x1f0d70(0x60e1,0x85bd)]();}",
+        "dependencies": [
+          "_0x2fb56a",
+          "_0x5ceccb",
+          "_0x4053b7",
+          "_0x5aa083",
+          "_0x1f0d70",
+          "_0x2411f8",
+          "_0x395e11",
+          "_0x28d9a9"
+        ]
+      }
+    ]
   }
 }
