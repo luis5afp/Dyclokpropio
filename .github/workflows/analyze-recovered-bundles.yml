@@ -20,6 +20,7 @@ on:
       - "tools/index-pretty-main-symbols.js"
       - "tools/extract-electron-store-schemas.js"
       - "tools/extract-electron-store-descriptor-mutations.js"
+      - "tools/extract-store-bootstrap-context.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -96,6 +97,12 @@ jobs:
         run: |
           Set-Location source
           node tools/extract-electron-store-descriptor-mutations.js
+
+      - name: Extract readable store bootstrap
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/extract-store-bootstrap-context.js
 
       - name: Trace recovered device ID algorithm
         shell: pwsh
