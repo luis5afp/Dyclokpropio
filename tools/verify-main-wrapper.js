@@ -4,6 +4,15 @@ const assert = require('assert');
 const Module = require('module');
 
 const mockBrowserWindow = function BrowserWindow() {};
+const mockDisplays = [
+  { id: 1, bounds: { x: 0, y: 0, width: 1920, height: 1080 } },
+  { id: 2, bounds: { x: 1920, y: 0, width: 1280, height: 1024 } },
+];
+const mockScreen = {
+  getAllDisplays() {
+    return mockDisplays;
+  },
+};
 const registrations = { handle: [], handleOnce: [], on: [], once: [] };
 const mockIpcMain = {};
 
@@ -53,7 +62,11 @@ const originalLoad = Module._load;
 
 Module._load = function patchedLoad(request, parent, isMain) {
   if (request === 'electron') {
-    return { BrowserWindow: mockBrowserWindow, ipcMain: mockIpcMain };
+    return {
+      BrowserWindow: mockBrowserWindow,
+      ipcMain: mockIpcMain,
+      screen: mockScreen,
+    };
   }
 
   if (request === 'electron-store') {
@@ -104,6 +117,7 @@ try {
     'get-device-info',
     'get-main-window-launch-preference',
     'set-main-window-launch-preference',
+    'get-all-display',
   ]) {
     assert.strictEqual(
       registrations.handle.filter((item) => item.channel === channel).length,
@@ -129,6 +143,11 @@ try {
     (item) => item.channel === 'get-current-platform',
   );
   assert.strictEqual(platformHandler.callback(), process.platform);
+
+  const displayHandler = registrations.handle.find(
+    (item) => item.channel === 'get-all-display',
+  );
+  assert.deepStrictEqual(displayHandler.callback(), mockDisplays);
 
   console.log('Main wrapper contract: OK');
 } finally {
