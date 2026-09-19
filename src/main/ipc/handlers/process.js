@@ -9,14 +9,8 @@ function getCurrentPlatform() {
   return process.platform;
 }
 
-function setProcessEnv(_event, payload = {}) {
-  const { key, value } = payload;
-
-  if (typeof key !== 'string' || key.length === 0) {
-    throw new TypeError('set-process-env requires a non-empty string key');
-  }
-
-  process.env[key] = value == null ? '' : String(value);
+function setProcessEnv(_event, { key, value }) {
+  process.env[key] = value;
 }
 
 function registerProcessHandlers(ipcMain) {
