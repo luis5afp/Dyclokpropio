@@ -2,19 +2,19 @@
 
 ## Delivery status
 
-The maximum reliable reconstruction possible from the recovered installer artifacts is now operationally complete on the `reconstruction-source` branch.
+The maximum reliable reconstruction possible from the recovered installer artifacts is operationally complete on the `reconstruction-source` branch.
 
 This statement has a precise meaning:
 
 - every recovered JavaScript/CSS/JSON/HTML runtime input used by the reconstructed package has a versioned editable copy under `src/runtime/`;
 - the reconstructed build removes those code/runtime files from the legacy `dist/` and `dist-electron/` copies before packaging and overlays the editable mirror from `src/runtime/`;
-- the build aborts if an editable runtime file is missing;
+- the build aborts if an editable recovered runtime file is missing;
 - reconstructed preload and main-process contracts are validated automatically;
 - the Windows reconstructed installer has already been built and smoke-launched successfully in GitHub Actions.
 
 ## Verified build
 
-Latest successful validation recorded by the branch:
+Latest successful validation recorded before the final completeness gate was added:
 
 - generated: 2026-09-19T03:46:08.9094266Z
 - installer: `Dyclokpropio_3.0.0_win_x64_reconstructed.exe`
@@ -27,13 +27,15 @@ The validation workflow installs dependencies, rebuilds native Electron modules,
 
 ## Editable coverage
 
-The bootstrap manifest currently records:
+The recovered runtime contains:
 
-- renderer editable runtime files: 561
-- Electron editable runtime files: 21
-- source maps recovered from the installer: none
+- 561 editable renderer inputs (JS/CSS/JSON/HTML);
+- 21 editable Electron inputs (JS/JSON/HTML);
+- no source maps.
 
-The renderer also has reconstructed maintainable Vue SFCs under `src/renderer/components/reconstructed/`, while the complete compatibility mirror remains editable under `src/runtime/dist/`.
+All 582 recovered editable inputs are mirrored under `src/runtime/`. The reconstructed Electron mirror also contains additional clean helper code, including `dist-electron/shared/ipc-channels.js`, so the source tree can legitimately contain more files than the recovered-input count.
+
+The renderer also has maintainable reconstructed Vue SFCs under `src/renderer/components/reconstructed/`, while the complete compatibility mirror remains editable under `src/runtime/dist/`.
 
 ## What cannot be recovered exactly
 

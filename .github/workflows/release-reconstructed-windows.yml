@@ -14,6 +14,10 @@ on:
       - "package.json"
       - ".github/workflows/release-reconstructed-windows.yml"
 
+concurrency:
+  group: reconstructed-release-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 

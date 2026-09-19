@@ -30,6 +30,10 @@ function editableSet(root) {
   );
 }
 
+function difference(left, right) {
+  return [...left].filter((file) => !right.has(file));
+}
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -43,8 +47,10 @@ const sourceRenderer = editableSet(path.join(SOURCE, 'dist'));
 const originalElectron = editableSet(path.join(ROOT, 'dist-electron'));
 const sourceElectron = editableSet(path.join(SOURCE, 'dist-electron'));
 
-const missingRenderer = [...originalRenderer].filter((file) => !sourceRenderer.has(file));
-const missingElectron = [...originalElectron].filter((file) => !sourceElectron.has(file));
+const missingRenderer = difference(originalRenderer, sourceRenderer);
+const missingElectron = difference(originalElectron, sourceElectron);
+const additionalRenderer = difference(sourceRenderer, originalRenderer);
+const additionalElectron = difference(sourceElectron, originalElectron);
 
 assert(
   missingRenderer.length === 0,
@@ -55,19 +61,21 @@ assert(
   'Editable runtime mirror is missing Electron files: ' + missingElectron.join(', '),
 );
 
+// The bootstrap counts describe recovered inputs mirrored from dist/dist-electron.
+// Reconstructed source is allowed to add new editable helper modules on top.
 assert(
-  sourceRenderer.size === bootstrap.rendererEditableFiles,
-  'Renderer editable-file count drifted: manifest=' +
+  originalRenderer.size === bootstrap.rendererEditableFiles,
+  'Recovered renderer input count drifted: manifest=' +
     bootstrap.rendererEditableFiles +
-    ', actual=' +
-    sourceRenderer.size,
+    ', recovered=' +
+    originalRenderer.size,
 );
 assert(
-  sourceElectron.size === bootstrap.electronEditableFiles,
-  'Electron editable-file count drifted: manifest=' +
+  originalElectron.size === bootstrap.electronEditableFiles,
+  'Recovered Electron input count drifted: manifest=' +
     bootstrap.electronEditableFiles +
-    ', actual=' +
-    sourceElectron.size,
+    ', recovered=' +
+    originalElectron.size,
 );
 
 for (const required of [
@@ -87,10 +95,14 @@ assert(maps.length === 0, 'Unexpected source maps appeared in reconstructed runt
 
 const summary = {
   exactOriginalSource: Boolean(bootstrap.exactOriginalSource),
-  rendererEditableFiles: sourceRenderer.size,
-  electronEditableFiles: sourceElectron.size,
+  recoveredRendererInputs: originalRenderer.size,
+  editableRendererFiles: sourceRenderer.size,
+  recoveredElectronInputs: originalElectron.size,
+  editableElectronFiles: sourceElectron.size,
   missingRendererFiles: missingRenderer.length,
   missingElectronFiles: missingElectron.length,
+  additionalRendererFiles: additionalRenderer,
+  additionalElectronFiles: additionalElectron,
   reconstructedMainPresent: true,
   reconstructedPreloadPresent: true,
   buildUsesEditableRuntimeMirror: true,
