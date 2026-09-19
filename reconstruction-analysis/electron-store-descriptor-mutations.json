@@ -1,0 +1,562 @@
+{
+  "generatedAt": "2026-09-19T03:16:40.025Z",
+  "descriptors": {
+    "_0x277d50": {
+      "store": "app",
+      "field": "userInfo",
+      "mutations": [
+        {
+          "line": 485,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\"), (_0x277d50[\"default\"] = {})"
+        }
+      ]
+    },
+    "_0x16b017": {
+      "store": "app",
+      "field": "inputDelay",
+      "mutations": [
+        {
+          "line": 487,
+          "key": "type",
+          "valueKind": "string",
+          "value": "number",
+          "expression": "\"number\""
+        }
+      ]
+    },
+    "_0x2bb24a": {
+      "store": "app",
+      "field": "language",
+      "mutations": [
+        {
+          "line": 489,
+          "key": "type",
+          "valueKind": "string",
+          "value": "string",
+          "expression": "\"string\""
+        }
+      ]
+    },
+    "_0x12848a": {
+      "store": "app",
+      "field": "token",
+      "mutations": [
+        {
+          "line": 491,
+          "key": "type",
+          "valueKind": "string",
+          "value": "string",
+          "expression": "\"string\""
+        }
+      ]
+    },
+    "_0x23e90c": {
+      "store": "app",
+      "field": "apiUrl",
+      "mutations": [
+        {
+          "line": 493,
+          "key": "type",
+          "valueKind": "string",
+          "value": "string",
+          "expression": "\"string\""
+        }
+      ]
+    },
+    "_0x323e75": {
+      "store": "app",
+      "field": "homeUrl",
+      "mutations": [
+        {
+          "line": 495,
+          "key": "type",
+          "valueKind": "string",
+          "value": "string",
+          "expression": "\"string\""
+        }
+      ]
+    },
+    "_0x31f99e": {
+      "store": "app",
+      "field": "userOpenList",
+      "mutations": [
+        {
+          "line": 497,
+          "key": "type",
+          "valueKind": "string",
+          "value": "array",
+          "expression": "\"array\""
+        }
+      ]
+    },
+    "_0x55052e": {
+      "store": "app",
+      "field": "closeWindowChoice",
+      "mutations": [
+        {
+          "line": 499,
+          "key": "type",
+          "valueKind": "string",
+          "value": "number",
+          "expression": "\"number\""
+        }
+      ]
+    },
+    "_0x3e2f9b": {
+      "store": "app",
+      "field": "loginAccountRecords",
+      "mutations": [
+        {
+          "line": 501,
+          "key": "type",
+          "valueKind": "string",
+          "value": "array",
+          "expression": "\"array\""
+        }
+      ]
+    },
+    "_0x54f56c": {
+      "store": "app",
+      "field": "baseURLKey",
+      "mutations": [
+        {
+          "line": 503,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x54f56c[\"default\"] = \"test\")"
+        }
+      ]
+    },
+    "_0x105b2e": {
+      "store": "app",
+      "field": "cacheBaseDir",
+      "mutations": [
+        {
+          "line": 505,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x105b2e[\"default\"] = \"\")"
+        }
+      ]
+    },
+    "_0x3c0323": {
+      "store": "app",
+      "field": "pluginPath",
+      "mutations": [
+        {
+          "line": 507,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x3c0323[\"default\"] = \"\")"
+        }
+      ]
+    },
+    "_0x52757b": {
+      "store": "app",
+      "field": "status",
+      "mutations": [
+        {
+          "line": 509,
+          "key": "type",
+          "valueKind": "string",
+          "value": "boolean",
+          "expression": "\"boolean\""
+        }
+      ]
+    },
+    "_0xa02318": {
+      "store": "app",
+      "field": "day",
+      "mutations": [
+        {
+          "line": 511,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"number\"), (_0xa02318[\"default\"] = 0x1e)"
+        }
+      ]
+    },
+    "_0x2382ef": {
+      "store": "app",
+      "field": "cacheBaseDirs",
+      "mutations": [
+        {
+          "line": 513,
+          "key": "type",
+          "valueKind": "string",
+          "value": "array",
+          "expression": "\"array\""
+        }
+      ]
+    },
+    "_0x12c524": {
+      "store": "app",
+      "field": "migrateType",
+      "mutations": [
+        {
+          "line": 515,
+          "key": "type",
+          "valueKind": "string",
+          "value": "string",
+          "expression": "\"string\""
+        }
+      ]
+    },
+    "_0x16d517": {
+      "store": "app",
+      "field": "migrateDir",
+      "mutations": [
+        {
+          "line": 517,
+          "key": "type",
+          "valueKind": "string",
+          "value": "string",
+          "expression": "\"string\""
+        }
+      ]
+    },
+    "_0x3f4fa0": {
+      "store": "app",
+      "field": "currentOpenApiConfig",
+      "mutations": [
+        {
+          "line": 523,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\"), (_0x3f4fa0[\"default\"] = _0x104399)"
+        }
+      ]
+    },
+    "_0x5731d2": {
+      "store": "app",
+      "field": "currentOpenApiV2Config",
+      "mutations": [
+        {
+          "line": 529,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\"), (_0x5731d2[\"default\"] = _0x155d90)"
+        }
+      ]
+    },
+    "_0x3691cd": {
+      "store": "app",
+      "field": "useSystemProxyForPersonal",
+      "mutations": [
+        {
+          "line": 531,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"boolean\")"
+        },
+        {
+          "line": 532,
+          "key": "default",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "!(0x3c1 + -0x1 * -0x140b + -0x17cc * 0x1))"
+        }
+      ]
+    },
+    "_0x1dc614": {
+      "store": "app",
+      "field": "deviceId",
+      "mutations": [
+        {
+          "line": 534,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x1dc614[\"default\"] = \"\")"
+        }
+      ]
+    },
+    "_0x5debf9": {
+      "store": "app",
+      "field": "isIpLimitVpn",
+      "mutations": [
+        {
+          "line": 536,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"boolean\")"
+        },
+        {
+          "line": 537,
+          "key": "default",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "!(-0x112a * 0x1 + -0x5 * -0x5a6 + 0x13b * -0x9))"
+        }
+      ]
+    },
+    "_0x3894d2": {
+      "store": "app",
+      "field": "cookieEncryptTypeMapForEnvIds",
+      "mutations": [
+        {
+          "line": 539,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\"), (_0x3894d2[\"default\"] = {})"
+        }
+      ]
+    },
+    "_0x2d235c": {
+      "store": "app",
+      "field": "useHardwareAcceleration",
+      "mutations": [
+        {
+          "line": 541,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"boolean\")"
+        },
+        {
+          "line": 542,
+          "key": "default",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "!(0x3 * -0xf4 + 0x1125 + -0x8 * 0x1c9))"
+        }
+      ]
+    },
+    "_0x3831df": {
+      "store": "app",
+      "field": "lastCheckSoftwareTimestamp",
+      "mutations": [
+        {
+          "line": 544,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"number\"), (_0x3831df[\"default\"] = 0x0)"
+        }
+      ]
+    },
+    "_0x2865cb": {
+      "store": "app",
+      "field": "downloadDomainPolicyV2",
+      "mutations": [
+        {
+          "line": 546,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x2865cb[\"default\"] = \"\")"
+        }
+      ]
+    },
+    "_0x3d1c22": {
+      "store": "app",
+      "field": "apiLine",
+      "mutations": [
+        {
+          "line": 548,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x3d1c22[\"default\"] = \"line1\")"
+        }
+      ]
+    },
+    "_0x45ab6d": {
+      "store": "app",
+      "field": "lineUrlList",
+      "mutations": [
+        {
+          "line": 550,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"array\"), (_0x45ab6d[\"default\"] = [])"
+        }
+      ]
+    },
+    "_0x40bee5": {
+      "store": "app",
+      "field": "eventVersions",
+      "mutations": [
+        {
+          "line": 552,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\"), (_0x40bee5[\"default\"] = {})"
+        }
+      ]
+    },
+    "_0x2e0585": {
+      "store": "app",
+      "field": "trackingPoint",
+      "mutations": [
+        {
+          "line": 554,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"string\"), (_0x2e0585[\"default\"] = \"0\")"
+        }
+      ]
+    },
+    "_0x473ec2": {
+      "store": "app",
+      "field": "mainWindowState",
+      "mutations": [
+        {
+          "line": 566,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\")"
+        },
+        {
+          "line": 567,
+          "key": "properties",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "_0x227444)"
+        },
+        {
+          "line": 568,
+          "key": "required",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "[\"width\", \"height\", \"isMaximize\" + \"d\"])"
+        },
+        {
+          "line": 569,
+          "key": "additional\" + \"Properties",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "!("
+        }
+      ]
+    },
+    "_0x30bf42": {
+      "store": "app",
+      "field": "mainWindowLaunchPreference",
+      "mutations": [
+        {
+          "line": 581,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"object\")"
+        },
+        {
+          "line": 582,
+          "key": "properties",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "_0x19afba)"
+        },
+        {
+          "line": 583,
+          "key": "required",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "[\"width\", \"height\"])"
+        },
+        {
+          "line": 584,
+          "key": "additional\" + \"Properties",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "!("
+        }
+      ]
+    },
+    "_0x5943f8": {
+      "store": "tracker",
+      "field": "isPaid",
+      "mutations": [
+        {
+          "line": 670,
+          "key": "type",
+          "valueKind": "string",
+          "value": "boolean",
+          "expression": "\"boolean\""
+        }
+      ]
+    },
+    "_0xcb79b9": {
+      "store": "tracker",
+      "field": "installDate",
+      "mutations": [
+        {
+          "line": 672,
+          "key": "type",
+          "valueKind": "string",
+          "value": "number",
+          "expression": "\"number\""
+        }
+      ]
+    },
+    "_0x143441": {
+      "store": "tracker",
+      "field": "dailyCount",
+      "mutations": [
+        {
+          "line": 674,
+          "key": "type",
+          "valueKind": "string",
+          "value": "number",
+          "expression": "\"number\""
+        }
+      ]
+    },
+    "_0x4b0dde": {
+      "store": "tracker",
+      "field": "events",
+      "mutations": [
+        {
+          "line": 676,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"array\"), (_0x4b0dde[\"default\"] = [])"
+        }
+      ]
+    },
+    "_0x442089": {
+      "store": "tracker",
+      "field": "reliableEvents",
+      "mutations": [
+        {
+          "line": 678,
+          "key": "type",
+          "valueKind": "expression",
+          "value": null,
+          "expression": "\"array\"), (_0x442089[\"default\"] = [])"
+        }
+      ]
+    },
+    "_0x451a7b": {
+      "store": "tracker",
+      "field": "lastResetDate",
+      "mutations": [
+        {
+          "line": 680,
+          "key": "type",
+          "valueKind": "string",
+          "value": "number",
+          "expression": "\"number\""
+        }
+      ]
+    }
+  }
+}
