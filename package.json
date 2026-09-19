@@ -104,7 +104,9 @@
     "verify:preload": "node tools/verify-preload-contract.js",
     "verify:main": "node tools/verify-main-wrapper.js",
     "verify:reconstruction": "npm run verify:preload && npm run verify:main",
-    "index:renderer": "node tools/build-renderer-recovery-index.js"
+    "index:renderer": "node tools/build-renderer-recovery-index.js",
+    "build:reconstructed:prepare": "node tools/build-reconstructed-runtime.js",
+    "build:reconstructed:win": "node tools/build-reconstructed-runtime.js && electron-builder --config electron-builder.reconstructed.yml --win nsis --x64 --publish never"
   },
   "devDependencies": {
     "electron": "31.7.7",
