@@ -14,6 +14,9 @@ const {
 const {
   registerWindowPreferenceHandlers,
 } = require('./handlers/window-preference');
+const {
+  registerDisplayHandlers,
+} = require('./handlers/display');
 
 const MIGRATED_CHANNELS = Object.freeze([
   PROCESS_CHANNELS.GET_CURRENT_PLATFORM,
@@ -24,6 +27,7 @@ const MIGRATED_CHANNELS = Object.freeze([
   'electron-store-delete',
   'get-main-window-launch-preference',
   'set-main-window-launch-preference',
+  'get-all-display',
 ]);
 
 function getCapturedStore(stores, name) {
@@ -34,6 +38,7 @@ function getCapturedStore(stores, name) {
 function registerMigratedHandlers(ipcMain, context = {}) {
   registerProcessHandlers(ipcMain);
   registerDeviceInfoHandlers(ipcMain);
+  registerDisplayHandlers(ipcMain, context.screen);
 
   const appStore = getCapturedStore(context.stores, 'app');
   const trackerStore = getCapturedStore(context.stores, 'tracker');
