@@ -1,0 +1,44 @@
+name: Analyze Recovered Bundles
+
+on:
+  push:
+    branches:
+      - reconstruction-source
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    if: "!contains(github.event.head_commit.message, '[reconstruction-bot]')"
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone reconstruction branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch reconstruction-source --depth 1
+
+      - name: Analyze compiled bundles
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/analyze-recovered-bundles.js
+
+      - name: Commit analysis reports
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Set-Location source
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reconstruction-analysis
+          if (git diff --cached --quiet) {
+            Write-Host "No analysis changes."
+            exit 0
+          }
+          git commit -m "[reconstruction-bot] Update bundle analysis"
+          git push origin reconstruction-source
