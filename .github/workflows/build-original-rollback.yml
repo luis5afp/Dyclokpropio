@@ -1,0 +1,88 @@
+name: Build Original Rollback
+
+on:
+  push:
+    branches:
+      - rollback-build-original
+    paths:
+      - ".github/workflows/build-original-rollback.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-original:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone original rollback branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch "rollback-build-original" --depth 1
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm install --legacy-peer-deps
+
+      - name: Rebuild native Electron dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npx electron-builder install-app-deps
+
+      - name: Build unpacked original application
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run build:dir
+
+      - name: Smoke-launch original executable
+        shell: pwsh
+        run: |
+          Set-Location source
+          $exe = Join-Path (Get-Location) "release\win-unpacked\Dyclokpropio.exe"
+          if (-not (Test-Path $exe)) {
+            throw "Original executable not found: $exe"
+          }
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) {
+            throw "Original executable exited with code $($proc.ExitCode)."
+          }
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Build original NSIS installer
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run build:win -- --publish never
+
+      - name: Write checksum
+        shell: pwsh
+        run: |
+          Set-Location source
+          $installers = Get-ChildItem "release\*.exe"
+          if (-not $installers) { throw "No original installer generated." }
+          $lines = foreach ($file in $installers) {
+            $hash = (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLower()
+            "$hash  $($file.Name)"
+          }
+          $lines | Set-Content "release\SHA256SUMS.txt" -Encoding ASCII
+          Get-Content "release\SHA256SUMS.txt"
+
+      - name: Upload original rollback installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyclokpropio-original-rollback-3.0.0
+          path: |
+            source/release/*.exe
+            source/release/SHA256SUMS.txt
+          if-no-files-found: error
