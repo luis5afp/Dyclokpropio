@@ -6,6 +6,8 @@ Generated from the compiled application bundles.
 - Renderer JS files summarized: 164
 - IPC channels mapped: 44
 - Candidate route/path strings: 23
+- Direct renderer IPC channels: 54
+- Renderer channels also found in main bundle: 17
 - Primary main bundle: dist-electron/main-CuCOh59n.js
 - Primary renderer bundle: dist/assets/index-2aSE6uVi.js
 
