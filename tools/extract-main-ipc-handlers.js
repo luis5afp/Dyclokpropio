@@ -18,11 +18,32 @@ function clip(offset, radius = 900) {
 }
 
 const constants = new Map();
-const constantRegex = /\b([A-Za-z_$][\w$]*)\s*=\s*(['"])([^'"\r\n]{1,140})\2/g;
 
-for (const match of source.matchAll(constantRegex)) {
-  const value = match[3];
-  if (/^[A-Za-z0-9_:.\/-]+$/.test(value)) {
+function parseStringConcat(expression) {
+  const expr = expression.trim();
+  if (!expr || expr.length > 500) return null;
+
+  const stringToken = /(['"])(?:\\.|(?!\1)[^\\])*\1/g;
+  const stripped = expr.replace(stringToken, 'S');
+
+  if (!/^\s*S(?:\s*\+\s*S)*\s*$/.test(stripped)) return null;
+
+  try {
+    const value = require('vm').runInNewContext(expr, Object.create(null), {
+      timeout: 50,
+    });
+    return typeof value === 'string' ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+const assignmentRegex =
+  /\b([A-Za-z_$][\w$]*)\s*=\s*([^,;]{1,500})(?=\s*[,;])/g;
+
+for (const match of source.matchAll(assignmentRegex)) {
+  const value = parseStringConcat(match[2]);
+  if (value !== null && /^[A-Za-z0-9_:.\/-]+$/.test(value)) {
     constants.set(match[1], value);
   }
 }
