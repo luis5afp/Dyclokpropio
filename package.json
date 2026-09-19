@@ -99,7 +99,11 @@
   "scripts": {
     "start": "electron .",
     "build:win": "electron-builder --win nsis --x64",
-    "build:dir": "electron-builder --dir --win --x64"
+    "build:dir": "electron-builder --dir --win --x64",
+    "start:reconstructed": "electron src/main/index.js",
+    "verify:preload": "node tools/verify-preload-contract.js",
+    "verify:main": "node tools/verify-main-wrapper.js",
+    "verify:reconstruction": "npm run verify:preload && npm run verify:main"
   },
   "devDependencies": {
     "electron": "31.7.7",
