@@ -50,6 +50,15 @@ function createFakeStore(initial = {}) {
 }
 
 const ipcMain = createFakeIpcMain();
+const displays = [
+  { id: 1, bounds: { x: 0, y: 0, width: 1920, height: 1080 } },
+  { id: 2, bounds: { x: 1920, y: 0, width: 1280, height: 1024 } },
+];
+const screen = {
+  getAllDisplays() {
+    return displays;
+  },
+};
 const stores = new Map([
   ['app', createFakeStore({ language: 'es' })],
   ['tracker', createFakeStore({ isPaid: false })],
@@ -64,6 +73,7 @@ const legacy = loadWithMigratedIpc({
       'get-device-info',
       'get-main-window-launch-preference',
       'set-main-window-launch-preference',
+      'get-all-display',
     ]) {
       ipcMain.handle(channel, () => 'LEGACY');
     }
@@ -81,7 +91,7 @@ const legacy = loadWithMigratedIpc({
     return { loaded: true };
   },
   registerMigrated(mainIpc) {
-    registerMigratedHandlers(mainIpc, { stores });
+    registerMigratedHandlers(mainIpc, { stores, screen });
   },
 });
 
@@ -92,6 +102,7 @@ for (const channel of [
   'get-device-info',
   'get-main-window-launch-preference',
   'set-main-window-launch-preference',
+  'get-all-display',
 ]) {
   assert.strictEqual(
     ipcMain.registrations.handle.filter((x) => x.channel === channel).length,
@@ -182,5 +193,10 @@ assert.deepStrictEqual(
 assert.deepStrictEqual(getPreference(), { width: 1200, height: 800 });
 assert.strictEqual(setPreference({}, null), null);
 assert.strictEqual(getPreference(), null);
+
+const getAllDisplays = ipcMain.registrations.handle.find(
+  (x) => x.channel === 'get-all-display',
+).callback;
+assert.deepStrictEqual(getAllDisplays(), displays);
 
 console.log('Incremental IPC migration: OK');
