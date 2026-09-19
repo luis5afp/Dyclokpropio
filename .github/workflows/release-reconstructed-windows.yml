@@ -3,8 +3,16 @@ name: Release Reconstructed Windows Installer
 on:
   workflow_dispatch:
   push:
+    branches:
+      - reconstruction-source
     tags:
       - "reconstructed-v*"
+    paths:
+      - "src/**"
+      - "tools/**"
+      - "electron-builder.reconstructed.yml"
+      - "package.json"
+      - ".github/workflows/release-reconstructed-windows.yml"
 
 permissions:
   contents: write
