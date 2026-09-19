@@ -14,39 +14,46 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Clone repository
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch "${{ github.ref_name }}" --depth 1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
+      - name: Show tool versions
+        shell: pwsh
+        run: |
+          node --version
+          npm --version
+          git --version
+          gh --version
 
       - name: Set package version from tag
         if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         run: |
+          Set-Location source
           $version = "${{ github.ref_name }}".TrimStart("v")
           npm version $version --no-git-tag-version --allow-same-version
 
       - name: Install dependencies
         shell: pwsh
-        run: npm install --legacy-peer-deps
+        run: |
+          Set-Location source
+          npm install --legacy-peer-deps
 
       - name: Rebuild native Electron dependencies
         shell: pwsh
-        run: npx electron-builder install-app-deps
+        run: |
+          Set-Location source
+          npx electron-builder install-app-deps
 
       - name: Build Windows NSIS installer
         shell: pwsh
-        run: npm run build:win
-
-      - name: Upload installer artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Dyclokpropio-Windows-x64
-          path: release/*.exe
-          if-no-files-found: error
+        run: |
+          Set-Location source
+          npm run build:win
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
@@ -54,4 +61,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.ref_name }}" release/*.exe --title "Dyclokpropio ${{ github.ref_name }}" --generate-notes
+          $tag = "${{ github.ref_name }}"
+          $files = Get-ChildItem "source\release\*.exe" | ForEach-Object { $_.FullName }
+          if (-not $files) { throw "No se genero ningun instalador .exe" }
+          gh release view $tag --repo "${{ github.repository }}" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $files --repo "${{ github.repository }}" --clobber
+          } else {
+            gh release create $tag $files --repo "${{ github.repository }}" --title "Dyclokpropio $tag" --generate-notes
+          }
