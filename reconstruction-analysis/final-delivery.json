@@ -1,0 +1,29 @@
+{
+  "completedAt": "2026-09-19T05:46:15Z",
+  "branch": "reconstruction-source",
+  "workflowRunId": 35424415737,
+  "workflowConclusion": "success",
+  "installer": {
+    "file": "Dyclokpropio_3.0.0_win_x64_reconstructed.exe",
+    "bytes": 190400322,
+    "sha256": "8e729e91debf06e6d86c667b8825864e6fc7f3de7706dd07a17f2207ccf555ce"
+  },
+  "artifact": {
+    "id": 10578578347,
+    "name": "Dyclokpropio-reconstructed-windows",
+    "zipBytes": 190064385,
+    "zipSha256": "25d6211c18d75d74ea1893c5143faf98b57da9bad409e9716b306cf2838c8872",
+    "expiresAt": "2026-12-18T05:36:47Z"
+  },
+  "editableCoverage": {
+    "recoveredRendererInputs": 561,
+    "editableRendererFiles": 561,
+    "recoveredElectronInputs": 21,
+    "editableElectronFiles": 22,
+    "missingRendererFiles": 0,
+    "missingElectronFiles": 0
+  },
+  "exactOriginalSource": false,
+  "operationallyEditableAndRebuildable": true,
+  "smokeLaunchPassed": true
+}

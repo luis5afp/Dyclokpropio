@@ -10,30 +10,50 @@ This statement has a precise meaning:
 - the reconstructed build removes those code/runtime files from the legacy `dist/` and `dist-electron/` copies before packaging and overlays the editable mirror from `src/runtime/`;
 - the build aborts if an editable recovered runtime file is missing;
 - reconstructed preload and main-process contracts are validated automatically;
-- the Windows reconstructed installer has already been built and smoke-launched successfully in GitHub Actions.
+- the Windows reconstructed installer is built and smoke-launched successfully in GitHub Actions.
 
-## Verified build
+## Final verified build
 
-Latest successful validation recorded before the final completeness gate was added:
+Final delivery workflow: GitHub Actions run `35424415737`.
 
-- generated: 2026-09-19T03:46:08.9094266Z
-- installer: `Dyclokpropio_3.0.0_win_x64_reconstructed.exe`
-- bytes: 190399568
-- SHA-256: `00c921fbf5433b08ff67d0cb6088b31764d54c3be8a9c7e90e15d22260b4eb13`
-- editable runtime mirror: enabled
-- smoke launch: passed
+All required steps passed:
 
-The validation workflow installs dependencies, rebuilds native Electron modules, runs the reconstruction contract suite, creates the NSIS installer and launches the unpacked executable as a smoke test.
+- dependency installation;
+- Electron native dependency rebuild;
+- complete reconstructed contract suite;
+- editable-runtime completeness gate;
+- Windows NSIS installer build;
+- executable smoke launch;
+- SHA-256 generation;
+- artifact upload.
+
+Generated installer:
+
+- file: `Dyclokpropio_3.0.0_win_x64_reconstructed.exe`
+- bytes: 190400322
+- SHA-256: `8e729e91debf06e6d86c667b8825864e6fc7f3de7706dd07a17f2207ccf555ce`
+
+Uploaded artifact:
+
+- name: `Dyclokpropio-reconstructed-windows`
+- artifact ID: `10578578347`
+- ZIP bytes: 190064385
+- ZIP digest: `sha256:25d6211c18d75d74ea1893c5143faf98b57da9bad409e9716b306cf2838c8872`
+- generated: 2026-09-19
+- expires on GitHub Actions: 2026-12-18
 
 ## Editable coverage
 
-The recovered runtime contains:
+The final completeness gate reported:
 
-- 561 editable renderer inputs (JS/CSS/JSON/HTML);
-- 21 editable Electron inputs (JS/JSON/HTML);
-- no source maps.
+- recovered renderer inputs: 561;
+- editable renderer files: 561;
+- recovered Electron inputs: 21;
+- editable Electron files: 22;
+- missing renderer files: 0;
+- missing Electron files: 0.
 
-All 582 recovered editable inputs are mirrored under `src/runtime/`. The reconstructed Electron mirror also contains additional clean helper code, including `dist-electron/shared/ipc-channels.js`, so the source tree can legitimately contain more files than the recovered-input count.
+The extra Electron source file is reconstructed helper code rather than a missing/extra recovered input. In particular, the clean IPC catalog adds `dist-electron/shared/ipc-channels.js`.
 
 The renderer also has maintainable reconstructed Vue SFCs under `src/renderer/components/reconstructed/`, while the complete compatibility mirror remains editable under `src/runtime/dist/`.
 
@@ -51,13 +71,14 @@ Those are information-loss limits of the supplied artifacts, not unfinished copy
 
 ## Practical definition of finished
 
-For this repository, reconstruction is considered finished at the operational/editability level when all of the following remain true:
+For this repository, reconstruction is finished at the operational/editability level because all of the following are true:
 
 1. all recovered JS/CSS/JSON/HTML runtime inputs have editable copies in `src/runtime/`;
 2. `npm run verify:editable-runtime` reports zero missing files;
 3. `npm run verify:reconstruction` passes;
 4. `npm run build:reconstructed:win` builds the Windows installer;
-5. the generated executable passes the smoke-launch step.
+5. the generated executable passes the smoke-launch step;
+6. the installer and checksum are published as a GitHub Actions artifact.
 
 The clean semantic rewrite under `src/main/` and `src/renderer/` can continue as normal refactoring, but it is no longer required in order to edit and rebuild the recovered application.
 
@@ -66,4 +87,4 @@ The clean semantic rewrite under `src/main/` and `src/renderer/` can continue as
 - `main`: recovered stable reference.
 - `reconstruction-source`: editable/rebuildable reconstruction and validation tooling.
 
-Do not delete the recovered reference bundles until any future clean rewrite has equivalent behavior and tests.
+The histories have been synchronized: `reconstruction-source` contains the current `main` history while keeping the reconstructed work. Pull request #1 is mergeable, but `main` remains intentionally preserved as the stable recovered reference.
