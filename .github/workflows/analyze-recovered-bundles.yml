@@ -11,6 +11,7 @@ on:
       - "src/preload/index.js"
       - "tools/analyze-recovered-bundles.js"
       - "tools/compare-preload-contract.js"
+      - "tools/deobfuscate-main-stage1.js"
       - ".github/workflows/analyze-recovered-bundles.yml"
 
 concurrency:
@@ -39,6 +40,12 @@ jobs:
           Set-Location source
           node tools/analyze-recovered-bundles.js
 
+      - name: Deobfuscate main bundle stage 1
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/deobfuscate-main-stage1.js
+
       - name: Compare recovered and reconstructed preload
         shell: pwsh
         run: |
@@ -54,7 +61,7 @@ jobs:
           gh auth setup-git
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reconstruction-analysis
+          git add reconstruction-analysis reconstruction-work
           if (git diff --cached --quiet) {
             Write-Host "No analysis changes."
             exit 0
