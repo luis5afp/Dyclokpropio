@@ -1,0 +1,63 @@
+name: Analyze Recovered Vue Source
+
+on:
+  push:
+    branches:
+      - reconstruction-source
+    paths:
+      - "dist/assets/**"
+      - "tools/analyze-vue-components.js"
+      - ".github/workflows/analyze-recovered-vue.yml"
+
+concurrency:
+  group: reconstruction-vue-analysis-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  analyze-vue:
+    runs-on: windows-latest
+    steps:
+      - name: Clone reconstruction branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch reconstruction-source --depth 1
+
+      - name: Analyze Vue component chunks
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/analyze-vue-components.js
+
+      - name: Commit Vue analysis
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Set-Location source
+          gh auth setup-git
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reconstruction-analysis/vue-component-manifest.json
+          if (git diff --cached --quiet) {
+            Write-Host "No Vue analysis changes."
+            exit 0
+          }
+          git commit -m "[reconstruction-bot] Update Vue component analysis"
+
+          $pushed = $false
+          for ($attempt = 1; $attempt -le 5; $attempt++) {
+            git pull --rebase origin reconstruction-source
+            if ($LASTEXITCODE -ne 0) { throw "git pull --rebase failed" }
+            git push origin reconstruction-source
+            if ($LASTEXITCODE -eq 0) {
+              $pushed = $true
+              break
+            }
+            Start-Sleep -Seconds (2 * $attempt)
+          }
+          if (-not $pushed) { throw "Could not push Vue analysis." }
