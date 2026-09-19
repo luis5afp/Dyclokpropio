@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - reconstruction-source
+      - main
     tags:
       - "reconstructed-v*"
     paths:
@@ -12,6 +12,7 @@ on:
       - "tools/**"
       - "electron-builder.reconstructed.yml"
       - "package.json"
+      - "versioning.json"
       - ".github/workflows/release-reconstructed-windows.yml"
 
 concurrency:
@@ -32,6 +33,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh repo clone "${{ github.repository }}" source -- --branch "${{ github.ref_name }}" --depth 1
+
+      - name: Assign automatic build version
+        id: version
+        shell: pwsh
+        env:
+          DYCLOK_VERSION_RUN: ${{ github.run_number }}
+        run: |
+          Set-Location source
+          node tools/set-build-version.js --run-number "$env:DYCLOK_VERSION_RUN"
+          node -e "console.log('Building Dyclokpropio ' + require('./package.json').version)"
 
       - name: Install dependencies
         shell: pwsh
@@ -86,15 +97,18 @@ jobs:
             "$hash  $($file.Name)"
           }
           $lines | Set-Content "release-reconstructed\SHA256SUMS.txt" -Encoding ASCII
+          "${{ steps.version.outputs.version }}" | Set-Content "release-reconstructed\VERSION.txt" -Encoding ASCII
           Get-Content "release-reconstructed\SHA256SUMS.txt"
+          Get-Content "release-reconstructed\VERSION.txt"
 
       - name: Upload reconstructed installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dyclokpropio-reconstructed-windows
+          name: Dyclokpropio-${{ steps.version.outputs.version }}-windows
           path: |
             source/release-reconstructed/*.exe
             source/release-reconstructed/SHA256SUMS.txt
+            source/release-reconstructed/VERSION.txt
           if-no-files-found: error
 
       - name: Publish GitHub release for reconstructed tag
