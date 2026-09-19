@@ -1,0 +1,41 @@
+appId: com.dyclokpropio.desktop
+productName: Dyclokpropio
+artifactName: Dyclokpropio_${version}_${os}_${arch}_reconstructed.${ext}
+
+asar: true
+
+asarUnpack:
+  - dist-electron/worker/**
+  - dist/assets/sync/**
+
+directories:
+  output: release-reconstructed
+
+files:
+  - from: build/reconstructed-runtime/dist
+    to: dist
+  - from: build/reconstructed-runtime/dist-electron
+    to: dist-electron
+  - package.json
+  - node_modules/**/*
+
+extraResources:
+  - from: plugins
+    to: plugins
+  - from: vendor
+    to: vendor
+  - from: resources/electron
+    to: electron
+  - from: resources/elevate.exe
+    to: elevate.exe
+
+win:
+  icon: application.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
