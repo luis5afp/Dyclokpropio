@@ -1,6 +1,6 @@
 'use strict';
 
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, ipcMain } = require('electron');
 
 // Preserve dependency-loading behavior observed in the recovered wrapper.
 require('path');
@@ -11,7 +11,18 @@ require('ts-md5');
 require('get-port-please');
 require('lodash');
 
-const legacy = require('./legacy-bundle');
+const { loadWithMigratedIpc } = require('./ipc/migration-loader');
+const {
+  MIGRATED_CHANNELS,
+  registerMigratedHandlers,
+} = require('./ipc/clean-registry');
+
+const legacy = loadWithMigratedIpc({
+  ipcMain,
+  migratedChannels: MIGRATED_CHANNELS,
+  loadLegacy: () => require('./legacy-bundle'),
+  registerMigrated: registerMigratedHandlers,
+});
 
 Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 Object.defineProperty(exports, 'BrowserWindow', {
