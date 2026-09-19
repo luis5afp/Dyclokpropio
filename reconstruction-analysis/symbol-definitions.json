@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T03:06:30.613Z",
+  "generatedAt": "2026-09-19T03:09:34.294Z",
   "source": "reconstruction-work/main.stage1.js",
   "symbols": {
     "fs": [
@@ -480,6 +480,75 @@
           "_0x395e11",
           "_0x28d9a9"
         ]
+      }
+    ],
+    "Oh": [],
+    "Dt": [
+      {
+        "kind": "assignment",
+        "offset": 18662,
+        "likelyDeclaration": true,
+        "bytes": 217,
+        "expression": "new Oh({'name':'tracker','encryptionKey':\"03c15ab2b8\"+'0588706644'+'f91cf2fab6'+\"c20e42eb4d\"+\"b2b0d1a006\"+\"65d1f5353f\"+'a83a','schema':kv,'clearInvalidConfig':!(0x1*0x407+-0x1*0x649+-0x11*-0x22),'defaults':_0x15e381})",
+        "dependencies": [
+          "Oh",
+          "name",
+          "tracker",
+          "encryptionKey",
+          "f91cf2fab6",
+          "c20e42eb4d",
+          "b2b0d1a006",
+          "a83a",
+          "schema",
+          "kv",
+          "clearInvalidConfig",
+          "defaults",
+          "_0x15e381"
+        ]
+      }
+    ],
+    "Rv": [
+      {
+        "kind": "assignment",
+        "offset": 18429,
+        "likelyDeclaration": true,
+        "bytes": 9,
+        "expression": "_0x3533fc",
+        "dependencies": [
+          "_0x3533fc"
+        ]
+      }
+    ],
+    "_0x4c199e": [
+      {
+        "kind": "assignment",
+        "offset": 16641,
+        "likelyDeclaration": true,
+        "bytes": 2,
+        "expression": "{}",
+        "dependencies": []
+      }
+    ],
+    "kv": [
+      {
+        "kind": "assignment",
+        "offset": 18649,
+        "likelyDeclaration": true,
+        "bytes": 9,
+        "expression": "_0x35bd54",
+        "dependencies": [
+          "_0x35bd54"
+        ]
+      }
+    ],
+    "_0x15e381": [
+      {
+        "kind": "assignment",
+        "offset": 18211,
+        "likelyDeclaration": true,
+        "bytes": 2,
+        "expression": "{}",
+        "dependencies": []
       }
     ]
   }
