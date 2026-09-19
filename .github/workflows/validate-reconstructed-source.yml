@@ -1,0 +1,95 @@
+name: Validate Reconstructed Source
+
+on:
+  push:
+    branches:
+      - reconstruction-source
+    paths:
+      - "src/runtime/**"
+      - "src/preload/**"
+      - "src/shared/**"
+      - "src/main/**"
+      - "tools/build-reconstructed-runtime.js"
+      - "electron-builder.reconstructed.yml"
+      - "package.json"
+      - ".github/workflows/validate-reconstructed-source.yml"
+
+concurrency:
+  group: reconstructed-source-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone reconstruction branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch reconstruction-source --depth 1
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm install --legacy-peer-deps
+
+      - name: Rebuild native Electron dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npx electron-builder install-app-deps
+
+      - name: Verify reconstructed contracts
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run verify:reconstruction
+
+      - name: Build reconstructed Windows installer
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run build:reconstructed:win
+
+      - name: Record reconstructed build status
+        shell: pwsh
+        run: |
+          Set-Location source
+          $exe = Get-ChildItem "release-reconstructed\*.exe" | Select-Object -First 1
+          if (-not $exe) { throw "No reconstructed installer was generated." }
+          $hash = (Get-FileHash $exe.FullName -Algorithm SHA256).Hash.ToLower()
+          $status = [ordered]@{
+            generatedAt = (Get-Date).ToUniversalTime().ToString("o")
+            sourceBranch = "reconstruction-source"
+            installer = $exe.Name
+            bytes = $exe.Length
+            sha256 = $hash
+            buildFromEditableRuntime = $true
+          }
+          New-Item -ItemType Directory -Path "reconstruction-analysis" -Force | Out-Null
+          $status | ConvertTo-Json | Set-Content "reconstruction-analysis\reconstructed-build-status.json" -Encoding UTF8
+          Get-Content "reconstruction-analysis\reconstructed-build-status.json"
+
+      - name: Commit validation status
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Set-Location source
+          gh auth setup-git
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reconstruction-analysis/reconstructed-build-status.json
+          if (git diff --cached --quiet) {
+            Write-Host "No validation status changes."
+            exit 0
+          }
+          git commit -m "[reconstruction-bot] Validate editable runtime build"
+          git pull --rebase origin reconstruction-source
+          git push origin reconstruction-source
