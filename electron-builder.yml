@@ -1,5 +1,5 @@
 appId: com.dyclokpropio.desktop
-productName: DICloak
+productName: Dyclokpropio
 artifactName: Dyclokpropio_${version}_${os}_${arch}.${ext}
 asar: true
 asarUnpack:
@@ -15,8 +15,6 @@ files:
 extraResources:
   - from: plugins
     to: plugins
-  - from: SourceData
-    to: SourceData
   - from: vendor
     to: vendor
   - from: resources/electron
