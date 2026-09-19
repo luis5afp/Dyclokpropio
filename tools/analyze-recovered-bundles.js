@@ -30,9 +30,8 @@ function uniq(items) {
 }
 
 function extractUrls(text) {
-  return uniq((text.match(/https?:\\?\/\\?\/[^"'\s)]+/g) || [])
-    .map((s) => s.replace(/\\\//g, '/'))
-    .slice(0, 500);
+  const matches = text.match(/https?:\\?\/\\?\/[^"'\s)]+/g) || [];
+  return uniq(matches.map((s) => s.replace(/\\\//g, '/'))).slice(0, 500);
 }
 
 function extractRequires(text) {
