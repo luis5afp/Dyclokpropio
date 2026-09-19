@@ -4,6 +4,18 @@ on:
   push:
     branches:
       - reconstruction-source
+    paths:
+      - "dist/**"
+      - "dist-electron/**"
+      - "src/shared/ipc-channels.js"
+      - "src/preload/index.js"
+      - "tools/analyze-recovered-bundles.js"
+      - "tools/compare-preload-contract.js"
+      - ".github/workflows/analyze-recovered-bundles.yml"
+
+concurrency:
+  group: reconstruction-analysis-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
