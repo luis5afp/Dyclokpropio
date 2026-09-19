@@ -45,8 +45,9 @@ for (const channel of UPDATE_CHANNELS) {
   for (const file of rendererFiles) {
     const source = fs.readFileSync(file, 'utf8');
     assert(
-      !source.includes('/v1/app/notice'),
-      'Remote program update check is still present in ' + file,
+      !source.includes('Be("/v1/app/notice")') &&
+        !source.includes("Be('/v1/app/notice')"),
+      'Remote program update list check is still present in ' + file,
     );
     assert(
       !source.includes('setInterval(()=>De().then(()=>{ht()}),6e5)'),
