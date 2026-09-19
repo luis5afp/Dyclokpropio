@@ -20,6 +20,16 @@
       ],
       "confidence": "high",
       "status": "reconstructed"
+    },
+    {
+      "name": "OpenProgressBar",
+      "source": "src/renderer/components/reconstructed/OpenProgressBar.vue",
+      "compiledFiles": [
+        "dist/assets/OpenProgressBar-CZucdUSf.js",
+        "dist/assets/OpenProgressBar-Dsu6-N2I.css"
+      ],
+      "confidence": "high",
+      "status": "reconstructed"
     }
   ]
 }
