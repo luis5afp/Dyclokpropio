@@ -37,6 +37,7 @@ const legacy = loadWithMigratedIpc({
     // Simulate legacy registrations for both migrated and unmigrated channels.
     ipcMain.handle('get-current-platform', () => 'LEGACY');
     ipcMain.on('set-process-env', () => 'LEGACY');
+    ipcMain.handle('get-device-info', () => 'LEGACY_DEVICE_INFO');
     ipcMain.handle('legacy-only-channel', () => 'LEGACY_ONLY');
     return { loaded: true };
   },
@@ -51,6 +52,10 @@ assert.strictEqual(
 );
 assert.strictEqual(
   ipcMain.registrations.on.filter((x) => x.channel === 'set-process-env').length,
+  1,
+);
+assert.strictEqual(
+  ipcMain.registrations.handle.filter((x) => x.channel === 'get-device-info').length,
   1,
 );
 assert.strictEqual(
@@ -69,5 +74,13 @@ const envRegistration = ipcMain.registrations.on.find(
 envRegistration.callback({}, { key: 'DYCLOK_RECONSTRUCTION_TEST', value: 'ok' });
 assert.strictEqual(process.env.DYCLOK_RECONSTRUCTION_TEST, 'ok');
 delete process.env.DYCLOK_RECONSTRUCTION_TEST;
+
+const deviceInfoHandler = ipcMain.registrations.handle.find(
+  (x) => x.channel === 'get-device-info',
+).callback;
+const deviceInfo = deviceInfoHandler();
+assert.strictEqual(typeof deviceInfo.id, 'string');
+assert.strictEqual(deviceInfo.id.length, 32);
+assert.strictEqual(typeof deviceInfo.name, 'string');
 
 console.log('Incremental IPC migration: OK');
