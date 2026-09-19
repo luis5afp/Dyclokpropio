@@ -49,4 +49,31 @@ assert.match(flag, /vue-country-flag-next/);
 assert.match(flag, /:country="props\.countryCode"/);
 assert.match(flag, /size="big"/);
 
+const lazy = read('src/renderer/components/reconstructed/LazyRow.vue');
+assert.match(lazy, /IntersectionObserver/);
+assert.match(lazy, /rootMargin:\s*'100px 0px'/);
+assert.match(lazy, /observer\.unobserve\(entry\.target\)/);
+assert.match(lazy, /<slot name="placeholder"/);
+
+const instructions = read(
+  'src/renderer/components/reconstructed/ImportInstructions.vue',
+);
+assert.match(instructions, /txtFilePreviewTitle/);
+assert.match(instructions, /txtFilePreviewTip3/);
+assert.match(instructions, /\{ pipe: '\|' \}/);
+
+const tip = read('src/renderer/components/reconstructed/Tip.vue');
+assert.match(tip, /useSlots/);
+assert.match(tip, /props\.text \|\| slots\.content/);
+assert.match(tip, /icon-help-circle1/);
+
+const fixedUrls = read(
+  'src/renderer/components/reconstructed/fixedUrlsFormItem.vue',
+);
+assert.match(fixedUrls, /defineEmits\(\['update:modelValue'\]\)/);
+assert.match(fixedUrls, /value\.split\('\\n'\)/);
+assert.match(fixedUrls, /url\.startsWith\('http'\)/);
+assert.match(fixedUrls, /url\.startsWith\('chrome'\)/);
+assert.match(fixedUrls, /env\.env\.req\.urlsCorrectRule/);
+
 console.log('Reconstructed Vue component contracts: OK');
