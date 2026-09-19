@@ -27,6 +27,12 @@ jobs:
           Set-Location source
           node tools/analyze-recovered-bundles.js
 
+      - name: Compare recovered and reconstructed preload
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/compare-preload-contract.js
+
       - name: Commit analysis reports
         shell: pwsh
         env:
