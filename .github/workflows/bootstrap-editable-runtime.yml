@@ -1,0 +1,59 @@
+name: Bootstrap Editable Runtime
+
+on:
+  push:
+    branches:
+      - reconstruction-source
+    paths:
+      - "tools/bootstrap-editable-runtime.js"
+      - ".github/workflows/bootstrap-editable-runtime.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone reconstruction branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch reconstruction-source --depth 1
+
+      - name: Create editable runtime source mirror
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/bootstrap-editable-runtime.js
+
+      - name: Format editable runtime source
+        shell: pwsh
+        run: |
+          Set-Location source
+          npx --yes prettier@3.6.2 --write "src/runtime/**/*.{js,css,json,html}"
+
+      - name: Validate editable main bundle syntax
+        shell: pwsh
+        run: |
+          Set-Location source
+          node --check "src/runtime/dist-electron/main-CuCOh59n.js"
+
+      - name: Commit editable runtime source
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Set-Location source
+          gh auth setup-git
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/runtime
+          if (git diff --cached --quiet) {
+            Write-Host "Editable runtime is already bootstrapped."
+            exit 0
+          }
+          git commit -m "[reconstruction-bot] Bootstrap editable runtime source"
+          git push origin reconstruction-source
