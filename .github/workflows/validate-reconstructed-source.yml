@@ -91,5 +91,21 @@ jobs:
             exit 0
           }
           git commit -m "[reconstruction-bot] Validate editable runtime build"
-          git pull --rebase origin reconstruction-source
-          git push origin reconstruction-source
+          $pushed = $false
+          for ($attempt = 1; $attempt -le 5; $attempt++) {
+            git pull --rebase origin reconstruction-source
+            if ($LASTEXITCODE -ne 0) { throw "git pull --rebase failed" }
+
+            git push origin reconstruction-source
+            if ($LASTEXITCODE -eq 0) {
+              $pushed = $true
+              break
+            }
+
+            Write-Host "Push race detected; retrying attempt $attempt/5..."
+            Start-Sleep -Seconds (2 * $attempt)
+          }
+
+          if (-not $pushed) {
+            throw "Could not push generated reconstruction changes after retries."
+          }
