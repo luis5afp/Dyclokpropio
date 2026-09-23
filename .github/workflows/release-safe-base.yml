@@ -29,6 +29,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
           gh repo clone "${{ github.repository }}" source -- --branch "main" --depth 1
       - name: Compute external release label
         id: version
