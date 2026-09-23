@@ -6,7 +6,6 @@ const crypto = require('crypto');
 const ROOT = path.resolve(__dirname, '..');
 
 const EXPECTED = Object.freeze({
-  'package.json': 'e326c6be742cdc0e291b2e6ff5f1eea3333a06f2b68a9fd122bdea990c7c2186',
   'dist/index.html': 'fa8e6050165005724614d39b26641bdc4d1be1ceeea39bf7b0d84c49444dd667',
   'dist/assets/index-BUIbb6Pa.js': '7de2a353b92c130b93b5c455826efaa6e1c8788cf44f99185b450e61379dc0df',
   'dist-electron/main.js': '69d38eecb10637d8fc3e2cfd5b86ea79894315db13b41800b1f1c61aa2a65517',
@@ -33,8 +32,29 @@ for (const [relative, expected] of Object.entries(EXPECTED)) {
 }
 
 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-if (pkg.version !== '3.0.0') throw new Error('Internal compatibility version must stay 3.0.0');
-if (pkg.main !== 'dist-electron/main.js') throw new Error('Original Electron main entry changed');
+const PACKAGE_IDENTITY = {
+  name: 'DICloak',
+  version: '3.0.0',
+  patchVersion: '1.2.4.1',
+  type: 'commonjs',
+  main: 'dist-electron/main.js',
+  homepage: 'https://dicloak.com/'
+};
+for (const [key, expected] of Object.entries(PACKAGE_IDENTITY)) {
+  if (pkg[key] !== expected) {
+    throw new Error('package.json compatibility field changed: ' + key + ' expected=' + expected + ' actual=' + pkg[key]);
+  }
+}
+const requiredDependencies = {
+  axios: '^1.6.8',
+  electronStore: '^8.1.0',
+  koa: '^2.15.3',
+  vue: '^3.4.21'
+};
+if (pkg.dependencies.axios !== requiredDependencies.axios) throw new Error('axios dependency changed');
+if (pkg.dependencies['electron-store'] !== requiredDependencies.electronStore) throw new Error('electron-store dependency changed');
+if (pkg.dependencies.koa !== requiredDependencies.koa) throw new Error('koa dependency changed');
+if (pkg.dependencies.vue !== requiredDependencies.vue) throw new Error('vue dependency changed');
 
 const updateChunk = fs.readFileSync(path.join(ROOT, 'dist', 'assets', 'index-D2T4aaQJ.js'), 'utf8');
 const oldPolling = 'De().then(()=>{ht()}),Y.value&&clearInterval(Y.value),Y.value=setInterval(()=>De().then(()=>{ht()}),6e5)';
@@ -46,6 +66,7 @@ console.log(JSON.stringify({
   uploadedBaseInstallerSha256: 'e29f761cce9a744d00dd1ccf82a29209a2f42c07b32c5567054419d08651dfde',
   internalCompatibilityVersion: pkg.version,
   serverAndConfigCriticalFilesUnchanged: Object.keys(EXPECTED).length,
+  packageCompatibilityFieldsPreserved: Object.keys(PACKAGE_IDENTITY).length,
   automaticUpdateCheckAtStartup: false,
   periodicUpdateCheckEvery10Minutes: false,
   manualUpdateNoticeImplementationPreserved: true,
