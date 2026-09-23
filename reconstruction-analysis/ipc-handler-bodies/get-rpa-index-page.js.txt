@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-rpa-index-page
+ * Method: handle
+ * Source offset: 3539006
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async()=>QR()

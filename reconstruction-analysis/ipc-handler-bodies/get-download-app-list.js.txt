@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-download-app-list
+ * Method: handle
+ * Source offset: 2125637
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>_0xb78f72[_0x25e7aa(0x20f5,0x4e18)+_0x25e7aa('0x1aea',0x2e20)]()

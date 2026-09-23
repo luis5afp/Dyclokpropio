@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: kernel-get-progress
+ * Method: handle
+ * Source offset: 2579508
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>_0x248cc8[_0x384568(0x1c7e,'0x3a0e')+'sSnapshots']()

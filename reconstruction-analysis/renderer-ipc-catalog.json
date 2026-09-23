@@ -1,0 +1,542 @@
+[
+  {
+    "channel": "aes-128-decrypt",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "aes-128-decrypt-many",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "aes-128-encrypt",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "cert-pin-set",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "change-org-res",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "check-proxy-for-gost",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "checker-resource-update",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "clear-env-server-cache-for-indexed-db",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "clear-env-server-cache-for-local-storage",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "common-request-for-local-api-response",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "electron-store-delete",
+    "methods": {
+      "sendSync": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "electron-store-get",
+    "methods": {
+      "sendSync": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "generate-sha256-hash",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "generate-sha256-hash-for-plugins",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-current-platform",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-device-id",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-device-info",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-device-name",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-device-user-name",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-last-modified-time",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-local-proxy",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-local-server-status",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-mac-address",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-network-identity",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-sha256-hash-folder",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-system-idle-time",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "get-system-memory-info",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "http:log",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "install-chrome-extension-for-open-api-response",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "kernel-cancel",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "kernel-cleanup-old",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "kernel-delete-installed",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "kernel-get-progress",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "kernel-install-requested",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "kernel-list-installed",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "network-probe",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "open-env-res",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "probe-gost-start",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "read-json-file",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "retry-detect-proxy",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "run-env",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "run-env-for-convert",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "set-process-env",
+    "methods": {
+      "send": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "set-user-plan",
+    "methods": {
+      "send": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "start-memory-monitor",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "start-power-save-blocker",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "stop-detect-proxy",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "stop-memory-monitor",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "stop-power-save-blocker",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "track-event",
+    "methods": {
+      "send": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "update-proxy-detector-config",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "user-save-file",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "version-local-info",
+    "methods": {
+      "invoke": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  },
+  {
+    "channel": "write-rpa-log",
+    "methods": {
+      "send": 1
+    },
+    "files": {
+      "dist/assets/index-BUIbb6Pa.js": 1
+    },
+    "count": 1
+  }
+]

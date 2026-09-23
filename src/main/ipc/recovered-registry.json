@@ -1,0 +1,701 @@
+{
+  "generatedFrom": "reconstruction-analysis/main-ipc-handlers.json",
+  "note": "Recovered registration metadata for modularization. Offsets refer to the stage-one deobfuscated main bundle.",
+  "channelCount": 77,
+  "channels": {
+    "active-window": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3502504
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "auto-del-install-pack": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3496090
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "change-language": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3503683
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "check-local-expansion-md5": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2368217
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "clear-electron-store": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3539636
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "close-all-win": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3539234
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "close-envs": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5471904
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "close-main-window": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5532581
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "download-chrome-extension": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2358480
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "electron-store-delete": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        28816
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "electron-store-get": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        27961
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "electron-store-set": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        28433
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "env-open-rule-check-cancel": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        4895077
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "env-open-rule-check-schedule": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        4894928
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "float-close-window": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2390677
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "float-is-open": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2387460
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "float-save-state": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2390825
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "float-set-size": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2388141
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-all-display": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3501592
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-current-platform": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3506378
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-desktop-sources": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3527028
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-device-info": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3505712
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-download-app-list": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2125637
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-expansion-version-from-expan-id": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2353168
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-local-proxy": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3478051
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-main-window-launch-preference": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3910524
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-rpa-bearing-page": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3538805
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-rpa-index-page": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3539006
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-running-map": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        5287292
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "get-window-by-pid": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3529478
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "heartbeat-activity-ping": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        4486955
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "input-text-to-custom-windows": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2573956
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "kernel-delete-installed": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2579791
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "kernel-get-progress": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2579508
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "key-close-win": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3539143
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "limit-download-start": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2599218
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "open-app": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3492556
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "open-folder-path": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        5539109
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "open-safari": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5508039
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "open-url": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5473742,
+        5553366
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "openapi-update-base-url": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3897651
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "probe-gost-start": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3558532
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "quit-app": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3494974
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "read-file": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        5545706
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "rpa-scheduled-task-exit-risk-result": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5278758
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "run-rpa": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5486885
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "set-main-window-launch-preference": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3910648
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "set-process-env": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        3545462
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "set-rpa-task-config": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3538677
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "set-user-plan": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        387336
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "start-memory-monitor": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3546070
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "stop-all-env": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5486296
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "stop-env": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5473686
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "stop-memory-monitor": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3546180
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "stop-rpa": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5505859
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-active-win": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2542636
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-clear-text-content": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2548252
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-clipboard": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2572241
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-close-syncHelp": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2540692
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-data": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2570020
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-lattice-layout": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2543821
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-open-syncHelp": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2541267
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-overlap-layout": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2544725
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-request-permission": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2544904
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-send-text-more": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2548588
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-start": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2547508
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "sync-stop": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        2548083
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "synchronizer-store-change-to-child": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2541360
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "synchronizer-store-change-to-parent": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2541968
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "track-event": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        386918
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "update-app": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2119747
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "update-app-cancel-download": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2124852
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "update-app-patch-update": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2123167
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "update-app-restart": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        2125249
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "window-test": {
+      "methods": [
+        "handle"
+      ],
+      "offsets": [
+        3533496
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "write-app-log": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5470004
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    },
+    "write-rpa-log": {
+      "methods": [
+        "on"
+      ],
+      "offsets": [
+        5471370
+      ],
+      "source": "reconstruction-work/main.stage1.js"
+    }
+  }
+}

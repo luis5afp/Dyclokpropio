@@ -1,0 +1,52 @@
+name: Validate Safe Uploaded Base
+
+on:
+  push:
+    branches:
+      - safe-base-uploaded-3.0.0
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - name: Clone validation branch
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo clone "${{ github.repository }}" source -- --branch "${{ github.ref_name }}" --depth 1
+      - name: Verify uploaded-base compatibility
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/verify-safe-base.js
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm install --legacy-peer-deps
+      - name: Rebuild native Electron dependencies
+        shell: pwsh
+        run: |
+          Set-Location source
+          npx electron-builder install-app-deps
+      - name: Build original-runtime application
+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run build:dir
+      - name: Smoke-launch original-runtime executable
+        shell: pwsh
+        run: |
+          Set-Location source
+          $exe = Join-Path (Get-Location) "release\win-unpacked\Dyclokpropio.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) { throw "Executable exited with code $($proc.ExitCode)" }
+          if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }

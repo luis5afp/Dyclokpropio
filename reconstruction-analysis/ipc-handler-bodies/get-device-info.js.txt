@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-device-info
+ * Method: handle
+ * Source offset: 3505712
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>({'timeZone':Intl[_0x3c516f('0x4b37',0x37b2)+_0x3c516f(0x6cfc,'0x6c25')]()[_0x2c65c3(0x744,'0x1e0a')+'tions']()['timeZone'],'language':Intl[_0x2c65c3(0x887,'0x36bd')+_0x2c65c3(0x7999,0x6b30)]()[_0x3c516f(0x469f,0x1eff)+_0x2c65c3(0x72ef,'0x4249')]()[_0x3c516f('0x6c7b',0x5b83)],'name':Ve['hostname'](),'id':hp()})

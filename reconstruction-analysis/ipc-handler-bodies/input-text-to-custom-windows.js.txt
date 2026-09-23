@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: input-text-to-custom-windows
+ * Method: handle
+ * Source offset: 2573956
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x2442c8,_0x22f3ef,_0x2a1c1a)=>{function _0x12c9f9(_0x12f08f,_0x572440){return _0x4d4207(_0x12f08f-_0x5f337f._0x5176b6,_0x572440);}DR(_0x22f3ef,0x134+-0x57*0x4f+0x5*0x521+0.5,_0x47bf65[_0x12c9f9(0x1209,-'0xde0')](Rl,_0x2a1c1a));}

@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: electron-store-set
+ * Method: on
+ * Source offset: 28433
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x820f4a,{key:_0x27e062,value:_0x1b5f3b})=>{const _0x19f81b={_0x15ad4f:'0x17d'};function _0xec4c61(_0x5dc4d4,_0x20725d){return _0x583ece(_0x20725d-_0x19f81b._0x15ad4f,_0x5dc4d4);}try{_0x820f4a[_0xec4c61('0x4c41',_0x212d7e._0x4b7f16)+'e']=Lh(_0x27e062,_0x1b5f3b);}catch{_0x820f4a['returnValu'+'e']=new Error(_0x354975['BIdzS']);}}

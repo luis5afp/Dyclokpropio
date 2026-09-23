@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-lattice-layout
+ * Method: handle
+ * Source offset: 2543821
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x4bc555,_0x2f06f8)=>om(_0x2f06f8)

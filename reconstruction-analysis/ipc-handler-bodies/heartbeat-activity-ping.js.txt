@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: heartbeat-activity-ping
+ * Method: on
+ * Source offset: 4486955
+ * This is analysis material, not yet a standalone runnable module.
+ */
+Hm

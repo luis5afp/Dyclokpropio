@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-main-window-launch-preference
+ * Method: handle
+ * Source offset: 3910524
+ * This is analysis material, not yet a standalone runnable module.
+ */
+()=>Ei(_0x5bc46d[_0x4c079e('0x16b8',0x4031)]('mainWindow'+'LaunchPref'+_0x3a252f('0x58d1',0x40c3)))

@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: get-rpa-bearing-page
+ * Method: handle
+ * Source offset: 3538805
+ * This is analysis material, not yet a standalone runnable module.
+ */
+async()=>v[_0x540e6e(0x2ad8,0x3369)](__dirname,_0x540e6e('0x4403','0x772e'),_0x540e6e('0x50af','0x7644')+_0x540e6e(0x67f7,'0x68a9'))

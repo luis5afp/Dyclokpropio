@@ -1,0 +1,8 @@
+/*
+ * Recovered IPC handler expression.
+ * Channel: sync-data
+ * Method: handle
+ * Source offset: 2570020
+ * This is analysis material, not yet a standalone runnable module.
+ */
+(_0x8f0b96,_0x3d0069)=>{_0x47bf65['ONpTv'](dy,_0x3d0069);}
