@@ -1,6 +1,10 @@
 node_modules/
 release/
+release-delivery/
+release-reconstructed/
+delivery/
 dist-recovered-tmp/
+SourceData/
 *.log
 .DS_Store
 Thumbs.db
