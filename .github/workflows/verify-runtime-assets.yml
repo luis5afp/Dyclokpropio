@@ -1,0 +1,29 @@
+name: Verify Installer Baseline
+
+on:
+  pull_request:
+    paths:
+      - 'dist/**'
+      - 'dist-electron/**'
+      - 'plugins/**'
+      - 'vendor/**'
+      - 'resources/**'
+      - 'package.json'
+      - 'tools/verify-build-assets.js'
+      - 'tools/verify-safe-base.js'
+      - '.github/workflows/verify-runtime-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Verify required runtime files
+        run: node tools/verify-build-assets.js
+      - name: Verify original baseline hashes
+        run: node tools/verify-safe-base.js
