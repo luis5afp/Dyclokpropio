@@ -29,13 +29,17 @@ jobs:
           git --version
           gh --version
 
-      - name: Set package version from tag
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Validate delivery version and runtime baseline
         shell: pwsh
         run: |
           Set-Location source
-          $version = "${{ github.ref_name }}".TrimStart("v")
-          npm version $version --no-git-tag-version --allow-same-version
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -notmatch '^v\d+\.\d+\.\d+$') {
+            throw 'Use a tag vX.Y.Z, for example v30.0.1'
+          }
+          node tools/verify-build-assets.js
+          if ($LASTEXITCODE -ne 0) { throw 'Required runtime assets are missing' }
+          node tools/verify-safe-base.js
+          if ($LASTEXITCODE -ne 0) { throw 'Protected runtime differs from the uploaded installer baseline' }
 
       - name: Install dependencies
         shell: pwsh
@@ -55,15 +59,55 @@ jobs:
           Set-Location source
           npm run build:win -- --publish never
 
+      - name: Smoke-launch unpacked Windows application
+        shell: pwsh
+        run: |
+          $exe = 'source/release/win-unpacked/Dyclokpropio.exe'
+          if (-not (Test-Path $exe)) { throw "Unpacked executable missing: $exe" }
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) {
+            throw "Application exited during smoke test: $($proc.ExitCode)"
+          }
+          if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
+
+      - name: Prepare externally versioned installer and checksum
+        shell: pwsh
+        run: |
+          $pkg = Get-Content 'source/package.json' -Raw | ConvertFrom-Json
+          $internalVersion = $pkg.version
+          $deliveryVersion = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.Substring(1) } else { $internalVersion }
+          $original = Join-Path 'source/release' "Dyclokpropio_${internalVersion}_win_x64.exe"
+          if (-not (Test-Path $original)) { throw "Installer missing: $original" }
+          New-Item -ItemType Directory -Path delivery -Force | Out-Null
+          $outputName = "Dyclokpropio_${deliveryVersion}_win_x64.exe"
+          $outputPath = Join-Path delivery $outputName
+          Copy-Item $original $outputPath
+          $sha = (Get-FileHash $outputPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  $outputName" | Set-Content 'delivery/SHA256SUMS.txt' -Encoding ascii
+          Write-Host "Installer: $outputName"
+          Write-Host "Internal compatibility version: $internalVersion"
+          Write-Host "SHA-256: $sha"
+
+      - name: Save installer for manual and tag builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyclokpropio-Windows-${{ github.run_number }}
+          path: |
+            delivery/*.exe
+            delivery/SHA256SUMS.txt
+          if-no-files-found: error
+
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = "${{ github.ref_name }}"
-          $files = Get-ChildItem "source\release\*.exe" | ForEach-Object { $_.FullName }
-          if (-not $files) { throw "No se genero ningun instalador .exe" }
+          $tag = $env:GITHUB_REF_NAME
+          $files = @(Get-ChildItem 'delivery/*.exe', 'delivery/SHA256SUMS.txt' | ForEach-Object { $_.FullName })
+          if (-not $files) { throw 'No installation files generated' }
           gh release view $tag --repo "${{ github.repository }}" *> $null
           if ($LASTEXITCODE -eq 0) {
             gh release upload $tag $files --repo "${{ github.repository }}" --clobber
