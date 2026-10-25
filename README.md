@@ -1,66 +1,50 @@
-# Dyclokpropio - proyecto recuperado
+# Dyclokpropio — recuperación del instalador Windows
 
-Esta carpeta fue reconstruida desde el instalador `Dyclokpropio_30.0.0_win_x64.exe`.
+Esta copia se reconstruyó a partir de **Dyclokpropio_30.0.0_win_x64.exe** (SHA-256: `e29f761cce9a744d00dd1ccf82a29209a2f42c07b32c5567054419d08651dfde`). **El nombre del archivo es 30.0.0, pero la versión interna recuperada de `package.json` es 3.0.0**. No deben confundirse estas versiones.
 
-## Qué se pudo recuperar
+## Qué contiene este repositorio
 
-- Aplicación Electron empaquetada originalmente con Electron **31.7.7**.
-- `package.json` original y una copia intacta en `package.original.json`.
-- Código compilado de Electron en `dist-electron/`.
-- Interfaz compilada de Vue/Vite en `dist/`.
-- Worker desempaquetado en `dist-electron/worker/`.
-- `DicSyncService.exe`, `plugins/`, `SourceData/`, `vendor/ffmpeg` y recursos auxiliares necesarios por la aplicación.
-- Configuración inicial `electron-builder.yml` para volver a empaquetar una versión de Windows x64.
+- El runtime compilado de Electron 31.7.7 (`dist-electron/`) y la interfaz compilada Vue/Vite (`dist/`).
+- El worker desempaquetado, `DicSyncService.exe`, las extensiones de `plugins/`, FFmpeg, el icono de bandeja y `resources/elevate.exe`.
+- `package.original.json` tal como se extrajo de `app.asar`, y `package.json` adaptado para ejecutar y empaquetar la recuperación.
+- `src/`, que contiene **reconstrucciones parciales para mantenimiento**, no el código fuente completo original. El punto de entrada del build habitual sigue siendo `dist-electron/main.js`.
 
-## Importante
+**No es el proyecto fuente original.** La distribución incluía bundles compilados/ofuscados, no todos los archivos `.vue`, `.ts` ni la configuración original de desarrollo. Un cambio en `src/` no modifica automáticamente el instalador habitual.
 
-Esto **no es el proyecto fuente original**. El instalador contiene código ya compilado/ofuscado y no incluye los `.vue`, `.ts` o configuración de desarrollo originales. Aun así, esta recuperación conserva la aplicación y permite estudiar/modificar los archivos compilados. Para mantenimiento serio, lo ideal es conseguir el repositorio fuente original y usar esta carpeta como referencia.
+### Archivos omitidos a propósito
 
-## Ejecutar como proyecto recuperado
+No se conserva `SourceData/` en Git: es un perfil de Chromium presente en el instalador de referencia que puede contener historial o datos personales. **No lo subas a un repositorio público.** Las dependencias y módulos nativos de Electron se recuperan durante `npm install` y el paso `electron-builder install-app-deps`, en lugar de versionar `node_modules/`.
 
-En Windows, dentro de esta carpeta:
+Consulta [RUNTIME_FILES_REQUIRED.md](RUNTIME_FILES_REQUIRED.md) para comprobar los recursos presentes.
+
+## Ejecutar el proyecto recuperado (Windows)
 
 ```powershell
-npm install
+npm install --legacy-peer-deps
+node tools/verify-build-assets.js
+node tools/verify-safe-base.js
 npm start
 ```
 
-El `package.json` recuperado fue ampliado con Electron 31.7.7 y electron-builder para facilitar el arranque y empaquetado. El archivo `package.original.json` conserva exactamente los metadatos extraídos del `app.asar`.
+Las dos verificaciones comprueban, respectivamente, que existen los recursos necesarios y que los once archivos críticos protegidos coinciden con la base analizada. **No sustituyen una prueba funcional de la interfaz, los servicios o los perfiles de navegador en Windows.**
 
-## Generar instalador de Windows
+## Crear un instalador Windows x64
 
 ```powershell
-npm install
+npm install --legacy-peer-deps
+npx electron-builder install-app-deps
+node tools/verify-build-assets.js
+node tools/verify-safe-base.js
 npm run build:win
 ```
 
-El resultado se escribirá en `release/`. La configuración de `electron-builder.yml` es una reconstrucción inicial basada en la estructura observada del instalador original; puede requerir ajustes si alguna ruta está codificada internamente.
+El instalador aparece en `release/`. El flujo de GitHub Actions aplica estas verificaciones antes de publicar. Al usar una etiqueta como `v30.0.1`, el instalador se entrega con el nombre `Dyclokpropio_30.0.1_win_x64.exe` sin cambiar la versión interna 3.0.0 del runtime recuperado. Consulta [docs/RELEASES.md](docs/RELEASES.md).
 
-## Integridad del instalador de origen
+## Recomendaciones al modificar
 
-SHA-256:
+1. Conserva una rama o etiqueta de la recuperación original.
+2. Haz cambios en otra rama y compara su comportamiento en Windows.
+3. No reemplaces los bundles críticos sin pruebas ni actualices hashes únicamente para silenciar una verificación.
+4. Si aparece el código fuente original, migra las mejoras y deja de editar directamente los bundles compilados.
 
-```text
-e29f761cce9a744d00dd1ccf82a29209a2f42c07b32c5567054419d08651dfde
-```
-
-## Estructura
-
-- `dist-electron/`: proceso principal, preload, sincronizador y worker.
-- `dist/`: interfaz de usuario compilada y recursos.
-- `plugins/`: recursos/plugins distribuidos con la aplicación.
-- `SourceData/`: plantilla/datos de navegador incluidos en el instalador.
-- `vendor/`: utilidades externas incluidas, como FFmpeg.
-- `resources/`: recursos auxiliares de Electron.
-- `package.original.json`: paquete original sin cambios.
-- `package.json`: paquete preparado para ejecutar/reconstruir.
-
-## Recomendación para futuras mejoras
-
-1. Conservar esta recuperación sin modificar en una rama o etiqueta.
-2. Hacer los cambios en otra rama.
-3. Si aparece el código fuente original, migrar las mejoras a ese código y dejar de editar los bundles compilados.
-
-## Copia para GitHub
-
-Esta variante `source-only` omite archivos de runtime grandes y `SourceData`. Consulta `RUNTIME_FILES_REQUIRED.md`. Para subirla al repositorio desde Windows puedes ejecutar `SUBIR_A_GITHUB.ps1` después de tener Git instalado y haber iniciado sesión en GitHub.
+La interfaz recuperada tiene deshabilitada la comprobación **automática** de actualizaciones al iniciar y cada diez minutos. El mecanismo de avisos/actualización sigue incluido; esto es una modificación deliberada respecto del instalador original y está documentada en [docs/UPLOADED_BASE_3.0.0.md](docs/UPLOADED_BASE_3.0.0.md).
