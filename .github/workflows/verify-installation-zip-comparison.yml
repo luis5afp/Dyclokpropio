@@ -1,0 +1,47 @@
+name: Verify offline installation ZIP comparison
+
+on:
+  pull_request:
+    paths:
+      - 'tools/Dyclok_Comparar_ZIPs_Instalacion.bat'
+      - '.github/workflows/verify-installation-zip-comparison.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare synthetic old and new installation ZIPs
+        shell: pwsh
+        run: |
+          $old='fixtures/old/DICloak'
+          $new='fixtures/new/Dyclokpropio'
+          New-Item -ItemType Directory -Force "$old/Chromium/Application", "$old/resources", "$new/resources" | Out-Null
+          'old-executable' | Set-Content -LiteralPath "$old/DICloak.exe"
+          'original-chromium' | Set-Content -LiteralPath "$old/Chromium/Application/ginsbrowser.exe"
+          'old ASAR' | Set-Content -LiteralPath "$old/resources/app.asar"
+          'new-executable' | Set-Content -LiteralPath "$new/Dyclokpropio.exe"
+          'new ASAR different size' | Set-Content -LiteralPath "$new/resources/app.asar"
+          Compress-Archive -Path 'fixtures/old/*' -DestinationPath 'fixtures/DICloak.zip'
+          Compress-Archive -Path 'fixtures/new/*' -DestinationPath 'fixtures/Dyclokpropio.zip'
+      - name: Run BAT headlessly against two fixture archives
+        shell: cmd
+        run: |
+          set DYCLOK_CI=1
+          call tools\Dyclok_Comparar_ZIPs_Instalacion.bat "%CD%\fixtures\DICloak.zip" "%CD%\fixtures\Dyclokpropio.zip"
+      - name: Assert safe report detects missing Chromium, files and ASAR size differences
+        shell: pwsh
+        run: |
+          $report=Get-ChildItem "$env:USERPROFILE\Downloads" -Filter 'Dyclok_Comparacion_Instalaciones_*.txt' |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $report) { throw 'Comparator did not write report' }
+          $txt=Get-Content -LiteralPath $report.FullName -Raw
+          foreach ($required in @('Solo antigua:', 'Solo nueva:', 'ginsbrowser.exe', 'app.asar', 'Misma ruta, distinto tamano')) {
+            if (-not $txt.Contains($required)) { throw "Missing report evidence: $required" }
+          }
+          if ($txt.Contains($env:USERPROFILE)) { throw 'Report must not contain absolute user profile paths' }
+          Write-Host 'PASS: Offline ZIP comparator detects structural gaps, no extraction, writes privacy-conscious report.'
