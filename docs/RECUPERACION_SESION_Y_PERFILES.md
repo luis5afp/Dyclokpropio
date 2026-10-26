@@ -1,5 +1,62 @@
 # Recuperar cierre de sesión cuando se mezclan versiones instaladas
 
+## Segunda corrección: «Confirmar» no cerraba la sesión
+
+La captura posterior al primer arreglo mostraba la confirmación **normal**,
+no la advertencia para perfiles abiertos. El propio estado del renderer era,
+por tanto, `ownOpenId.length === 0` en ese momento.
+
+Al contrastarlo con el código fuente recuperado del `app.asar` original,
+se encontró que la interfaz Electron siempre enviaba la orden
+`stop-env` con `callbackName: logout-stop-env-success`, incluso cuando no
+había ningún perfil abierto. Solo después de recibir el evento de respuesta
+ejecutaba la función existente de cierre de sesión. Con un proceso auxiliar
+desconectado, obsoleto o sin respuesta, **Confirmar no hacía nada**.
+
+El código original de salida también ejecuta
+`await Dre.stopReporting()` antes de limpiar la autenticación. Ese paso
+puede fallar o quedar pendiente si falla la comunicación con el servicio.
+
+### Comportamiento corregido
+
+1. Sin perfiles abiertos registrados, la confirmación ejecuta directamente
+   la función `kse(true)` del propio programa, conservando su intento de
+   cerrar sesión en el servidor y su limpieza habitual.
+2. Con perfiles abiertos registrados, mantiene la orden nativa de detener
+   entornos, sin cerrar automáticamente navegadores por otra vía.
+3. Si el flujo de salida no responde después de 15 segundos, o falla,
+   muestra una **segunda confirmación opcional** para cerrar solo la
+   sesión local. No ejecuta esa alternativa sin intervención del usuario.
+4. La salida local de recuperación utiliza `GlobalState.clearState()`,
+   elimina únicamente las claves de autenticación `basic:state` y
+   `token:state` del almacenamiento de la interfaz y recarga la
+   aplicación. No borra datos de perfiles, cookies, contraseñas ni
+   instalaciones anteriores.
+
+**Limitación de seguridad importante:** la recuperación local no puede
+garantizar que el servidor haya invalidado la sesión remota ni que haya
+cerrado navegadores que siguen abiertos. Se comunica explícitamente antes
+de que el usuario confirme. Para una revocación completa, se necesita que
+el servicio vuelva a estar disponible y/o cerrar la sesión en el servidor.
+
+La recuperación es un módulo mantenible
+`dist/assets/dyclok-logout-recovery.mjs`, cargado desde el componente
+recuperado `index-D2T4aaQJ.js`. No altera los once archivos protegidos
+del runtime ni el mecanismo de autenticación del navegador.
+
+### Verificación
+
+```powershell
+node --check dist/assets/dyclok-logout-recovery.mjs
+node tools/verify-logout-recovery.js
+node tools/verify-safe-base.js
+```
+
+Las pruebas cubren salida directa cuando no hay perfiles, confirmación
+de parada cuando los hay, respuesta que nunca llega, error de red,
+recuperación local confirmada y conservación de la protección de cambio
+de equipo.
+
 ## Qué se encontró en el código
 
 En `dist/assets/index-D2T4aaQJ.js` la interfaz ejecutaba esta comprobación:
@@ -16,7 +73,7 @@ No es posible distinguirlos solo por la imagen.
 
 ## Corrección realizada
 
-Si la lista de perfiles abiertos detecta IDs (sean reales o obsoletos),
+En la primera corrección, si la lista de perfiles abiertos detectaba IDs (sean reales o obsoletos),
 el menú Cerrar sesión muestra una **confirmación adicional** explicando que
 se intentarán detener entornos aún activos. Solo con la confirmación del
 usuario ejecuta el mecanismo ORIGINAL `X.send(...LOGOUT_STOP_ENV_SUCCESS)`.
