@@ -9,6 +9,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const FILE = 'dyclok-startup-health.json';
+const ALLOWED_CODES = new Set(['MODULE_NOT_FOUND','ERR_MODULE_NOT_FOUND','ENOENT','EACCES','EPERM','ERR_REQUIRE_ESM','ERR_INVALID_ARG_TYPE']);
 const ALLOWED_ERRORS = new Set([
   'Error','TypeError','ReferenceError','SyntaxError','RangeError',
   'AggregateError','TimeoutError','AbortError'
@@ -25,11 +26,30 @@ function createStartupHealth(app, {fileSystem = fs, processObject = process} = {
     originalCacheHandlerRegistrations:0,
     originalCacheHandlerRemovals:0,
     mainEntrypointErrorClass:'none',
-    uncaughtErrorClass:'none'
+    uncaughtErrorClass:'none',
+    uncaughtErrorCode:'none',
+    uncaughtSource:'none',
+    uncaughtSourceColumn:0
   };
   function safeErrorClass(error) {
     const name=error && typeof error.name==='string' ? error.name : '';
     return ALLOWED_ERRORS.has(name) ? name : 'Other';
+  }
+  function saveErrorOrigin(error) {
+    const code=error && typeof error.code==='string' ? error.code : '';
+    state.uncaughtErrorCode=ALLOWED_CODES.has(code)?code:'Other';
+    // Only classify stack locations within the known, SHA-guarded runtime.
+    // No path, message, arbitrary name or stack content is written.
+    const stack=error && typeof error.stack==='string' ? error.stack : '';
+    const native=stack.match(/main-CuCOh59n\.js:1:(\d{1,8})/);
+    const base=stack.match(/(?:dist-electron[\\/]main\.js|main\.js):(\d{1,5}):(\d{1,8})/);
+    if(native && Number(native[1])>0 && Number(native[1])<7000000){
+      state.uncaughtSource='protected-bundle';
+      state.uncaughtSourceColumn=Number(native[1]);
+    } else if(base){
+      state.uncaughtSource='electron-main';
+      state.uncaughtSourceColumn=0;
+    } else {state.uncaughtSource='other';state.uncaughtSourceColumn=0;}
   }
   function save() {
     try {
@@ -51,7 +71,8 @@ function createStartupHealth(app, {fileSystem = fs, processObject = process} = {
     // swallow or change the native Electron crash behavior.
     if(typeof processObject?.on==='function') {
       processObject.on('uncaughtExceptionMonitor',error=>{
-        state.uncaughtErrorClass=safeErrorClass(error);save();
+        state.uncaughtErrorClass=safeErrorClass(error);
+        saveErrorOrigin(error);save();
       });
     }
   } catch { /* Instrumentation must be optional. */ }
