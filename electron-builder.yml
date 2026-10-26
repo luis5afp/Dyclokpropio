@@ -25,6 +25,13 @@ files:
   - src/main/extension-download-diagnostics.js
   - package.json
   - node_modules/**/*
+# Chromium is not an npm dependency or an Electron executable. It is the
+# separate browser engine needed by recovered native profile launching.
+# This directory is prepared from an authorized complete original archive
+# before building. The preflight and output validators fail closed if absent.
+extraFiles:
+  - from: Chromium
+    to: Chromium
 extraResources:
   - from: plugins
     to: plugins
