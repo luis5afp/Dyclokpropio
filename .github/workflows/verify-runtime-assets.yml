@@ -53,6 +53,8 @@ jobs:
         run: npm install --legacy-peer-deps
       - name: Extract original extension package
         run: node tools/unpack-bundled-extension.js
+      - name: Investigate original cache handler registration (static only)
+        run: node tools/inspect-cache-original-registration.js
       - name: Verify required runtime files
         run: node tools/verify-build-assets.js
       - name: Verify bundled extension load-contract
