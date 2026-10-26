@@ -25,13 +25,18 @@ const STEPS = new Set([
 const CHANNELS = new Set([
   'download-chrome-unzip-extension','generate-sha256-hash-for-plugins',
   'check-expansion-sha256-hash','stop-env','open-env','lock-env',
-  'get-local-server-status','get-app-title'
+  'get-local-server-status','get-app-title',
+  'clear-dev-cache','electron-store-get','electron-store-set','read-json-file',
+  'generate-sha256-hash','get-cache-info'
 ]);
+const CHECKPOINTS = new Set(['begin','config-ready','geo-start','geo-ready','cache-start','cache-success','cache-fail','keys-start','keys-success']);
 const CODES = new Set([
   'UNKNOWN_ERROR','UNCLASSIFIED','EXPAND_DOWNLOAD_FAIL','EXPAND_CHECK_FAIL',
   'EXPAND_SHA256_CHECK_FAIL','EXPAND_SHA256_HASH_FAIL','EXPAND_MISSING',
   'NETWORK_ERROR','TIMEOUT_ERROR','ABORT_ERROR','IPC_ERROR','HTTP_ERROR',
-  'LOCK_ENV_FAIL','OPEN_ENV_FAIL','PROXY_CHECK_FAIL','REQUEST_FAILED'
+  'LOCK_ENV_FAIL','OPEN_ENV_FAIL','PROXY_CHECK_FAIL','REQUEST_FAILED',
+  'IPC_NO_HANDLER','IPC_PERMISSION','IPC_NOT_FOUND','IPC_TIMEOUT',
+  'IPC_INVALID_ARGUMENT','IPC_TYPE_ERROR'
 ]);
 
 function sanitize(payload) {
@@ -52,7 +57,9 @@ function sanitize(payload) {
     scope: SCOPES.has(payload.scope) ? payload.scope : 'unknown',
     status, elapsedMs,
     result: RESULTS.has(payload.result) ? payload.result : 'none',
-    code: CODES.has(payload.code) ? payload.code : 'UNCLASSIFIED'
+    code: CODES.has(payload.code) ? payload.code : 'UNCLASSIFIED',
+    checkpoint: kind === 'stage' && payload.action === 'paramsMerge' && CHECKPOINTS.has(payload.checkpoint)
+      ? payload.checkpoint : 'none'
   };
 }
 
