@@ -133,7 +133,7 @@ try {
   $newCritical = @($newOnly | Where-Object { $_.Path -match $critical })
   $oldCore = @($old.Files.Values | Where-Object { $_.Path -match '(?i)(^|/)ginsbrowser\.exe$' })
   $newCore = @($new.Files.Values | Where-Object { $_.Path -match '(?i)(^|/)ginsbrowser\.exe$' })
-  $report = New-Object System.Collections.Generic.List[string]
+  $script:report = New-Object System.Collections.Generic.List[string]
   Add-Line 'DYCLOK - COMPARACION DE ARCHIVOS DE INSTALACION'
   Add-Line ('Generado: ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
   Add-Line 'FUENTE: indice de archivos de los ZIP, sin extraer ni ejecutar sus contenidos.'
