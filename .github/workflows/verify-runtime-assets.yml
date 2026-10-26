@@ -20,6 +20,8 @@ on:
       - 'tools/repair-extension-cache.ps1'
       - 'electron-builder.yml'
       - 'tools/verify-safe-base.js'
+      - 'tools/apply-legacy-expand-check.js'
+      - 'tools/verify-legacy-expansion-compat.js'
       - '.github/workflows/verify-runtime-assets.yml'
       - '.github/workflows/release-safe-base.yml'
       - 'tools/verify-release-workflow.js'
@@ -48,5 +50,9 @@ jobs:
         run: node tools/verify-bootstrap-diagnostics.js
       - name: Verify original baseline hashes
         run: node tools/verify-safe-base.js
+      - name: Verify 2.8.17 compatibility transformation without changing baseline
+        run: node tools/apply-legacy-expand-check.js
+      - name: Exercise old extension policy and mandatory SHA256 security rejection
+        run: node tools/verify-legacy-expansion-compat.js
       - name: Verify public release publication contract
         run: node tools/verify-release-workflow.js
