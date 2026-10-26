@@ -100,6 +100,7 @@ jobs:
               originalCacheHandlerRemovals=$record.originalCacheHandlerRemovals
               mainEntrypointErrorClass=$record.mainEntrypointErrorClass
               uncaughtErrorClass=$record.uncaughtErrorClass
+              uncaughtErrorMainBundleColumn=$record.uncaughtErrorMainBundleColumn
               uncaughtErrorCode=$record.uncaughtErrorCode
               uncaughtSource=$record.uncaughtSource
               uncaughtSourceColumn=$record.uncaughtSourceColumn
