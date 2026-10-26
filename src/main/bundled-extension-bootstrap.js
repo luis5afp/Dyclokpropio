@@ -13,6 +13,7 @@ const path = require('node:path');
 const childProcess = require('node:child_process');
 const { ipcMain } = require('electron');
 const { installExtensionDownloadRetry } = require('./bundled-extension-download-retry.js');
+const { createExtensionDiagnosticWriter } = require('./extension-download-diagnostics.js');
 
 // Keep the original DICloak extension repository and integrity verification.
 // Retry a failed HTTPS download once, without turning false into success.

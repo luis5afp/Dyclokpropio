@@ -19,6 +19,7 @@ files:
   - src/main/bundled-extension-pin.js
   - src/main/bundled-extension-download-retry.js
   - src/main/extension-download-diagnostics.js
+  - src/main/extension-download-diagnostics.js
   - package.json
   - node_modules/**/*
 extraResources:

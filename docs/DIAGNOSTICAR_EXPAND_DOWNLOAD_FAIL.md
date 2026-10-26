@@ -74,3 +74,19 @@ remoto de extensiones ni al equipo Windows donde ocurre el error.
 
 La validación automática solo simula el manejador; una prueba en el
 equipo afectado y el diagnóstico específico son necesarios.
+
+## Hallazgo del diagnóstico sin registros (versión v30.0.4)
+
+El archivo con el mensaje «No hay registro del descargador» **no demuestra** que la descarga haya funcionado. Al revisar `src/main/bundled-extension-bootstrap.js` se encontró una omisión: se utilizaba `createExtensionDiagnosticWriter()` sin importarlo. La excepción `ReferenceError` era absorbida por el bloque `try/catch`, de modo que **se desactivaban tanto el reintento como el registro de fallos**, incluso si el instalador se compilaba correctamente.
+
+La corrección incorpora la importación y una prueba que ejecuta el bootstrap real con Electron simulado, reproduce un resultado `null` y verifica que aparezca una entrada anónima en `dyclok-extension-errors.jsonl`. La prueba se ejecuta tanto en la revisión del código como **antes de publicar un EXE**.
+
+### Diagnóstico después de la nueva instalación
+
+1. Confirma que has instalado la nueva versión; no ejecutes una versión antigua en paralelo.
+2. Abre **una vez** un perfil que falle (por ejemplo 243) y luego cierra esa ventana de error.
+3. Desde PowerShell, ejecuta `show-extension-download-diagnostics.ps1` y comparte el resultado, quitando cualquier detalle que no desees revelar.
+4. Si aparecen filas `null`, `false` o `exception`, el problema corresponde a una extensión descargada por el gestor original. Busca el ID/nombre en el grupo de extensiones y comprueba el paquete y permisos, no desactives controles de seguridad.
+5. Si **sigue sin haber registro**, el error probablemente ocurrió fuera de este descargador, por ejemplo en la validación de seguridad o por una extensión asignada que no llegó a solicitarse. Se necesita capturar la etapa exacta o los registros originales del programa. No borramos datos ni prometemos que todos los perfiles abrirán sin identificar la causa.
+
+**Importante:** corregir el diagnóstico no restaura por sí mismo archivos remotos desaparecidos, permisos de cuenta, seguridad interna ni listas de extensiones erróneas.
