@@ -19,6 +19,7 @@ const required = [
   ['dist/assets/sync/DicSyncService.exe', 100],
   ['vendor/ffmpeg/bin/ffmpeg.exe', 100],
   ['resources/elevate.exe', 100],
+  ['application.ico', 100],
   ['resources/electron/tray-icon.png', 100],
   ['plugins/.automa/manifest.json', 1],
   ['plugins/.simulation/manifest.json', 1],
