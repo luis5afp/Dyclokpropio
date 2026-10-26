@@ -236,7 +236,8 @@ jobs:
             'CORRECCION v30.0.10: si generate-sha256-hash-for-plugins devuelve null, no se invoca .slice sobre null. El hash ausente real sigue enviandose a la verificacion remota obligatoria, que puede rechazarlo.'
             'NOVEDAD: boton flotante Diagnostico para iniciar/detener captura de metadatos de apertura, HTTP de interfaz e IPC cuando disponible; exportar TXT desde la aplicacion.',
             'v30.0.11: añade puntos de control de paramsMerge y categoriza errores IPC. NO se declara corregido el fallo de apertura sin validacion en el PC afectado.',
-            'v30.0.12: el IPC clear-dev-cache puede invocar la funcion original de limpieza si fue registrada con el mecanismo legado on(); conserva los tipos de limpieza, resultados y rechazos reales. Requiere prueba en Windows afectado.'
+            'v30.0.12: adaptador IPC para clear-dev-cache; diagnostico posterior detecto que no se instalaba en Electron 31.'
+            'v30.0.13: se elimina la dependencia de ipcMain.hasHandler (API inexistente en Electron 31) y se prueban los manejadores con simulacion fiel. La limpieza original sigue siendo obligatoria. Requiere validar apertura real del perfil 244.'
             'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
             'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
             'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
