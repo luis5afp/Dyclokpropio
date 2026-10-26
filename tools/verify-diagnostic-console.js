@@ -58,6 +58,13 @@ assert.ok(inspected.includes('throw error}})()'),'Cache failures must still abor
     assert.equal(sanitize({kind:'ipc',phase:'error',action:'clear-dev-cache',code:'IPC_NO_HANDLER'}).code,'IPC_NO_HANDLER');
     assert.equal(sanitize({kind:'stage',phase:'info',action:'paramsMerge',checkpoint:'cache-fail'}).checkpoint,'cache-fail');
     assert.equal(sanitize({kind:'stage',phase:'info',action:'paramsMerge',checkpoint:'PRIVATE-ID'}).checkpoint,'none');
+    fs.writeFileSync(path.join(fixture,'dyclok-startup-health.json'),JSON.stringify({
+      schema:1,bootstrapLoaded:true,originalEntrypointLoaded:true,
+      electronReady:true,mainWindowCreated:true,originalCacheHandlerRegistered:false,
+      originalCacheHandlerRegistrations:0,originalCacheHandlerRemovals:0,
+      mainEntrypointErrorClass:'TypeError',uncaughtErrorClass:'none',
+      arbitrarySecret:'DO_NOT_EXPOSE_STARTUP_SECRET'
+    }));
     const stop=await handlers.get(CONTROL)(origin,'stop');
     assert.equal(stop.active,false);
     const exported=await handlers.get(CONTROL)(origin,'export');
@@ -67,6 +74,9 @@ assert.ok(inspected.includes('throw error}})()'),'Cache failures must still abor
       assert.equal(report.includes(secret),false,'Diagnostic report leaked: '+secret);
     }
     assert.ok(report.includes('EXPAND_SHA256_CHECK_FAIL'));
+    assert.ok(report.includes('MAIN_PROCESS_STARTUP_STATUS'));
+    assert.ok(report.includes('"originalCacheHandlerRegistered":false'));
+    assert.equal(report.includes('DO_NOT_EXPOSE_STARTUP_SECRET'),false);
     assert.ok(report.includes('"status":503'));
     assert.ok(report.includes('"result":"null"'));
     console.log('PASS: opt-in button installer and JavaScript syntax');
