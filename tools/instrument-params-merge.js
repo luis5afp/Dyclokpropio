@@ -42,9 +42,28 @@ function transform(source){
   }
   return output;
 }
+// This stage must work in TWO distinct situations:
+//   preflight: Git's unmodified renderer (legacy and stages transformed in memory);
+//   --apply: the already verified, ALREADY PATCHED Windows build workspace.
+// Calling legacy() again during --apply incorrectly re-applies its exact-match
+// changes and aborts the build with "Missing or duplicate change site".
+const BASE_SHA256='7de2a353b92c130b93b5c455826efaa6e1c8788cf44f99185b450e61379dc0df';
+const EXPECTED_STAGES_SHA256='c31673200543e6b83e4f2f6e0f59835a3322d599e9961b8d5580181c6122bdf0';
+function prepareInput(source,apply){
+  if(apply){
+    assert.equal(hash(source),EXPECTED_STAGES_SHA256,
+      'Expected EXACT reviewed renderer after legacy+stage patches. Refusing unexpected input.');
+    return source;
+  }
+  assert.equal(hash(source),BASE_SHA256,'Expected original baseline renderer in preflight.');
+  const prepared=stages(legacy(source));
+  assert.equal(hash(prepared),EXPECTED_STAGES_SHA256,'Reviewed preflight output changed unexpectedly.');
+  return prepared;
+}
 function main(){
-  const baseline=fs.readFileSync(TARGET,'utf8');
-  const expected=stages(legacy(baseline));
+  const current=fs.readFileSync(TARGET,'utf8');
+  const apply=process.argv.includes('--apply');
+  const expected=prepareInput(current,apply);
   const result=transform(expected);
   const folder=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-params-probes-'));
   try{
@@ -52,13 +71,13 @@ function main(){
     const checked=spawnSync(process.execPath,['--check',file],{encoding:'utf8',maxBuffer:1048576});
     assert.equal(checked.status,0,'paramsMerge instrumentation syntax error: '+checked.stderr?.slice(-1500));
   }finally{fs.rmSync(folder,{recursive:true,force:true});}
-  if(process.argv.includes('--apply')){
-    const current=fs.readFileSync(TARGET,'utf8');
-    assert.equal(hash(current),hash(expected),'Missing prior verified legacy and stage patches');
+  if(apply){
+    // The hash check in prepareInput guarantees the previous two patches are
+    // present exactly once; this transform only injects diagnostic checkpoints.
     fs.writeFileSync(TARGET,result,'utf8');
   }
   console.log('PASS: paramsMerge redacted checkpoints; runtime behavior preserved.');
   console.log('Build SHA:',hash(expected),'->',hash(result));
 }
 if(require.main===module)main();
-module.exports={transform,changes};
+module.exports={transform,changes,prepareInput,BASE_SHA256,EXPECTED_STAGES_SHA256};
