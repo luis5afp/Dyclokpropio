@@ -17,6 +17,8 @@ on:
       - "tools/apply-legacy-expand-check.js"
       - "tools/instrument-open-stages.js"
       - "tools/verify-open-stage-diagnostics.js"
+      - "tools/fix-null-interior-plugin-hash.js"
+      - "tools/verify-null-interior-plugin-hash.js"
       - "src/main/open-stage-diagnostics.js"
       - "src/main/diagnostic-console.js"
       - "src/renderer/diagnostic-panel.js"
@@ -100,6 +102,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Legacy behavior and SHA256 integrity safety tests failed' }
           node tools/verify-open-stage-diagnostics.js
           if ($LASTEXITCODE -ne 0) { throw 'Open-stage diagnostic and privacy test failed' }
+          node tools/verify-null-interior-plugin-hash.js
+          if ($LASTEXITCODE -ne 0) { throw 'Null plugin hash crash regression and security tests failed' }
           node tools/verify-diagnostic-console.js
           if ($LASTEXITCODE -ne 0) { throw 'Diagnostic console and redaction tests failed' }
           node tools/install-diagnostic-panel.js
@@ -121,6 +125,12 @@ jobs:
           Set-Location source
           node tools/instrument-open-stages.js --apply
           if ($LASTEXITCODE -ne 0) { throw 'Profile-open stage diagnostic patch failed; refusing release' }
+      - name: Repair fulfilled-null interior plugin checksum without bypassing remote integrity
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/fix-null-interior-plugin-hash.js --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Null plugin checksum repair failed; refusing release' }
       - name: Install visible in-app diagnostic button after baseline verification
         shell: pwsh
         run: |
@@ -216,6 +226,7 @@ jobs:
             'DIAGNOSTICO: el instalador anota unicamente etapa, resultado y codigo filtrado del error al abrir un perfil en dyclok-open-stage.jsonl.',
             'CORRECCION v30.0.10: si generate-sha256-hash-for-plugins devuelve null, no se invoca .slice sobre null. El hash ausente real sigue enviandose a la verificacion remota obligatoria, que puede rechazarlo.'
             'NOVEDAD: boton flotante Diagnostico para iniciar/detener captura de metadatos de apertura, HTTP de interfaz e IPC cuando disponible; exportar TXT desde la aplicacion.',
+            'CORRECCION: se evita la excepcion JavaScript al recibir null del generador SHA256 interno; un hash ausente no se inventa y la validacion remota sigue pudiendo bloquear el perfil.',
             'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
             'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
             'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
