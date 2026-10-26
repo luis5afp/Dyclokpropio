@@ -22,6 +22,18 @@ const mark=(n)=>{const marker=JSON.stringify(String(n));
  return ';try{const p=process.env.DYCLOK_CL_PROGRESS_FILE;if(p&&p.endsWith("dyclok-ci-cl-progress.txt"))require("node:fs").writeFileSync(p,'+marker+');}catch{};';
 };
 const patches=body.map((st,i)=>({pos:st.start,code:mark(i)}));
+// Statement 23 is a comma sequence: WA.start, event binding, oN, Sn, GA,
+// tray creation. Mark each sub-expression without changing its return value.
+const stmt23=body[23];
+if(stmt23.type!=='ExpressionStatement'||stmt23.expression.type!=='SequenceExpression')throw Error('Unexpected statement 23 sequence');
+const exprs=stmt23.expression.expressions;
+if(exprs.length<5||exprs.length>10)throw Error('Unexpected startup expression count');
+const markExpr=n=>'(()=>{try{const p=process.env.DYCLOK_CL_PROGRESS_FILE;if(p&&p.endsWith("dyclok-ci-cl-progress.txt"))require("node:fs").writeFileSync(p,'+JSON.stringify(String(n))+');}catch{}})()';
+for(const [i,ex] of exprs.entries()){
+  patches.push({pos:ex.start,code:'('+markExpr('23.'+i)+','});
+  patches.push({pos:ex.end,code:')'});
+}
+console.log('CI_STAGE_23_SUBEXPRESSIONS='+exprs.length);
 patches.push({pos:fn.body.start+1,code:mark('ENTER')});
 patches.sort((a,b)=>b.pos-a.pos);
 let next=src;
