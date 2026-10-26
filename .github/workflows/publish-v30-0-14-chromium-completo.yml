@@ -1,0 +1,123 @@
+name: Publicar v30.0.14 con Chromium completo (fuente autorizada)
+
+on:
+  workflow_dispatch:
+    inputs:
+      archive_sha256:
+        description: "SHA256 de DICloak.zip, verificado localmente antes de usar el archivo"
+        type: string
+        required: true
+      redistribution_authorized:
+        description: "Confirmo que tengo permiso para redistribuir el nucleo Chromium/ginsbrowser en esta release"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v30-0-14-chromium-completo-release
+  cancel-in-progress: false
+
+jobs:
+  complete-installer:
+    if: ${{ inputs.redistribution_authorized == true }}
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check authorized source and caller confirmation before fetching files
+        shell: pwsh
+        env:
+          ARCHIVE_URL: ${{ secrets.DYCLOK_AUTHORIZED_CHROMIUM_ARCHIVE_URL }}
+          EXPECTED_SHA256: ${{ inputs.archive_sha256 }}
+        run: |
+          if([string]::IsNullOrWhiteSpace($env:ARCHIVE_URL)){
+            throw 'BLOCKED: configure the private repository secret DYCLOK_AUTHORIZED_CHROMIUM_ARCHIVE_URL'
+          }
+          if($env:ARCHIVE_URL -notmatch '^https://'){
+            throw 'BLOCKED: authorized ZIP source must use HTTPS'
+          }
+          if($env:EXPECTED_SHA256 -notmatch '^[a-fA-F0-9]{64}$'){
+            throw 'BLOCKED: exact SHA256 of authorized original ZIP required'
+          }
+          Write-Host 'SOURCE_APPROVAL=CONFIRMED'
+          Write-Host 'SHA256_EXPECTED_FORMAT=VALID'
+      - name: Preserve protected original source bytes on Windows
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Check out exact rc4-compatible complete Chromium build source
+        uses: actions/checkout@v4
+        with:
+          ref: 55844723d683ab9b9b314b42ff4ead4d0318093a
+          path: source
+      - name: Download privately supplied authorized original ZIP and verify identity
+        shell: pwsh
+        env:
+          ARCHIVE_URL: ${{ secrets.DYCLOK_AUTHORIZED_CHROMIUM_ARCHIVE_URL }}
+          EXPECTED_SHA256: ${{ inputs.archive_sha256 }}
+        run: |
+          $dest=Join-Path $env:RUNNER_TEMP 'authorized-DICloak.zip'
+          Invoke-WebRequest -Uri $env:ARCHIVE_URL -OutFile $dest -MaximumRedirection 3
+          $actual=(Get-FileHash -LiteralPath $dest -Algorithm SHA256).Hash
+          if($actual -ine $env:EXPECTED_SHA256){
+            Remove-Item -LiteralPath $dest -Force -ErrorAction SilentlyContinue
+            throw 'BLOCKED: supplied ZIP SHA256 does not match the expected original file'
+          }
+          Write-Host 'ORIGINAL_ZIP_SHA256_VERIFIED=True'
+      - name: Build real Windows NSIS installer with entire verified Chromium tree
+        shell: pwsh
+        working-directory: source
+        run: |
+          $zip=Join-Path $env:RUNNER_TEMP 'authorized-DICloak.zip'
+          & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File 'tools/build-win-with-complete-chromium.ps1' -ArchivoZipAntiguo $zip
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED: real Chromium package build or original native IPC smoke failed'}
+      - name: Confirm complete delivery and original runtime status
+        shell: pwsh
+        working-directory: source
+        run: |
+          $folder='release-delivery'
+          $binary=Join-Path $folder 'Dyclokpropio_30.0.14_CHROMIUM_COMPLETO_PRUEBA_win_x64.exe'
+          $checksum=Join-Path $folder 'SHA256SUMS-CHROMIUM-COMPLETO.txt'
+          $status=Join-Path $folder 'TEST_STATUS-CHROMIUM-COMPLETO.txt'
+          foreach($p in @($binary,$checksum,$status)){
+            if(-not (Test-Path -LiteralPath $p -PathType Leaf)){throw ('BLOCKED: missing output '+$p)}
+          }
+          $actual=(Get-FileHash -LiteralPath $binary -Algorithm SHA256).Hash.ToLowerInvariant()
+          $line=Get-Content -LiteralPath $checksum -Raw
+          if(-not $line.StartsWith($actual)){throw 'BLOCKED: installer checksum mismatch'}
+          $body=Get-Content -LiteralPath $status -Raw
+          foreach($term in @('completeChromiumBundled=true','nativeCacheIpcRegistered=true')){
+            if(-not $body.Contains($term)){throw ('BLOCKED: '+$term+' not verified')}
+          }
+          Write-Host 'REAL_COMPLETE_WINDOWS_INSTALLER_VERIFIED=True'
+      - name: Publish v30.0.14 as prerelease only after all checks pass
+        shell: pwsh
+        working-directory: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          & gh release view v30.0.14 2>$null
+          if($LASTEXITCODE -eq 0){throw 'BLOCKED: v30.0.14 release already exists; do not overwrite'}
+          $notes=@'
+          EXPERIMENTAL - Dyclokpropio v30.0.14 con el nucleo Chromium completo.
+          Fuente: archivo original autorizado y comprobado mediante SHA256.
+          Archivos Chromium verificados tras el empaquetado. Arranque Electron
+          y registro nativo del IPC de cache comprobados en Windows.
+
+          El perfil 244 todavia NO ha sido validado con una ventana Chromium
+          real en la PC del usuario. No instalar sobre la copia que funciona.
+          Error separado gost.exe ENOENT: investigacion pendiente.
+          '@
+          & gh release create v30.0.14             'release-delivery/Dyclokpropio_30.0.14_CHROMIUM_COMPLETO_PRUEBA_win_x64.exe' 'release-delivery/SHA256SUMS-CHROMIUM-COMPLETO.txt' 'release-delivery/TEST_STATUS-CHROMIUM-COMPLETO.txt' --target 55844723d683ab9b9b314b42ff4ead4d0318093a --title 'Dyclokpropio v30.0.14 (PRUEBA - Chromium completo)' --notes $notes --prerelease --latest=false
+          if($LASTEXITCODE -ne 0){throw 'GitHub Release creation failed'}
+          Write-Host 'V30_0_14_RELEASE_PUBLISHED=True'
+      - name: Remove original proprietary ZIP from temporary runner
+        if: always()
+        shell: pwsh
+        run: |
+          $source=Join-Path $env:RUNNER_TEMP 'authorized-DICloak.zip'
+          if(Test-Path -LiteralPath $source){Remove-Item -LiteralPath $source -Force -ErrorAction SilentlyContinue}
