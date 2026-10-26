@@ -1,0 +1,188 @@
+name: Publicar prueba v30.0.14-rc1 (NO estable)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/publish-v30-0-14-rc1.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dyclok-v30-0-14-rc1-publish
+  cancel-in-progress: false
+
+jobs:
+  prerelease:
+    runs-on: windows-latest
+    steps:
+      - name: Check out the exact pre-release candidate revision
+        uses: actions/checkout@v4
+        with:
+          ref: 13c06ce4b9218f04a1575d0ca60cc6743eca1d24
+          path: source
+      - name: Preserve original bundle bytes
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Install dependencies and verify protected runtime
+        shell: pwsh
+        working-directory: source
+        run: |
+          npm install --legacy-peer-deps
+          if($LASTEXITCODE -ne 0){throw 'Dependency installation failed'}
+          foreach($script in @(
+            'tools/unpack-bundled-extension.js',
+            'tools/verify-build-assets.js',
+            'tools/verify-safe-base.js',
+            'tools/verify-original-cache-ipc-registration.js',
+            'tools/verify-cache-ipc-compatibility.js',
+            'tools/verify-startup-health.js',
+            'tools/verify-bootstrap-diagnostics.js',
+            'tools/verify-extension-download-retry.js',
+            'tools/verify-legacy-expansion-compat.js',
+            'tools/verify-diagnostic-console.js',
+            'tools/verify-open-stage-diagnostics.js'
+          )){
+            & node $script
+            if($LASTEXITCODE -ne 0){throw "Pre-release test failed: $script"}
+          }
+      - name: Apply checksum-guarded renderer compatibility and diagnostics
+        shell: pwsh
+        working-directory: source
+        run: |
+          foreach($script in @(
+            'tools/apply-legacy-expand-check.js',
+            'tools/instrument-open-stages.js',
+            'tools/instrument-params-merge.js',
+            'tools/install-diagnostic-panel.js'
+          )){
+            & node $script --apply
+            if($LASTEXITCODE -ne 0){throw "Cannot apply protected renderer change: $script"}
+          }
+      - name: Build the actual Windows NSIS installer
+        shell: pwsh
+        working-directory: source
+        run: |
+          npx electron-builder install-app-deps
+          if($LASTEXITCODE -ne 0){throw 'Electron native dependencies failed'}
+          npm run build:win -- --publish never
+          if($LASTEXITCODE -ne 0){throw 'Windows NSIS installer build failed'}
+      - name: Inspect installer and compatibility resources
+        shell: pwsh
+        working-directory: source
+        run: |
+          $base='release/win-unpacked'
+          foreach($relative in @(
+            'Dyclokpropio.exe','resources/app.asar',
+            'plugins/.automa/manifest.json',
+            'resources/plugins/.automa/manifest.json',
+            'vendor/ffmpeg/bin/ffmpeg.exe',
+            'resources/vendor/ffmpeg/bin/ffmpeg.exe',
+            'resources/app/dist/assets/sync/DicSyncService.exe',
+            'resources/app.asar.unpacked/dist/assets/sync/DicSyncService.exe'
+          )){
+            if(-not (Test-Path -LiteralPath (Join-Path $base $relative) -PathType Leaf)){
+              throw "Installer resource missing: $relative"
+            }
+          }
+          if(-not (Test-Path -LiteralPath 'release/Dyclokpropio_3.0.0_win_x64.exe' -PathType Leaf)){
+            throw 'Generated NSIS EXE missing'
+          }
+      - name: Verify the application starts and saves a safe diagnostic
+        shell: pwsh
+        working-directory: source
+        run: |
+          $started=Get-Date
+          $exe=(Resolve-Path 'release/win-unpacked/Dyclokpropio.exe').Path
+          $proc=Start-Process -FilePath $exe -PassThru
+          try {
+            Start-Sleep -Seconds 22
+            $proc.Refresh()
+            if($proc.HasExited -and $proc.ExitCode -ne 0){throw "Electron startup exited with code $($proc.ExitCode)"}
+            $found=@(Get-ChildItem -LiteralPath $env:APPDATA -File -Filter 'dyclok-startup-health.json' -Recurse -ErrorAction SilentlyContinue |
+              Where-Object {$_.LastWriteTime -ge $started.AddSeconds(-5)} |
+              Sort-Object LastWriteTime -Descending)
+            if($found.Count -eq 0){throw 'No startup health record generated'}
+            $status=Get-Content -LiteralPath $found[0].FullName -Raw | ConvertFrom-Json
+            if(-not $status.originalEntrypointLoaded -or -not $status.electronReady){
+              throw 'Recovered runtime failed to start'
+            }
+            Write-Host ('ELECTRON_STARTED='+$status.electronReady)
+            Write-Host ('ORIGINAL_CACHE_IPC_REGISTERED='+$status.originalCacheHandlerRegistered)
+            Write-Host ('CRASH_CODE='+$status.uncaughtErrorCode)
+            Write-Host ('FILE_CATEGORY='+$status.uncaughtKnownBasename)
+            # This is an experimental pre-release. A missing original IPC is
+            # recorded as a KNOWN FAILURE, NOT silently bypassed or passed.
+            @(
+              'BUILD_CLASS=PRE_RELEASE_EXPERIMENTAL'
+              'ORIGINAL_CACHE_IPC_REGISTERED=' + $status.originalCacheHandlerRegistered
+              'KNOWN_IPC_FAILURE=IPC_ORIGINAL_MISSING'
+              'STARTUP_ERROR_CODE=' + $status.uncaughtErrorCode
+              'STARTUP_MISSING_KNOWN_BASENAME=' + $status.uncaughtKnownBasename
+              'PROFILE_244_VALIDATED=NO'
+            ) | Set-Content 'release/TEST_STATUS.txt' -Encoding ASCII
+          } finally {
+            $proc.Refresh()
+            if(-not $proc.HasExited){Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue}
+          }
+      - name: Prepare uniquely named test installer and SHA256
+        shell: pwsh
+        working-directory: source
+        run: |
+          New-Item -ItemType Directory -Force 'release-delivery' | Out-Null
+          $name='Dyclokpropio_30.0.14-rc1_win_x64.exe'
+          Copy-Item -LiteralPath 'release/Dyclokpropio_3.0.0_win_x64.exe' -Destination "release-delivery/$name"
+          $sha=(Get-FileHash -LiteralPath "release-delivery/$name" -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  $name" | Set-Content 'release-delivery/SHA256SUMS.txt' -Encoding ASCII
+          Copy-Item 'release/TEST_STATUS.txt' 'release-delivery/TEST_STATUS.txt'
+          @(
+            'deliveryVersion=30.0.14-rc1'
+            'releaseChannel=EXPERIMENTAL_PRE_RELEASE'
+            'internalCompatibilityVersion=3.0.0'
+            'sourceCommit=13c06ce4b9218f04a1575d0ca60cc6743eca1d24'
+            'notStable=true'
+            'profile244Validated=false'
+          ) | Set-Content 'release-delivery/VERSION.txt' -Encoding ASCII
+          Write-Host "Installer sha256: $sha"
+      - name: Upload experimental installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyclokpropio-30.0.14-rc1-test-installer
+          path: |
+            source/release-delivery/*.exe
+            source/release-delivery/*.txt
+          if-no-files-found: error
+      - name: Publish specifically as GitHub pre-release (never Latest)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag='v30.0.14-rc1'
+          gh release view $tag --repo $env:GITHUB_REPOSITORY --json tagName 2>$null | Out-Null
+          if($LASTEXITCODE -eq 0){throw "Pre-release tag already exists; refusing to overwrite $tag"}
+          $folder='source/release-delivery'
+          $file=Join-Path $folder 'Dyclokpropio_30.0.14-rc1_win_x64.exe'
+          $sha=(Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()
+          $expected=(Get-Content -LiteralPath (Join-Path $folder 'SHA256SUMS.txt') -Raw).Trim()
+          if($expected -ne ($sha+'  '+[IO.Path]::GetFileName($file))){throw 'SHA256 mismatch; cannot publish'}
+          $notes=@(
+            'VERSION DE PRUEBA / NO ESTABLE. Solicitada para instalacion y reproduccion del fallo del perfil 244.'
+            ''
+            'ADVERTENCIA: clear-dev-cache sigue sin registrar el manejador original en la ultima prueba Windows; abrir perfiles puede fallar con IPC_ORIGINAL_MISSING / PARAMS_MERGE_UNKNOWN.'
+            'El diagnostico detecta una excepcion ENOENT para gost.exe. No hay prueba de que este sea el unico fallo.'
+            'Esta compilacion mantiene controles SHA256, no finge exito al limpiar cache, y no elimina perfiles.'
+            'No se garantiza identidad de funciones con DICloak 2.8.17. Chromium/Application/ginsbrowser.exe no esta empaquetado.'
+            'Haz copia de seguridad de los perfiles y prueba en una carpeta de instalacion separada.'
+            'Abre Dyclokpropio.exe (no el DICloak.exe antiguo) e intenta el perfil 244.'
+            'Desde el boton Diagnostico, exporta el TXT filtrado para analizar los resultados.'
+            ''
+            'Archivo TEST_STATUS.txt resume que verificaciones reales pasaron y cuales fallaron.'
+            'Version interna compatible: 3.0.0.'
+            'Codigo fuente exacto: 13c06ce4b9218f04a1575d0ca60cc6743eca1d24'
+          ) -join "`n"
+          gh release create $tag $file (Join-Path $folder 'SHA256SUMS.txt') (Join-Path $folder 'VERSION.txt') (Join-Path $folder 'TEST_STATUS.txt') --repo $env:GITHUB_REPOSITORY --target '13c06ce4b9218f04a1575d0ca60cc6743eca1d24' --prerelease --title 'Dyclokpropio v30.0.14-rc1 (PRUEBA - fallo de perfiles pendiente)' --notes $notes
+          if($LASTEXITCODE -ne 0){throw 'Could not publish experimental pre-release'}
