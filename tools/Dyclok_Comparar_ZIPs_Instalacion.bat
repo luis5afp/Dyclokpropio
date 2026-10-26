@@ -179,6 +179,6 @@ try {
   Write-Host ('Solo en antigua: ' + $oldOnly.Count + '; solo en nueva: ' + $newOnly.Count)
   Write-Host 'Envie solamente este TXT para el analisis, no copias de perfiles.'
 } catch {
-  Write-Host ('ERROR: ' + $_.Exception.Message)
+  Write-Host ('ERROR en linea ' + $_.InvocationInfo.ScriptLineNumber + ': ' + $_.Exception.Message)
   exit 1
 }
