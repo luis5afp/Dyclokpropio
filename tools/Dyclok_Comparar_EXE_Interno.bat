@@ -101,7 +101,7 @@ function Inspect-PE([string]$file) {
       Subsystem=$subsystem
       ResourcesBytes=$resourceBytes
       CertificateBytes=$certBytes
-      Sections=@($sects)
+      Sections=$sects.ToArray()
     }
   }finally{$br.Dispose();$fs.Dispose()}
 }
