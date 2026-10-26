@@ -27,6 +27,8 @@ on:
       - 'src/main/open-stage-diagnostics.js'
       - 'src/main/diagnostic-console.js'
       - 'src/main/cache-ipc-compatibility.js'
+      - 'src/main/startup-health.js'
+      - 'tools/verify-startup-health.js'
       - 'tools/verify-cache-ipc-compatibility.js'
       - 'tools/verify-original-cache-ipc-registration.js'
       - 'src/renderer/diagnostic-panel.js'
@@ -63,6 +65,8 @@ jobs:
         run: |
           node tools/verify-original-cache-ipc-registration.js
           node tools/verify-cache-ipc-compatibility.js
+      - name: Verify redacted Windows main-process startup health
+        run: node tools/verify-startup-health.js
       - name: Verify Electron bootstrap actually enables diagnostics
         run: node tools/verify-bootstrap-diagnostics.js
       - name: Verify original baseline hashes
