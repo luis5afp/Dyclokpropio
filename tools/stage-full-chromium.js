@@ -22,6 +22,14 @@ function sha256File(filename){
   return h.digest('hex');
 }
 function normal(name){return name.replace(/\\/g,'/')}
+// Only ship runtime assets, never crash identifiers, user data or setup metrics
+// from an already-used DICloak installation. These data can be regenerated.
+function isRuntimeAsset(relative){
+  const path=relative.replace(/\\/g,'/');
+  if(/^(?:User Data|Application\/SetupMetrics)(?:\/|$)/i.test(path))return false;
+  if(/^(?:Application|ginsbrowser)\//i.test(path))return true;
+  return /^version\.json$/i.test(path);
+}
 function filenameSafe(relative){
   if(!relative || relative.startsWith('/')||relative.includes('//') || /^[a-z]:/i.test(relative) || /[\x00-\x1f:]/.test(relative))return false;
   const parts=relative.split('/');
@@ -43,8 +51,8 @@ function inspect(zip){
     const name=normal(e.entryName);
     if(!name.toLowerCase().startsWith(root.toLowerCase()))continue;
     // A contents-only ZIP must not include unrelated application files.
-    if(!root && !/^(?:Application|ginsbrowser)\//i.test(name))continue;
     const relative=name.slice(root.length).replace(/\/$/,'');
+    if(!isRuntimeAsset(relative))continue;
     if(!relative)continue;
     if(!filenameSafe(relative))throw Error('Unsafe path inside Chromium ZIP');
     if((e.attr>>>16&0xf000)===0xa000)throw Error('Symlink inside Chromium ZIP rejected');
@@ -127,4 +135,4 @@ function main(args){
   console.log('CHROMIUM_STAGED='+JSON.stringify(info));
 }
 if(require.main===module)try{main(process.argv.slice(2))}catch(err){console.error('CHROMIUM_PRECHECK_FAILED:',err.message);process.exitCode=1}
-module.exports={filenameSafe,inspect,stage,validateInstalled};
+module.exports={filenameSafe,isRuntimeAsset,inspect,stage,validateInstalled};
