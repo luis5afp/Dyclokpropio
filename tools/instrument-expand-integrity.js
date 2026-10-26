@@ -20,6 +20,7 @@ const EXPECTED_PARAMS_SHA256='4f4b738adacf4b06c598fdde44412866451dc4b6b23579cae8
 const DECL='She={name:"扩展检测",stepType:zde.EXPAND_CHECK,async handler(e){';
 const DECISION='m.extens.every(e=>e.result)&&m.interiorExtens.every(e=>e.result)';
 const HOOK='const DyclokExtensionAudit=(m)=>{try{for(const g of [["ext",m?.extens],["internal",m?.interiorExtens]]){const category=g[0],items=g[1],checkpoint=!Array.isArray(items)?"integrity-invalid-response":items.some(i=>!i?.result)?category==="ext"?"integrity-ext-reject":"integrity-internal-reject":category==="ext"?"integrity-ext-accept":"integrity-internal-accept";const p=window.ipcRenderer?.invoke?.("dyclok-diag-event",{kind:"stage",phase:"info",action:"expandCheck",checkpoint});if(p&&typeof p.catch==="function")p.catch(()=>{})}}catch{}};';
+const INTERNAL_HOOK='const DyclokInternalAudit=m=>{try{const arr=Array.isArray(m?.interiorExtens)?m.interiorExtens:[];for(let i=0;i<2;i++){const result=arr[i],checkpoint=!result?"integrity-internal-invalid-response":i===0?result.result?"integrity-browser-accept":"integrity-browser-reject":result.result?"integrity-plugins-accept":"integrity-plugins-reject";const p=window.ipcRenderer?.invoke?.("dyclok-diag-event",{kind:"stage",phase:"info",action:"expandCheck",checkpoint});if(p&&typeof p.catch==="function")p.catch(()=>{})}}catch{}};';
 function transform(source){
   assert.equal(source.split(DECL).length-1,1,'Expected exactly one expansion-check handler');
   const start=source.indexOf(DECL),end=source.indexOf('}},Rhe={name:',start);
@@ -27,8 +28,8 @@ function transform(source){
   const before=source.slice(start,end);
   assert.equal(before.split(DECISION).length-1,1,'Expected one unaltered integrity decision');
   assert.ok(before.includes('checkExpansionSha256Hash('),'Mandatory remote integrity verification missing');
-  const after=before.replace(DECL,DECL+HOOK)
-    .replace(DECISION,'(DyclokExtensionAudit(m),'+DECISION+')');
+  const after=before.replace(DECL,DECL+HOOK+INTERNAL_HOOK)
+    .replace(DECISION,'(DyclokExtensionAudit(m),DyclokInternalAudit(m),'+DECISION+')');
   const result=source.slice(0,start)+after+source.slice(end);
   for(const term of ['generate-sha256-hash-for-plugins','checkExpansionSha256Hash(','new Error(yre.EXPAND_SHA256_CHECK_FAIL)',DECISION]){
     assert.ok(result.includes(term),'Security expression changed: '+term);
@@ -65,4 +66,4 @@ function main(){
   console.log('PASS: unmodified integrity decision, metadata-only group checkpoints. Output hash='+SHA(result));
 }
 if(require.main===module)main();
-module.exports={transform,HOOK,DECL,DECISION,preparedBaseline,EXPECTED_PARAMS_SHA256};
+module.exports={transform,HOOK,INTERNAL_HOOK,DECL,DECISION,preparedBaseline,EXPECTED_PARAMS_SHA256};
