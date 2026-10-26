@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const AdmZip=require('adm-zip');
-const {stage,inspect,filenameSafe}=require('./stage-full-chromium.js');
+const {stage,inspect,filenameSafe,isRuntimeAsset}=require('./stage-full-chromium.js');
 const {verify}=require('./verify-chromium-bundle.js');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-chromium-fixture-'));
 try {
@@ -10,6 +10,13 @@ try {
   const base=path.join(files,'Application',ver);
   fs.mkdirSync(base,{recursive:true});
   fs.mkdirSync(path.join(files,'ginsbrowser','.ginsextension2'),{recursive:true});
+  fs.mkdirSync(path.join(files,'User Data','Crashpad'),{recursive:true});
+  fs.mkdirSync(path.join(files,'Application','SetupMetrics'),{recursive:true});
+  fs.writeFileSync(path.join(files,'User Data','Crashpad','settings.dat'),'PRIVATE-SYNTHETIC-CRASH-ID');
+  fs.writeFileSync(path.join(files,'Application','SetupMetrics','4616_example.pma'),'PRIVATE-SYNTHETIC-TELEMETRY');
+  fs.writeFileSync(path.join(files,'version.json'),JSON.stringify({main:{version:'142.1.7'},others:[]}));
+  fs.writeFileSync(path.join(files,'ginsbrowser','.ginsextension2.zip'),Buffer.from('SYNTHETIC-EXTENSION-BUNDLE'));
+  fs.writeFileSync(path.join(files,'ginsbrowser','.ginsextension3.zip'),Buffer.from('SYNTHETIC-EXTENSION-BUNDLE'));
   // Sizes must meet native binary minimums. Contents are synthetic zeros,
   // never published and never executed.
   fs.writeFileSync(path.join(files,'Application','ginsbrowser.exe'),Buffer.alloc(1_000_002));
@@ -28,6 +35,13 @@ try {
   assert.equal(metadata.version,ver);
   assert.ok(metadata.files>=51);
   assert.ok(fs.existsSync(path.join(staged,'Chromium','ginsbrowser','.ginsextension2','manifest.json')));
+  assert.ok(fs.existsSync(path.join(staged,'Chromium','version.json')));
+  assert.ok(fs.existsSync(path.join(staged,'Chromium','ginsbrowser','.ginsextension2.zip')));
+  assert.ok(fs.existsSync(path.join(staged,'Chromium','ginsbrowser','.ginsextension3.zip')));
+  assert.ok(!fs.existsSync(path.join(staged,'Chromium','User Data')));
+  assert.ok(!fs.existsSync(path.join(staged,'Chromium','Application','SetupMetrics')));
+  assert.equal(isRuntimeAsset('User Data/Crashpad/settings.dat'),false);
+  assert.equal(isRuntimeAsset('Application/SetupMetrics/4616_example.pma'),false);
   assert.throws(()=>stage(zipFile,staged),/already exists/);
   // Windows "Compress to ZIP" of Chromium's contents omits Chromium/ itself.
   const bareZip=new AdmZip();bareZip.addLocalFolder(files);
@@ -37,6 +51,8 @@ try {
   assert.equal(bare.version,ver);
   assert.ok(fs.existsSync(path.join(stagedBare,'Chromium','Application','ginsbrowser.exe')));
   assert.ok(fs.existsSync(path.join(stagedBare,'Chromium','ginsbrowser','.ginsextension2','manifest.json')));
+  assert.ok(fs.existsSync(path.join(stagedBare,'Chromium','version.json')));
+  assert.ok(!fs.existsSync(path.join(stagedBare,'Chromium','User Data')));
 
   const packaged=path.join(tmp,'win-unpacked');
   fs.mkdirSync(packaged);
