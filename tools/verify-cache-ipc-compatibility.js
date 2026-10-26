@@ -4,7 +4,7 @@ const {
   CHANNEL,ORIGINAL_UNAVAILABLE,trustedMainWindow,installCacheIpcCompatibility
 }=require('../src/main/cache-ipc-compatibility.js');
 
-function fakeElectron(){
+function fakeElectron(withHasHandler=false){
   const handlers=new Map(),listeners=new Map();
   const ipcMain={
     on(channel,fn){listeners.set(channel,fn);return this;},
@@ -12,15 +12,19 @@ function fakeElectron(){
       if(handlers.has(channel))throw new Error('Duplicate native handle: '+channel);
       handlers.set(channel,fn);
     },
-    hasHandler(channel){return handlers.has(channel);},
     removeHandler(channel){handlers.delete(channel);},
     _handlers:handlers,_listeners:listeners
   };
+  // Real Electron 31 exposes handle(), handleOnce(), removeHandler(),
+  // but NOT hasHandler(). Previous tests invented it and concealed a bug.
+  if(withHasHandler)ipcMain.hasHandler=(channel)=>handlers.has(channel);
   return ipcMain;
 }
 
 async function main(){
   const ipc=fakeElectron();
+  assert.equal(typeof ipc.hasHandler,'undefined',
+    'Test fixture must match Electron 31: no hasHandler() method');
   const feature=installCacheIpcCompatibility(ipc,{waitMs:0});
   assert.equal(feature.status().hasHandler,true,
     'IPC transport must be registered BEFORE recovered main initialization');
@@ -77,7 +81,7 @@ async function main(){
   assert.equal(ipc._handlers.get('another-native-channel'),unrelated);
 
   // If the original channel is already bound, it has absolute priority.
-  const ipc2=fakeElectron(),existing=async()=>({native:true});
+  const ipc2=fakeElectron(true),existing=async()=>({native:true});
   ipc2.handle(CHANNEL,existing);
   const feature2=installCacheIpcCompatibility(ipc2,{waitMs:0});
   assert.equal(feature2.status().stableAdapter,false);
