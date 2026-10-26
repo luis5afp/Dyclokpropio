@@ -71,6 +71,27 @@ function isTrusted(event) {
   } catch { return false; }
 }
 
+// Whitelist the fixed main-process health fields before including them in
+// the user-triggered diagnostic export. Never copy arbitrary JSON keys.
+function readStartupHealth(app, fileSystem = fs) {
+  try {
+    const file=path.join(app.getPath('userData'),'dyclok-startup-health.json');
+    const raw=JSON.parse(fileSystem.readFileSync(file,'utf8'));
+    if(raw?.schema!==1)return {available:false};
+    const boolKeys=['bootstrapLoaded','originalEntrypointLoaded',
+      'electronReady','mainWindowCreated','originalCacheHandlerRegistered'];
+    const out={available:true};
+    for(const name of boolKeys)out[name]=raw[name]===true;
+    for(const name of ['originalCacheHandlerRegistrations','originalCacheHandlerRemovals'])
+      out[name]=Number.isSafeInteger(raw[name])&&raw[name]>=0&&raw[name]<=10000?raw[name]:0;
+    for(const name of ['mainEntrypointErrorClass','uncaughtErrorClass'])
+      out[name]=['none','Error','TypeError','ReferenceError','SyntaxError',
+        'RangeError','AggregateError','TimeoutError','AbortError','Other'].includes(raw[name])
+        ? raw[name]:'Other';
+    return out;
+  }catch {return {available:false};}
+}
+
 function createDiagnosticConsole(ipcMain, app, {fileSystem = fs} = {}) {
   if (!ipcMain || typeof ipcMain.handle !== 'function') throw new TypeError('ipcMain required');
   let active = false;
@@ -137,6 +158,8 @@ function createDiagnosticConsole(ipcMain, app, {fileSystem = fs} = {}) {
         'Eventos: '+events.length,
         'Cobertura: renderer fetch/XHR; IPC cuando el puente lo permite; pasos internos de apertura.',
         'El trafico de procesos nativos y navegadores externos no se captura.',
+        'MAIN_PROCESS_STARTUP_STATUS (metadatos filtrados):',
+        JSON.stringify(readStartupHealth(app,fileSystem)),
         '', ...events.map(row => JSON.stringify(row)), ''
       ].join('\n');
       fileSystem.mkdirSync(dir,{recursive:true});
@@ -164,4 +187,4 @@ function createDiagnosticConsole(ipcMain, app, {fileSystem = fs} = {}) {
     status
   };
 }
-module.exports = {CONTROL,EVENT,sanitize,isTrusted,createDiagnosticConsole};
+module.exports = {CONTROL,EVENT,sanitize,isTrusted,readStartupHealth,createDiagnosticConsole};
