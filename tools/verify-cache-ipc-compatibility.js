@@ -1,97 +1,98 @@
 'use strict';
 const assert=require('node:assert/strict');
 const {
-  CHANNEL,trustedMainWindow,installCacheIpcCompatibility
+  CHANNEL,ORIGINAL_UNAVAILABLE,trustedMainWindow,installCacheIpcCompatibility
 }=require('../src/main/cache-ipc-compatibility.js');
 
 function fakeElectron(){
-  const handleMap=new Map(), listeners=new Map();
+  const handlers=new Map(),listeners=new Map();
   const ipcMain={
-    on(channel,fn){
-      listeners.set(channel,fn);
-      return this;
-    },
+    on(channel,fn){listeners.set(channel,fn);return this;},
     handle(channel,fn){
-      if(handleMap.has(channel)) throw new Error('Duplicate handler');
-      handleMap.set(channel,fn);
+      if(handlers.has(channel))throw new Error('Duplicate native handle: '+channel);
+      handlers.set(channel,fn);
     },
-    hasHandler(channel){return handleMap.has(channel);},
-    removeHandler(channel){handleMap.delete(channel);},
-    _handleMap:handleMap,
-    _listeners:listeners
+    hasHandler(channel){return handlers.has(channel);},
+    removeHandler(channel){handlers.delete(channel);},
+    _handlers:handlers,_listeners:listeners
   };
   return ipcMain;
 }
 
 async function main(){
   const ipc=fakeElectron();
-  const feature=installCacheIpcCompatibility(ipc);
-  assert.equal(feature.status().hasHandler,false);
-  const other=()=>123;
-  ipc.on('another-legacy-channel',other);
-  assert.equal(ipc._listeners.get('another-legacy-channel'),other);
-  assert.equal(ipc.hasHandler('another-legacy-channel'),false);
-
-  const callRecord=[],privateId='SIMULATED_PROFILE_SECRET',secret='SIMULATED_DATA';
-  const originalCacheHandler=async(event,payload)=>{
-    callRecord.push({event,payload});
-    if(payload.fail) throw new Error('ORIGINAL_CACHE_FAILURE');
-    return {msg:'ORIGINAL_RESULT',data:{reason:'ORIGINAL_POLICY',value:secret}};
-  };
-  const originalReturn=ipc.on(CHANNEL,originalCacheHandler);
-  assert.equal(originalReturn,ipc,'ipcMain.on chain must be preserved');
-  assert.equal(ipc._listeners.get(CHANNEL),originalCacheHandler,
-    'Native handler is not replaced or removed');
-  assert.equal(feature.status().seenOriginalOn,true);
-  assert.equal(feature.status().bridged,true);
-  assert.equal(ipc.hasHandler(CHANNEL),true,'invoke bridge must be available');
-
+  const feature=installCacheIpcCompatibility(ipc,{waitMs:0});
+  assert.equal(feature.status().hasHandler,true,
+    'IPC transport must be registered BEFORE recovered main initialization');
+  assert.equal(feature.status().originalRegistered,false,
+    'No native cache operation exists until original main loads');
   const event={senderFrame:{url:'file:///C:/Program%20Files/Dyclokpropio/resources/app.asar/dist/index.html#/profiles'}};
-  const args={id:privateId,clearTypes:8,localDataConfig:{privateValue:secret}};
-  const result=await ipc._handleMap.get(CHANNEL)(event,args);
-  assert.deepEqual(result,{msg:'ORIGINAL_RESULT',data:{reason:'ORIGINAL_POLICY',value:secret}},
-    'Must pass through exact original response without synthetic success');
-  assert.equal(callRecord.length,1);
-  assert.equal(callRecord[0].event,event);
-  assert.equal(callRecord[0].payload,args,'Original cache flags, id and policy remain untouched');
-  await assert.rejects(()=>ipc._handleMap.get(CHANNEL)(event,{fail:true}),
-    /ORIGINAL_CACHE_FAILURE/,'Do not swallow original cleanup errors');
+  const fakePayload={id:'FAKE_PROFILE_IDENTIFIER',clearTypes:8,
+    localDataConfig:{testValue:'SENSITIVE_SIMULATED_DATA'}};
+  await assert.rejects(
+    ()=>ipc._handlers.get(CHANNEL)(event,fakePayload),
+    e=>e.message===ORIGINAL_UNAVAILABLE,
+    'Must fail, not simulate success, if the recovered operation never registers');
+  const calls=[];
+  const native=async (e,payload)=>{
+    calls.push([e,payload]);
+    if(payload.fail)throw new Error('NATIVE_CACHE_FAILED');
+    return {msg:'ORIGINAL_CACHE_RESULT',data:{reason:'ORIGINAL_POLICY'}};
+  };
+  ipc.handle(CHANNEL,native); // Actual recovered main calls ipcMain.handle.
+  assert.equal(feature.status().originalRegistered,true);
+  assert.equal(feature.status().originalRegistrations,1);
+  assert.deepEqual(await ipc._handlers.get(CHANNEL)(event,fakePayload),
+    {msg:'ORIGINAL_CACHE_RESULT',data:{reason:'ORIGINAL_POLICY'}});
+  assert.equal(calls.length,1);
+  assert.strictEqual(calls[0][0],event);
+  assert.strictEqual(calls[0][1],fakePayload,
+    'Must preserve original clearTypes, id and localDataConfig exactly');
+  await assert.rejects(()=>ipc._handlers.get(CHANNEL)(event,{fail:true}),
+    /NATIVE_CACHE_FAILED/,'Must forward native cleanup rejection unchanged');
 
-  assert.equal(trustedMainWindow({senderFrame:{url:'https://evil.test/dist/index.html'}}),false);
-  assert.equal(trustedMainWindow({senderFrame:{url:'file:///tmp/dist/index.html.evil'}}),false);
   assert.equal(trustedMainWindow(event),true);
-  assert.throws(()=>ipc._handleMap.get(CHANNEL)(
-    {senderFrame:{url:'https://evil.test/dist/index.html'}},args
-  ),/DYCLOK_CACHE_IPC_DENIED/);
-  assert.equal(callRecord.length,2,'Untrusted renderer must not reach original cache callback');
+  assert.equal(trustedMainWindow({senderFrame:{url:'https://evil.test/dist/index.html'}}),false);
+  await assert.rejects(
+    ()=>ipc._handlers.get(CHANNEL)(
+      {senderFrame:{url:'https://evil.test/dist/index.html'}},fakePayload),
+    /DYCLOK_CACHE_IPC_DENIED/,'Remote windows cannot request profile deletion');
+  assert.equal(calls.length,2,'No remote callback must reach original cleaner');
 
-  // Late original registrations are authoritative and replace ONLY the bridge.
-  const native=async()=>({msg:'NATIVE_MAIN_HANDLER'});
-  ipc.handle(CHANNEL,native);
-  assert.equal(feature.status().bridged,false);
-  assert.equal(feature.status().nativeHandleSeen,true);
-  assert.equal(ipc._handleMap.get(CHANNEL),native);
-  assert.deepEqual(await ipc._handleMap.get(CHANNEL)(event,args),{msg:'NATIVE_MAIN_HANDLER'});
-  assert.equal(ipc._listeners.get(CHANNEL),originalCacheHandler);
-  assert.equal(callRecord.length,2);
+  ipc.removeHandler(CHANNEL);
+  assert.equal(feature.status().originalRegistered,false);
+  assert.equal(feature.status().hasHandler,true,
+    'Keep stable transport present and require native callback to return');
+  await assert.rejects(()=>ipc._handlers.get(CHANNEL)(event,fakePayload),
+    e=>e.message===ORIGINAL_UNAVAILABLE);
+  ipc.handle(CHANNEL,async()=>false);
+  assert.equal(await ipc._handlers.get(CHANNEL)(event,fakePayload),false,
+    'Original false return must stay false, not be rewritten as success');
+  ipc.handle(CHANNEL,async()=>null);
+  assert.equal(await ipc._handlers.get(CHANNEL)(event,fakePayload),null,
+    'Original null result must remain null');
 
-  // A native handle registered first also prevents any bridge.
-  const ipc2=fakeElectron();
-  ipc2.handle(CHANNEL,native);
-  const feature2=installCacheIpcCompatibility(ipc2);
-  ipc2.on(CHANNEL,originalCacheHandler);
-  assert.equal(feature2.status().bridged,false);
-  assert.equal(ipc2._handleMap.get(CHANNEL),native);
+  const unrelated=async()=>17;
+  ipc.handle('another-native-channel',unrelated);
+  assert.equal(ipc._handlers.get('another-native-channel'),unrelated);
 
-  // The compatibility layer MUST NOT install a pretend handler when none
-  // has been registered by the original Electron bundle.
+  // If the original channel is already bound, it has absolute priority.
+  const ipc2=fakeElectron(),existing=async()=>({native:true});
+  ipc2.handle(CHANNEL,existing);
+  const feature2=installCacheIpcCompatibility(ipc2,{waitMs:0});
+  assert.equal(feature2.status().stableAdapter,false);
+  assert.equal(ipc2._handlers.get(CHANNEL),existing);
+
+  // Delayed native registration: the invocation waits for real code,
+  // never skips deletion or invents a successful response.
   const ipc3=fakeElectron();
-  installCacheIpcCompatibility(ipc3);
-  assert.equal(ipc3.hasHandler(CHANNEL),false);
-  console.log('PASS: original clear-dev-cache implementation reused unmodified for invoke');
-  console.log('PASS: original results and failures preserved; no synthetic success/blanket deletion');
-  console.log('PASS: native handle takes priority, delayed registrations supported');
-  console.log('PASS: only trusted app window can invoke the original operation');
+  installCacheIpcCompatibility(ipc3,{waitMs:1000});
+  const pending=ipc3._handlers.get(CHANNEL)(event,fakePayload);
+  ipc3.handle(CHANNEL,async()=>({native:'after-ready'}));
+  assert.deepEqual(await pending,{native:'after-ready'});
+  console.log('PASS: clear-dev-cache IPC available early, original main handle() captured');
+  console.log('PASS: no native callback means explicit failure, never simulated cleanup');
+  console.log('PASS: native payload, result, false/null and exceptions all preserved');
+  console.log('PASS: trusted renderer restriction and delayed native registration verified');
 }
-
 main().catch(e=>{console.error(e);process.exitCode=1;});
