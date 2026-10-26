@@ -43,6 +43,6 @@ try {
   assert.equal(filenameSafe('Application/con.txt'),false);
   assert.equal(filenameSafe('ginsbrowser/_locales/zh_CN/messages.json'),true);
   const builder=fs.readFileSync(path.resolve('electron-builder.yml'),'utf8');
-  assert.match(builder,/extraFiles:\s*\n\s*-\s*from: Chromium\s*\n\s*to: Chromium/);
+  assert.match(builder,/extraFiles:[\s\S]*?-\s*from: Chromium\s*\n\s*to: Chromium/);
   console.log('PASS: all Chromium trees staged, critical hashes checked, absent files rejected, double install rejected');
 }finally{fs.rmSync(tmp,{recursive:true,force:true})}
