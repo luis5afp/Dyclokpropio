@@ -14,6 +14,7 @@ const childProcess = require('node:child_process');
 const { ipcMain } = require('electron');
 const { installExtensionDownloadRetry } = require('./bundled-extension-download-retry.js');
 const { createExtensionDiagnosticWriter } = require('./extension-download-diagnostics.js');
+const { registerOpenStageDiagnostics } = require('./open-stage-diagnostics.js');
 
 // Keep the original DICloak extension repository and integrity verification.
 // Retry a failed HTTPS download once, without turning false into success.
@@ -21,6 +22,13 @@ try {
   installExtensionDownloadRetry(ipcMain, { record: createExtensionDiagnosticWriter(require('electron').app) });
 } catch (error) {
   console.warn('[Dyclokpropio] No se pudo activar el reintento de extensiones:', error.message);
+}
+// Traces per-stage profile opening without collecting profile IDs, cookies,
+// URLs, log text, filesystem locations or stack traces.
+try {
+  registerOpenStageDiagnostics(ipcMain, require('electron').app);
+} catch (error) {
+  console.warn('[Dyclokpropio] No se pudo activar el diagnóstico de etapas:', error.message);
 }
 // DIAGNOSTIC BUILD: disable ONLY the Cookies Pro bundled injection for ALL
 // profiles, existing and future. Keep the verified original extension downloader

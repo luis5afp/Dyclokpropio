@@ -78,6 +78,8 @@ async function main() {
           return require('../src/main/bundled-extension-download-retry.js');
         case './extension-download-diagnostics.js':
           return require('../src/main/extension-download-diagnostics.js');
+        case './open-stage-diagnostics.js':
+          return require('../src/main/open-stage-diagnostics.js');
         case './bundled-extension-launch.js':
         case './bundled-extension-pin.js':
           throw new Error('Cookies Pro integration must not be loaded while disabled');
@@ -112,6 +114,8 @@ async function main() {
     assert.equal(warnings.length, 0,
       'Bootstrap reported an initialization error; download instrumentation is probably disabled');
 
+    assert.equal(typeof handlers.get('dyclok-open-stage'), 'function',
+      'Stage instrumentation writer did not register before original runtime');
     const handler = handlers.get('download-chrome-unzip-extension');
     assert.equal(typeof handler, 'function', 'Downloader was not registered by the main runtime');
     const secret = 'do-not-log-this-query-secret';

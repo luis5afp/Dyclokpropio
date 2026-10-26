@@ -19,6 +19,7 @@ files:
   - src/main/bundled-extension-pin.js
   - src/main/bundled-extension-download-retry.js
   - src/main/extension-download-diagnostics.js
+  - src/main/open-stage-diagnostics.js
   - src/main/extension-download-diagnostics.js
   - package.json
   - node_modules/**/*
@@ -31,6 +32,8 @@ extraResources:
     to: tools/repair-extension-cache.ps1
   - from: tools/show-extension-download-diagnostics.ps1
     to: tools/show-extension-download-diagnostics.ps1
+  - from: tools/show-open-stage-diagnostics.ps1
+    to: tools/show-open-stage-diagnostics.ps1
   - from: resources/electron
     to: electron
   - from: resources/elevate.exe
