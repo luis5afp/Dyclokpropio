@@ -22,6 +22,10 @@ on:
       - 'tools/verify-safe-base.js'
       - 'tools/apply-legacy-expand-check.js'
       - 'tools/verify-legacy-expansion-compat.js'
+      - 'tools/instrument-open-stages.js'
+      - 'tools/verify-open-stage-diagnostics.js'
+      - 'src/main/open-stage-diagnostics.js'
+      - 'tools/show-open-stage-diagnostics.ps1'
       - '.github/workflows/verify-runtime-assets.yml'
       - '.github/workflows/release-safe-base.yml'
       - 'tools/verify-release-workflow.js'
@@ -54,5 +58,7 @@ jobs:
         run: node tools/apply-legacy-expand-check.js
       - name: Exercise old extension policy and mandatory SHA256 security rejection
         run: node tools/verify-legacy-expansion-compat.js
+      - name: Verify redacted opening-stage instrumentation and privacy contract
+        run: node tools/verify-open-stage-diagnostics.js
       - name: Verify public release publication contract
         run: node tools/verify-release-workflow.js
