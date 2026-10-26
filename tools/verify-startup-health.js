@@ -30,17 +30,24 @@ try{
   assert.equal(record().originalCacheHandlerRemovals,1);
   processMonitor.emit('uncaughtExceptionMonitor',new TypeError('secret_credential_should_not_appear'));
   assert.equal(record().uncaughtErrorClass,'TypeError');
+  assert.equal(record().uncaughtSource,'other');
+  const synthetic = Object.assign(new Error('fake password'), {code:'MODULE_NOT_FOUND',stack:'Error: secret at C:\\Users\\PRIVATE\\dist-electron\\main-CuCOh59n.js:1:5885666'});
+  processMonitor.emit('uncaughtExceptionMonitor',synthetic);
+  assert.equal(record().uncaughtSource,'protected-bundle');
+  assert.equal(record().uncaughtSourceColumn,5885666);
+  assert.equal(record().uncaughtErrorCode,'MODULE_NOT_FOUND');
   startup.originalEntrypointFailed(new Error('https://secret.url/?token=SENSITIVE'));
   const raw=fs.readFileSync(path.join(temp,FILE),'utf8');
   assert.equal(record().mainEntrypointErrorClass,'Error');
-  for(const secret of ['secret_credential_should_not_appear','secret.url','SENSITIVE','token','profile-244']) {
+  for(const secret of ['secret_credential_should_not_appear','secret.url','SENSITIVE','token','profile-244','PRIVATE']) {
     assert.equal(raw.includes(secret),false,'Startup metadata leaked '+secret);
   }
   assert.deepEqual(Object.keys(record()).sort(),[
     'schema','bootstrapLoaded','originalEntrypointLoaded','electronReady',
     'mainWindowCreated','originalCacheHandlerRegistered',
     'originalCacheHandlerRegistrations','originalCacheHandlerRemovals',
-    'mainEntrypointErrorClass','uncaughtErrorClass'
+    'mainEntrypointErrorClass','uncaughtErrorClass',
+    'uncaughtErrorCode','uncaughtSource','uncaughtSourceColumn'
   ].sort());
   console.log('PASS: startup state accurately records Electron lifecycle and native IPC registration');
   console.log('PASS: errors never serialize messages, paths, credentials or profile identifiers');
