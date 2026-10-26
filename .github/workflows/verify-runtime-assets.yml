@@ -30,6 +30,7 @@ on:
       - 'tools/install-diagnostic-panel.js'
       - 'tools/verify-diagnostic-console.js'
       - 'tools/instrument-params-merge.js'
+      - 'tools/verify-params-merge-build-contract.js'
       - 'tools/show-open-stage-diagnostics.ps1'
       - '.github/workflows/verify-runtime-assets.yml'
       - '.github/workflows/release-safe-base.yml'
@@ -66,7 +67,9 @@ jobs:
       - name: Verify redacted opening-stage instrumentation and privacy contract
         run: node tools/verify-open-stage-diagnostics.js
       - name: Verify opt-in diagnostic button and paramsMerge checkpoints
-        run: node tools/instrument-params-merge.js
+        run: |
+          node tools/instrument-params-merge.js
+          node tools/verify-params-merge-build-contract.js
       - name: Verify opt-in diagnostic button, sessions and redaction
         run: node tools/verify-diagnostic-console.js
       - name: Verify public release publication contract
