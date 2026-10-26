@@ -79,6 +79,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Bundled extension validation failed' }
           node tools/verify-extension-download-retry.js
           if ($LASTEXITCODE -ne 0) { throw 'Extension download retry contract failed' }
+          node tools/verify-bootstrap-diagnostics.js
+          if ($LASTEXITCODE -ne 0) { throw 'Diagnostic integration failed; refusing to publish an uninstrumented installer' }
       - name: Rebuild native Electron dependencies
         shell: pwsh
         run: |
