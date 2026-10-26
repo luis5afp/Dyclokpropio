@@ -18,7 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Verify exact source transforms, original integrity decision and privacy
-        run: node tools/verify-expand-integrity-audit.js
+        run: |
+          node tools/instrument-expand-integrity.js
+          node tools/verify-expand-integrity-audit.js
       - name: Verify diagnostics and original expansion validation
         run: node tools/verify-legacy-expansion-compat.js
       - name: Verify no extension details can enter diagnostic console
