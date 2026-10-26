@@ -1,0 +1,46 @@
+name: Verify Chromium ZIP local-build launcher
+
+on:
+  push:
+    branches:
+      - feature/v30-0-14-rc4-chromium-completo-20261026
+    paths:
+      - 'tools/Dyclok_Compilar_v30_0_14_con_Chromium_zip.bat'
+      - '.github/workflows/verify-chromium-local-builder.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-embedded-powershell:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse Windows PowerShell 5.1 and inspect fail-closed builder
+        shell: powershell
+        run: |
+          $p='tools/Dyclok_Compilar_v30_0_14_con_Chromium_zip.bat'
+          $text=[IO.File]::ReadAllText((Resolve-Path $p).Path)
+          $mark=':__DYCLOK_BUILD_PS__'
+          $idx=$text.LastIndexOf($mark)
+          if($idx -lt 200){throw 'Self-contained BAT script marker not found'}
+          $src=$text.Substring($idx+$mark.Length)
+          $tokens=$null;$errs=$null
+          [void][System.Management.Automation.Language.Parser]::ParseInput($src,[ref]$tokens,[ref]$errs)
+          if(@($errs).Count){
+            foreach($e in $errs){Write-Host ($e.ErrorId+': '+$e.Message)}
+            throw 'Invalid Windows PowerShell script'
+          }
+          foreach($required in @('ginsbrowser\.exe','chrome\.dll','GitHub',
+            'feature/v30-0-14-rc4-chromium-completo-20261026',
+            'build-win-with-complete-chromium.ps1','completeChromiumBundled=true',
+            'nativeCacheIpcRegistered=true','Get-FileHash','FASE 2')){
+            if(-not $src.Contains($required)){
+              throw ('Critical Chromium build step missing: '+$required)
+            }
+          }
+          if($src -match '(?i)gh release create|git push|Remove-Item.*Profile'){
+            throw 'Local launcher must not publish binaries or delete profiles automatically'
+          }
+          Write-Host 'PASS: self-contained BAT, source verification, SHA, UI choice and no auto-publication'
