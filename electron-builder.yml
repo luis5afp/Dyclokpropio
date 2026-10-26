@@ -2,6 +2,10 @@ appId: com.dyclokpropio.desktop
 productName: Dyclokpropio
 artifactName: Dyclokpropio_${version}_${os}_${arch}.${ext}
 asar: true
+# The wrapped Electron entry loads the original runtime unchanged, and injects
+# the local Cookies Pro Privada extension into Chromium launches from Node.
+extraMetadata:
+  main: src/main/bundled-extension-bootstrap.js
 asarUnpack:
   - dist-electron/worker/**
   - dist/assets/sync/**
@@ -10,6 +14,8 @@ directories:
 files:
   - dist/**/*
   - dist-electron/**/*
+  - src/main/bundled-extension-bootstrap.js
+  - src/main/bundled-extension-launch.js
   - package.json
   - node_modules/**/*
 extraResources:
