@@ -17,26 +17,40 @@ jobs:
   smoke:
     runs-on: windows-latest
     steps:
+      - name: Preserve the exact protected bundle bytes on Windows
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
       - uses: actions/checkout@v4
       - name: Install Electron dependencies
         shell: pwsh
         run: |
           npm install --legacy-peer-deps
           if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
-          node tools/unpack-bundled-extension.js
-          node tools/verify-build-assets.js
-          node tools/verify-safe-base.js
-          node tools/verify-startup-health.js
-          node tools/verify-cache-ipc-compatibility.js
-          node tools/verify-bootstrap-diagnostics.js
-          if ($LASTEXITCODE -ne 0) { throw 'Preflight failed' }
+          foreach($cmd in @(
+            'tools/unpack-bundled-extension.js',
+            'tools/verify-build-assets.js',
+            'tools/verify-safe-base.js',
+            'tools/verify-startup-health.js',
+            'tools/verify-cache-ipc-compatibility.js',
+            'tools/verify-bootstrap-diagnostics.js'
+          )){
+            & node $cmd
+            if($LASTEXITCODE -ne 0){throw "Failed preflight: $cmd"}
+          }
       - name: Apply verified renderer instrumentation
         shell: pwsh
         run: |
-          node tools/apply-legacy-expand-check.js --apply
-          node tools/instrument-open-stages.js --apply
-          node tools/instrument-params-merge.js --apply
-          node tools/install-diagnostic-panel.js --apply
+          foreach($cmd in @(
+            'tools/apply-legacy-expand-check.js',
+            'tools/instrument-open-stages.js',
+            'tools/instrument-params-merge.js',
+            'tools/install-diagnostic-panel.js'
+          )){
+            & node $cmd --apply
+            if($LASTEXITCODE -ne 0){throw "Failed protected renderer patch: $cmd"}
+          }
       - name: Rebuild Windows native modules and stage full directory
         shell: pwsh
         run: |
