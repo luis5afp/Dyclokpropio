@@ -16,6 +16,7 @@ const {transform:stages}=require('./instrument-open-stages.js');
 const {transform:params}=require('./instrument-params-merge.js');
 const TARGET=path.resolve(__dirname,'../dist/assets/index-BUIbb6Pa.js');
 const SHA=input=>crypto.createHash('sha256').update(input).digest('hex');
+const EXPECTED_PARAMS_SHA256='4f4b738adacf4b06c598fdde44412866451dc4b6b23579cae864635d67958b74';
 const DECL='She={name:"扩展检测",stepType:zde.EXPAND_CHECK,async handler(e){';
 const DECISION='m.extens.every(e=>e.result)&&m.interiorExtens.every(e=>e.result)';
 const HOOK='const DyclokExtensionAudit=(m)=>{try{for(const g of [["ext",m?.extens],["internal",m?.interiorExtens]]){const category=g[0],items=g[1],checkpoint=!Array.isArray(items)?"integrity-invalid-response":items.some(i=>!i?.result)?category==="ext"?"integrity-ext-reject":"integrity-internal-reject":category==="ext"?"integrity-ext-accept":"integrity-internal-accept";const p=window.ipcRenderer?.invoke?.("dyclok-diag-event",{kind:"stage",phase:"info",action:"expandCheck",checkpoint});if(p&&typeof p.catch==="function")p.catch(()=>{})}}catch{}};';
@@ -42,10 +43,17 @@ function preparedBaseline(){
 function main(){
   const apply=process.argv.includes('--apply');
   const current=fs.readFileSync(TARGET,'utf8');
-  const expected=preparedBaseline();
-  if(apply)assert.equal(SHA(current),SHA(expected),'Unexpected post-patch renderer: audit not installed');
-  else assert.equal(SHA(current),BASE_SHA256,'Expected unmodified source before preflight');
-  const result=transform(expected);
+  let prepared;
+  if(apply){
+    assert.equal(SHA(current),EXPECTED_PARAMS_SHA256,
+      'Expected exact previously reviewed renderer with paramsMerge diagnostics');
+    prepared=current;
+  }else{
+    assert.equal(SHA(current),BASE_SHA256,'Expected unmodified source before preflight');
+    prepared=preparedBaseline();
+    assert.equal(SHA(prepared),EXPECTED_PARAMS_SHA256,'Reviewed paramsMerge output unexpectedly changed');
+  }
+  const result=transform(prepared);
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-integrity-audit-'));
   try{
     const f=path.join(dir,'renderer.mjs');
@@ -57,4 +65,4 @@ function main(){
   console.log('PASS: unmodified integrity decision, metadata-only group checkpoints. Output hash='+SHA(result));
 }
 if(require.main===module)main();
-module.exports={transform,HOOK,DECL,DECISION,preparedBaseline};
+module.exports={transform,HOOK,DECL,DECISION,preparedBaseline,EXPECTED_PARAMS_SHA256};
