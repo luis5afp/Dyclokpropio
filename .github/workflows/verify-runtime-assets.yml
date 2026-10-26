@@ -10,6 +10,11 @@ on:
       - 'resources/**'
       - 'package.json'
       - 'tools/verify-build-assets.js'
+      - 'bundled-extensions/**'
+      - 'src/main/bundled-extension-*.js'
+      - 'tools/unpack-bundled-extension.js'
+      - 'tools/verify-bundled-extension.js'
+      - 'electron-builder.yml'
       - 'tools/verify-safe-base.js'
       - '.github/workflows/verify-runtime-assets.yml'
   workflow_dispatch:
@@ -23,7 +28,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Install dependencies for extension extraction
+        run: npm install --legacy-peer-deps
+      - name: Extract original extension package
+        run: node tools/unpack-bundled-extension.js
       - name: Verify required runtime files
         run: node tools/verify-build-assets.js
+      - name: Verify bundled extension load-contract
+        run: node tools/verify-bundled-extension.js
       - name: Verify original baseline hashes
         run: node tools/verify-safe-base.js
