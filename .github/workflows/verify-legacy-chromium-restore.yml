@@ -98,5 +98,27 @@ jobs:
           if($LASTEXITCODE -eq 0){throw 'Existing Chromium overwrite was not rejected'}
           $same=(Get-FileHash -LiteralPath (Join-Path $targetRoot 'Chromium\Application\ginsbrowser.exe') -Algorithm SHA256).Hash
           if($installedHash -ne $same){throw 'Second invocation modified a previously installed kernel'}
-          $global:LASTEXITCODE=0  # The deliberately rejected second invocation must not fail the job.
-          Write-Host 'PASS: extract full synthetic kernel; reject overwrite; preserve binary SHA'
+          # Verify a ZIP with a containing installation directory is supported,
+          # while source data outside its Chromium/ folder stays untouched.
+          $wrappedRoot=Join-Path $root 'wrapped-source'
+          New-Item -ItemType Directory -Path (Join-Path $wrappedRoot 'DICloak') -Force | Out-Null
+          Copy-Item -LiteralPath (Join-Path $source 'Chromium') -Destination (Join-Path $wrappedRoot 'DICloak') -Recurse
+          $wrappedZip=Join-Path $root 'wrapped-original.zip'
+          [IO.Compression.ZipFile]::CreateFromDirectory($wrappedRoot,$wrappedZip)
+          $wrappedInstall=Join-Path $root 'wrapped-installation'
+          New-Item -ItemType Directory -Path (Join-Path $wrappedInstall 'resources') -Force | Out-Null
+          Set-Content -LiteralPath (Join-Path $wrappedInstall 'resources\app.asar') -Value 'SYNTHETIC-APP-ASAR'
+          $wrappedExe=Join-Path $wrappedInstall 'Dyclokpropio.exe'
+          Set-Content -LiteralPath $wrappedExe -Value 'SYNTHETIC-EXE'
+          $env:DYCLOK_FIXTURE_ZIP=$wrappedZip
+          $env:DYCLOK_FIXTURE_EXE=$wrappedExe
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $testPs
+          if($LASTEXITCODE -ne 0){throw 'Wrapped archive Chromium extraction failed'}
+          if(-not (Test-Path -LiteralPath (Join-Path $wrappedInstall 'Chromium\Application\ginsbrowser.exe') -PathType Leaf)){
+            throw 'Expected restored Chromium folder missing from wrapped source'
+          }
+          if(Test-Path -LiteralPath (Join-Path $wrappedInstall 'DICloak')){
+            throw 'Source containing folder was incorrectly copied into installation'
+          }
+          $global:LASTEXITCODE=0  # Deliberately rejected second invocation was expected.
+          Write-Host 'PASS: complete/wrapped synthetic ZIP installs correctly; existing install unchanged'
