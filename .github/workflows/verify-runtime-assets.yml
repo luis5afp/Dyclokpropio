@@ -24,6 +24,8 @@ on:
       - 'tools/verify-legacy-expansion-compat.js'
       - 'tools/instrument-open-stages.js'
       - 'tools/verify-open-stage-diagnostics.js'
+      - 'tools/fix-null-interior-plugin-hash.js'
+      - 'tools/verify-null-interior-plugin-hash.js'
       - 'src/main/open-stage-diagnostics.js'
       - 'src/main/diagnostic-console.js'
       - 'src/renderer/diagnostic-panel.js'
@@ -66,5 +68,7 @@ jobs:
         run: node tools/verify-open-stage-diagnostics.js
       - name: Verify opt-in diagnostic button, sessions and redaction
         run: node tools/verify-diagnostic-console.js
+      - name: Regression test actual null plugin checksum crash and remote integrity enforcement
+        run: node tools/verify-null-interior-plugin-hash.js
       - name: Verify public release publication contract
         run: node tools/verify-release-workflow.js
