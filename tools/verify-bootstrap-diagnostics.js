@@ -100,10 +100,9 @@ async function main() {
             attempts++;
             return null;
           });
-          // Recovered main has an async cache-clearing callback. If wired
-          // through legacy on(), the UI invoke() must still reach this
-          // real implementation, retaining the same return/rejection.
-          ipcMain.on('clear-dev-cache', async (_event, payload) => {
+          // Recovered main registers its original async cache-clearing
+          // callback with handle(). The early transport must capture it.
+          ipcMain.handle('clear-dev-cache', async (_event, payload) => {
             if (payload?.fail) throw new Error('CACHE_NATIVE_REJECTION');
             return {msg:'ORIGINAL_CACHE_CALLBACK_RESULT'};
           });
@@ -138,10 +137,10 @@ async function main() {
       'The in-app diagnostic console event receiver was not registered');
     assert.equal(typeof handlers.get('dyclok-open-stage'), 'function',
       'Stage instrumentation writer did not register before original runtime');
-    assert.equal(typeof legacyListeners.get('clear-dev-cache'),'function',
-      'Original cache callback must remain registered');
+    assert.equal(legacyListeners.has('clear-dev-cache'),false,
+      'The original runtime uses handle(), not on(), for this channel');
     assert.equal(typeof handlers.get('clear-dev-cache'),'function',
-      'Renderer invoke must reach the recovered cache operation');
+      'Renderer invoke must reach the original recovered cache operation');
     const cacheEvent={senderFrame:{url:'file:///C:/Program%20Files/Dyclokpropio/resources/app.asar/dist/index.html#/profiles'}};
     const cacheResult=await handlers.get('clear-dev-cache')(cacheEvent,{id:'test',clearTypes:8});
     assert.deepEqual(cacheResult,{msg:'ORIGINAL_CACHE_CALLBACK_RESULT'});
