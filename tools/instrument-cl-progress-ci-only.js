@@ -30,12 +30,12 @@ const exprs=stmt23.expression.expressions;
 if(exprs.length<5||exprs.length>10)throw Error('Unexpected startup expression count');
 const markExpr=n=>'(()=>{try{const p=process.env.DYCLOK_CL_PROGRESS_FILE;if(p&&p.endsWith("dyclok-ci-cl-progress.txt"))require("node:fs").writeFileSync(p,'+JSON.stringify(String(n))+');}catch{}})()';
 for(const [i,ex] of exprs.entries()){
-  patches.push({pos:ex.start,code:'('+markExpr('23.'+i)+','});
+  patches.push({pos:ex.start,code:'('+markExpr('23.'+i)+',',priority:-1});
   patches.push({pos:ex.end,code:')'});
 }
 console.log('CI_STAGE_23_SUBEXPRESSIONS='+exprs.length);
 patches.push({pos:fn.body.start+1,code:mark('ENTER')});
-patches.sort((a,b)=>b.pos-a.pos);
+patches.sort((a,b)=>b.pos-a.pos || (a.priority??0)-(b.priority??0));
 let next=src;
 for(const {pos,code} of patches)next=next.slice(0,pos)+code+next.slice(pos);
 if(!next.includes("const CL=async()=>{"))throw Error('Original function start modified');
