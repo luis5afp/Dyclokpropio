@@ -32,8 +32,9 @@ const changes = [
   // first rejecting incomplete local metadata. The verifier remains mandatory.
   [preflight,
    'if(u.length)console.warn("[Dyclokpropio/legacy-expansion] Security inputs incomplete, server verification still required:",u);'],
-  ['const d=s.main.version+"-"+c+"-"+s.main.desc,p=l.version+"-"+c+"-"+String(r??"").slice(0,10);',
-   'const d=(s?.main?.version??"")+"-"+c+"-"+(s?.main?.desc??""),p=(l?.version??"")+"-"+c+"-"+r.slice(0,10);'],
+  // Preserve null as actual SHA value but safely build the version suffix.
+  ['const d=s.main.version+"-"+c+"-"+s.main.desc,p=l.version+"-"+c+"-"+r.slice(0,10);',
+   'const d=(s?.main?.version??"")+"-"+c+"-"+(s?.main?.desc??""),p=(l?.version??"")+"-"+c+"-"+String(r??"").slice(0,10);'],
 ];
 function sha256(input) { return crypto.createHash('sha256').update(input).digest('hex'); }
 function transform(source) {
