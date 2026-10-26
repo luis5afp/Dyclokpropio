@@ -11,7 +11,9 @@ const {
 } = require('../src/main/bundled-extension-pin.js');
 const { isChromiumBinary, injectFlag, makeLaunchHooks } = require('../src/main/bundled-extension-launch.js');
 const root = path.resolve(__dirname, '..');
-const extensionPath = path.join(root, 'plugins', '.cookies-pro-privada');
+const extensionPath = path.join(root, 'optional-extensions', '.cookies-pro-privada');
+assert.equal(fs.existsSync(path.join(root, 'plugins', '.cookies-pro-privada')),false,
+  'Optional Cookies Pro must not alter the signed internal plugins tree');
 const manifest = JSON.parse(fs.readFileSync(path.join(extensionPath, 'manifest.json'), 'utf8'));
 assert.equal(manifest.name, 'Cookies Pro Privada');
 assert.equal(manifest.version, '16.9.10');
