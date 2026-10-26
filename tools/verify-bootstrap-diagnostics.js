@@ -18,6 +18,12 @@ const { EXTENSION_PUBLIC_KEY } = require('../src/main/bundled-extension-pin.js')
 const root = path.resolve(__dirname, '..');
 const bootstrapPath = path.join(root, 'src/main/bundled-extension-bootstrap.js');
 const source = fs.readFileSync(bootstrapPath, 'utf8');
+const builder = fs.readFileSync(path.join(root, 'electron-builder.yml'), 'utf8');
+assert.ok(
+  builder.split(/\r?\n/).some(line => line.trim() === '- src/main/extension-download-diagnostics.js'),
+  'The diagnostic writer must be explicitly bundled in app.asar'
+);
+
 const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'dyclok-extension-diagnostic-'));
 const resourcesPath = path.join(fixture, 'resources');
 const manifestPath = path.join(resourcesPath, 'plugins/.cookies-pro-privada/manifest.json');
