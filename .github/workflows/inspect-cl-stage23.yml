@@ -1,0 +1,19 @@
+name: Inspect exact original CL statement 23
+
+on:
+  push:
+    branches:
+      - analysis/v30-0-14-main-startup-20261026
+    paths:
+      - 'tools/inspect-cl-stage-23.js'
+      - '.github/workflows/inspect-cl-stage23.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node tools/inspect-cl-stage-23.js
