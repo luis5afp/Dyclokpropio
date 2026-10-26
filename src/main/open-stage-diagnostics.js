@@ -28,7 +28,7 @@ function sanitize(payload) {
   const errorClass = VALID_CLASSES.has(payload.errorClass) ? payload.errorClass : 'Other';
   return {utc:new Date().toISOString(),step:payload.step,phase:payload.phase,code,errorClass};
 }
-function registerOpenStageDiagnostics(ipcMain,app,{fileSystem=fs}={}){
+function registerOpenStageDiagnostics(ipcMain,app,{fileSystem=fs,onEvent}={}){
   if(!ipcMain||typeof ipcMain.handle!=='function')throw new TypeError('Missing ipcMain.handle');
   ipcMain.handle(CHANNEL,async(_event,payload)=>{
     const entry=sanitize(payload);
@@ -43,6 +43,7 @@ function registerOpenStageDiagnostics(ipcMain,app,{fileSystem=fs}={}){
         fileSystem.renameSync(file,old);
       }
       fileSystem.appendFileSync(file,JSON.stringify(entry)+'\n',{encoding:'utf8',flag:'a',mode:0o600});
+      try { if (typeof onEvent === 'function') onEvent(entry); } catch {}
       return true;
     }catch{return false;}
   });
