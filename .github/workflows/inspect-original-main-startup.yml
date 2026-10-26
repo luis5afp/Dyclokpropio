@@ -14,5 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install parser for static analysis
+        run: npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - name: Parse CL original initialization order
+        run: node tools/inspect-cl-order.js
       - name: Inspect recovered main runtime without execution
         run: node tools/inspect-original-main-startup.js
