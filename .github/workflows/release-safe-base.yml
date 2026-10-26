@@ -168,6 +168,8 @@ jobs:
             '',
             'Incluye las correcciones y recursos integrados en main hasta este commit.',
             'El instalador conserva la version interna 3.0.0 del runtime recuperado.',
+            'VERSION DE DIAGNOSTICO: la inyeccion automatica y el icono fijo de Cookies Pro Privada estan desactivados en todos los perfiles.',
+            'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
             'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
             'IMPORTANTE: realizar copia de seguridad de los perfiles antes de instalar; las funciones del navegador deben probarse en Windows.',
             '',
