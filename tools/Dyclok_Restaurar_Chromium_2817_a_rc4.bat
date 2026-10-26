@@ -55,15 +55,15 @@ try {
   $exe = Pick 'Seleccione Dyclokpropio.exe de v30.0.14-rc4' 'Dyclokpropio.exe|Dyclokpropio.exe|Aplicaciones (*.exe)|*.exe'
   if(-not $exe){Note 'CANCELADO_EJECUTABLE_NUEVO';return}
   if([IO.Path]::GetFileName($exe) -ine 'Dyclokpropio.exe'){
-    throw (New-Object System.InvalidOperationException('NOT_DYCLOKPROP_IO_EXE'))
+    throw ([System.InvalidOperationException]::new('NOT_DYCLOKPROP_IO_EXE'))
   }
   $root=[IO.Path]::GetDirectoryName($exe)
   if(-not (Test-Path -LiteralPath (Join-Path $root 'resources\app.asar') -PathType Leaf)){
-    throw (New-Object System.InvalidOperationException('NOT_PACKAGED_DYCLOK'))
+    throw ([System.InvalidOperationException]::new('NOT_PACKAGED_DYCLOK'))
   }
   $target=Join-Path $root 'Chromium'
   if(Test-Path -LiteralPath $target) {
-    throw (New-Object System.InvalidOperationException('TARGET_CHROMIUM_ALREADY_EXISTS'))
+    throw ([System.InvalidOperationException]::new('TARGET_CHROMIUM_ALREADY_EXISTS'))
   }
 
   $archive=[IO.Compression.ZipFile]::OpenRead($zip)
@@ -73,12 +73,12 @@ try {
     -not $_.FullName.EndsWith('/')
   })
   if($entries.Count -lt 40 -or $entries.Count -gt 5000){
-    throw (New-Object System.InvalidOperationException('CHROMIUM_FILE_COUNT_INVALID'))
+    throw ([System.InvalidOperationException]::new('CHROMIUM_FILE_COUNT_INVALID'))
   }
   $required=@('Chromium/Application/ginsbrowser.exe')
   $ver=@($entries | Where-Object {$_.FullName -match '^Chromium/Application/(\d+\.\d+\.\d+\.\d+)/chrome\.dll$'})
   if($ver.Count -ne 1){
-    throw (New-Object System.InvalidOperationException('NO_SINGLE_VERSIONED_CHROME_DLL'))
+    throw ([System.InvalidOperationException]::new('NO_SINGLE_VERSIONED_CHROME_DLL'))
   }
   $kernelVer=[regex]::Match($ver[0].FullName,'^Chromium/Application/([^/]+)/chrome\.dll$').Groups[1].Value
   foreach($relative in @('icudtl.dat','resources.pak','v8_context_snapshot.bin')){
@@ -86,21 +86,21 @@ try {
   }
   foreach($name in $required) {
     if(-not @($entries|Where-Object{$_.FullName -ieq $name}).Count) {
-      throw (New-Object System.InvalidOperationException('REQUIRED_CHROMIUM_COMPONENT_MISSING'))
+      throw ([System.InvalidOperationException]::new('REQUIRED_CHROMIUM_COMPONENT_MISSING'))
     }
   }
   $total=[long]0
-  $used=New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+  $used=[System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   foreach($entry in $entries){
     $name=$entry.FullName.Replace('\','/')
     if($name -match '(^|/)\.\.(/|$)' -or
        $name -match '[\x00-\x1f:]' -or
        $name -notmatch '^Chromium/Application/[A-Za-z0-9._/@()+ -]+(?:/[A-Za-z0-9._/@()+ -]+)*$'){
-      throw (New-Object System.InvalidOperationException('UNSAFE_ARCHIVE_ENTRY'))
+      throw ([System.InvalidOperationException]::new('UNSAFE_ARCHIVE_ENTRY'))
     }
-    if(-not $used.Add($name)){throw (New-Object System.InvalidOperationException('DUPLICATE_ARCHIVE_PATH'))}
+    if(-not $used.Add($name)){throw ([System.InvalidOperationException]::new('DUPLICATE_ARCHIVE_PATH'))}
     $total+=[long]$entry.Length
-    if($total -gt 3000000000){throw (New-Object System.InvalidOperationException('ARCHIVE_EXCEEDS_LIMIT'))}
+    if($total -gt 3000000000){throw ([System.InvalidOperationException]::new('ARCHIVE_EXCEEDS_LIMIT'))}
   }
   Note ('ARCHIVO_CHROMIUM_VALIDADO=True')
   Note ('VERSION_NUCLEO='+$kernelVer)
@@ -129,7 +129,7 @@ try {
     $relative=$entry.FullName.Substring($prefix.Length).Replace('/','\')
     $dest=[IO.Path]::GetFullPath((Join-Path $stage $relative))
     if(-not $dest.StartsWith($stageFull,[StringComparison]::OrdinalIgnoreCase)){
-      throw (New-Object System.InvalidOperationException('ARCHIVE_PATH_ESCAPE'))
+      throw ([System.InvalidOperationException]::new('ARCHIVE_PATH_ESCAPE'))
     }
     [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($dest))|Out-Null
     $input=$null
@@ -143,7 +143,7 @@ try {
       if($null -ne $input){$input.Dispose()}
     }
     if((Get-Item -LiteralPath $dest).Length -ne $entry.Length) {
-      throw (New-Object System.IO.InvalidDataException('MISMATCH_IN_EXTRACTED_SIZE'))
+      throw ([System.IO.InvalidDataException]::new('MISMATCH_IN_EXTRACTED_SIZE'))
     }
     $copied++
   }
@@ -151,7 +151,7 @@ try {
   $stagedDll=Join-Path (Join-Path $stage ('Application\'+$kernelVer)) 'chrome.dll'
   foreach($file in @($stagedExe,$stagedDll)){
     if(-not (Test-Path -LiteralPath $file -PathType Leaf)){
-      throw (New-Object System.InvalidOperationException('REQUIRED_BINARY_NOT_STAGED'))
+      throw ([System.InvalidOperationException]::new('REQUIRED_BINARY_NOT_STAGED'))
     }
   }
   $exeSHA=(Get-FileHash -LiteralPath $stagedExe -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -159,7 +159,7 @@ try {
   Note ('SHA256_GINSBROWSER='+$exeSHA)
   Note ('SHA256_CHROME_DLL='+$dllSHA)
   if(Test-Path -LiteralPath $target){
-    throw (New-Object System.InvalidOperationException('TARGET_APPEARED_DURING_EXTRACTION'))
+    throw ([System.InvalidOperationException]::new('TARGET_APPEARED_DURING_EXTRACTION'))
   }
   [IO.Directory]::Move($stage,$target)
   $committed=$true
@@ -190,6 +190,6 @@ try {
   if($null -ne $archive){$archive.Dispose()}
   if(-not $committed -and $stage -and (Test-Path -LiteralPath $stage)){
     # Only remove the uniquely named staging folder created by this tool.
-    [IO.Directory]::Delete($stage,$true)
+    try {[IO.Directory]::Delete($stage,$true)} catch {Write-Host 'STAGING_CLEANUP_FAILED'}
   }
 }
