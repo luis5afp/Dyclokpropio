@@ -79,7 +79,25 @@ function inspect(zip){
   if(exe.size<1_000_000||dll.size<100_000_000)throw Error('Native browser EXE or DLL unexpectedly small');
   return {root,entries,files,version,bytes};
 }
-function stage(archive,into){
+
+function assertWindowsX64PE(filename){
+  const fd=fs.openSync(filename,'r');
+  try{
+    const prefix=Buffer.alloc(64);
+    if(fs.readSync(fd,prefix,0,64,0)!==64||prefix.toString('ascii',0,2)!=='MZ')
+      throw Error('Not a Windows executable/DLL (MZ header missing)');
+    const at=prefix.readUInt32LE(0x3c);
+    if(at<64||at>1024*1024||at+6>fs.fstatSync(fd).size)
+      throw Error('Invalid Windows PE header offset');
+    const pe=Buffer.alloc(6);
+    if(fs.readSync(fd,pe,0,6,at)!==6||pe.toString('ascii',0,4)!=='PE\u0000\u0000')
+      throw Error('Invalid Windows PE signature');
+    if(pe.readUInt16LE(4)!==0x8664)
+      throw Error('Native Chromium component is not Windows x64');
+  }finally{fs.closeSync(fd)}
+}
+
+function stage(archive,into,opts={}){
   const target=path.resolve(into,'Chromium');
   if(fs.existsSync(target))throw Error('Chromium/ already exists; refusing overwrite');
   const zip=new AdmZip(archive);
@@ -100,6 +118,10 @@ function stage(archive,into){
       if(normalized==='application/ginsbrowser.exe'||normalized.endsWith('/chrome.dll')&&versionPattern.test(file.relative)){
         hashes[file.relative]=digest(buf);
       }
+    }
+    if(opts.requirePE===true){
+      assertWindowsX64PE(path.join(stageDir,'Application','ginsbrowser.exe'));
+      assertWindowsX64PE(path.join(stageDir,'Application',inventory.version,'chrome.dll'));
     }
     if(fs.existsSync(target))throw Error('Chromium folder appeared concurrently');
     fs.renameSync(stageDir,target); committed=true;
@@ -130,9 +152,9 @@ function main(args){
   }
   if(args.length!==2||args[0]!=='--archive')throw Error('Usage: node tools/stage-full-chromium.js --archive OWN_DICloak.zip  or  --verify-only');
   if(!fs.existsSync(args[1]))throw Error('Authorized source ZIP not found');
-  const info=stage(args[1],process.cwd());
+  const info=stage(args[1],process.cwd(),{requirePE:true});
   validateInstalled(process.cwd());
   console.log('CHROMIUM_STAGED='+JSON.stringify(info));
 }
 if(require.main===module)try{main(process.argv.slice(2))}catch(err){console.error('CHROMIUM_PRECHECK_FAILED:',err.message);process.exitCode=1}
-module.exports={filenameSafe,isRuntimeAsset,inspect,stage,validateInstalled};
+module.exports={filenameSafe,isRuntimeAsset,inspect,stage,validateInstalled,assertWindowsX64PE};
