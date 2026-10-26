@@ -40,6 +40,22 @@ try{
   assert.equal(record().uncaughtSource,'protected-bundle');
   assert.equal(record().uncaughtSourceColumn,5885666);
   assert.equal(record().uncaughtErrorCode,'MODULE_NOT_FOUND');
+  // Check a known installation file is categorized, not stored as a path.
+  const artifactError=Object.assign(new Error('private path must not escape'), {
+    code:'ENOENT', syscall:'open',
+    path:path.join(temp,'resources','vendor','ffmpeg','bin','ffmpeg.exe')
+  });
+  const app2=new EventEmitter();
+  app2.getPath=key=>temp;
+  const emit2=new EventEmitter();
+  const observer=createStartupHealth(app2,{processObject:Object.assign(emit2,{
+    resourcesPath:path.join(temp,'resources'),execPath:path.join(temp,'Dyclokpropio.exe')
+  })});
+  emit2.emit('uncaughtExceptionMonitor',artifactError);
+  assert.equal(record().uncaughtFileArea,'resources');
+  assert.equal(record().uncaughtFileKind,'.exe');
+  assert.equal(record().uncaughtKnownBasename,'ffmpeg.exe');
+  assert.equal(record().uncaughtSyscall,'open');
   startup.originalEntrypointFailed(new Error('https://secret.url/?token=SENSITIVE'));
   const raw=fs.readFileSync(path.join(temp,FILE),'utf8');
   assert.equal(record().mainEntrypointErrorClass,'Error');
@@ -51,6 +67,7 @@ try{
     'mainWindowCreated','originalCacheHandlerRegistered',
     'originalCacheHandlerRegistrations','originalCacheHandlerRemovals',
     'mainEntrypointErrorClass','uncaughtErrorClass',
+    'uncaughtFileArea','uncaughtFileKind','uncaughtKnownBasename','uncaughtSyscall',
     'uncaughtErrorCode','uncaughtSource','uncaughtSourceColumn'
   ].sort());
   console.log('PASS: startup state accurately records Electron lifecycle and native IPC registration');
