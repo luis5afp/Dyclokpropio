@@ -1,0 +1,99 @@
+name: Verify v30.0.14 real Windows runtime (no publish)
+
+on:
+  pull_request:
+    paths:
+      - 'src/main/**'
+      - 'electron-builder.yml'
+      - 'tools/verify-startup-health.js'
+      - 'tools/verify-bootstrap-diagnostics.js'
+      - '.github/workflows/verify-v30-0-14-windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Electron dependencies
+        shell: pwsh
+        run: |
+          npm install --legacy-peer-deps
+          if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
+          node tools/unpack-bundled-extension.js
+          node tools/verify-build-assets.js
+          node tools/verify-safe-base.js
+          node tools/verify-startup-health.js
+          node tools/verify-cache-ipc-compatibility.js
+          node tools/verify-bootstrap-diagnostics.js
+          if ($LASTEXITCODE -ne 0) { throw 'Preflight failed' }
+      - name: Apply verified renderer instrumentation
+        shell: pwsh
+        run: |
+          node tools/apply-legacy-expand-check.js --apply
+          node tools/instrument-open-stages.js --apply
+          node tools/instrument-params-merge.js --apply
+          node tools/install-diagnostic-panel.js --apply
+      - name: Rebuild Windows native modules and stage full directory
+        shell: pwsh
+        run: |
+          npx electron-builder install-app-deps
+          if ($LASTEXITCODE -ne 0) { throw 'Native rebuild failed' }
+          npm run build:dir -- --publish never
+          if ($LASTEXITCODE -ne 0) { throw 'Windows build failed' }
+      - name: Verify original and new compatibility paths
+        shell: pwsh
+        run: |
+          $dir='release\win-unpacked'
+          foreach($relative in @(
+            'Dyclokpropio.exe',
+            'resources\app.asar',
+            'plugins\.automa\manifest.json',
+            'vendor\ffmpeg\bin\ffmpeg.exe',
+            'resources\plugins\.automa\manifest.json',
+            'resources\vendor\ffmpeg\bin\ffmpeg.exe',
+            'resources\app\dist\assets\sync\DicSyncService.exe',
+            'resources\app.asar.unpacked\dist\assets\sync\DicSyncService.exe'
+          )){
+            $target=Join-Path $dir $relative
+            if(-not (Test-Path -LiteralPath $target -PathType Leaf)){throw "Missing compatibility asset: $relative"}
+            Write-Host "PASS: $relative"
+          }
+      - name: Smoke real main process and original clear-dev-cache registration
+        shell: pwsh
+        run: |
+          $exe=(Resolve-Path 'release\win-unpacked\Dyclokpropio.exe').Path
+          $started=Get-Date
+          $proc=Start-Process -FilePath $exe -PassThru
+          try {
+            Start-Sleep -Seconds 22
+            $proc.Refresh()
+            if($proc.HasExited -and $proc.ExitCode -ne 0){throw "Electron process exited with code $($proc.ExitCode)"}
+            $found=@(Get-ChildItem -Path $env:APPDATA -File -Filter 'dyclok-startup-health.json' -Recurse -ErrorAction SilentlyContinue |
+              Where-Object {$_.LastWriteTime -ge $started.AddSeconds(-5)} |
+              Sort-Object LastWriteTime -Descending)
+            if($found.Count -eq 0){throw 'Main did not emit startup status'}
+            $record=Get-Content -LiteralPath $found[0].FullName -Raw | ConvertFrom-Json
+            $public=[ordered]@{
+              electronReady=$record.electronReady
+              mainWindowCreated=$record.mainWindowCreated
+              originalEntrypointLoaded=$record.originalEntrypointLoaded
+              originalCacheHandlerRegistered=$record.originalCacheHandlerRegistered
+              originalCacheHandlerRegistrations=$record.originalCacheHandlerRegistrations
+              originalCacheHandlerRemovals=$record.originalCacheHandlerRemovals
+              mainEntrypointErrorClass=$record.mainEntrypointErrorClass
+              uncaughtErrorClass=$record.uncaughtErrorClass
+            }
+            Write-Host ('MAIN_STARTUP_HEALTH='+(ConvertTo-Json -InputObject $public -Compress))
+            if(-not $record.originalEntrypointLoaded -or -not $record.electronReady){
+              throw 'Recovered runtime did not complete basic startup'
+            }
+            if(-not $record.originalCacheHandlerRegistered){
+              throw 'Native IPC original clear-dev-cache did not register: v30.0.14 NOT ready for public release'
+            }
+          }finally{
+            if(-not $proc.HasExited){Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue}
+          }
