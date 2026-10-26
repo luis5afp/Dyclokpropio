@@ -102,6 +102,10 @@ jobs:
               uncaughtErrorClass=$record.uncaughtErrorClass
               uncaughtErrorMainBundleColumn=$record.uncaughtErrorMainBundleColumn
               uncaughtErrorCode=$record.uncaughtErrorCode
+              uncaughtFileArea=$record.uncaughtFileArea
+              uncaughtFileKind=$record.uncaughtFileKind
+              uncaughtKnownBasename=$record.uncaughtKnownBasename
+              uncaughtSyscall=$record.uncaughtSyscall
               uncaughtSource=$record.uncaughtSource
               uncaughtSourceColumn=$record.uncaughtSourceColumn
             }
