@@ -1,0 +1,34 @@
+name: Verify EXE binary inspection
+
+on:
+  pull_request:
+    paths:
+      - 'tools/Dyclok_Comparar_EXE_Interno.bat'
+      - '.github/workflows/verify-exe-binary-inspection.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-exe-inspector:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run portable metadata reader against actual Windows executables
+        shell: cmd
+        run: |
+          set DYCLOK_CI=1
+          call tools\Dyclok_Comparar_EXE_Interno.bat "C:\Windows\System32\notepad.exe" "C:\Windows\System32\reg.exe"
+      - name: Check structural report and privacy
+        shell: pwsh
+        run: |
+          $file=Get-ChildItem "$env:USERPROFILE\Downloads" -Filter 'Dyclok_Analisis_EXE_Interno_*.txt' |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $file) { throw 'Inspector did not create report' }
+          $content=Get-Content -LiteralPath $file.FullName -Raw
+          foreach($token in @('SHA256','PE.Machine','PE.PEFormat','FileVersion','SignatureStatus','=== DIFERENCIAS IMPORTANTES ===')) {
+            if(-not $content.Contains($token)){ throw "Required EXE metadata missing: $token" }
+          }
+          if($content.Contains($env:USERPROFILE)){ throw 'Absolute user profile leaked in report' }
+          Write-Host 'PASS: Portable, privacy-conscious EXE comparison works with native Windows binaries.'
