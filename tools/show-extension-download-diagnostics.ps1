@@ -29,10 +29,11 @@ if ($files.Count -eq 0) {
 foreach ($file in $files) {
   Write-Host ('Diagnostico: ' + $file) -ForegroundColor Cyan
   $lines = @(Get-Content -LiteralPath $file -Tail $Last -ErrorAction Stop)
+  $results = @()
   foreach ($line in $lines) {
     try {
       $entry = $line | ConvertFrom-Json -ErrorAction Stop
-      [pscustomobject]@{
+      $results += [pscustomobject]@{
         UTC = [string]$entry.utc
         ExtensionId = [string]$entry.extensionId
         ExtensionName = [string]$entry.extensionName
@@ -42,5 +43,6 @@ foreach ($file in $files) {
     } catch {
       Write-Warning 'Se omitio una linea invalida del registro.'
     }
-  } | Format-Table -AutoSize
+  }
+  if ($results.Count) { $results | Format-Table -AutoSize }
 }
