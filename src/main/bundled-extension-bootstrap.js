@@ -76,7 +76,7 @@ if (ENABLE_BUNDLED_COOKIES_PRO) {
     pinExtensionForLaunch,
   } = require('./bundled-extension-pin.js');
   
-  const extensionPath = path.join(process.resourcesPath, 'plugins', '.cookies-pro-privada');
+  const extensionPath = path.join(process.resourcesPath, 'optional-extensions', '.cookies-pro-privada');
   const manifestPath = path.join(extensionPath, 'manifest.json');
   
   if (!fs.existsSync(manifestPath)) {
