@@ -40,7 +40,6 @@ async function main() {
         if (handlers.has(channel)) throw new Error('IPC handler already registered: ' + channel);
         handlers.set(channel, handler);
       },
-      hasHandler(channel) { return handlers.has(channel); },
       removeHandler(channel) { handlers.delete(channel); },
       on(channel, handler) {
         legacyListeners.set(channel, handler);
@@ -72,6 +71,8 @@ async function main() {
     };
     const originalSpawn = fakeChildProcess.spawn;
     const originalExecFile = fakeChildProcess.execFile;
+    assert.equal(typeof ipcMain.hasHandler,'undefined',
+      'Electron 31 ipcMain does not expose hasHandler(); bootstrap fixture must reflect runtime API');
     const originalMain = { loaded: true };
     let mainLoaded = false;
     let attempts = 0;
