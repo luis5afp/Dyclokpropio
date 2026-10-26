@@ -19,10 +19,10 @@ on:
 
 concurrency:
   group: safe-base-release-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -36,14 +36,27 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol lf
           gh repo clone "${{ github.repository }}" source -- --branch "main" --depth 1
-      - name: Compute external release label
+      - name: Calculate next public version (v30.0.N)
         id: version
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          $release = "3.0.${{ github.run_number }}"
+          # Use real tags, not workflow run numbers. Previous successful
+          # artifacts were never published as Releases.
+          $refs = @(gh api --paginate "repos/$env:GITHUB_REPOSITORY/git/matching-refs/tags/v30.0" --jq '.[].ref')
+          if ($LASTEXITCODE -ne 0) { throw 'Could not read existing release tags' }
+          $highestPatch = 0
+          foreach ($ref in $refs) {
+            if ($ref -match '^refs/tags/v30\.0\.(\d+)$') {
+              $patchNumber = [int]$Matches[1]
+              if ($patchNumber -gt $highestPatch) { $highestPatch = $patchNumber }
+            }
+          }
+          $release = '30.0.' + ($highestPatch + 1)
           "version=$release" >> $env:GITHUB_OUTPUT
-          Write-Host "External delivery version: $release"
-          Write-Host "Internal compatibility version remains 3.0.0"
+          Write-Host "Release to publish: v$release"
+          Write-Host 'Internal compatibility version remains 3.0.0'
       - name: Verify uploaded-base compatibility
         shell: pwsh
         run: |
@@ -116,3 +129,47 @@ jobs:
             source/release-delivery/SHA256SUMS.txt
             source/release-delivery/VERSION.txt
           if-no-files-found: error
+      - name: Publish installer on GitHub Releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Only publish after the checksum was generated and the Windows
+          # smoke test and all validation steps completed successfully.
+          $release = '${{ steps.version.outputs.version }}'
+          $tag = 'v' + $release
+          $delivery = 'source/release-delivery'
+          $installer = Join-Path $delivery ("Dyclokpropio_" + $release + "_win_x64.exe")
+          $checksumFile = Join-Path $delivery 'SHA256SUMS.txt'
+          $versionFile = Join-Path $delivery 'VERSION.txt'
+          foreach ($file in @($installer, $checksumFile, $versionFile)) {
+            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
+              throw "Release file missing: $file"
+            }
+          }
+          $digest = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          $hashLine = (Get-Content -LiteralPath $checksumFile -Raw).Trim()
+          $expectedLine = $digest + '  ' + [IO.Path]::GetFileName($installer)
+          if ($hashLine -ne $expectedLine) {
+            throw 'SHA256SUMS.txt does not match the compiled installer'
+          }
+          gh release view $tag --repo "$env:GITHUB_REPOSITORY" --json tagName 2>$null | Out-Null
+          if ($LASTEXITCODE -eq 0) {
+            throw "Release $tag already exists. Refusing to overwrite a published installer."
+          }
+          $builtCommit = (git -C source rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or -not $builtCommit) { throw 'Cannot identify source commit' }
+          $notes = @(
+            "Instalador Windows x64 Dyclokpropio $release.",
+            '',
+            'Incluye las correcciones y recursos integrados en main hasta este commit.',
+            'El instalador conserva la version interna 3.0.0 del runtime recuperado.',
+            'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
+            'IMPORTANTE: realizar copia de seguridad de los perfiles antes de instalar; las funciones del navegador deben probarse en Windows.',
+            '',
+            "Commit de origen: $builtCommit"
+          ) -join "`n"
+          gh release create $tag $installer $checksumFile $versionFile --repo "$env:GITHUB_REPOSITORY" --target $builtCommit --title "Dyclokpropio $tag" --notes $notes
+          if ($LASTEXITCODE -ne 0) { throw "Could not publish release $tag" }
+          Write-Host "Public Release: https://github.com/$env:GITHUB_REPOSITORY/releases/tag/$tag"
+
