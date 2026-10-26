@@ -64,6 +64,7 @@ jobs:
           $dir='release\win-unpacked'
           foreach($relative in @(
             'Dyclokpropio.exe',
+            'logo.ico',
             'resources\app.asar',
             'plugins\.automa\manifest.json',
             'vendor\ffmpeg\bin\ffmpeg.exe',
