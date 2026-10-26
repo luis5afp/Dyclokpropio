@@ -12,7 +12,12 @@ for(const [label,from,to] of [
  console.log('END_'+label);
 }
 
-for(const [name,rx] of [['WA',/\\b(?:class\\s+WA|WA\\s*=|function\\s+WA\\s*\\()/g],['oN',/\\b(?:const\\s+oN|oN\\s*=|function\\s+oN\\s*\\()/g],['Sn',/\\b(?:const\\s+Sn|Sn\\s*=|function\\s+Sn\\s*\\()/g],['GA',/\\b(?:const\\s+GA|GA\\s*=|function\\s+GA\\s*\\()/g]]){
- const matches=Array.from(src.matchAll(rx)).slice(0,5);
- console.log('SYMBOL_'+name+'_DEFINITIONS='+JSON.stringify(matches.map(m=>({offset:m.index,context:src.slice(Math.max(0,m.index-120),Math.min(src.length,m.index+650))}))));
+for(const name of ['WA','oN','Sn','GA']){
+ const needles=['const '+name+'=','let '+name+'=',name+'=class','function '+name+'('];
+ let positions=[];
+ for(const needle of needles){
+   let off=src.indexOf(needle);
+   if(off>=0)positions.push({needle,offset:off,context:src.slice(Math.max(0,off-100),Math.min(src.length,off+900))});
+ }
+ console.log('SYMBOL_'+name+'_DEFINITIONS='+JSON.stringify(positions.slice(0,6)));
 }
