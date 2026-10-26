@@ -19,3 +19,33 @@ contexts("Vv,_0x2a7edd",1100,1100,6);
 contexts("Vv, _0x2a7edd",1100,1100,5);
 contexts("_0x3f3e18('0x22c7','0x419e')",1000,1200,5);
 contexts("_0x3f3e18('0x22c7', '0x419e')",1000,1200,5);
+
+const acorn=require('acorn');
+const target=s.indexOf("Vv,_0x2a7edd");
+if(target<0)throw new Error('Handler registration changed');
+const ast=acorn.parse(s,{ecmaVersion:'latest',sourceType:'script',allowReturnOutsideFunction:true});
+function findPath(node, offset, path=[]) {
+ if(!node||typeof node!=='object'||typeof node.start!=='number'||!(node.start<=offset&&offset<node.end))return null;
+ const pathNew=[...path,node];
+ for(const [key,value] of Object.entries(node)){
+   if(key==='start'||key==='end')continue;
+   if(Array.isArray(value)){
+     for(const sub of value){
+       const found=findPath(sub,offset,pathNew);
+       if(found)return found;
+     }
+   }else if(value&&typeof value==='object'){
+     const found=findPath(value,offset,pathNew);
+     if(found)return found;
+   }
+ }
+ return pathNew;
+}
+const parentPath=findPath(ast,target);
+console.log('AST-REGISTER-PATH',JSON.stringify(parentPath.map((node,idx)=>({
+ level:idx,type:node.type,start:node.start,end:node.end,
+ span:node.end-node.start,
+ opening:s.slice(node.start,Math.min(node.start+145,node.end)),
+ closing:s.slice(Math.max(node.start,node.end-140),node.end),
+ identifier:node.id&&node.id.name||undefined
+}))));
