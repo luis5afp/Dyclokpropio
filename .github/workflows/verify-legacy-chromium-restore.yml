@@ -98,4 +98,5 @@ jobs:
           if($LASTEXITCODE -eq 0){throw 'Existing Chromium overwrite was not rejected'}
           $same=(Get-FileHash -LiteralPath (Join-Path $targetRoot 'Chromium\Application\ginsbrowser.exe') -Algorithm SHA256).Hash
           if($installedHash -ne $same){throw 'Second invocation modified a previously installed kernel'}
+          $global:LASTEXITCODE=0  # The deliberately rejected second invocation must not fail the job.
           Write-Host 'PASS: extract full synthetic kernel; reject overwrite; preserve binary SHA'
