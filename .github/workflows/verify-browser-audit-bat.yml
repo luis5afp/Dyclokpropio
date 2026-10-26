@@ -7,6 +7,7 @@ on:
     paths:
       - 'tools/Dyclok_Auditoria_Navegador_rc4.bat'
       - 'tools/Dyclok_Auditoria_Navegador_rc4_v2.bat'
+      - 'tools/Dyclok_Auditoria_Navegador_rc4_v3.bat'
       - '.github/workflows/verify-browser-audit-bat.yml'
   workflow_dispatch:
 
@@ -21,7 +22,7 @@ jobs:
       - name: Check embedded PowerShell syntax and no modification operations
         shell: pwsh
         run: |
-          foreach($file in @('tools/Dyclok_Auditoria_Navegador_rc4.bat','tools/Dyclok_Auditoria_Navegador_rc4_v2.bat')) {
+          foreach($file in @('tools/Dyclok_Auditoria_Navegador_rc4.bat','tools/Dyclok_Auditoria_Navegador_rc4_v2.bat','tools/Dyclok_Auditoria_Navegador_rc4_v3.bat')) {
           $raw = Get-Content -LiteralPath $file -Raw
           $marker=':__DYCLOK_AUDIT_PS__'
           $i=$raw.LastIndexOf($marker)
@@ -44,6 +45,11 @@ jobs:
           if($file -match '_v2'){
             foreach($token in @('Get-CimInstance','ParentProcessId','DESCENDIENTES_DE_DYCLOK','ORIGEN_')){
               if(-not $script.Contains($token)){throw ('V2 native correlation feature missing: '+$token)}
+            }
+          }
+          if($file -match '_v3'){
+            foreach($token in @('dyclok-user-cache','ParentFamily','CHROME_NUEVO_PADRE_TIPO_','CACHE_USUARIO_DICLOAK_EXISTE')){
+              if(-not $script.Contains($token)){throw ('V3 cached-kernel correlation missing: '+$token)}
             }
           }
           Write-Host ('PASS: browser audit is syntactically valid, self-contained and read-only: '+$file)
