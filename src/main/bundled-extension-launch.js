@@ -34,7 +34,7 @@ function injectFlag(args, extensionPath) {
   return result;
 }
 
-function makeLaunchHooks(cp, extensionPath, warn = console.warn) {
+function makeLaunchHooks(cp, extensionPath, warn = console.warn, beforeBrowserLaunch = null) {
   const originalSpawn = cp.spawn;
   const originalExecFile = cp.execFile;
   if (typeof originalSpawn !== 'function' || typeof originalExecFile !== 'function') {
@@ -46,6 +46,7 @@ function makeLaunchHooks(cp, extensionPath, warn = console.warn) {
         warn('Chrome lanzado sin lista de argumentos: no se pudo insertar la extension');
       } else {
         args = injectFlag(args, extensionPath);
+        if (beforeBrowserLaunch && !args.includes('--disable-extensions')) beforeBrowserLaunch(args);
       }
     }
     return originalSpawn.call(this, file, args, options);
@@ -56,6 +57,7 @@ function makeLaunchHooks(cp, extensionPath, warn = console.warn) {
         warn('Chrome lanzado con execFile sin lista de argumentos: extension omitida');
       } else {
         args = injectFlag(args, extensionPath);
+        if (beforeBrowserLaunch && !args.includes('--disable-extensions')) beforeBrowserLaunch(args);
       }
     }
     return originalExecFile.call(this, file, args, options, callback);
