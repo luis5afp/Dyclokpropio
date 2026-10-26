@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - analysis/v30-0-14-main-startup-20261026
+    paths:
+      - 'tools/instrument-cl-progress-ci-only.js'
+      - '.github/workflows/trace-original-cl-ci.yml'
 
 permissions:
   contents: read
