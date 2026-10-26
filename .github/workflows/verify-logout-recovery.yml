@@ -1,0 +1,27 @@
+name: Verify Logout Recovery
+
+on:
+  pull_request:
+    paths:
+      - 'dist/assets/index-D2T4aaQJ.js'
+      - 'tools/verify-logout-recovery.js'
+      - 'tools/verify-safe-base.js'
+      - 'tools/diagnose-session-windows.ps1'
+      - '.github/workflows/verify-logout-recovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Parse recovered browser UI script as ESM
+        run: node --input-type=module --check < dist/assets/index-D2T4aaQJ.js
+      - name: Test confirmed logout with stale profile IDs
+        run: node tools/verify-logout-recovery.js
+      - name: Verify critical original runtime files were not altered
+        run: node tools/verify-safe-base.js
