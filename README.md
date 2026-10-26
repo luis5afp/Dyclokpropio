@@ -48,3 +48,10 @@ El instalador aparece en `release/`. El flujo de GitHub Actions aplica estas ver
 4. Si aparece el código fuente original, migra las mejoras y deja de editar directamente los bundles compilados.
 
 La interfaz recuperada tiene deshabilitada la comprobación **automática** de actualizaciones al iniciar y cada diez minutos. El mecanismo de avisos/actualización sigue incluido; esto es una modificación deliberada respecto del instalador original y está documentada en [docs/UPLOADED_BASE_3.0.0.md](docs/UPLOADED_BASE_3.0.0.md).
+
+## Cookies Pro Privada en todos los perfiles
+
+Puedes instalar la extensión Cookies Pro Privada 16.9.10 con la función nativa **Gestión de extensiones → Subir ZIP → Grupo de extensiones** y después asignar ese grupo a todos los perfiles actuales y futuros. Hay una herramienta opcional que aplica grupos en lote mediante la API local (simulación por defecto, sin almacenar la clave API).
+
+Consulta [la guía de Cookies Pro Privada para todos los perfiles](docs/EXTENSION_COOKIES_PRO_TODOS_LOS_PERFILES.md). **La extensión no se instala en las cuentas automáticamente solo con descargar el EXE; requiere importarla y asociar el grupo por primera vez.**
+
