@@ -42,6 +42,19 @@
     return ['boolean','string','number','object'].includes(type) ? type : 'other';
   }
   function elapsed(start) { return Math.max(0, Math.round(performance.now() - start)); }
+  function ipcErrorCode(error) {
+    // Inspect only for fixed error families. Never export the raw message/code.
+    try {
+      const msg = String(error && error.message || '');
+      if (/No handler registered|No handler for/i.test(msg)) return 'IPC_NO_HANDLER';
+      if (/\b(?:EACCES|EPERM)\b|access is denied|permission denied/i.test(msg)) return 'IPC_PERMISSION';
+      if (/\bENOENT\b|not found|does not exist/i.test(msg)) return 'IPC_NOT_FOUND';
+      if (/\bETIMEDOUT\b|timed?\s?out/i.test(msg)) return 'IPC_TIMEOUT';
+      if (/invalid argument|ERR_INVALID_ARG_TYPE/i.test(msg)) return 'IPC_INVALID_ARGUMENT';
+      if (error && error.name === 'TypeError') return 'IPC_TYPE_ERROR';
+    } catch (_) {}
+    return 'IPC_ERROR';
+  }
 
   // Best effort: Electron contextBridge may expose a read-only invoke function.
   // In that case, stage logs and fetch/XHR metadata still work.
@@ -58,14 +71,14 @@
         let task;
         try { task = old.apply(this, [channel].concat(args)); }
         catch (_) {
-          send({kind:'ipc',phase:'error',action:channel,elapsedMs:elapsed(begin),code:'IPC_ERROR'});
+          send({kind:'ipc',phase:'error',action:channel,elapsedMs:elapsed(begin),code:ipcErrorCode(_)});
           throw _;
         }
         if (task && typeof task.then === 'function') {
           Promise.resolve(task).then(function (value) {
             send({kind:'ipc',phase:'response',action:channel,elapsedMs:elapsed(begin),result:resultType(value)});
-          }, function () {
-            send({kind:'ipc',phase:'error',action:channel,elapsedMs:elapsed(begin),code:'IPC_ERROR'});
+          }, function (error) {
+            send({kind:'ipc',phase:'error',action:channel,elapsedMs:elapsed(begin),code:ipcErrorCode(error)});
           }).catch(function () {});
         }
         return task;
@@ -159,6 +172,7 @@
       const textValue = [row.utc?.slice(11,19),row.kind,row.action,row.phase,
         row.status === null ? '' : 'HTTP '+row.status,
         row.code === 'UNCLASSIFIED' ? '' : row.code,
+        row.checkpoint && row.checkpoint !== 'none' ? row.checkpoint : '',
         row.elapsedMs === null ? '' : row.elapsedMs+'ms'].filter(Boolean).join(' · ');
       el('div',textValue,lines);
     }
