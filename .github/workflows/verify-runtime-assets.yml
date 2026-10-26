@@ -26,6 +26,8 @@ on:
       - 'tools/verify-open-stage-diagnostics.js'
       - 'src/main/open-stage-diagnostics.js'
       - 'src/main/diagnostic-console.js'
+      - 'src/main/cache-ipc-compatibility.js'
+      - 'tools/verify-cache-ipc-compatibility.js'
       - 'src/renderer/diagnostic-panel.js'
       - 'tools/install-diagnostic-panel.js'
       - 'tools/verify-diagnostic-console.js'
@@ -56,6 +58,8 @@ jobs:
         run: node tools/verify-bundled-extension.js
       - name: Verify bounded extension downloader retry
         run: node tools/verify-extension-download-retry.js
+      - name: Verify recovered cache IPC handler compatibility
+        run: node tools/verify-cache-ipc-compatibility.js
       - name: Verify Electron bootstrap actually enables diagnostics
         run: node tools/verify-bootstrap-diagnostics.js
       - name: Verify original baseline hashes
