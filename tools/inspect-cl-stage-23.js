@@ -21,3 +21,9 @@ for(const name of ['WA','oN','Sn','GA']){
  }
  console.log('SYMBOL_'+name+'_DEFINITIONS='+JSON.stringify(positions.slice(0,6)));
 }
+
+for(const needle of ['_0x2be698=', 'logo.ico', 'application.ico', 'new x[\'Tray\']']){
+ let positions=[],p=0;
+ while((p=src.indexOf(needle,p))>=0&&positions.length<7){positions.push({off:p,context:src.slice(Math.max(0,p-160),Math.min(src.length,p+420))});p+=needle.length}
+ console.log('SEARCH_'+needle+'='+JSON.stringify(positions));
+}
