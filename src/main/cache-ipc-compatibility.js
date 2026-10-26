@@ -11,6 +11,8 @@
  *
  * Keep all native deletion rules, types, results and failures intact. An
  * absent native callback is an ERROR, never a fabricated success.
+ * Electron 31 ipcMain has handle()/removeHandler(), but does NOT expose
+ * hasHandler(); never require an undocumented method to register transport.
  *
  * No profile identifiers, file paths, cache flags or results are logged.
  */
@@ -27,12 +29,15 @@ function trustedMainWindow(event) {
 function installCacheIpcCompatibility(ipcMain, {waitMs = 1800} = {}) {
   if (!ipcMain ||
     typeof ipcMain.handle !== 'function' ||
-    typeof ipcMain.hasHandler !== 'function' ||
     typeof ipcMain.removeHandler !== 'function') {
-    throw new TypeError('Electron ipcMain.handle/hasHandler/removeHandler required');
+    throw new TypeError('Electron ipcMain.handle/removeHandler required');
   }
-  const alreadyNative = ipcMain.hasHandler(CHANNEL);
-  if (alreadyNative) {
+  // hasHandler() is NOT part of the supported Electron 31 ipcMain API.
+  // The optional probe helps test doubles that expose it, but production
+  // installation must not depend on it (v30.0.12 silently skipped install).
+  const checkNative = typeof ipcMain.hasHandler === 'function'
+    ? ipcMain.hasHandler.bind(ipcMain) : null;
+  if (checkNative && checkNative(CHANNEL)) {
     // Do not override an earlier native registration.
     return {status:()=>({hasHandler:true,originalRegistered:true,stableAdapter:false})};
   }
@@ -88,7 +93,7 @@ function installCacheIpcCompatibility(ipcMain, {waitMs = 1800} = {}) {
   };
   return {
     status(){return {
-      hasHandler:ipcMain.hasHandler(CHANNEL),
+      hasHandler:checkNative ? checkNative(CHANNEL) : true,
       originalRegistered:typeof original==='function',
       stableAdapter:true,originalRegistrations
     };}
