@@ -51,6 +51,12 @@ extraResources:
 # The recovered runtime may resolve legacy binaries/plugins relative to the
 # installed executable. Duplicate (do not move) original paths for compatibility.
 extraFiles:
+  # DICloak 2.8.17 installed logo.ico next to DICloak.exe. Its original
+  # Windows Tray constructor runs before cache IPC registration; a missing
+  # icon aborts CL at statement 23 and leaves clear-dev-cache unavailable.
+  # Provide the repository's existing app icon under that legacy filename.
+  - from: application.ico
+    to: logo.ico
   - from: plugins
     to: plugins
   - from: vendor
