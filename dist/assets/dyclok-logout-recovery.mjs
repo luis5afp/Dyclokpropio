@@ -29,7 +29,9 @@ export function makeLogoutController({
 
   let busy = false;
   let rescueShown = false;
+  let rescueTimer = null;
   function showLocalRecovery() {
+    rescueTimer = null;
     if (rescueShown || !stillSignedIn()) return;
     rescueShown = true;
     confirm({
@@ -50,7 +52,9 @@ export function makeLogoutController({
   async function executeLogout() {
     if (busy) return;
     busy = true;
-    const rescueTimer = schedule(showLocalRecovery, rescueDelayMs);
+    rescueShown = false;
+    if (rescueTimer !== null) clearSchedule(rescueTimer);
+    rescueTimer = schedule(showLocalRecovery, rescueDelayMs);
     try {
       if (!isClient() || openProfiles().length === 0) {
         // Crucial: the recovered UI previously sent STOP_ENV even with zero
@@ -63,16 +67,18 @@ export function makeLogoutController({
       }
     } catch (error) {
       logError('[Dyclokpropio] Normal logout failed', error);
-      clearSchedule(rescueTimer);
+      if (rescueTimer !== null) {
+        clearSchedule(rescueTimer);
+        rescueTimer = null;
+      }
       showLocalRecovery();
     } finally {
       busy = false;
-      // A native STOP_ENV callback is asynchronous and can never resolve a
-      // Promise returned by IPC.send(). Keep the watchdog alive while signed
-      // in; do not automatically sign out or close browsers.
-      if (!isClient() || openProfiles().length === 0) {
-        // Standard logout may have returned while navigating; the watchdog
-        // checks the current auth state before showing another dialog.
+      // Native IPC and the standard logout can finish asynchronously. Only
+      // discard the watchdog when local authentication has been cleared.
+      if (!stillSignedIn() && rescueTimer !== null) {
+        clearSchedule(rescueTimer);
+        rescueTimer = null;
       }
     }
   }
