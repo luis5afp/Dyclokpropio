@@ -26,7 +26,7 @@ function trustedMainWindow(event) {
   } catch { return false; }
 }
 
-function installCacheIpcCompatibility(ipcMain, {waitMs = 1800} = {}) {
+function installCacheIpcCompatibility(ipcMain, {waitMs = 1800, onOriginalRegistered, onOriginalRemoved} = {}) {
   if (!ipcMain ||
     typeof ipcMain.handle !== 'function' ||
     typeof ipcMain.removeHandler !== 'function') {
@@ -74,6 +74,7 @@ function installCacheIpcCompatibility(ipcMain, {waitMs = 1800} = {}) {
       if(typeof handler!=='function')throw new TypeError('Original cache IPC callback must be a function');
       original=handler;
       originalRegistrations++;
+      try { if(typeof onOriginalRegistered==='function') onOriginalRegistered(); } catch {}
       releaseWait();
       // Electron ipcMain.handle normally returns undefined.
       return undefined;
@@ -86,6 +87,7 @@ function installCacheIpcCompatibility(ipcMain, {waitMs = 1800} = {}) {
       // IPC transport installed. Until the original registers again, the
       // router fails explicitly instead of clearing or claiming success.
       original=null;
+      try { if(typeof onOriginalRemoved==='function') onOriginalRemoved(); } catch {}
       registration=new Promise(resolve=>{releaseWait=resolve;});
       return undefined;
     }
