@@ -87,14 +87,14 @@ function Format-File($item) {
 function Show-Group([string]$heading, $items, [int]$limit=400) {
   Add-Line ''
   Add-Line $heading
-  Add-Line ('Cantidad total: ' + @($items).Count)
+  Add-Line ('Cantidad total: ' + $items.Count)
   $count = 0
-  foreach ($item in @($items | Sort-Object -Property Path)) {
+  foreach ($item in ($items | Sort-Object -Property Path)) {
     if ($count -ge $limit) { break }
     Add-Line ('  ' + (Format-File $item))
     $count++
   }
-  if (@($items).Count -gt $limit) { Add-Line ('  ... listado abreviado; ' + (@($items).Count - $limit) + ' entradas mas') }
+  if ($items.Count -gt $limit) { Add-Line ('  ... listado abreviado; ' + ($items.Count - $limit) + ' entradas mas') }
 }
 
 try {
