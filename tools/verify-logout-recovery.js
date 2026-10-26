@@ -1,95 +1,132 @@
 'use strict';
-// Contract tests for the recovered Vue logout menu. Execute the actual
-// compact handler with fake IPC/UI state; no login tokens or browser data.
+
+/**
+ * Tests the NEW recovery module as well as the actual Vite chunk wiring.
+ * Never touches profiles, cookies, credentials or external services.
+ */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 
-const source = fs.readFileSync(
-  path.join(__dirname, '..', 'dist', 'assets', 'index-D2T4aaQJ.js'),
-  'utf8'
-);
-const begin = 'ne=e=>{const t=async()=>{X.isClient?';
-const end = ',oe=b(null)';
-const first = source.indexOf(begin);
-assert.ok(first >= 0, 'Logout handler missing');
-assert.equal(source.indexOf(begin, first + 1), -1, 'Ambiguous logout handler');
-const last = source.indexOf(end, first);
-assert.ok(last > first, 'Could not delimit logout handler');
-const expression = source.slice(first + 'ne='.length, last);
-assert.ok(expression.endsWith('}'), 'Logout handler incomplete');
+const root = path.resolve(__dirname, '..');
+const ui = fs.readFileSync(path.join(root, 'dist/assets/index-D2T4aaQJ.js'), 'utf8');
+assert.ok(ui.startsWith('import{makeLogoutController as dyMakeLogoutController}from"./dyclok-logout-recovery.mjs";'));
+assert.ok(ui.includes('ne=dyMakeLogoutController({'));
+assert.ok(ui.includes('standardLogout:()=>_e(!0)'), 'Must invoke recovered original logout function');
+assert.ok(ui.includes('openProfiles:()=>he.getters.ownOpenId'), 'Must check actual open profile state');
+assert.ok(ui.includes('stopProfiles:()=>X.send(be,{callbackName:me.LOGOUT_STOP_ENV_SUCCESS})'),
+  'Must keep original native STOP_ENV for active browsers');
+assert.ok(ui.includes('localOnlyLogout:async()=>{S.clearState()'), 'Must use original auth state reset');
+assert.ok(ui.includes('window.localStorage.removeItem("basic:state")'));
+assert.ok(ui.includes('window.localStorage.removeItem("token:state")'));
+assert.ok(ui.includes('he.getters.ownOpenId.length&&!t'), 'Team switch safety guard must remain unchanged');
+assert.ok(!ui.includes('he.getters.ownOpenId.length&&X.isClient?ye(E("header.promptError"))'),
+  'Permanent logout block was reintroduced');
+assert.ok(ui.includes('/v1/app/notice'), 'Existing update code changed unexpectedly');
 
-// Team switching must still refuse to proceed while profiles are open.
-assert.ok(
-  source.includes('he.getters.ownOpenId.length&&!t'),
-  'Team switching safety guard must remain unchanged'
-);
-// Both regular and stale-record logout paths use the original STOP_ENV IPC.
-assert.ok(
-  expression.includes('LOGOUT_STOP_ENV_SUCCESS'),
-  'Native safe logout callback missing'
-);
-assert.ok(
-  expression.includes('No se eliminarán los perfiles'),
-  'Explicit non-destructive confirmation missing'
-);
+async function main() {
+  const { makeLogoutController } = await import('../dist/assets/dyclok-logout-recovery.mjs');
 
-function makeHarness({ openProfiles = [], isClient = true } = {}) {
-  const calls = { send: [], errors: [], dialogs: [], browserLogout: 0 };
-  const context = {
-    X: {
-      isClient,
-      send: (...args) => { calls.send.push(args); },
-    },
-    be: 'stop-all-environments',
-    me: { LOGOUT_STOP_ENV_SUCCESS: 'logout-stopped' },
-    he: { getters: { ownOpenId: openProfiles } },
-    ye: (message) => { calls.errors.push(message); },
-    E: (key) => key,
-    ke: (options) => { calls.dialogs.push(options); },
-    _e: async () => { calls.browserLogout += 1; },
-  };
-  return {
-    calls,
-    logout: vm.runInNewContext('(' + expression + ')', context),
-  };
+  function harness({ client = true, open = [], standardError = false, pending = false } = {}) {
+    const calls = { ipc: 0, standard: 0, local: 0, dialogs: [], log: [], timers: [], signedIn: true };
+    const timers = [];
+    const makeTimer = (cb, ms) => {
+      const token = { cb, ms, cancelled: false };
+      timers.push(token);
+      return token;
+    };
+    const clearTimer = (token) => { token.cancelled = true; };
+    let resolvePending;
+    const logout = makeLogoutController({
+      isClient: () => client,
+      openProfiles: () => open,
+      stopProfiles: () => { calls.ipc++; },
+      standardLogout: () => {
+        calls.standard++;
+        if (standardError) return Promise.reject(new Error('Network unreachable'));
+        if (pending) return new Promise(resolve => { resolvePending = resolve; });
+        calls.signedIn = false;
+        return Promise.resolve();
+      },
+      stillSignedIn: () => calls.signedIn,
+      confirm: (opts) => { calls.dialogs.push(opts); },
+      translate: (key) => key,
+      localOnlyLogout: () => { calls.local++; calls.signedIn = false; },
+      logError: (...args) => { calls.log.push(args); },
+      schedule: makeTimer,
+      clearSchedule: clearTimer,
+      rescueDelayMs: 15000,
+    });
+    const tick = () => timers.filter(t => !t.cancelled).forEach(t => { t.cancelled = true; t.cb(); });
+    return { logout, calls, tick, resolvePending: () => resolvePending?.() };
+  }
+
+  // The screenshot has the regular confirmation, hence ownOpenId was empty.
+  // No IPC event is expected in that case. This is the principal regression.
+  let h = harness();
+  h.logout();
+  assert.equal(h.calls.standard, 0, 'No action before confirmation');
+  assert.equal(h.calls.dialogs.length, 1);
+  await h.calls.dialogs[0].confirmCb();
+  assert.equal(h.calls.standard, 1, 'Must call direct logout when no browsers tracked');
+  assert.equal(h.calls.ipc, 0, 'Do not wait for native callback with zero profiles');
+  h.tick();
+  assert.equal(h.calls.dialogs.length, 1, 'No fallback if login already cleared');
+
+  // Programmatic pre-confirmed logout is unchanged with zero open browsers.
+  h = harness();
+  await h.logout(true);
+  assert.equal(h.calls.standard, 1);
+  assert.equal(h.calls.dialogs.length, 0);
+  assert.equal(h.calls.ipc, 0);
+
+  // With open profiles, require explicit confirmation and keep the native path.
+  h = harness({ open: ['browser-244'] });
+  h.logout(true);
+  assert.equal(h.calls.dialogs.length, 1, 'Cannot silently bypass real open browsers');
+  assert.equal(h.calls.ipc, 0);
+  await h.calls.dialogs[0].confirmCb();
+  assert.equal(h.calls.ipc, 1);
+  assert.equal(h.calls.standard, 0);
+  assert.equal(h.calls.local, 0);
+  h.tick();
+  assert.equal(h.calls.dialogs.length, 2, 'Stalled IPC must present a second recovery confirmation');
+  assert.equal(h.calls.local, 0, 'Never perform local-only signout automatically');
+  assert.match(h.calls.dialogs[1].message, /sesión del servidor podría continuar activa/);
+  await h.calls.dialogs[1].confirmCb();
+  assert.equal(h.calls.local, 1);
+
+  // A reporting/network promise that never settles cannot trap the user.
+  h = harness({ pending: true });
+  h.logout();
+  const promise = h.calls.dialogs[0].confirmCb();
+  assert.equal(h.calls.standard, 1);
+  h.tick();
+  assert.equal(h.calls.dialogs.length, 2, 'Hung logout should offer manual local fallback');
+  assert.equal(h.calls.local, 0);
+  await h.calls.dialogs[1].confirmCb();
+  assert.equal(h.calls.local, 1);
+  h.resolvePending();
+  await promise;
+
+  // An unexpected failure must not silently clear credentials.
+  h = harness({ standardError: true });
+  h.logout();
+  await h.calls.dialogs[0].confirmCb();
+  assert.equal(h.calls.dialogs.length, 2, 'Failed logout should show recovery');
+  assert.equal(h.calls.local, 0);
+  assert.equal(h.calls.log.length, 1);
+
+  // Web variant uses direct logout, not native Electron IPC.
+  h = harness({ client: false, open: ['browser-244'] });
+  h.logout();
+  await h.calls.dialogs[0].confirmCb();
+  assert.equal(h.calls.standard, 1);
+  assert.equal(h.calls.ipc, 0);
+
+  console.log('PASS: no open profiles => direct logout, not native IPC');
+  console.log('PASS: open profiles => confirmed native stop + optional local recovery');
+  console.log('PASS: stalled/offline logout => second confirmation; no automatic data deletion');
+  console.log('PASS: original profile isolation and team-switch checks retained');
 }
-
-(async () => {
-  let h = makeHarness({ openProfiles: ['orphan-profile-old-build'] });
-  h.logout();
-  assert.equal(h.calls.send.length, 0, 'Should not logout before user confirmation');
-  assert.equal(h.calls.dialogs.length, 1, 'Stale-profile user must get a confirmation');
-  assert.ok(h.calls.dialogs[0].message.includes('Si ya cerraste los navegadores'));
-  await h.calls.dialogs[0].confirmCb();
-  assert.equal(h.calls.send.length, 1, 'User-confirmed safe STOP_ENV was not requested');
-  assert.equal(h.calls.send[0][1].callbackName, 'logout-stopped');
-  assert.equal(h.calls.errors.length, 0, 'Should not hard-block stale profile state');
-
-  h = makeHarness({ openProfiles: [] });
-  h.logout();
-  assert.equal(h.calls.dialogs.length, 1, 'Normal logout confirmation missing');
-  assert.equal(h.calls.send.length, 0);
-  await h.calls.dialogs[0].confirmCb();
-  assert.equal(h.calls.send.length, 1);
-
-  h = makeHarness({ openProfiles: [] });
-  h.logout(true);
-  assert.equal(h.calls.dialogs.length, 0, 'Already-confirmed logout should not prompt again');
-  assert.equal(h.calls.send.length, 1);
-
-  h = makeHarness({ openProfiles: ['profile-still-open'] });
-  h.logout(true);
-  assert.equal(h.calls.send.length, 0, 'Even auto logout must not bypass open-profile confirmation');
-  assert.equal(h.calls.dialogs.length, 1);
-
-  h = makeHarness({ openProfiles: ['profile-still-open'], isClient: false });
-  h.logout();
-  assert.equal(h.calls.dialogs.length, 1);
-  await h.calls.dialogs[0].confirmCb();
-  assert.equal(h.calls.browserLogout, 1, 'Browser logout regression');
-
-  console.log('PASS: stale profile logout can be confirmed without deleting profiles.');
-  console.log('PASS: no automatic bypass; original stop-environment IPC and team guard remain.');
-})().catch((error) => { console.error(error); process.exitCode = 1; });
+main().catch(e => { console.error(e); process.exitCode = 1; });
