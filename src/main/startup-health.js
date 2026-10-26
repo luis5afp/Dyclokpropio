@@ -29,15 +29,52 @@ function createStartupHealth(app, {fileSystem = fs, processObject = process} = {
     uncaughtErrorClass:'none',
     uncaughtErrorCode:'none',
     uncaughtSource:'none',
-    uncaughtSourceColumn:0
+    uncaughtSourceColumn:0,
+    uncaughtFileArea:'none',
+    uncaughtFileKind:'none',
+    uncaughtKnownBasename:'none',
+    uncaughtSyscall:'none'
   };
   function safeErrorClass(error) {
     const name=error && typeof error.name==='string' ? error.name : '';
     return ALLOWED_ERRORS.has(name) ? name : 'Other';
   }
+  function safeFileClue(error) {
+    // Only fixed enumerated metadata; never persist path or error.message.
+    const syscall=typeof error?.syscall==='string' ? error.syscall : '';
+    state.uncaughtSyscall=['open','stat','scandir','spawn','mkdir','rename','lstat','access','unlink','readlink'].includes(syscall)
+      ? syscall : 'other';
+    const value=typeof error?.path==='string' ? error.path : '';
+    if(!value) return;
+    const full=path.resolve(value);
+    function isWithin(parent) {
+      if(!parent || typeof parent!=='string')return false;
+      const base=path.resolve(parent);
+      const rel=path.relative(base,full);
+      return rel==='' || (!!rel && rel!=='..' && !rel.startsWith('..'+path.sep) && !path.isAbsolute(rel));
+    }
+    let area='other';
+    try {
+      if(isWithin(processObject.resourcesPath)) area='resources';
+      else if(isWithin(path.dirname(processObject.execPath || ''))) area='installation';
+      else if(isWithin(app?.getPath?.('userData'))) area='user-data';
+    } catch { /* Classify only if a known root is available. */ }
+    state.uncaughtFileArea=area;
+    const ext=path.extname(full).toLowerCase();
+    state.uncaughtFileKind=['.exe','.dll','.node','.asar','.json','.png','.pak','.dat','.zip','.log','.db','.js','.txt'].includes(ext)
+      ? ext : 'other';
+    if(area==='installation' || area==='resources') {
+      const known=['ginsbrowser.exe','gost.exe','ffmpeg.exe','dicsyncservice.exe',
+        'app.asar','package.json','manifest.json','tray-icon.png',
+        'chrome.dll','resources.pak','icudtl.dat','snapshot_blob.bin'];
+      const name=path.basename(full).toLowerCase();
+      state.uncaughtKnownBasename=known.includes(name)?name:'other';
+    }
+  }
   function saveErrorOrigin(error) {
     const code=error && typeof error.code==='string' ? error.code : '';
     state.uncaughtErrorCode=ALLOWED_CODES.has(code)?code:'Other';
+    safeFileClue(error);
     // Only classify stack locations within the known, SHA-guarded runtime.
     // No path, message, arbitrary name or stack content is written.
     const stack=error && typeof error.stack==='string' ? error.stack : '';
