@@ -21,6 +21,7 @@ files:
   - src/main/extension-download-diagnostics.js
   - src/main/open-stage-diagnostics.js
   - src/main/diagnostic-console.js
+  - src/main/cache-ipc-compatibility.js
   - src/main/extension-download-diagnostics.js
   - package.json
   - node_modules/**/*

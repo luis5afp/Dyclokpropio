@@ -16,6 +16,7 @@ const { installExtensionDownloadRetry } = require('./bundled-extension-download-
 const { createExtensionDiagnosticWriter } = require('./extension-download-diagnostics.js');
 const { registerOpenStageDiagnostics } = require('./open-stage-diagnostics.js');
 const { createDiagnosticConsole } = require('./diagnostic-console.js');
+const { installCacheIpcCompatibility } = require('./cache-ipc-compatibility.js');
 
 // Keep the original DICloak extension repository and integrity verification.
 // Retry a failed HTTPS download once, without turning false into success.
@@ -23,6 +24,14 @@ try {
   installExtensionDownloadRetry(ipcMain, { record: createExtensionDiagnosticWriter(require('electron').app) });
 } catch (error) {
   console.warn('[Dyclokpropio] No se pudo activar el reintento de extensiones:', error.message);
+}
+// Restore the ORIGINAL recovered clear-dev-cache handler for renderer invoke()
+// if the runtime registers it with the older ipcMain.on() mechanism.
+// Never skip cleanup or fabricate a positive cache-clear result.
+try {
+  installCacheIpcCompatibility(ipcMain);
+} catch (error) {
+  console.warn('[Dyclokpropio] Compatibilidad IPC de caché no disponible:', error.message);
 }
 // The opt-in session console is registered before the original Electron runtime.
 let diagnosticConsole = null;

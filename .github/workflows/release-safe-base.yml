@@ -19,6 +19,9 @@ on:
       - "tools/verify-open-stage-diagnostics.js"
       - "src/main/open-stage-diagnostics.js"
       - "src/main/diagnostic-console.js"
+      - "src/main/cache-ipc-compatibility.js"
+      - "tools/verify-cache-ipc-compatibility.js"
+      - "tools/verify-original-cache-ipc-registration.js"
       - "src/renderer/diagnostic-panel.js"
       - "tools/install-diagnostic-panel.js"
       - "tools/verify-diagnostic-console.js"
@@ -92,6 +95,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Extension download retry contract failed' }
           node tools/verify-bootstrap-diagnostics.js
           if ($LASTEXITCODE -ne 0) { throw 'Diagnostic integration failed; refusing to publish an uninstrumented installer' }
+          node tools/verify-original-cache-ipc-registration.js
+          if ($LASTEXITCODE -ne 0) { throw 'Original cache handler registration contract failed' }
+          node tools/verify-cache-ipc-compatibility.js
+          if ($LASTEXITCODE -ne 0) { throw 'Recovered cache handler invoke bridge failed' }
       - name: Test legacy extension behavior and mandatory remote integrity
         shell: pwsh
         run: |
@@ -228,7 +235,8 @@ jobs:
             'DIAGNOSTICO: el instalador anota unicamente etapa, resultado y codigo filtrado del error al abrir un perfil en dyclok-open-stage.jsonl.',
             'CORRECCION v30.0.10: si generate-sha256-hash-for-plugins devuelve null, no se invoca .slice sobre null. El hash ausente real sigue enviandose a la verificacion remota obligatoria, que puede rechazarlo.'
             'NOVEDAD: boton flotante Diagnostico para iniciar/detener captura de metadatos de apertura, HTTP de interfaz e IPC cuando disponible; exportar TXT desde la aplicacion.',
-            'v30.0.11: añade puntos de control de paramsMerge y categoriza errores IPC. NO se declara corregido el fallo de apertura sin validacion en el PC afectado.'
+            'v30.0.11: añade puntos de control de paramsMerge y categoriza errores IPC. NO se declara corregido el fallo de apertura sin validacion en el PC afectado.',
+            'v30.0.12: el IPC clear-dev-cache puede invocar la funcion original de limpieza si fue registrada con el mecanismo legado on(); conserva los tipos de limpieza, resultados y rechazos reales. Requiere prueba en Windows afectado.'
             'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
             'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
             'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
