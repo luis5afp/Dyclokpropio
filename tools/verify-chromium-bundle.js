@@ -31,6 +31,7 @@ function verify(sourceDir,installedDir){
     const installed=b.get(name);
     if(!installed)throw Error('Missing packaged Chromium resource '+name);
     if(fs.statSync(orig).size!==fs.statSync(installed).size)throw Error('Packaged Chromium resource size changed '+name);
+    if(hash(orig)!==hash(installed))throw Error('Packaged Chromium resource SHA256 changed '+name);
   }
   const critical=[
     'Application/ginsbrowser.exe',
@@ -43,7 +44,7 @@ function verify(sourceDir,installedDir){
   }
   console.log('BUNDLED_CHROMIUM_COMPLETE='+JSON.stringify({
     verified:true,files:a.size,version:original.version,
-    criticalHashesMatch:true,includesOriginalSubtrees:Array.from(a.keys()).some(x=>x.startsWith('ginsbrowser/'))
+    allFileHashesMatch:true,criticalHashesMatch:true,includesOriginalSubtrees:Array.from(a.keys()).some(x=>x.startsWith('ginsbrowser/'))
   }));
 }
 if(require.main===module)try{
