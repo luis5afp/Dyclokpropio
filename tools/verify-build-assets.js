@@ -23,6 +23,7 @@ const required = [
   ['plugins/.automa/manifest.json', 1],
   ['plugins/.simulation/manifest.json', 1],
   ['plugins/.spoofing-video/manifest.json', 1],
+  ['bundled-extensions/Cookies-Pro-v16.9.10-runtime.zip', 100],
 ];
 
 const missing = [];
