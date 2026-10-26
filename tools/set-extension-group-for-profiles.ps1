@@ -116,7 +116,7 @@ function Apply-Group {
             continue
         }
         if ($existing -and $existing -ne $GroupId -and -not $ReplaceExistingGroups) {
-            Write-Warning "$label: tiene otro grupo de extensiones ($existing); omitido para no eliminar extensiones."
+            Write-Warning "${label}: tiene otro grupo de extensiones ($existing); omitido para no eliminar extensiones."
             $skipped++
             continue
         }
