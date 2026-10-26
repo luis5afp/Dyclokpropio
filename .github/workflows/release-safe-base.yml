@@ -162,7 +162,7 @@ jobs:
             "deliveryVersion=" + $release,
             "internalCompatibilityVersion=3.0.0",
             "baseInstallerSha256=e29f761cce9a744d00dd1ccf82a29209a2f42c07b32c5567054419d08651dfde",
-            "rendererCompatibilitySha256=04aeafcf291e98d4ab2f632f77c49d21d5cfda3c813addbc433fd8dd2a3cf37b"
+            "rendererCompatibilitySha256=0859bd51a5703b4c01c19c38878642315215341733d5080770faee9a85bb5925"
           ) | Set-Content "release-delivery\VERSION.txt" -Encoding ASCII
           Get-Content "release-delivery\SHA256SUMS.txt"
           Get-Content "release-delivery\VERSION.txt"
@@ -214,6 +214,7 @@ jobs:
             'La integridad SHA256 y la validacion remota permanecen activas; si los hashes fallan, se sigue bloqueando el perfil.',
             'La inyeccion automatica de Cookies Pro Privada continua desactivada para aislar esta incidencia.',
             'DIAGNOSTICO: el instalador anota unicamente etapa, resultado y codigo filtrado del error al abrir un perfil en dyclok-open-stage.jsonl.',
+            'CORRECCION v30.0.10: si generate-sha256-hash-for-plugins devuelve null, no se invoca .slice sobre null. El hash ausente real sigue enviandose a la verificacion remota obligatoria, que puede rechazarlo.'
             'NOVEDAD: boton flotante Diagnostico para iniciar/detener captura de metadatos de apertura, HTTP de interfaz e IPC cuando disponible; exportar TXT desde la aplicacion.',
             'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
             'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',

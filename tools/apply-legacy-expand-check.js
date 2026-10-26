@@ -12,7 +12,7 @@ const { spawnSync } = require('node:child_process');
 
 const TARGET = 'dist/assets/index-BUIbb6Pa.js';
 const BASE_SHA256 = '7de2a353b92c130b93b5c455826efaa6e1c8788cf44f99185b450e61379dc0df';
-const PATCHED_SHA256 = '04aeafcf291e98d4ab2f632f77c49d21d5cfda3c813addbc433fd8dd2a3cf37b';
+const PATCHED_SHA256 = '0859bd51a5703b4c01c19c38878642315215341733d5080770faee9a85bb5925';
 const START = 'She={name:"扩展检测",stepType:zde.EXPAND_CHECK,async handler(e){';
 const END = '}},Rhe={name:"参数合并"';
 const tick = String.fromCharCode(96);
@@ -32,8 +32,9 @@ const changes = [
   // first rejecting incomplete local metadata. The verifier remains mandatory.
   [preflight,
    'if(u.length)console.warn("[Dyclokpropio/legacy-expansion] Security inputs incomplete, server verification still required:",u);'],
+  // Preserve null as actual SHA value but safely build the version suffix.
   ['const d=s.main.version+"-"+c+"-"+s.main.desc,p=l.version+"-"+c+"-"+r.slice(0,10);',
-   'const d=(s?.main?.version??"")+"-"+c+"-"+(s?.main?.desc??""),p=(l?.version??"")+"-"+c+"-"+r.slice(0,10);'],
+   'const d=(s?.main?.version??"")+"-"+c+"-"+(s?.main?.desc??""),p=(l?.version??"")+"-"+c+"-"+String(r??"").slice(0,10);'],
 ];
 function sha256(input) { return crypto.createHash('sha256').update(input).digest('hex'); }
 function transform(source) {

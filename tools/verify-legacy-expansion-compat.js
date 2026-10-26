@@ -14,7 +14,7 @@ const start=patched.indexOf(MARKER),end=patched.indexOf('}},Rhe={name:',start);
 assert.ok(start>0&&end>start,'Unexpected EXPAND_CHECK handler boundaries');
 const body=patched.slice(start+MARKER.length,end);
 
-function mock({mustDownload=false,security=false,missingHash=false,verified=true}={}) {
+function mock({mustDownload=false,security=false,missingHash=false,nullInterior=false,verified=true}={}) {
   const calls=[];
   const orgFlags=(mustDownload?2:0)|(security?1:0);
   const ctx={
@@ -32,7 +32,7 @@ function mock({mustDownload=false,security=false,missingHash=false,verified=true
     window:{ipcRenderer:{invoke:async name=>{
       calls.push(name);
       if(name==='generate-sha256-hash'||name==='generate-sha256-hash-for-plugins')
-        return missingHash?'':'test-hash';
+        return missingHash?'':name==='generate-sha256-hash-for-plugins'&&nullInterior?null:'test-hash';
       if(name==='read-json-file')return {main:{version:'1.0',desc:'test'}};
       throw new Error('Unexpected test IPC: '+name);
     }}},
@@ -49,8 +49,9 @@ function mock({mustDownload=false,security=false,missingHash=false,verified=true
     isSuperAdmin:false,checkProxyResult:{},
     getCoreExpandList:async()=>[],
     trySendMsg:async(fn,fail)=>{try{return await fn()}catch(e){return fail(e)}},
-    checkExpansionSha256Hash:async()=>{
+    checkExpansionSha256Hash:async(payload)=>{
       calls.push('remote-integrity-verifier');
+      calls.push({integrityPayload:payload});
       return {extens:[],interiorExtens:[{result:verified},{result:verified}]};
     }
   };
@@ -73,8 +74,21 @@ function mock({mustDownload=false,security=false,missingHash=false,verified=true
   assert.ok(t.calls.includes('remote-integrity-verifier'),
     'Missing hashes must reach (not bypass) integrity verification');
 
+  // Production incident: generate-sha256-hash-for-plugins resolved to null.
+  // The original .slice(0,10) threw TypeError, hiding the true integrity failure.
+  t=mock({security:true,nullInterior:true,verified:false});
+  await assert.rejects(()=>t.handler(t.open),e=>e.message==='EXPAND_SHA256_CHECK_FAIL');
+  assert.ok(t.calls.includes('remote-integrity-verifier'),
+    'Null hash must reach mandatory remote verification rather than crash on .slice');
+  const audit=t.calls.find(x=>x&&typeof x==='object'&&x.integrityPayload);
+  assert.equal(audit.integrityPayload.interiorExtens[1].sha256Hash,null,
+    'The missing hash must not be replaced with a fake or auto-approved value');
+  assert.equal(audit.integrityPayload.interiorExtens[1].sha256Key,'3.0.0-win-',
+    'A null hash should only use an empty string for the version key suffix');
+
   t=mock({mustDownload:true,security:false});
   await assert.rejects(()=>t.handler(t.open),e=>e.message==='PLUGIN_DOWNLOAD_FAIL_BLOCKED');
   assert.ok(!t.calls.includes('remote-integrity-verifier'));
   console.log('PASS: 2.8.17 extension policy restored; real SHA256 failures still block.');
+  console.log('PASS: null interior plugin hash never causes TypeError; real null reaches remote integrity checker.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
