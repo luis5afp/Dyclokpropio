@@ -15,6 +15,10 @@ on:
       - "tools/verify-bundled-extension.js"
       - "tools/verify-safe-base.js"
       - "tools/apply-legacy-expand-check.js"
+      - "tools/instrument-open-stages.js"
+      - "tools/verify-open-stage-diagnostics.js"
+      - "src/main/open-stage-diagnostics.js"
+      - "tools/show-open-stage-diagnostics.ps1"
       - ".github/workflows/release-safe-base.yml"
   workflow_dispatch:
 
@@ -90,6 +94,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Legacy patch preflight failed' }
           node tools/verify-legacy-expansion-compat.js
           if ($LASTEXITCODE -ne 0) { throw 'Legacy behavior and SHA256 integrity safety tests failed' }
+          node tools/verify-open-stage-diagnostics.js
+          if ($LASTEXITCODE -ne 0) { throw 'Open-stage diagnostic and privacy test failed' }
       - name: Rebuild native Electron dependencies
         shell: pwsh
         run: |
@@ -101,6 +107,12 @@ jobs:
           Set-Location source
           node tools/apply-legacy-expand-check.js --apply
           if ($LASTEXITCODE -ne 0) { throw 'Legacy EXPAND_CHECK compatibility patch failed; refusing release' }
+      - name: Instrument profile opening stages for redacted v30.0.8 diagnostics
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/instrument-open-stages.js --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Profile-open stage diagnostic patch failed; refusing release' }
       - name: Build Windows installer from original runtime
         shell: pwsh
         run: |
@@ -187,6 +199,8 @@ jobs:
             'COMPATIBILIDAD 2.8.17: EXPAND_CHECK distingue extension obligatoria faltante del error de descarga, y envia hashes reales al verificador de seguridad.',
             'La integridad SHA256 y la validacion remota permanecen activas; si los hashes fallan, se sigue bloqueando el perfil.',
             'La inyeccion automatica de Cookies Pro Privada continua desactivada para aislar esta incidencia.',
+            'DIAGNOSTICO: el instalador anota unicamente etapa, resultado y codigo filtrado del error al abrir un perfil en dyclok-open-stage.jsonl.',
+            'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
             'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
             'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
             'IMPORTANTE: realizar copia de seguridad de los perfiles antes de instalar; las funciones del navegador deben probarse en Windows.',
