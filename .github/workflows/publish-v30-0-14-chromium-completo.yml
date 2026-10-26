@@ -51,7 +51,7 @@ jobs:
       - name: Check out exact rc4-compatible complete Chromium build source
         uses: actions/checkout@v4
         with:
-          ref: 55844723d683ab9b9b314b42ff4ead4d0318093a
+          ref: a4bcc725c470240e1b7b03570e8c271ae52f1099
           path: source
       - name: Download privately supplied authorized original ZIP and verify identity
         shell: pwsh
@@ -112,7 +112,7 @@ jobs:
           real en la PC del usuario. No instalar sobre la copia que funciona.
           Error separado gost.exe ENOENT: investigacion pendiente.
           '@
-          & gh release create v30.0.14             'release-delivery/Dyclokpropio_30.0.14_CHROMIUM_COMPLETO_PRUEBA_win_x64.exe' 'release-delivery/SHA256SUMS-CHROMIUM-COMPLETO.txt' 'release-delivery/TEST_STATUS-CHROMIUM-COMPLETO.txt' --target 55844723d683ab9b9b314b42ff4ead4d0318093a --title 'Dyclokpropio v30.0.14 (PRUEBA - Chromium completo)' --notes $notes --prerelease --latest=false
+          & gh release create v30.0.14             'release-delivery/Dyclokpropio_30.0.14_CHROMIUM_COMPLETO_PRUEBA_win_x64.exe' 'release-delivery/SHA256SUMS-CHROMIUM-COMPLETO.txt' 'release-delivery/TEST_STATUS-CHROMIUM-COMPLETO.txt' --target a4bcc725c470240e1b7b03570e8c271ae52f1099 --title 'Dyclokpropio v30.0.14 (PRUEBA - Chromium completo)' --notes $notes --prerelease --latest=false
           if($LASTEXITCODE -ne 0){throw 'GitHub Release creation failed'}
           Write-Host 'V30_0_14_RELEASE_PUBLISHED=True'
       - name: Remove original proprietary ZIP from temporary runner
