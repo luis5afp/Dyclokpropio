@@ -46,6 +46,7 @@
     // Inspect only for fixed error families. Never export the raw message/code.
     try {
       const msg = String(error && error.message || '');
+      if (msg.includes('CACHE_ORIGINAL_HANDLER_NOT_REGISTERED')) return 'IPC_ORIGINAL_MISSING';
       if (/No handler registered|No handler for/i.test(msg)) return 'IPC_NO_HANDLER';
       if (/\b(?:EACCES|EPERM)\b|access is denied|permission denied/i.test(msg)) return 'IPC_PERMISSION';
       if (/\bENOENT\b|not found|does not exist/i.test(msg)) return 'IPC_NOT_FOUND';
