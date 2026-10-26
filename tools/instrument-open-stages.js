@@ -9,7 +9,7 @@ const os=require('node:os');
 const path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const TARGET=path.resolve(__dirname,'../dist/assets/index-BUIbb6Pa.js');
-const EXPECTED_LEGACY_SHA='04aeafcf291e98d4ab2f632f77c49d21d5cfda3c813addbc433fd8dd2a3cf37b';
+const EXPECTED_LEGACY_SHA='0859bd51a5703b4c01c19c38878642315215341733d5080770faee9a85bb5925';
 function sha(s){return crypto.createHash('sha256').update(s).digest('hex');}
 const sites=[
   ['class Jde{constructor()',
