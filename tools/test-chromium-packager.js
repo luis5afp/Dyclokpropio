@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const AdmZip=require('adm-zip');
-const {stage,inspect,filenameSafe,isRuntimeAsset}=require('./stage-full-chromium.js');
+const {stage,inspect,filenameSafe,isRuntimeAsset,assertWindowsX64PE}=require('./stage-full-chromium.js');
 const {verify}=require('./verify-chromium-bundle.js');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-chromium-fixture-'));
 try {
@@ -30,6 +30,21 @@ try {
   const src=path.join(tmp,'fixture');
   const zip1=new AdmZip();zip1.addLocalFolder(src);
   const zipFile=path.join(tmp,'legacy.zip');zip1.writeZip(zipFile);
+  const invalid=path.join(tmp,'invalid-real-source');
+  fs.mkdirSync(invalid);
+  assert.throws(()=>stage(zipFile,invalid,{requirePE:true}),/Not a Windows executable/);
+  assert.equal(fs.existsSync(path.join(invalid,'Chromium')),false,'Reject fake browser before committing');
+  const pe=Buffer.alloc(256);
+  pe.write('MZ',0,'ascii');
+  pe.writeUInt32LE(128,0x3c);
+  pe.write('PE\0\0',128,'ascii');
+  pe.writeUInt16LE(0x8664,132);
+  const fakePe=path.join(tmp,'synthetic-valid-header.exe');
+  fs.writeFileSync(fakePe,pe);
+  assert.doesNotThrow(()=>assertWindowsX64PE(fakePe));
+  pe.writeUInt16LE(0x14c,132);
+  fs.writeFileSync(fakePe,pe);
+  assert.throws(()=>assertWindowsX64PE(fakePe),/not Windows x64/);
   const staged=path.join(tmp,'build');fs.mkdirSync(staged);
   const metadata=stage(zipFile,staged);
   assert.equal(metadata.version,ver);
