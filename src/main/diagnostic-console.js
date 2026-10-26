@@ -88,6 +88,9 @@ function readStartupHealth(app, fileSystem = fs) {
       out[name]=['none','Error','TypeError','ReferenceError','SyntaxError',
         'RangeError','AggregateError','TimeoutError','AbortError','Other'].includes(raw[name])
         ? raw[name]:'Other';
+    out.uncaughtErrorMainBundleColumn=Number.isSafeInteger(raw.uncaughtErrorMainBundleColumn) &&
+      raw.uncaughtErrorMainBundleColumn>=0 && raw.uncaughtErrorMainBundleColumn<=6000000
+      ? raw.uncaughtErrorMainBundleColumn : 0;
     return out;
   }catch {return {available:false};}
 }
