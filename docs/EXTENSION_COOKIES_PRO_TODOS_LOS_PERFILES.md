@@ -1,60 +1,29 @@
-# Cookies Pro Privada 16.9.10 en todos los perfiles
+# Cookies Pro Privada v16.9.10 — integración de fábrica
 
-Este documento sirve para la extensión ZIP proporcionada por el propietario del proyecto. **No contiene datos de cuentas, cookies o sesiones ni se incluye el ZIP en GitHub.** La versión original tiene un `manifest.json` de Manifest V3 y exige Chromium/Chrome **130 o superior**. El Chrome de cada perfil es distinto del Chromium que usa la interfaz Electron.
+A partir de la integración [PR #3](https://github.com/luis5afp/Dyclokpropio/pull/3), el código de Dyclokpropio **incluye el paquete de Cookies Pro Privada** dentro del repositorio: `bundled-extensions/Cookies-Pro-v16.9.10-runtime.zip`.
 
-## Instalar en todos los perfiles desde Dyclokpropio
+## ¿Tengo que instalarla manualmente perfil por perfil?
 
-Esta es la ruta preferida, ya que usa el administrador de extensiones existente de DICloak sin modificar su runtime recuperado.
+**No es el objetivo de esta versión:** el flujo de compilación incluye el paquete y el cargador `src/main/bundled-extension-bootstrap.js` intenta activar automáticamente la extensión cuando la aplicación inicia los procesos Chromium de perfiles nuevos y existentes.
 
-1. Descarga el ZIP preparado `Cookies_Pro_Privada_16.9.10_para_Dyclokpropio.zip` entregado por separado. Tiene `manifest.json` en la raíz del ZIP.
-2. Abre **Extensiones / Gestión de extensiones** → **Añadir extensión** → **Subir paquete ZIP**.
-3. Asigna el nombre **Cookies Pro Privada**, selecciona un **grupo de extensiones** y activa la extensión. Puedes habilitar la opción de fijarla a la barra.
-4. En **Perfiles**, selecciona los perfiles actuales y abre **Más acciones → Editar perfil → Configuración avanzada → Extensiones**. Habilita las extensiones y selecciona el grupo que contiene Cookies Pro Privada. También puedes editar cada perfil por separado.
-5. Abre un perfil y verifica en `chrome://extensions` que esté instalada, habilitada y sin errores.
-6. En cada **perfil nuevo**, selecciona el mismo grupo de extensiones en la configuración avanzada antes de crearlo. Para creación en lote, establece el grupo de extensiones en las opciones avanzadas.
+La integración no modifica las cookies ni comparte los datos entre perfiles. Para perfiles que ya están abiertos, ciérralos antes de probar el nuevo instalador.
 
-**Cuidado con los grupos existentes:** si los perfiles ya tienen otros grupos y otras extensiones, conviene añadir Cookies Pro Privada a esos grupos en Gestión de extensiones, en lugar de sustituir el grupo del perfil. Así no se pierden las extensiones previas.
+### Limitación importante
 
-Referencia: https://help.dicloak.com/how-to-add-extensions-and-apply-them-to-profiles/
+**La carga automática no está demostrada aún en un navegador de perfil real en Windows.** Funciona cuando el navegador es lanzado mediante las llamadas de Node.js que intercepta el bootstrap y el kernel acepta `--load-extension`. Chrome oficial 137+ ignora ese flag; algunos kernels de Chromium sí lo admiten. La extensión exige Chromium 130 o superior.
 
-## Herramienta opcional para aplicar el grupo masivamente por la API local
+**No se debe anunciar como garantizada para todos los perfiles hasta probar un instalador completo en Windows.** Consulta las verificaciones y pruebas obligatorias en [COOKIES_PRO_INTEGRATION.md](COOKIES_PRO_INTEGRATION.md).
 
-El script `tools/set-extension-group-for-profiles.ps1` permite asociar el grupo seleccionado a todos los perfiles a los que la API local tiene acceso. **No sube ni instala el ZIP**: primero añade y habilita la extensión con la interfaz.
+## Método alternativo si el kernel no admite el cargador
 
-La API local de DICloak debe estar habilitada. Obtén la clave API local y el ID numérico de tu grupo de extensiones. No los publiques en GitHub ni los compartas en capturas.
+El administrador de extensiones de DICloak permite subir el ZIP por la interfaz, activarlo en un grupo de extensiones y asociar grupos a perfiles. Es la alternativa oficial cuando el cargador no funciona con el kernel de navegador usado.
 
-Desde la carpeta raíz del repositorio, en PowerShell, ejecuta una simulación:
+1. Abre **Extensiones / Gestión de extensiones**, sube el paquete ZIP de la extensión y habilítalo en un grupo.
+2. Asocia ese grupo a los perfiles desde **Configuración avanzada → Extensiones**, o agrega la extensión al grupo que ya tengan para no quitar otras extensiones.
+3. Para automatizar únicamente la **asignación del grupo** mediante API local, existe `tools/set-extension-group-for-profiles.ps1`. Esa herramienta no sube el ZIP. Requiere una clave API local que nunca debe guardarse en el repositorio.
 
-```powershell
-.\tools\set-extension-group-for-profiles.ps1 -GroupId 'ID_DEL_GRUPO'
-```
+Documentación oficial: https://help.dicloak.com/how-to-add-extensions-and-apply-them-to-profiles/
 
-Después de revisar los resultados:
+## Privacidad
 
-```powershell
-.\tools\set-extension-group-for-profiles.ps1 -GroupId 'ID_DEL_GRUPO' -Apply
-```
-
-Por defecto se omiten los perfiles que ya usan **otro grupo**, para no reemplazar sus extensiones. Solo si deseas sustituirlos, añade `-ReplaceExistingGroups` después de comprobar qué extensiones perderían. Ejecuta el modo simulación con esta opción antes de `-Apply`.
-
-Para detectar y actualizar perfiles que crees mientras PowerShell permanezca abierto:
-
-```powershell
-.\tools\set-extension-group-for-profiles.ps1 -GroupId 'ID_DEL_GRUPO' -Apply -Continuous
-```
-
-Este modo consulta la API local cada 60 segundos; se detiene con Ctrl+C. **No instala un servicio de Windows, no ejecuta tareas en segundo plano al cerrar la consola y no sustituye la configuración correcta de los perfiles nuevos.**
-
-Documentación de API: https://help.dicloak.com/dicloak-api-browser-profile-interface/
-
-## Privacidad y compatibilidad
-
-- La extensión solicita permisos para leer, modificar y borrar cookies y acceder a todos los sitios HTTP y HTTPS. Revísala y utilízala solo en perfiles que controles.
-- Instalar el mismo código de extensión en distintos perfiles **no transfiere automáticamente** cookies, contraseñas ni sesiones entre ellos. Los datos que la extensión almacene o importe en un perfil deben mantenerse separados.
-- Perfiles con un navegador anterior a la versión 130 no cumplen el mínimo declarado por la extensión. Una instalación correcta en un perfil no demuestra compatibilidad con otros kernels.
-- El repositorio no contiene credenciales de la API local. La herramienta pide la clave en la consola y no la guarda en un archivo.
-- Se recomienda probar primero en un perfil de prueba y respaldar los datos antes de realizar cambios en lote.
-
-## Estado de la implementación
-
-Se añadió la utilidad opcional de sincronización de grupo y esta guía. **No se modificó el código compilado responsable de abrir Chrome**. Instalar el ZIP y elegir el grupo en la cuenta local del usuario son pasos imprescindibles para que aparezca en los navegadores.
+El paquete tiene permisos para administrar cookies y leer sitios HTTP/HTTPS. Usarlo solo en perfiles propios/autorizados. El código del repositorio **no incluye cookies, contraseñas o archivos de sesión de ningún perfil**.
