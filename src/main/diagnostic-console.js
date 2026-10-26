@@ -30,6 +30,7 @@ const CHANNELS = new Set([
   'generate-sha256-hash','get-cache-info'
 ]);
 const CHECKPOINTS = new Set(['begin','config-ready','geo-start','geo-ready','cache-start','cache-success','cache-fail','keys-start','keys-success']);
+const EXPAND_CHECKPOINTS=new Set(['integrity-ext-reject','integrity-internal-reject','integrity-ext-accept','integrity-internal-accept','integrity-invalid-response']);
 const CODES = new Set([
   'UNKNOWN_ERROR','UNCLASSIFIED','EXPAND_DOWNLOAD_FAIL','EXPAND_CHECK_FAIL',
   'EXPAND_SHA256_CHECK_FAIL','EXPAND_SHA256_HASH_FAIL','EXPAND_MISSING',
@@ -58,7 +59,7 @@ function sanitize(payload) {
     status, elapsedMs,
     result: RESULTS.has(payload.result) ? payload.result : 'none',
     code: CODES.has(payload.code) ? payload.code : 'UNCLASSIFIED',
-    checkpoint: kind === 'stage' && payload.action === 'paramsMerge' && CHECKPOINTS.has(payload.checkpoint)
+    checkpoint: kind === 'stage' && ((payload.action === 'paramsMerge' && CHECKPOINTS.has(payload.checkpoint)) || (payload.action === 'expandCheck' && EXPAND_CHECKPOINTS.has(payload.checkpoint)))
       ? payload.checkpoint : 'none'
   };
 }
