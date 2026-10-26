@@ -33,6 +33,7 @@ async function main() {
   try {
     const handlers = new Map();
     const warnings = [];
+    const infos = [];
     const ipcMain = {
       handle(channel, handler) {
         if (handlers.has(channel)) throw new Error('IPC handler already registered: ' + channel);
@@ -97,13 +98,17 @@ async function main() {
       require: fakeRequire,
       process: { resourcesPath },
       module: out,
-      console: { warn: (...args) => warnings.push(args.map(String).join(' ')) },
+      console: {
+        warn: (...args) => warnings.push(args.map(String).join(' ')),
+        info: (...args) => infos.push(args.map(String).join(' ')),
+      },
     }, { filename: bootstrapPath, timeout: 2000 });
 
     assert.equal(mainLoaded, true, 'Original Electron runtime was not loaded');
     assert.equal(fakeChildProcess.spawn, originalSpawn, 'Cookies Pro modified child process spawn');
     assert.equal(fakeChildProcess.execFile, originalExecFile, 'Cookies Pro modified child process execFile');
     assert.equal(out.exports, originalMain, 'Bootstrapped app changed unexpectedly');
+    assert.ok(infos.some(msg => msg.includes('Cookies Pro Privada desactivada')), 'Diagnostic mode not reported');
     assert.equal(warnings.length, 0,
       'Bootstrap reported an initialization error; download instrumentation is probably disabled');
 
