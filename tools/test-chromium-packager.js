@@ -29,6 +29,15 @@ try {
   assert.ok(metadata.files>=51);
   assert.ok(fs.existsSync(path.join(staged,'Chromium','ginsbrowser','.ginsextension2','manifest.json')));
   assert.throws(()=>stage(zipFile,staged),/already exists/);
+  // Windows "Compress to ZIP" of Chromium's contents omits Chromium/ itself.
+  const bareZip=new AdmZip();bareZip.addLocalFolder(files);
+  const bareFile=path.join(tmp,'chromium-contents.zip');bareZip.writeZip(bareFile);
+  const stagedBare=path.join(tmp,'build-bare');fs.mkdirSync(stagedBare);
+  const bare=stage(bareFile,stagedBare);
+  assert.equal(bare.version,ver);
+  assert.ok(fs.existsSync(path.join(stagedBare,'Chromium','Application','ginsbrowser.exe')));
+  assert.ok(fs.existsSync(path.join(stagedBare,'Chromium','ginsbrowser','.ginsextension2','manifest.json')));
+
   const packaged=path.join(tmp,'win-unpacked');
   fs.mkdirSync(packaged);
   fs.cpSync(path.join(staged,'Chromium'),path.join(packaged,'Chromium'),{recursive:true});
