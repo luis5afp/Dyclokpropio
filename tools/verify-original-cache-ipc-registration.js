@@ -42,6 +42,6 @@ assert.equal(typeof sandbox._0x1acd6a,'function','Secondary decoder unavailable 
 const name='clear-dev-'+sandbox._0x1acd6a(-0x499,0x2222);
 const method=sandbox._0x28d9a9('0x419e',0x22c7+0x346);
 assert.equal(name,'clear-dev-cache','Recovered main cache target changed unexpectedly');
-assert.ok(['on','handle'].includes(method),'Unknown recovered main registration method: '+String(method));
+assert.equal(method,'handle','Expected recovered cache IPC registration through handle()');
 console.log('Original Electron registration for '+name+': ipcMain.'+method);
 console.log('Original handler signature: async(event,{clearTypes,id,localDataConfig})');
