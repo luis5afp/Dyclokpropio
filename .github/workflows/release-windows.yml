@@ -36,8 +36,6 @@ jobs:
           if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -notmatch '^v\d+\.\d+\.\d+$') {
             throw 'Use a tag vX.Y.Z, for example v30.0.1'
           }
-          node tools/verify-build-assets.js
-          if ($LASTEXITCODE -ne 0) { throw 'Required runtime assets are missing' }
           node tools/verify-safe-base.js
           if ($LASTEXITCODE -ne 0) { throw 'Protected runtime differs from the uploaded installer baseline' }
 
@@ -46,6 +44,17 @@ jobs:
         run: |
           Set-Location source
           npm install --legacy-peer-deps
+
+      - name: Expand and verify bundled Cookies Pro extension
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/unpack-bundled-extension.js
+          if ($LASTEXITCODE -ne 0) { throw 'Extension extraction failed' }
+          node tools/verify-build-assets.js
+          if ($LASTEXITCODE -ne 0) { throw 'Installer assets are missing' }
+          node tools/verify-bundled-extension.js
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled extension contract failed' }
 
       - name: Rebuild native Electron dependencies
         shell: pwsh
@@ -64,6 +73,8 @@ jobs:
         run: |
           $exe = 'source/release/win-unpacked/Dyclokpropio.exe'
           if (-not (Test-Path $exe)) { throw "Unpacked executable missing: $exe" }
+          $bundledManifest = 'source/release/win-unpacked/resources/plugins/.cookies-pro-privada/manifest.json'
+          if (-not (Test-Path $bundledManifest)) { throw "Bundled extension missing from installer: $bundledManifest" }
           $proc = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 12
           $proc.Refresh()
