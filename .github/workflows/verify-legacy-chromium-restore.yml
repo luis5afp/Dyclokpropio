@@ -32,7 +32,7 @@ jobs:
             foreach($item in $errors){Write-Host ($item.ErrorId+': '+$item.Message)}
             throw 'Invalid embedded PowerShell syntax'
           }
-          foreach($requirement in @('Chromium/Application/ginsbrowser.exe',
+          foreach($requirement in @('Application/ginsbrowser.exe','CHROMIUM_ROOT_NOT_UNIQUE',
             'ZipFile]::OpenRead','FileMode]::CreateNew','Directory]::Move',
             'Get-FileHash','ARCHIVE_PATH_ESCAPE','TARGET_CHROMIUM_ALREADY_EXISTS',
             'NO_SE_MODIFICARON_PERFILES=True')){
