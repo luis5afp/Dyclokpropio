@@ -10,6 +10,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const AdmZip = require('adm-zip');
+const { EXTENSION_ID, EXTENSION_PUBLIC_KEY, deriveExtensionId } = require('../src/main/bundled-extension-pin.js');
 
 const root = path.resolve(__dirname, '..');
 const zipFile = path.join(root, 'bundled-extensions', 'Cookies-Pro-v16.9.10-runtime.zip');
@@ -31,6 +32,8 @@ const manifest = JSON.parse(zip.readAsText('manifest.json'));
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.name, 'Cookies Pro Privada');
 assert.equal(manifest.version, '16.9.10');
+assert.equal(deriveExtensionId(EXTENSION_PUBLIC_KEY), EXTENSION_ID, 'ID publico de la extension inconsistente');
+assert.ok(manifest.action && manifest.action.default_popup, 'La extension necesita un icono de accion para poder fijarse');
 
 const staged = path.join(root, 'plugins', '.cookies-pro-privada-staged');
 fs.rmSync(staged, { recursive: true, force: true });
@@ -40,7 +43,25 @@ try {
     fs.mkdirSync(path.dirname(target), { recursive: true });
     const file = zip.getEntry(filename);
     assert.ok(file, 'Falta recurso: ' + filename);
-    fs.writeFileSync(target, file.getData(), { mode: 0o644 });
+    if (filename === 'manifest.json') {
+      // Keep the user's original ZIP unchanged. Give the unpacked copy a
+      // consistent ID and a visible action icon for the Chromium toolbar.
+      const unpackedManifest = {
+        ...manifest,
+        key: EXTENSION_PUBLIC_KEY,
+        action: {
+          ...manifest.action,
+          default_icon: {
+            '16': 'icons/icon16.png',
+            '48': 'icons/icon48.png',
+            '128': 'icons/icon128.png',
+          },
+        },
+      };
+      fs.writeFileSync(target, JSON.stringify(unpackedManifest, null, 2) + '\n', { mode: 0o644 });
+    } else {
+      fs.writeFileSync(target, file.getData(), { mode: 0o644 });
+    }
   }
   fs.rmSync(out, { recursive: true, force: true });
   fs.renameSync(staged, out);
