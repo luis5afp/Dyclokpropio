@@ -6,6 +6,7 @@ on:
       - diagnostics/rc4-native-browser-process-audit-20261026
     paths:
       - 'tools/Dyclok_Auditoria_Navegador_rc4.bat'
+      - 'tools/Dyclok_Auditoria_Navegador_rc4_v2.bat'
       - '.github/workflows/verify-browser-audit-bat.yml'
   workflow_dispatch:
 
@@ -20,7 +21,7 @@ jobs:
       - name: Check embedded PowerShell syntax and no modification operations
         shell: pwsh
         run: |
-          $file = 'tools/Dyclok_Auditoria_Navegador_rc4.bat'
+          foreach($file in @('tools/Dyclok_Auditoria_Navegador_rc4.bat','tools/Dyclok_Auditoria_Navegador_rc4_v2.bat')) {
           $raw = Get-Content -LiteralPath $file -Raw
           $marker=':__DYCLOK_AUDIT_PS__'
           $i=$raw.LastIndexOf($marker)
@@ -40,4 +41,10 @@ jobs:
           if($script -notmatch 'Get-Process' -or $script -notmatch 'ginsbrowser\.exe' -or $script -notmatch 'WriteAllLines'){
             throw 'Expected process, kernel-presence, privacy-preserving TXT report behavior missing'
           }
-          Write-Host 'PASS: browser audit is syntactically valid, self-contained and read-only'
+          if($file -match '_v2'){
+            foreach($token in @('Get-CimInstance','ParentProcessId','DESCENDIENTES_DE_DYCLOK','ORIGEN_')){
+              if(-not $script.Contains($token)){throw ('V2 native correlation feature missing: '+$token)}
+            }
+          }
+          Write-Host ('PASS: browser audit is syntactically valid, self-contained and read-only: '+$file)
+          }
