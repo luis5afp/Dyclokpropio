@@ -13,11 +13,11 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const vm = require('node:vm');
-const { EXTENSION_PUBLIC_KEY } = require('../src/main/bundled-extension-pin.js');
 
 const root = path.resolve(__dirname, '..');
 const bootstrapPath = path.join(root, 'src/main/bundled-extension-bootstrap.js');
 const source = fs.readFileSync(bootstrapPath, 'utf8');
+assert.ok(source.includes('const ENABLE_BUNDLED_COOKIES_PRO = false;'), 'Diagnostic build must disable bundled Cookies Pro globally');
 const builder = fs.readFileSync(path.join(root, 'electron-builder.yml'), 'utf8');
 assert.ok(
   builder.split(/\r?\n/).some(line => line.trim() === '- src/main/extension-download-diagnostics.js'),
@@ -46,19 +46,15 @@ async function main() {
         return fixture;
       },
     };
-    const fakeManifest = {
-      name: 'Cookies Pro Privada',
-      version: '16.9.10',
-      key: EXTENSION_PUBLIC_KEY,
-      action: { default_icon: { '16': 'icons/icon16.png' } },
-    };
+    // In this diagnostic build Cookies Pro must not be inspected, injected
+    // or pinned. No profile preferences may be accessed by our bootstrap.
     const fakeFs = {
       existsSync(p) {
-        if (p === manifestPath) return true;
+        if (p === manifestPath) throw new Error('Cookies Pro manifest was inspected while disabled');
         return fs.existsSync(p);
       },
       readFileSync(p, encoding) {
-        if (p === manifestPath) return JSON.stringify(fakeManifest);
+        if (p === manifestPath) throw new Error('Cookies Pro manifest was read while disabled');
         return fs.readFileSync(p, encoding);
       },
     };
@@ -66,6 +62,8 @@ async function main() {
       spawn: () => {},
       execFile: () => {},
     };
+    const originalSpawn = fakeChildProcess.spawn;
+    const originalExecFile = fakeChildProcess.execFile;
     const originalMain = { loaded: true };
     let mainLoaded = false;
     let attempts = 0;
@@ -80,9 +78,8 @@ async function main() {
         case './extension-download-diagnostics.js':
           return require('../src/main/extension-download-diagnostics.js');
         case './bundled-extension-launch.js':
-          return require('../src/main/bundled-extension-launch.js');
         case './bundled-extension-pin.js':
-          return require('../src/main/bundled-extension-pin.js');
+          throw new Error('Cookies Pro integration must not be loaded while disabled');
         case '../../dist-electron/main.js':
           mainLoaded = true;
           ipcMain.handle('download-chrome-unzip-extension', async () => {
@@ -104,6 +101,8 @@ async function main() {
     }, { filename: bootstrapPath, timeout: 2000 });
 
     assert.equal(mainLoaded, true, 'Original Electron runtime was not loaded');
+    assert.equal(fakeChildProcess.spawn, originalSpawn, 'Cookies Pro modified child process spawn');
+    assert.equal(fakeChildProcess.execFile, originalExecFile, 'Cookies Pro modified child process execFile');
     assert.equal(out.exports, originalMain, 'Bootstrapped app changed unexpectedly');
     assert.equal(warnings.length, 0,
       'Bootstrap reported an initialization error; download instrumentation is probably disabled');
@@ -133,6 +132,7 @@ async function main() {
     assert.equal(raw.includes(secret), false, 'Diagnostic leaked URL query data');
     assert.equal(raw.includes('profile'), false, 'Diagnostic should not store browser profile info');
 
+    console.log('PASS: Cookies Pro injection/pinning remains OFF for every Chromium launch.');
     console.log('PASS: Electron bootstrap installs working retry BEFORE original runtime.');
     console.log('PASS: failed download writes redacted diagnostic record into userData.');
     console.log('PASS: original download failure remains a failure; no profile data touched.');
