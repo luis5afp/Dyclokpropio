@@ -6,6 +6,9 @@ const path=require('node:path');
 const vm=require('node:vm');
 const {createDiagnosticConsole,sanitize,isTrusted,CONTROL,EVENT}=require('../src/main/diagnostic-console.js');
 const {transform,TAG}=require('./install-diagnostic-panel.js');
+const {transform:compat}=require('./apply-legacy-expand-check.js');
+const {transform:stage}=require('./instrument-open-stages.js');
+const {transform:probe}=require('./instrument-params-merge.js');
 
 const html=fs.readFileSync(path.join(__dirname,'../dist/index.html'),'utf8');
 const htmlPatched=transform(html);
@@ -14,6 +17,10 @@ assert.ok(htmlPatched.indexOf(TAG)<htmlPatched.indexOf('assets/index-BUIbb6Pa.js
 assert.throws(()=>transform(html+' modified'),'Modified renderer index.html must be rejected');
 const ui=fs.readFileSync(path.join(__dirname,'../src/renderer/diagnostic-panel.js'),'utf8');
 new vm.Script(ui,{filename:'diagnostic-panel.js'});
+const renderer=fs.readFileSync(path.join(__dirname,'../dist/assets/index-BUIbb6Pa.js'),'utf8');
+const inspected=probe(stage(compat(renderer)));
+for(const checkpoint of ['begin','config-ready','geo-start','geo-ready','cache-start','cache-success','cache-fail','keys-start','keys-success'])assert.ok(inspected.includes('DyclokParamsProbe("'+checkpoint+'")'),'Missing paramsMerge checkpoint '+checkpoint);
+assert.ok(inspected.includes('throw error}})()'),'Cache failures must still abort profile open');
 
 (async()=>{
   const fixture=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-diagnostic-panel-'));
@@ -47,6 +54,10 @@ new vm.Script(ui,{filename:'diagnostic-panel.js'});
     assert.ok(status.tail.some(x=>x.kind==='ipc'&&x.action==='other'));
     assert.equal(sanitize({kind:'http',phase:'request',action:'DELETE',url:'private'}).action,'DELETE');
     assert.equal(sanitize({kind:'hostile',phase:'request'}),null);
+    assert.equal(sanitize({kind:'ipc',phase:'error',action:'clear-dev-cache',code:'IPC_NO_HANDLER'}).action,'clear-dev-cache');
+    assert.equal(sanitize({kind:'ipc',phase:'error',action:'clear-dev-cache',code:'IPC_NO_HANDLER'}).code,'IPC_NO_HANDLER');
+    assert.equal(sanitize({kind:'stage',phase:'info',action:'paramsMerge',checkpoint:'cache-fail'}).checkpoint,'cache-fail');
+    assert.equal(sanitize({kind:'stage',phase:'info',action:'paramsMerge',checkpoint:'PRIVATE-ID'}).checkpoint,'none');
     const stop=await handlers.get(CONTROL)(origin,'stop');
     assert.equal(stop.active,false);
     const exported=await handlers.get(CONTROL)(origin,'export');
