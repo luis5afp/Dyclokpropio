@@ -1,0 +1,18 @@
+name: Inspect recovered startup cache registration dependencies
+
+on:
+  push:
+    branches:
+      - analysis/v30-0-14-main-startup-20261026
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect recovered main runtime without execution
+        run: node tools/inspect-original-main-startup.js
