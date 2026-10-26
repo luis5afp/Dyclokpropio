@@ -9,6 +9,10 @@ on:
       - "dist-electron/**"
       - "package.json"
       - "electron-builder.yml"
+      - "bundled-extensions/**"
+      - "src/main/bundled-extension-*.js"
+      - "tools/unpack-bundled-extension.js"
+      - "tools/verify-bundled-extension.js"
       - "tools/verify-safe-base.js"
       - ".github/workflows/release-safe-base.yml"
   workflow_dispatch:
@@ -50,6 +54,16 @@ jobs:
         run: |
           Set-Location source
           npm install --legacy-peer-deps
+      - name: Restore bundled Cookies Pro before building
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/unpack-bundled-extension.js
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled extension extraction failed' }
+          node tools/verify-build-assets.js
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled installer resources missing' }
+          node tools/verify-bundled-extension.js
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled extension validation failed' }
       - name: Rebuild native Electron dependencies
         shell: pwsh
         run: |
@@ -66,6 +80,8 @@ jobs:
           Set-Location source
           $exe = Join-Path (Get-Location) "release\win-unpacked\Dyclokpropio.exe"
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+          $extensionManifest = "release\win-unpacked\resources\plugins\.cookies-pro-privada\manifest.json"
+          if (-not (Test-Path $extensionManifest)) { throw "Bundled Cookies Pro extension missing from build: $extensionManifest" }
           $proc = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 12
           $proc.Refresh()

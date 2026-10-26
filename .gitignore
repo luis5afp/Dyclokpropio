@@ -8,3 +8,7 @@ SourceData/
 *.log
 .DS_Store
 Thumbs.db
+
+# Generated from bundled-extensions/*.zip before building
+plugins/.cookies-pro-privada/
+plugins/.cookies-pro-privada-staged/
