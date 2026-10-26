@@ -5,7 +5,7 @@ const label='const CL=async()=>';
 const idx=src.indexOf(label);
 if(idx<0)throw Error('CL declaration not found');
 const fn=acorn.parseExpressionAt(src,idx+'const CL='.length,{ecmaVersion:'latest',ranges:true});
-if(fn.type!=='ArrowFunctionExpression'||fn.body.type!=='BlockStatement')throw Error('Not recovered CL arrow');
+if(fn.type!=='ArrowFunctionExpression'||fn.body.type!=='BlockStatement')throw Error('Not recovered CL arrow: '+fn.type+'/'+fn.body?.type+' offset '+idx+' '+src.slice(idx,idx+70));
 const body=fn.body.body;
 const registrationAt=5848339;
 console.log('STATIC_CL_BEGIN='+idx+' END='+fn.end+' TOP_LEVEL_STATEMENTS='+body.length+' REGISTRATION_OFFSET='+registrationAt);
