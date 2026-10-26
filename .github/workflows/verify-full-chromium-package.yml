@@ -3,7 +3,7 @@ name: Validate complete Chromium packaging (synthetic binary fixture)
 on:
   push:
     branches:
-      - feature/v30-0-14-bundle-entire-chromium-20261026
+      - feature/v30-0-14-rc4-chromium-completo-20261026
     paths:
       - 'tools/stage-full-chromium.js'
       - 'tools/verify-chromium-bundle.js'
