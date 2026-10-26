@@ -51,15 +51,6 @@ function createStartupHealth(app, {fileSystem = fs, processObject = process} = {
       state.uncaughtSourceColumn=0;
     } else {state.uncaughtSource='other';state.uncaughtSourceColumn=0;}
   }
-  function safeOriginalBundleColumn(error) {
-    try {
-      const stack = typeof error?.stack === 'string' ? error.stack : '';
-      const match = /main-CuCOh59n\.js:1:(\d{1,8})(?:\D|$)/.exec(stack);
-      if (!match) return 0;
-      const column = Number(match[1]);
-      return Number.isSafeInteger(column) && column > 0 && column <= 6000000 ? column : 0;
-    } catch { return 0; }
-  }
   function save() {
     try {
       const home = app?.getPath?.('userData');
