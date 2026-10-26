@@ -17,7 +17,7 @@ const { installExtensionDownloadRetry } = require('./bundled-extension-download-
 // Keep the original DICloak extension repository and integrity verification.
 // Retry a failed HTTPS download once, without turning false into success.
 try {
-  installExtensionDownloadRetry(ipcMain);
+  installExtensionDownloadRetry(ipcMain, { record: createExtensionDiagnosticWriter(require('electron').app) });
 } catch (error) {
   console.warn('[Dyclokpropio] No se pudo activar el reintento de extensiones:', error.message);
 }
