@@ -15,6 +15,8 @@ on:
       - 'tools/unpack-bundled-extension.js'
       - 'tools/verify-bundled-extension.js'
       - 'tools/verify-extension-download-retry.js'
+      - 'tools/verify-bootstrap-diagnostics.js'
+      - 'src/main/extension-download-diagnostics.js'
       - 'tools/repair-extension-cache.ps1'
       - 'electron-builder.yml'
       - 'tools/verify-safe-base.js'
@@ -42,6 +44,8 @@ jobs:
         run: node tools/verify-bundled-extension.js
       - name: Verify bounded extension downloader retry
         run: node tools/verify-extension-download-retry.js
+      - name: Verify Electron bootstrap actually enables diagnostics
+        run: node tools/verify-bootstrap-diagnostics.js
       - name: Verify original baseline hashes
         run: node tools/verify-safe-base.js
       - name: Verify public release publication contract
