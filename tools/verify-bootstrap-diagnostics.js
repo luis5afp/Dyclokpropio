@@ -34,10 +34,17 @@ async function main() {
     const handlers = new Map();
     const warnings = [];
     const infos = [];
+    const legacyListeners = new Map();
     const ipcMain = {
       handle(channel, handler) {
         if (handlers.has(channel)) throw new Error('IPC handler already registered: ' + channel);
         handlers.set(channel, handler);
+      },
+      hasHandler(channel) { return handlers.has(channel); },
+      removeHandler(channel) { handlers.delete(channel); },
+      on(channel, handler) {
+        legacyListeners.set(channel, handler);
+        return this;
       },
     };
     const app = {
@@ -82,6 +89,8 @@ async function main() {
           return require('../src/main/open-stage-diagnostics.js');
         case './diagnostic-console.js':
           return require('../src/main/diagnostic-console.js');
+        case './cache-ipc-compatibility.js':
+          return require('../src/main/cache-ipc-compatibility.js');
         case './bundled-extension-launch.js':
         case './bundled-extension-pin.js':
           throw new Error('Cookies Pro integration must not be loaded while disabled');
@@ -90,6 +99,13 @@ async function main() {
           ipcMain.handle('download-chrome-unzip-extension', async () => {
             attempts++;
             return null;
+          });
+          // Recovered main has an async cache-clearing callback. If wired
+          // through legacy on(), the UI invoke() must still reach this
+          // real implementation, retaining the same return/rejection.
+          ipcMain.on('clear-dev-cache', async (_event, payload) => {
+            if (payload?.fail) throw new Error('CACHE_NATIVE_REJECTION');
+            return {msg:'ORIGINAL_CACHE_CALLBACK_RESULT'};
           });
           return originalMain;
         default:
@@ -122,6 +138,15 @@ async function main() {
       'The in-app diagnostic console event receiver was not registered');
     assert.equal(typeof handlers.get('dyclok-open-stage'), 'function',
       'Stage instrumentation writer did not register before original runtime');
+    assert.equal(typeof legacyListeners.get('clear-dev-cache'),'function',
+      'Original cache callback must remain registered');
+    assert.equal(typeof handlers.get('clear-dev-cache'),'function',
+      'Renderer invoke must reach the recovered cache operation');
+    const cacheEvent={senderFrame:{url:'file:///C:/Program%20Files/Dyclokpropio/resources/app.asar/dist/index.html#/profiles'}};
+    const cacheResult=await handlers.get('clear-dev-cache')(cacheEvent,{id:'test',clearTypes:8});
+    assert.deepEqual(cacheResult,{msg:'ORIGINAL_CACHE_CALLBACK_RESULT'});
+    await assert.rejects(()=>handlers.get('clear-dev-cache')(cacheEvent,{fail:true}),
+      /CACHE_NATIVE_REJECTION/,'Must not swallow the original cache error');
     const handler = handlers.get('download-chrome-unzip-extension');
     assert.equal(typeof handler, 'function', 'Downloader was not registered by the main runtime');
     const secret = 'do-not-log-this-query-secret';
@@ -149,6 +174,7 @@ async function main() {
 
     console.log('PASS: Cookies Pro injection/pinning remains OFF for every Chromium launch.');
     console.log('PASS: Electron bootstrap installs working retry BEFORE original runtime.');
+    console.log('PASS: clear-dev-cache invoke delegates to recovered original callback.');
     console.log('PASS: failed download writes redacted diagnostic record into userData.');
     console.log('PASS: original download failure remains a failure; no profile data touched.');
   } finally {
