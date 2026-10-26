@@ -17,6 +17,7 @@ files:
   - src/main/bundled-extension-bootstrap.js
   - src/main/bundled-extension-launch.js
   - src/main/bundled-extension-pin.js
+  - src/main/bundled-extension-download-retry.js
   - package.json
   - node_modules/**/*
 extraResources:
@@ -24,6 +25,8 @@ extraResources:
     to: plugins
   - from: vendor
     to: vendor
+  - from: tools/repair-extension-cache.ps1
+    to: tools/repair-extension-cache.ps1
   - from: resources/electron
     to: electron
   - from: resources/elevate.exe
