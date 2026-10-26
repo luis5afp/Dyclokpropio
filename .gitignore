@@ -12,3 +12,8 @@ Thumbs.db
 # Generated from bundled-extensions/*.zip before building
 plugins/.cookies-pro-privada/
 plugins/.cookies-pro-privada-staged/
+
+# Local authorized native browser binaries: never commit or republish by accident.
+/Chromium/
+/DICloak.zip
+/.dyclok-chromium-stage-*/
