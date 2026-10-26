@@ -20,6 +20,8 @@ on:
       - "src/main/open-stage-diagnostics.js"
       - "src/main/diagnostic-console.js"
       - "src/main/cache-ipc-compatibility.js"
+      - "src/main/startup-health.js"
+      - "tools/verify-startup-health.js"
       - "tools/verify-cache-ipc-compatibility.js"
       - "tools/verify-original-cache-ipc-registration.js"
       - "src/renderer/diagnostic-panel.js"
@@ -99,6 +101,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Original cache handler registration contract failed' }
           node tools/verify-cache-ipc-compatibility.js
           if ($LASTEXITCODE -ne 0) { throw 'Recovered cache handler invoke bridge failed' }
+          node tools/verify-startup-health.js
+          if ($LASTEXITCODE -ne 0) { throw 'Native startup health privacy contract failed' }
       - name: Test legacy extension behavior and mandatory remote integrity
         shell: pwsh
         run: |
@@ -159,11 +163,39 @@ jobs:
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
           $extensionManifest = "release\win-unpacked\resources\plugins\.cookies-pro-privada\manifest.json"
           if (-not (Test-Path $extensionManifest)) { throw "Bundled Cookies Pro extension missing from build: $extensionManifest" }
+          # Verify real historical installation paths are present in addition to
+          # the new resources paths; these are legacy runtime lookup candidates.
+          foreach ($relative in @(
+            'plugins\.automa\manifest.json',
+            'vendor\ffmpeg\bin\ffmpeg.exe',
+            'resources\app\dist\assets\sync\DicSyncService.exe'
+          )) {
+            $expected=Join-Path 'release\win-unpacked' $relative
+            if (-not (Test-Path -LiteralPath $expected -PathType Leaf)) {
+              throw "Old layout compatibility component missing: $relative"
+            }
+          }
+          $startTime=Get-Date
           $proc = Start-Process -FilePath $exe -PassThru
-          Start-Sleep -Seconds 12
-          $proc.Refresh()
-          if ($proc.HasExited -and $proc.ExitCode -ne 0) { throw "Executable exited with code $($proc.ExitCode)" }
-          if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
+          try {
+            Start-Sleep -Seconds 18
+            $proc.Refresh()
+            if ($proc.HasExited -and $proc.ExitCode -ne 0) { throw "Executable exited with code $($proc.ExitCode)" }
+            $healthFiles = @(Get-ChildItem -LiteralPath $env:APPDATA -Filter 'dyclok-startup-health.json' -File -Recurse -ErrorAction SilentlyContinue |
+              Where-Object { $_.LastWriteTime -ge $startTime.AddSeconds(-5) } |
+              Sort-Object LastWriteTime -Descending)
+            if ($healthFiles.Count -eq 0) { throw 'No main-process startup health record from Windows executable' }
+            $health=Get-Content -LiteralPath $healthFiles[0].FullName -Raw | ConvertFrom-Json
+            if (-not $health.originalEntrypointLoaded -or -not $health.electronReady) {
+              throw 'Original Electron runtime did not finish basic initialization on Windows'
+            }
+            if (-not $health.originalCacheHandlerRegistered) {
+              throw 'Original clear-dev-cache handler NEVER registered on Windows; refusing v30.0.14 publication'
+            }
+            Write-Host 'PASS: original Electron startup + real original cache IPC handler registered on Windows.'
+          } finally {
+            if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
+          }
       - name: Prepare versioned delivery
         shell: pwsh
         run: |
@@ -237,7 +269,9 @@ jobs:
             'NOVEDAD: boton flotante Diagnostico para iniciar/detener captura de metadatos de apertura, HTTP de interfaz e IPC cuando disponible; exportar TXT desde la aplicacion.',
             'v30.0.11: añade puntos de control de paramsMerge y categoriza errores IPC. NO se declara corregido el fallo de apertura sin validacion en el PC afectado.',
             'v30.0.12: adaptador IPC para clear-dev-cache; diagnostico posterior detecto que no se instalaba en Electron 31.'
-            'v30.0.13: se elimina la dependencia de ipcMain.hasHandler (API inexistente en Electron 31) y se prueban los manejadores con simulacion fiel. La limpieza original sigue siendo obligatoria. Requiere validar apertura real del perfil 244.'
+            'v30.0.13: se elimina la dependencia de ipcMain.hasHandler (API inexistente en Electron 31) y se prueban los manejadores con simulacion fiel. La limpieza original sigue siendo obligatoria. Requiere validar apertura real del perfil 244.',
+            'v30.0.14: restaura rutas de compatibilidad en la raiz para plugins y ffmpeg, y resources/app/dist/assets/sync/DicSyncService.exe. Añade estado filtrado del arranque original y exige que el controlador nativo clear-dev-cache se registre en Windows ANTES de permitir publicar.',
+            'Advertencia: el ejecutable Chromium/Application/ginsbrowser.exe no forma parte del repositorio base. No se afirma paridad total con DICloak 2.8.17 ni apertura del perfil 244 sin prueba real.'
             'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
             'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
             'La compilacion y el arranque basico superaron las verificaciones automatizadas.',

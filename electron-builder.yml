@@ -22,6 +22,7 @@ files:
   - src/main/open-stage-diagnostics.js
   - src/main/diagnostic-console.js
   - src/main/cache-ipc-compatibility.js
+  - src/main/startup-health.js
   - src/main/extension-download-diagnostics.js
   - package.json
   - node_modules/**/*
@@ -40,6 +41,16 @@ extraResources:
     to: electron
   - from: resources/elevate.exe
     to: elevate.exe
+  # Preserve old unpacked SyncService path alongside electron-builder's app.asar.unpacked.
+  - from: dist/assets/sync/DicSyncService.exe
+    to: app/dist/assets/sync/DicSyncService.exe
+# The recovered runtime may resolve legacy binaries/plugins relative to the
+# installed executable. Duplicate (do not move) original paths for compatibility.
+extraFiles:
+  - from: plugins
+    to: plugins
+  - from: vendor
+    to: vendor
 win:
   icon: application.ico
   target:
