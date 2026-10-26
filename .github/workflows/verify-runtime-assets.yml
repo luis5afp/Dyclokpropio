@@ -17,6 +17,8 @@ on:
       - 'electron-builder.yml'
       - 'tools/verify-safe-base.js'
       - '.github/workflows/verify-runtime-assets.yml'
+      - '.github/workflows/release-safe-base.yml'
+      - 'tools/verify-release-workflow.js'
   workflow_dispatch:
 
 permissions:
@@ -38,3 +40,5 @@ jobs:
         run: node tools/verify-bundled-extension.js
       - name: Verify original baseline hashes
         run: node tools/verify-safe-base.js
+      - name: Verify public release publication contract
+        run: node tools/verify-release-workflow.js
