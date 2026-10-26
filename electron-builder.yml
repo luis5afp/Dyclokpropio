@@ -28,6 +28,8 @@ extraResources:
     to: vendor
   - from: tools/repair-extension-cache.ps1
     to: tools/repair-extension-cache.ps1
+  - from: tools/show-extension-download-diagnostics.ps1
+    to: tools/show-extension-download-diagnostics.ps1
   - from: resources/electron
     to: electron
   - from: resources/elevate.exe
