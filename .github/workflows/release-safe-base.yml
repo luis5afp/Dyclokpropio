@@ -82,6 +82,14 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Extension download retry contract failed' }
           node tools/verify-bootstrap-diagnostics.js
           if ($LASTEXITCODE -ne 0) { throw 'Diagnostic integration failed; refusing to publish an uninstrumented installer' }
+      - name: Test legacy extension behavior and mandatory remote integrity
+        shell: pwsh
+        run: |
+          Set-Location source
+          node tools/apply-legacy-expand-check.js
+          if ($LASTEXITCODE -ne 0) { throw 'Legacy patch preflight failed' }
+          node tools/verify-legacy-expansion-compat.js
+          if ($LASTEXITCODE -ne 0) { throw 'Legacy behavior and SHA256 integrity safety tests failed' }
       - name: Rebuild native Electron dependencies
         shell: pwsh
         run: |
