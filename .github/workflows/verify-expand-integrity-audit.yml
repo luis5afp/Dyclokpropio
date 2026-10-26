@@ -21,6 +21,8 @@ jobs:
         run: |
           node tools/instrument-expand-integrity.js
           node tools/verify-expand-integrity-audit.js
+      - name: Read-only inspect recovered renderer integrity contract
+        run: node tools/audit-internal-sha-contract.js
       - name: Verify diagnostics and original expansion validation
         run: node tools/verify-legacy-expansion-compat.js
       - name: Verify no extension details can enter diagnostic console
