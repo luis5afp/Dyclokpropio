@@ -97,7 +97,7 @@ function Get-AllProfiles {
     if ($profiles.Count -lt $total) {
         throw "Lista incompleta: $($profiles.Count) de $total; no se realizara ningun cambio."
     }
-    return ,@($profiles.ToArray())
+    return $profiles.ToArray()
 }
 
 function Apply-Group {
