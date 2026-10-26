@@ -14,7 +14,9 @@ const { EXTENSION_ID, EXTENSION_PUBLIC_KEY, deriveExtensionId } = require('../sr
 
 const root = path.resolve(__dirname, '..');
 const zipFile = path.join(root, 'bundled-extensions', 'Cookies-Pro-v16.9.10-runtime.zip');
-const out = path.join(root, 'plugins', '.cookies-pro-privada');
+// Keep optional user extension OUTSIDE the original internally signed plugins tree.
+// The internal plugins SHA must cover only the recovered runtime's own files.
+const out = path.join(root, 'optional-extensions', '.cookies-pro-privada');
 const expectedHash = '053c843178e9401260030c0e0e7f036c9c1cade2a0e92113c7eff4f6426e32d9';
 const expectedFiles = [
   'manifest.json', 'background.js', 'popup.js', 'popup.html',
@@ -35,7 +37,8 @@ assert.equal(manifest.version, '16.9.10');
 assert.equal(deriveExtensionId(EXTENSION_PUBLIC_KEY), EXTENSION_ID, 'ID publico de la extension inconsistente');
 assert.ok(manifest.action && manifest.action.default_popup, 'La extension necesita un icono de accion para poder fijarse');
 
-const staged = path.join(root, 'plugins', '.cookies-pro-privada-staged');
+const staged = path.join(root, 'optional-extensions', '.cookies-pro-privada-staged');
+fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.rmSync(staged, { recursive: true, force: true });
 try {
   for (const filename of expectedFiles) {
@@ -63,6 +66,10 @@ try {
       fs.writeFileSync(target, file.getData(), { mode: 0o644 });
     }
   }
+  // A legacy build might have staged this optional extension under plugins/.
+  // Do not delete user profile extensions; this is only the build workspace.
+  const wronglyStaged = path.join(root, 'plugins', '.cookies-pro-privada');
+  fs.rmSync(wronglyStaged, { recursive: true, force: true });
   fs.rmSync(out, { recursive: true, force: true });
   fs.renameSync(staged, out);
   console.log('Cookies Pro Privada 16.9.10 integrada en ' + out);

@@ -27,6 +27,10 @@ files:
   - package.json
   - node_modules/**/*
 extraResources:
+  # Optional Cookies Pro is NOT part of the recovered runtime's signed plugins.
+  # Keep it available for a future opt-in without changing the internal SHA256.
+  - from: optional-extensions
+    to: optional-extensions
   - from: plugins
     to: plugins
   - from: vendor

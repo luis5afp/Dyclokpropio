@@ -14,6 +14,7 @@ on:
       - 'src/main/bundled-extension-*.js'
       - 'tools/unpack-bundled-extension.js'
       - 'tools/verify-bundled-extension.js'
+      - 'tools/verify-original-plugin-isolation.js'
       - 'tools/verify-extension-download-retry.js'
       - 'tools/verify-bootstrap-diagnostics.js'
       - 'src/main/extension-download-diagnostics.js'
@@ -58,7 +59,9 @@ jobs:
       - name: Verify required runtime files
         run: node tools/verify-build-assets.js
       - name: Verify bundled extension load-contract
-        run: node tools/verify-bundled-extension.js
+        run: |
+          node tools/verify-original-plugin-isolation.js
+          node tools/verify-bundled-extension.js
       - name: Verify bounded extension downloader retry
         run: node tools/verify-extension-download-retry.js
       - name: Verify recovered cache IPC handler compatibility

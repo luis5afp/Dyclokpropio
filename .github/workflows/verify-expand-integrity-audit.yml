@@ -1,0 +1,29 @@
+name: Verify SHA256 integrity mismatch diagnostic (no bypass)
+
+on:
+  pull_request:
+    paths:
+      - 'tools/instrument-expand-integrity.js'
+      - 'tools/verify-expand-integrity-audit.js'
+      - 'src/main/diagnostic-console.js'
+      - '.github/workflows/verify-expand-integrity-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact source transforms, original integrity decision and privacy
+        run: |
+          node tools/instrument-expand-integrity.js
+          node tools/verify-expand-integrity-audit.js
+      - name: Read-only inspect recovered renderer integrity contract
+        run: node tools/audit-internal-sha-contract.js
+      - name: Verify diagnostics and original expansion validation
+        run: node tools/verify-legacy-expansion-compat.js
+      - name: Verify no extension details can enter diagnostic console
+        run: node tools/verify-diagnostic-console.js
