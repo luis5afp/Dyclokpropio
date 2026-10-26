@@ -49,3 +49,22 @@ console.log('AST-REGISTER-PATH',JSON.stringify(parentPath.map((node,idx)=>({
  closing:s.slice(Math.max(node.start,node.end-140),node.end),
  identifier:node.id&&node.id.name||undefined
 }))));
+
+const references=[];
+function inspect(node,parent,ancestors=[]){
+ if(!node||typeof node!=='object')return;
+ if(node.type==='Identifier'&&node.name==='CL')references.push({
+  start:node.start,parentType:parent?.type,
+  ancestors:ancestors.slice(-5).map(x=>x.type),
+  before:s.slice(Math.max(0,node.start-450),node.start),
+  after:s.slice(node.end,Math.min(s.length,node.end+700))
+ });
+ for(const [name,value] of Object.entries(node)){
+  if(name==='start'||name==='end')continue;
+  if(Array.isArray(value))value.forEach(sub=>inspect(sub,node,[...ancestors,node]));
+  else if(value&&typeof value==='object')inspect(value,node,[...ancestors,node]);
+ }
+}
+inspect(ast,null);
+console.log('CL-REF-COUNT',references.length);
+references.slice(0,22).forEach(x=>console.log('CL-REF',JSON.stringify(x)));
