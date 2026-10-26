@@ -29,13 +29,21 @@ function filenameSafe(relative){
 }
 function inspect(zip){
   const list=zip.getEntries();
-  const roots=list.filter(e=>!e.isDirectory&&/^(?:[^/]+\/){0,3}Chromium\/Application\/ginsbrowser\.exe$/i.test(normal(e.entryName)));
-  if(roots.length!==1)throw Error('One and only one Chromium/Application/ginsbrowser.exe required');
+  // ZIPs made by Windows can contain Chromium/ or directly its contents.
+  // Accept no more than three harmless wrapper directories, reject ambiguity.
+  const roots=list.filter(e=>!e.isDirectory&&/^(?:[^/]+\/){0,3}(?:Chromium\/)?Application\/ginsbrowser\.exe$/i.test(normal(e.entryName)));
+  if(roots.length!==1)throw Error('Exactly one Application/ginsbrowser.exe required in Chromium archive');
   const root=normal(roots[0].entryName).slice(0,-'Application/ginsbrowser.exe'.length);
+  // Avoid reading any accidental profiles/app binaries outside the Chromium tree.
+  const rootSegments=root.split('/').filter(Boolean);
+  if(rootSegments.length && !rootSegments.some(s=>s.toLowerCase()==='chromium'))
+    throw Error('Archive root must include Chromium folder, or Chromium contents at ZIP root');
   const entries=[];const names=new Set();let bytes=0;
   for(const e of list){
     const name=normal(e.entryName);
     if(!name.toLowerCase().startsWith(root.toLowerCase()))continue;
+    // A contents-only ZIP must not include unrelated application files.
+    if(!root && !/^(?:Application|ginsbrowser)\//i.test(name))continue;
     const relative=name.slice(root.length).replace(/\/$/,'');
     if(!relative)continue;
     if(!filenameSafe(relative))throw Error('Unsafe path inside Chromium ZIP');
