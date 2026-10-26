@@ -19,7 +19,7 @@ function normal(name){return name.replace(/\\/g,'/')}
 function filenameSafe(relative){
   if(!relative || relative.startsWith('/')||relative.includes('//') || /^[a-z]:/i.test(relative) || /[\x00-\x1f:]/.test(relative))return false;
   const parts=relative.split('/');
-  return parts.every(part=>part!=='.'&&part!=='..'&&/^[a-zA-Z0-9_ @()+.\-]+$/.test(part));
+  return parts.every(part=>part.length>0&&part!=='.'&&part!=='..'&& !/[<>|?*]/.test(part)&& !/[. ]$/.test(part)&& !/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)/i.test(part));
 }
 function inspect(zip){
   const list=zip.getEntries();
