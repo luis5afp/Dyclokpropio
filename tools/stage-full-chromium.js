@@ -15,6 +15,12 @@ const versionPattern=/^Application\/(\d+\.\d+\.\d+\.\d+)\/chrome\.dll$/;
 const minimumNames=['Application/ginsbrowser.exe','icudtl.dat','resources.pak','v8_context_snapshot.bin'];
 const MAX_FILES=7000, MAX_BYTES=4_000_000_000;
 function digest(buffer){return crypto.createHash('sha256').update(buffer).digest('hex')}
+function sha256File(filename){
+  const h=crypto.createHash('sha256'),fd=fs.openSync(filename,'r'),buf=Buffer.allocUnsafe(1024*1024);
+  try {let n;while((n=fs.readSync(fd,buf,0,buf.length,null))>0)h.update(buf.subarray(0,n))}
+  finally {fs.closeSync(fd)}
+  return h.digest('hex');
+}
 function normal(name){return name.replace(/\\/g,'/')}
 function filenameSafe(relative){
   if(!relative || relative.startsWith('/')||relative.includes('//') || /^[a-z]:/i.test(relative) || /[\x00-\x1f:]/.test(relative))return false;
@@ -82,7 +88,7 @@ function stage(archive,into){
     if(fs.existsSync(target))throw Error('Chromium folder appeared concurrently');
     fs.renameSync(stageDir,target); committed=true;
     return {version:inventory.version,files:inventory.entries.length,bytes:inventory.bytes,
-            archiveSha256:digest(fs.readFileSync(archive)),criticalFiles:hashes};
+            archiveSha256:sha256File(archive),criticalFiles:hashes};
   }finally{
     if(!committed)fs.rmSync(stageDir,{recursive:true,force:true});
   }
