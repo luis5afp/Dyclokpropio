@@ -30,7 +30,7 @@ const CHANNELS = new Set([
   'generate-sha256-hash','get-cache-info'
 ]);
 const CHECKPOINTS = new Set(['begin','config-ready','geo-start','geo-ready','cache-start','cache-success','cache-fail','keys-start','keys-success']);
-const EXPAND_CHECKPOINTS=new Set(['integrity-ext-reject','integrity-internal-reject','integrity-ext-accept','integrity-internal-accept','integrity-invalid-response']);
+const EXPAND_CHECKPOINTS=new Set(['integrity-ext-reject','integrity-internal-reject','integrity-ext-accept','integrity-internal-accept','integrity-invalid-response','integrity-browser-accept','integrity-browser-reject','integrity-plugins-accept','integrity-plugins-reject','integrity-internal-invalid-response']);
 const CODES = new Set([
   'UNKNOWN_ERROR','UNCLASSIFIED','EXPAND_DOWNLOAD_FAIL','EXPAND_CHECK_FAIL',
   'EXPAND_SHA256_CHECK_FAIL','EXPAND_SHA256_HASH_FAIL','EXPAND_MISSING',
