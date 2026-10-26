@@ -10,9 +10,9 @@ const body=fn.body.body;
 const registrationAt=5848339;
 console.log('STATIC_CL_BEGIN='+idx+' END='+fn.end+' TOP_LEVEL_STATEMENTS='+body.length+' REGISTRATION_OFFSET='+registrationAt);
 function preview(st){
- const snippet=src.slice(st.start,Math.min(st.end,st.start+115)).replace(/\\s+/g,' ');
+ const snippet=src.slice(st.start,Math.min(st.end,st.start+115)).replace(/\s+/g,' ');
  return {start:st.start,end:st.end,type:st.type,startsWith:snippet,containsRegister:st.start<=registrationAt&&st.end>=registrationAt,
-  awaitTokens:(src.slice(st.start,st.end).match(/await\\s/g)||[]).length};
+  awaitTokens:(src.slice(st.start,st.end).match(/await\s/g)||[]).length};
 }
 for(const [i,st] of body.entries()){
  if(i<25 || i>body.length-12 || st.start<=registrationAt&&st.end>=registrationAt || st.start>registrationAt-6000&&st.start<registrationAt+500)
@@ -21,8 +21,8 @@ for(const [i,st] of body.entries()){
 let regStatement=body.findIndex(st=>st.start<=registrationAt&&st.end>=registrationAt);
 if(regStatement<0)throw Error('Registration offset not inside CL');
 console.log('REGISTER_STATEMENT_INDEX='+regStatement+' OF='+body.length);
-const awaitsBefore=body.slice(0,regStatement).reduce((n,st)=>n+(src.slice(st.start,st.end).match(/await\\s/g)||[]).length,0);
+const awaitsBefore=body.slice(0,regStatement).reduce((n,st)=>n+(src.slice(st.start,st.end).match(/await\s/g)||[]).length,0);
 console.log('AWAIT_TOKENS_BEFORE_REGISTRATION='+awaitsBefore);
 for(let i=Math.max(0,regStatement-5);i<=Math.min(body.length-1,regStatement+5);i++){
- const st=body[i];console.log('NEAR_REG_'+i+' START='+st.start+' LEN='+(st.end-st.start)+' TEXT='+src.slice(st.start,Math.min(st.end,st.start+250)).replace(/\\s+/g,' '));
+ const st=body[i];console.log('NEAR_REG_'+i+' START='+st.start+' LEN='+(st.end-st.start)+' TEXT='+src.slice(st.start,Math.min(st.end,st.start+250)).replace(/\s+/g,' '));
 }
