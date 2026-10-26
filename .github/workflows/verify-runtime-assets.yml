@@ -14,6 +14,8 @@ on:
       - 'src/main/bundled-extension-*.js'
       - 'tools/unpack-bundled-extension.js'
       - 'tools/verify-bundled-extension.js'
+      - 'tools/verify-extension-download-retry.js'
+      - 'tools/repair-extension-cache.ps1'
       - 'electron-builder.yml'
       - 'tools/verify-safe-base.js'
       - '.github/workflows/verify-runtime-assets.yml'
@@ -38,6 +40,8 @@ jobs:
         run: node tools/verify-build-assets.js
       - name: Verify bundled extension load-contract
         run: node tools/verify-bundled-extension.js
+      - name: Verify bounded extension downloader retry
+        run: node tools/verify-extension-download-retry.js
       - name: Verify original baseline hashes
         run: node tools/verify-safe-base.js
       - name: Verify public release publication contract
