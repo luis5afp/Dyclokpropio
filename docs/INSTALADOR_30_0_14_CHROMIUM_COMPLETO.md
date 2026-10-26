@@ -35,3 +35,37 @@ El instalador local resultante es `release-delivery/Dyclokpropio_30.0.14_CHROMIU
 3. Verificar árbol completo e identidad de DLL/EXE dentro del instalador, incluso en máquinas limpias.
 4. Confirmar que el perfil 244 crea un proceso nativo **y ventana visible**; probar 243 y 240.
 5. No declarar el perfil abierto en UI solo porque `openEnv` respondió `success`.
+
+
+## Nuevos archivos entregados (26/oct/2026)
+
+El usuario agregó `ginsbrowser.exe` (3.23 MB), `chrome_proxy.exe`,
+`chrome.VisualElementsManifest.xml`, `version.json`,
+`.ginsextension2.zip`, `.ginsextension3.zip`, `settings.dat` y dos
+archivos `.pma`. El inventario original permite establecer:
+
+| Archivo | Ruta relativa de la instalación antigua | Tratamiento |
+| --- | --- | --- |
+| ginsbrowser.exe | Chromium/Application/ginsbrowser.exe | Motor, obligatorio |
+| chrome_proxy.exe | Chromium/Application/chrome_proxy.exe | Binario auxiliar |
+| chrome.VisualElementsManifest.xml | Chromium/Application/chrome.VisualElementsManifest.xml | Manifiesto de interfaz |
+| version.json | Chromium/version.json | Identidad de paquete, conservar |
+| .ginsextension2.zip / .ginsextension3.zip | Paquetes asociados a Chromium/ginsbrowser; ubicación ZIP original no verificada | No sustituir automáticamente carpetas originales sin verificar |
+| settings.dat | Chromium/User Data/Crashpad/settings.dat | **Estado de usuario: excluir del instalador público** |
+| *.pma | Chromium/Application/SetupMetrics/*.pma | **Métricas de una instalación anterior: excluir del instalador público** |
+
+El `version.json` enviado declara `main.version = 142.1.7` y las
+extensiones internas `exension2` y `exension3` versión `142.1.7`.
+La carpeta `Application/142.0.7444.273/` identifica el motor nativo.
+Son dos identificadores distintos y no deben intercambiarse.
+
+`Chromium.zip` de ~193 MB está adjunto a la conversación pero no se ha podido
+inspeccionar byte por byte con las herramientas actuales. No basta con
+haber recibido su nombre: hasta verificar el ZIP original y el manifiesto
+no se puede asegurar que contenga `chrome.dll` y todas las bibliotecas.
+
+La preparación automatizada conserva el código del motor, incluyendo
+`Chromium/version.json` y `Chromium/ginsbrowser/`, pero **omite**
+`Chromium/User Data/` y `Chromium/Application/SetupMetrics/` para evitar
+republicar datos o identificadores de la instalación antigua. Pruebas
+sintéticas verifican esa separación.
