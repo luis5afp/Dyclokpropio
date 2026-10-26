@@ -69,23 +69,23 @@ try {
   $archive=[IO.Compression.ZipFile]::OpenRead($zip)
   $prefix='Chromium/'
   $entries=@($archive.Entries | Where-Object {
-    $_.FullName.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase) -and
-    -not $_.FullName.EndsWith('/')
+    ($_.FullName.Replace('\','/')).StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase) -and
+    -not ($_.FullName.Replace('\','/')).EndsWith('/')
   })
   if($entries.Count -lt 40 -or $entries.Count -gt 5000){
     throw ([System.InvalidOperationException]::new('CHROMIUM_FILE_COUNT_INVALID'))
   }
   $required=@('Chromium/Application/ginsbrowser.exe')
-  $ver=@($entries | Where-Object {$_.FullName -match '^Chromium/Application/(\d+\.\d+\.\d+\.\d+)/chrome\.dll$'})
+  $ver=@($entries | Where-Object {($_.FullName.Replace('\','/')) -match '^Chromium/Application/(\d+\.\d+\.\d+\.\d+)/chrome\.dll$'})
   if($ver.Count -ne 1){
     throw ([System.InvalidOperationException]::new('NO_SINGLE_VERSIONED_CHROME_DLL'))
   }
-  $kernelVer=[regex]::Match($ver[0].FullName,'^Chromium/Application/([^/]+)/chrome\.dll$').Groups[1].Value
+  $kernelVer=[regex]::Match(($ver[0].FullName.Replace('\','/')),'^Chromium/Application/([^/]+)/chrome\.dll$').Groups[1].Value
   foreach($relative in @('icudtl.dat','resources.pak','v8_context_snapshot.bin')){
     $required+=('Chromium/Application/'+$kernelVer+'/'+$relative)
   }
   foreach($name in $required) {
-    if(-not @($entries|Where-Object{$_.FullName -ieq $name}).Count) {
+    if(-not @($entries|Where-Object{($_.FullName.Replace('\','/')) -ieq $name}).Count) {
       throw ([System.InvalidOperationException]::new('REQUIRED_CHROMIUM_COMPONENT_MISSING'))
     }
   }
@@ -126,7 +126,7 @@ try {
   $stageFull=[IO.Path]::GetFullPath($stage).TrimEnd('\')+'\'
   $copied=0
   foreach($entry in $entries) {
-    $relative=$entry.FullName.Substring($prefix.Length).Replace('/','\')
+    $relative=$entry.FullName.Replace('\','/').Substring($prefix.Length).Replace('/','\')
     $dest=[IO.Path]::GetFullPath((Join-Path $stage $relative))
     if(-not $dest.StartsWith($stageFull,[StringComparison]::OrdinalIgnoreCase)){
       throw ([System.InvalidOperationException]::new('ARCHIVE_PATH_ESCAPE'))
