@@ -100,6 +100,9 @@ jobs:
               originalCacheHandlerRemovals=$record.originalCacheHandlerRemovals
               mainEntrypointErrorClass=$record.mainEntrypointErrorClass
               uncaughtErrorClass=$record.uncaughtErrorClass
+              uncaughtErrorCode=$record.uncaughtErrorCode
+              uncaughtSource=$record.uncaughtSource
+              uncaughtSourceColumn=$record.uncaughtSourceColumn
             }
             Write-Host ('MAIN_STARTUP_HEALTH='+(ConvertTo-Json -InputObject $public -Compress))
             if(-not $record.originalEntrypointLoaded -or -not $record.electronReady){
