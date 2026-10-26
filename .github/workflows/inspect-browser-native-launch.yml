@@ -1,0 +1,20 @@
+name: Read-only audit Chromium launch code and runtime paths
+
+on:
+  push:
+    branches:
+      - diagnostics/rc4-native-browser-process-audit-20261026
+    paths:
+      - 'tools/inspect-browser-native-launch.js'
+      - '.github/workflows/inspect-browser-native-launch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect Chromium path and spawn symbols in recovered protected bundle
+        run: node tools/inspect-browser-native-launch.js
