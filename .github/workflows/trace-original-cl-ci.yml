@@ -1,0 +1,77 @@
+name: Identify original CL startup interruption (CI only)
+
+on:
+  push:
+    branches:
+      - analysis/v30-0-14-main-startup-20261026
+
+permissions:
+  contents: read
+
+jobs:
+  trace:
+    runs-on: windows-latest
+    steps:
+      - name: Preserve uploaded original bytes on Windows
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+      - name: Install and verify original baseline
+        shell: pwsh
+        run: |
+          npm install --legacy-peer-deps
+          if($LASTEXITCODE -ne 0){throw 'npm install failed'}
+          node tools/verify-safe-base.js
+          if($LASTEXITCODE -ne 0){throw 'Baseline integrity failed'}
+          node tools/unpack-bundled-extension.js
+          if($LASTEXITCODE -ne 0){throw 'Optional extension stage failed'}
+      - name: Insert numeric startup checkpoints only in temporary CI build
+        shell: pwsh
+        run: |
+          node tools/instrument-cl-progress-ci-only.js
+          if($LASTEXITCODE -ne 0){throw 'CI analysis instrument failed'}
+          node --check dist-electron/main-CuCOh59n.js
+          if($LASTEXITCODE -ne 0){throw 'CI analysis syntax invalid'}
+      - name: Build temporary diagnostic Windows app, never release
+        shell: pwsh
+        run: |
+          npx electron-builder install-app-deps
+          if($LASTEXITCODE -ne 0){throw 'Native install failed'}
+          npm run build:dir -- --publish never
+          if($LASTEXITCODE -ne 0){throw 'Unpacked diagnostic build failed'}
+      - name: Observe exactly how far original CL executes
+        shell: pwsh
+        run: |
+          $trace=Join-Path $env:RUNNER_TEMP 'dyclok-ci-cl-progress.txt'
+          Remove-Item $trace -ErrorAction SilentlyContinue
+          $env:DYCLOK_CL_PROGRESS_FILE=$trace
+          $started=Get-Date
+          $app=(Resolve-Path 'release/win-unpacked/Dyclokpropio.exe').Path
+          $proc=Start-Process -FilePath $app -PassThru
+          try{
+            Start-Sleep -Seconds 22
+            $last='NO_CL_ENTRY'
+            if(Test-Path $trace){$last=(Get-Content -Path $trace -Raw).Trim()}
+            Write-Host ('ORIGINAL_CL_LAST_STATEMENT='+$last)
+            $files=@(Get-ChildItem -Path $env:APPDATA -File -Filter 'dyclok-startup-health.json' -Recurse -ErrorAction SilentlyContinue |
+              Where-Object {$_.LastWriteTime -ge $started.AddSeconds(-5)} | Sort-Object LastWriteTime -Descending)
+            if($files.Count){
+              $status=Get-Content -LiteralPath $files[0].FullName -Raw | ConvertFrom-Json
+              $filtered=@{
+                electronReady=$status.electronReady
+                mainWindowCreated=$status.mainWindowCreated
+                nativeCacheRegistered=$status.originalCacheHandlerRegistered
+                errorClass=$status.uncaughtErrorClass
+                errorCode=$status.uncaughtErrorCode
+                missingKnownFile=$status.uncaughtKnownBasename
+              }
+              Write-Host ('CI_SAFE_STARTUP_SUMMARY='+(ConvertTo-Json $filtered -Compress))
+            }
+            if($last -eq 'NO_CL_ENTRY'){throw 'Recovered CL was never entered; investigate previous startup awaits'}
+            # This is diagnostic, not a passing test of profile-open readiness.
+          }finally{
+            $proc.Refresh()
+            if(-not $proc.HasExited){Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue}
+          }
