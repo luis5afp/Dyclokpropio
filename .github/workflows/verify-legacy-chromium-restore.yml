@@ -1,0 +1,101 @@
+name: Verify verified legacy Chromium restore (Windows)
+
+on:
+  push:
+    branches:
+      - fix/rc4-restore-verified-chromium-kernel-from-own-2817-archive-20261026
+    paths:
+      - 'tools/Dyclok_Restaurar_Chromium_2817_a_rc4.bat'
+      - '.github/workflows/verify-legacy-chromium-restore.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse embedded Windows PowerShell 5.1 and enforce scope
+        shell: powershell
+        run: |
+          $file='tools/Dyclok_Restaurar_Chromium_2817_a_rc4.bat'
+          $raw=[IO.File]::ReadAllText((Resolve-Path $file))
+          $tag=':__DYCLOK_KERNEL_PS__'
+          $idx=$raw.LastIndexOf($tag)
+          if($idx -lt 150){throw 'BAT embedded PowerShell marker missing'}
+          $src=$raw.Substring($idx+$tag.Length)
+          $tokens=$null; $errors=$null
+          [void][System.Management.Automation.Language.Parser]::ParseInput($src,[ref]$tokens,[ref]$errors)
+          if(@($errors).Count){
+            foreach($item in $errors){Write-Host ($item.ErrorId+': '+$item.Message)}
+            throw 'Invalid embedded PowerShell syntax'
+          }
+          foreach($requirement in @('Chromium/Application/ginsbrowser.exe',
+            'ZipFile]::OpenRead','FileMode]::CreateNew','Directory]::Move',
+            'Get-FileHash','ARCHIVE_PATH_ESCAPE','TARGET_CHROMIUM_ALREADY_EXISTS',
+            'NO_SE_MODIFICARON_PERFILES=True')){
+            if(-not $src.Contains($requirement)){throw ('Restore contract missing: '+$requirement)}
+          }
+          foreach($forbidden in @('Stop-Process','Start-Process','Invoke-WebRequest',
+            'Invoke-RestMethod','Copy-Item -Force','Remove-Item -Recurse')){
+            if($src -match ('(?i)\b'+[regex]::Escape($forbidden)+'\b')){
+              throw ('Forbidden change: '+$forbidden)
+            }
+          }
+          Write-Host 'PASS: embedded PowerShell 5.1 parses; archive extraction is opt-in and scope-checked'
+      - name: Synthetic ZIP tests for complete restore and safe refusal to overwrite
+        shell: powershell
+        run: |
+          $ErrorActionPreference='Stop'
+          Add-Type -AssemblyName System.IO.Compression
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $root=Join-Path $env:RUNNER_TEMP 'dyclok-kernel-restore-test'
+          New-Item -ItemType Directory -Path $root -Force | Out-Null
+          $source=Join-Path $root 'archive-source'
+          $files=Join-Path $source 'Chromium\Application'
+          $version=Join-Path $files '142.0.7444.273'
+          New-Item -ItemType Directory -Path $version -Force | Out-Null
+          Set-Content -LiteralPath (Join-Path $files 'ginsbrowser.exe') -Value 'SYNTHETIC-EXE-NOT-A-REAL-BROWSER'
+          foreach($name in @('chrome.dll','icudtl.dat','resources.pak','v8_context_snapshot.bin')){
+            Set-Content -LiteralPath (Join-Path $version $name) -Value ('SYNTHETIC '+$name)
+          }
+          1..44 | ForEach-Object {Set-Content -LiteralPath (Join-Path $version ("test$_.pak")) -Value ("SYNTHETIC $_")}
+          $zip=Join-Path $root 'DICloak-original-fixture.zip'
+          [IO.Compression.ZipFile]::CreateFromDirectory($source,$zip)
+          $targetRoot=Join-Path $root 'test-installation'
+          New-Item -ItemType Directory -Path (Join-Path $targetRoot 'resources') -Force | Out-Null
+          Set-Content -LiteralPath (Join-Path $targetRoot 'resources\app.asar') -Value 'SYNTHETIC-APP-ASAR'
+          $exe=Join-Path $targetRoot 'Dyclokpropio.exe'
+          Set-Content -LiteralPath $exe -Value 'SYNTHETIC-EXE'
+          $batRaw=[IO.File]::ReadAllText((Resolve-Path 'tools/Dyclok_Restaurar_Chromium_2817_a_rc4.bat'))
+          $marker=':__DYCLOK_KERNEL_PS__'
+          $ps=$batRaw.Substring($batRaw.LastIndexOf($marker)+$marker.Length)
+          # Replace interactive selection in a throwaway test-only copy:
+          $ps=[regex]::Replace($ps,'(?m)^  \$zip = Pick .*$','  $zip=$env:DYCLOK_FIXTURE_ZIP')
+          $ps=[regex]::Replace($ps,'(?m)^  \$exe = Pick .*$','  $exe=$env:DYCLOK_FIXTURE_EXE')
+          $ps=[regex]::Replace($ps,'(?s)  \$answer=\[System.Windows.Forms.MessageBox\]::Show\(\$text,.*?\[System.Windows.Forms.MessageBoxIcon\]::Question\)','  $answer=[System.Windows.Forms.DialogResult]::Yes')
+          if($ps -match "(?m)^  \`$zip = Pick" -or $ps -match '(?s)\$answer=\[System.Windows.Forms.MessageBox\]::Show'){
+            throw 'Fixture did not remove required interactive dialogs'
+          }
+          $testPs=Join-Path $root 'synthetic-test-script.ps1'
+          [IO.File]::WriteAllText($testPs,$ps)
+          $env:DYCLOK_FIXTURE_ZIP=$zip
+          $env:DYCLOK_FIXTURE_EXE=$exe
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $testPs
+          if($LASTEXITCODE -ne 0){throw 'Synthetic complete Chromium extraction failed'}
+          foreach($required in @(
+            'Chromium\Application\ginsbrowser.exe',
+            'Chromium\Application\142.0.7444.273\chrome.dll',
+            'Chromium\Application\142.0.7444.273\icudtl.dat')){
+            if(-not (Test-Path -LiteralPath (Join-Path $targetRoot $required) -PathType Leaf)){
+              throw ('Restoration failed for '+$required)
+            }
+          }
+          $installedHash=(Get-FileHash -LiteralPath (Join-Path $targetRoot 'Chromium\Application\ginsbrowser.exe') -Algorithm SHA256).Hash
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $testPs
+          if($LASTEXITCODE -eq 0){throw 'Existing Chromium overwrite was not rejected'}
+          $same=(Get-FileHash -LiteralPath (Join-Path $targetRoot 'Chromium\Application\ginsbrowser.exe') -Algorithm SHA256).Hash
+          if($installedHash -ne $same){throw 'Second invocation modified a previously installed kernel'}
+          Write-Host 'PASS: extract full synthetic kernel; reject overwrite; preserve binary SHA'
