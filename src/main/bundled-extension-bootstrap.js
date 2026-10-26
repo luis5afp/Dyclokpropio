@@ -15,6 +15,7 @@ const { ipcMain } = require('electron');
 const { installExtensionDownloadRetry } = require('./bundled-extension-download-retry.js');
 const { createExtensionDiagnosticWriter } = require('./extension-download-diagnostics.js');
 const { registerOpenStageDiagnostics } = require('./open-stage-diagnostics.js');
+const { createDiagnosticConsole } = require('./diagnostic-console.js');
 
 // Keep the original DICloak extension repository and integrity verification.
 // Retry a failed HTTPS download once, without turning false into success.
@@ -23,10 +24,17 @@ try {
 } catch (error) {
   console.warn('[Dyclokpropio] No se pudo activar el reintento de extensiones:', error.message);
 }
+// The opt-in session console is registered before the original Electron runtime.
+let diagnosticConsole = null;
+try {
+  diagnosticConsole = createDiagnosticConsole(ipcMain, require('electron').app);
+} catch (error) {
+  console.warn('[Dyclokpropio] No se pudo iniciar la consola de diagnóstico:', error.message);
+}
 // Traces per-stage profile opening without collecting profile IDs, cookies,
 // URLs, log text, filesystem locations or stack traces.
 try {
-  registerOpenStageDiagnostics(ipcMain, require('electron').app);
+  registerOpenStageDiagnostics(ipcMain, require('electron').app, { onEvent: diagnosticConsole && diagnosticConsole.onStage });
 } catch (error) {
   console.warn('[Dyclokpropio] No se pudo activar el diagnóstico de etapas:', error.message);
 }
