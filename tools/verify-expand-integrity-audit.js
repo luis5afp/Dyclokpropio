@@ -2,9 +2,11 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {transform,HOOK,DECISION,preparedBaseline}=require('./instrument-expand-integrity.js');
+const {transform,HOOK,DECISION,preparedBaseline,EXPECTED_PARAMS_SHA256}=require('./instrument-expand-integrity.js');
+const crypto=require('node:crypto');
 const {sanitize}=require('../src/main/diagnostic-console.js');
 const source=preparedBaseline();
+assert.equal(crypto.createHash('sha256').update(source).digest('hex'),EXPECTED_PARAMS_SHA256);
 const out=transform(source);
 assert.ok(out.includes('(DyclokExtensionAudit(m),'+DECISION+')'));
 assert.equal(out.split('checkExpansionSha256Hash(').length,source.split('checkExpansionSha256Hash(').length);
