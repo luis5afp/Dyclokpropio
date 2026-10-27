@@ -18,6 +18,7 @@ foreach($needed in @('tools/build-win-with-complete-chromium.ps1','tools/stage-f
 $actualSha=(Get-FileHash -LiteralPath $version -Algorithm SHA256).Hash.ToLowerInvariant()
 if($actualSha -ne $expectedSha){throw ('ZIP 142 distinto del recibido y revisado. SHA256='+$actualSha)}
 Add-Type -AssemblyName 'System.IO.Compression' -ErrorAction Stop
+Add-Type -AssemblyName 'System.IO.Compression.FileSystem' -ErrorAction Stop
 $zip=[System.IO.Compression.ZipFile]::OpenRead($version)
 try {
   $expectedNames=@('chrome.dll','chrome_elf.dll','resources.pak','icudtl.dat','v8_context_snapshot.bin')
