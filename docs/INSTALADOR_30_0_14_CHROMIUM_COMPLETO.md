@@ -69,3 +69,39 @@ La preparación automatizada conserva el código del motor, incluyendo
 `Chromium/User Data/` y `Chromium/Application/SetupMetrics/` para evitar
 republicar datos o identificadores de la instalación antigua. Pruebas
 sintéticas verifican esa separación.
+
+## Archivo adicional entregado: 142.0.7444.273.zip
+
+El usuario también entregó `142.0.7444.273.zip` (aprox. 191 MB).
+El entorno de lectura de archivos de la conversación devolvió un error de
+ejecución al intentar abrirlo; **su contenido no está verificado directamente**.
+Por la nomenclatura y el inventario de DICloak 2.8.17, se trata de la
+carpeta `Chromium/Application/142.0.7444.273/`, donde se esperan
+`chrome.dll`, `icudtl.dat`, `resources.pak`, `v8_context_snapshot.bin`
+y otros componentes.
+
+Se ha preparado importación de dos ZIP locales:
+
+- `Chromium.zip`: carpeta principal, `Application/ginsbrowser.exe`,
+  `Chromium/ginsbrowser/` y otros recursos.
+- `142.0.7444.273.zip`: carpeta nativa de versión, ya sea con sus
+  archivos en la raíz, en `142.0.7444.273/` o en
+  `Chromium/Application/142.0.7444.273/`.
+
+El importador combina las rutas SOLO en
+`Chromium/Application/142.0.7444.273/`; si encuentra archivos repetidos,
+rechaza contenidos diferentes y admite exclusivamente copias idénticas
+comparadas por SHA-256. También comprueba versión única, rutas seguras y
+que los ejecutables sean binarios Windows x64 de estructura PE válida.
+
+Compilación privada desde una copia autorizada de ambos ZIP:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-win-with-complete-chromium.ps1 -ArchivoZipAntiguo "C:\ruta\Chromium.zip" -ZipVersionChromium "C:\ruta\142.0.7444.273.zip"
+```
+
+Alternativa: ejecutar `tools/Dyclok_Compilar_v30_0_14_con_Chromium_zip.bat`,
+seleccionar el primer ZIP y después el segundo ZIP cuando se abra el
+cuadro opcional. Ninguna compilación publica archivos automáticamente.
+La validación del instalador debe usar el ZIP auténtico y confirmar la
+apertura del perfil 244 antes de considerarlo funcional.
