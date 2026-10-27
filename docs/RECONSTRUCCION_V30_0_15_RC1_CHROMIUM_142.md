@@ -1,6 +1,6 @@
 # Reconstruccion Dyclokpropio v30.0.15-rc1: Chromium 142.0.7444.273
 
-**ESTADO: fuente de reconstruccion experimental; NO se ha publicado un instalador.**
+**ESTADO: ZIP base completo recibido y verificado; fuente de reconstruccion experimental; NO se ha compilado ni publicado un nuevo instalador Windows.**
 
 ## Inventario probado del ZIP versionado
 - Archivo: 142.0.7444.273.zip
@@ -39,3 +39,17 @@ Si el ZIP base no contiene ginsbrowser.exe, no coincide la version, o alguna pru
 - Esta rama comparte codigo y documentacion, no distribuye el ZIP aportado por el usuario.
 - Antes de publicar un instalador: fuente completa autorizada, derechos de redistribucion comprobados, hash, CI Windows y prueba del perfil real con copia de seguridad previa.
 - No anunciar ni marcar esta version como estable mientras dichas verificaciones falten.
+
+## Resultado del ZIP base completo recibido (26-oct-2026)
+
+- Archivo: Chromium.zip
+- SHA256: `b38ffca00f8d90971b207f032d74b97dda7affe56017c584df14c81c52d672c7`
+- 340 entradas (307 archivos), comprobacion CRC ZIP correcta, sin rutas inseguras ni duplicados por mayusculas/minusculas.
+- Incluye `Chromium/Application/ginsbrowser.exe` (3.231.280 bytes), comprobado PE Windows x64; SHA256 `21c398f5c5771fca444114fd919e3656ef7ac3d62b2c0df330ea8a28ae307f26`.
+- `Chromium/Application/142.0.7444.273/chrome.dll`: SHA256 `f15100d61f86614c35172e9cc484f236f8a12f0746e562128d6e2a9aacef6f59`.
+- Los **264 archivos** del ZIP separado de version 142 son **identicos por SHA256** a los 264 archivos bajo `Chromium/Application/142.0.7444.273/` del ZIP base. No se necesita duplicar la version en el instalador.
+- `Chromium/version.json`: version principal del proveedor `142.1.7` (distinta del directorio del nucleo `142.0.7444.273`).
+- `Chromium/User Data/Crashpad/settings.dat` y dos archivos `Application/SetupMetrics/*.pma` no deben incluirse en el instalador; el stagging existente los excluye.
+- Elegibles para empaquetado: **304 archivos de runtime**.
+
+**Faltan pruebas de compilacion NSIS en Windows, arranque real del navegador y perfil 244.** No hay justificacion para afirmar aun que el error de apertura esta arreglado. El problema `gost.exe ENOENT` sigue abierto en la base experimental.
