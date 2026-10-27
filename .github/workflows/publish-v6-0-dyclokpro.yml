@@ -1,0 +1,131 @@
+name: Publicar Dyclokpro v6.0 Windows icono y nombre
+
+on:
+  push:
+    branches:
+      - 'release/v6.0-dyclokpro-branding'
+    paths:
+      - '.github/workflows/publish-v6-0-dyclokpro.yml'
+      - 'tools/release-v6-0-branding.py'
+      - 'release-build/v6.0/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dyclokpro-v6-0-release
+  cancel-in-progress: false
+
+jobs:
+  package-and-release:
+    if: github.repository == 'luis5afp/Dyclokpropio'
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout v6.0 release scripts
+        uses: actions/checkout@v4
+
+      - name: Confirm v6.0 does not already exist
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $releases=(& gh release list --repo $env:GITHUB_REPOSITORY --limit 100 --json tagName | ConvertFrom-Json)
+          if($LASTEXITCODE -ne 0){throw 'GitHub release check failed'}
+          if(@($releases | Where-Object {$_.tagName -eq 'v6.0'}).Count -gt 0){
+            throw 'BLOCKED: v6.0 already published; preserve immutable release'
+          }
+
+      - name: Verify v5.9 EXE used as the base
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          & gh release download 'v5.9' --repo $env:GITHUB_REPOSITORY --pattern 'Dyclokpropio_5.9_win_x64.exe' --dir $env:RUNNER_TEMP --clobber
+          if($LASTEXITCODE -ne 0){throw 'Missing published v5.9 original installer'}
+          $source=Join-Path $env:RUNNER_TEMP 'Dyclokpropio_5.9_win_x64.exe'
+          $hash=(Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($hash -ne '98e36c196372e56e1e79fdfd8705ba46d272b55b0ddcf0d7ad24209207d89ed3'){
+            throw 'BLOCKED: v5.9 installer changed'
+          }
+
+      - name: Prepare Windows icon dependencies
+        shell: pwsh
+        run: |
+          & python -m pip install --disable-pip-version-check 'Pillow==11.3.0'
+          if($LASTEXITCODE -ne 0){throw 'Could not prepare icon conversion'}
+
+      - name: Preserve Chromium and replace visible branding
+        shell: pwsh
+        run: |
+          $source=Join-Path $env:RUNNER_TEMP 'Dyclokpropio_5.9_win_x64.exe'
+          $destination=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-prepackaged'
+          & python tools/release-v6-0-branding.py --installer $source --out $destination --logo-base64 release-build/v6.0/Dyclokpro_icon.png.base64
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED: branding or original ASAR verification failed'}
+          $icon=Join-Path $destination 'Dyclokpro.ico'
+          if(-not(Test-Path $icon -PathType Leaf)){throw 'Missing branded icon'}
+          Copy-Item -LiteralPath $icon -Destination 'release-build/v6.0/Dyclokpro.ico' -Force
+          if(-not(Test-Path (Join-Path $destination 'Dyclokpro.exe'))){throw 'Branded app EXE missing'}
+          if(Test-Path (Join-Path $destination 'DICloak.exe')){throw 'Legacy filename still installed'}
+
+      - name: Build full Dyclokpro v6.0 Windows NSIS EXE
+        working-directory: release-build/v6.0
+        shell: pwsh
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          & npm install --no-audit --no-fund --ignore-scripts
+          if($LASTEXITCODE -ne 0){throw 'electron-builder dependency installation failed'}
+          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-prepackaged'
+          & npx electron-builder --win nsis --x64 --prepackaged $app --publish never --config electron-builder.json
+          if($LASTEXITCODE -ne 0){throw 'NSIS packaging or Windows icon rewrite failed'}
+          $out='out/Dyclokpro_6.0_win_x64.exe'
+          if(-not(Test-Path $out -PathType Leaf)){throw 'No real branded EXE generated'}
+          if((Get-Item $out).Length -lt 180000000){throw 'EXE unexpectedly small'}
+          $sha=(Get-FileHash $out -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  Dyclokpro_6.0_win_x64.exe" | Set-Content 'out/SHA256SUMS_v6.0.txt' -Encoding ascii
+          Write-Host "DYCLOKPRO_V6_SHA256=$sha"
+
+      - name: Validate EXE content and publish v6.0
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $exe='release-build/v6.0/out/Dyclokpro_6.0_win_x64.exe'
+          $sum='release-build/v6.0/out/SHA256SUMS_v6.0.txt'
+          $actual=(Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          if((Get-Content $sum -Raw).Trim() -ne "$actual  Dyclokpro_6.0_win_x64.exe"){
+            throw 'Installer checksum mismatch'
+          }
+          $stream=[System.IO.File]::OpenRead((Resolve-Path $exe).Path)
+          try {
+            $buf=New-Object byte[] 2
+            if($stream.Read($buf,0,2) -ne 2 -or $buf[0] -ne 77 -or $buf[1] -ne 90){
+              throw 'Not a Windows executable'
+            }
+          }finally{ $stream.Dispose() }
+          & 7z l $exe | Out-Null
+          if($LASTEXITCODE -ne 0){throw 'EXE 7z/NSIS integrity check failed'}
+          $notes=@'
+          # Dyclokpro v6.0 - Nuevo nombre e icono
+
+          Instalador Windows 64 bits completo, actualizado desde v5.9.
+
+          - Nombre publico e instalador: Dyclokpro.
+          - EXE y accesos directos: Dyclokpro.
+          - Icono de Windows, bandeja, pantalla de acceso y principales logotipos: imagen enviada para el proyecto.
+          - Titulo de interfaz y textos de marca traducidos: Dyclokpro.
+          - Se conserva la identidad interna de almacenamiento de perfiles para no perder configuracion ni sesiones.
+          - Chromium original 142.0.7444.273 y comportamiento de perfiles sin modificaciones.
+          - Siguen desactivadas las comprobaciones y descargas automaticas de actualizaciones introducidas en v5.9.
+          - No se incluyen SourceData ni directorios privados de perfil en el instalador.
+
+          Se validan el archivo base, metadatos ASAR, sintaxis del codigo modificado, iconos y formato Windows NSIS.
+          La apertura de perfiles reales debe comprobarse en el PC de destino antes de retirar cualquier version anterior.
+          La aplicacion puede contener identificadores tecnicos antiguos de servicios de terceros; no deben alterarse porque romperian integraciones.
+          Redistribuir componentes de terceros requiere las licencias y permisos correspondientes.
+          '@
+          & gh release create 'v6.0' $exe $sum --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'Dyclokpro v6.0 - Nuevo nombre e icono' --notes $notes --latest
+          if($LASTEXITCODE -ne 0){throw 'Release v6.0 upload failed'}
+          Write-Host 'PUBLICADO_DYCLOKPRO_V6_EXE=true'
