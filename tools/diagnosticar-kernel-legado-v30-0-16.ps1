@@ -88,7 +88,7 @@ if (-not (Test-Path -LiteralPath $outBase -PathType Container)) {
   $outBase = [Environment]::GetFolderPath('Desktop')
 }
 $out = Join-Path $outBase 'Dyclok_Informe_Kernel_30_0_16.txt'
-[System.IO.File]::WriteAllLines($out,$lines.ToArray(),(New-Object System.Text.UTF8Encoding($false)))
+[System.IO.File]::WriteAllLines($out,$lines.ToArray(),([System.Text.UTF8Encoding]::new($false)))
 Write-Host ''
 Write-Host ('Informe guardado: '+$out) -ForegroundColor Green
 Write-Host 'Adjunta el informe. No contiene rutas privadas, cookies, contrasenas, ni IDs de perfiles.'
