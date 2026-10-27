@@ -1,0 +1,49 @@
+name: Verify local Chromium 142 reconstruction source (no binaries)
+on:
+  push:
+    branches:
+      - feature/v30-0-15-rc1-chromium-142-reconstruccion-20261026
+    paths:
+      - 'tools/build-v30-0-15-rc1-from-user-zips.ps1'
+      - 'docs/RECONSTRUCCION_V30_0_15_RC1_CHROMIUM_142.md'
+      - '.github/workflows/verify-v30-0-15-rc1-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-source:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell 5.1 and validate fail-closed requirements
+        shell: powershell
+        run: |
+          $script='tools/build-v30-0-15-rc1-from-user-zips.ps1'
+          $errors=$null; $tokens=$null
+          [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $script).Path,[ref]$tokens,[ref]$errors)
+          if(@($errors).Count){
+            foreach($e in $errors){ Write-Host $e.Message }
+            throw 'PowerShell parse errors'
+          }
+          $source=Get-Content -LiteralPath $script -Raw
+          foreach($marker in @(
+            '142.0.7444.273',
+            '02ac2000010e709262394e59a2875a7efab34d5fdc8fa0886d8517c70a87f5ca',
+            'ChromiumBaseZip',
+            'ChromiumVersionZip',
+            'build-win-with-complete-chromium.ps1',
+            'completeChromiumBundled=true',
+            'nativeCacheIpcRegistered=true',
+            'SHA256SUMS-v30.0.15-rc1.txt',
+            'realProfileOpeningValidated=false',
+            'redistributionRights=NOT_VERIFIED'
+          )){
+            if(-not $source.Contains($marker)){throw ('Missing critical safeguard: '+$marker)}
+          }
+          foreach($prohibited in @('gh release create', 'git push', 'Remove-Item -Recurse -Force')) {
+            if($source.Contains($prohibited)){throw ('Prohibited unreviewed action: '+$prohibited)}
+          }
+          Write-Host 'PASS: local RC1 source syntax + integrity guardrails'
+          Write-Host 'NOT_TESTED: proprietary native browser / real profile 244'
