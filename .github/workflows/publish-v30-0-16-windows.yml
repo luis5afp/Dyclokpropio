@@ -1,0 +1,227 @@
+name: Publicar v30.0.16 Windows con Chromium 142 completo
+
+on:
+  workflow_dispatch:
+    inputs:
+      archive_sha256:
+        description: "SHA256 del ZIP completo de Chromium 142 autorizado"
+        required: true
+        type: string
+      redistribution_authorized:
+        description: "Confirmo permiso para redistribuir estos binarios en GitHub Releases"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dyclok-v30-0-16-publicacion
+  cancel-in-progress: false
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Confirm redistribution and protected ZIP source
+        shell: pwsh
+        env:
+          AUTHORIZED: ${{ inputs.redistribution_authorized }}
+          ARCHIVE_URL: ${{ secrets.DYCLOK_AUTHORIZED_CHROMIUM_ARCHIVE_URL }}
+          EXPECTED_SHA: ${{ inputs.archive_sha256 }}
+        run: |
+          if($env:AUTHORIZED -ne 'true'){throw 'BLOCKED: redistribution authorization required'}
+          if([string]::IsNullOrWhiteSpace($env:ARCHIVE_URL) -or $env:ARCHIVE_URL -notmatch '^https://'){
+            throw 'BLOCKED: set DYCLOK_AUTHORIZED_CHROMIUM_ARCHIVE_URL secret to a private authorized full Chromium ZIP'
+          }
+          if($env:EXPECTED_SHA -notmatch '^[a-fA-F0-9]{64}$'){
+            throw 'BLOCKED: exact original archive SHA256 required'
+          }
+
+      - name: Preserve exact protected Javascript bytes
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Check out release controller and verified patch
+        uses: actions/checkout@v4
+        with:
+          path: controls
+
+      - name: Check out Chromium 142 candidate
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v30-0-15-rc1-chromium-142-reconstruccion-20261026
+          path: source
+
+      - name: Verify authorized complete Chromium ZIP (never log its URL)
+        shell: pwsh
+        env:
+          ARCHIVE_URL: ${{ secrets.DYCLOK_AUTHORIZED_CHROMIUM_ARCHIVE_URL }}
+          EXPECTED_SHA: ${{ inputs.archive_sha256 }}
+        run: |
+          $archive=Join-Path $env:RUNNER_TEMP 'authorized-chromium-142.zip'
+          Invoke-WebRequest -Uri $env:ARCHIVE_URL -OutFile $archive -MaximumRedirection 3
+          $actual=(Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash
+          if($actual -ine $env:EXPECTED_SHA){
+            Remove-Item -LiteralPath $archive -Force -ErrorAction SilentlyContinue
+            throw 'BLOCKED: Chromium ZIP SHA256 mismatch'
+          }
+          Write-Host 'AUTHORIZED_CHROMIUM_SHA256_VERIFIED=True'
+
+      - name: Verify protected original runtime and prepare dependencies
+        shell: pwsh
+        working-directory: source
+        run: |
+          npm install --legacy-peer-deps
+          if($LASTEXITCODE -ne 0){throw 'npm dependencies failed'}
+          foreach($script in @(
+            'tools/unpack-bundled-extension.js',
+            'tools/verify-build-assets.js',
+            'tools/verify-original-plugin-isolation.js',
+            'tools/verify-safe-base.js'
+          )){
+            & node $script
+            if($LASTEXITCODE -ne 0){throw "Original runtime validation failed: $script"}
+          }
+
+      - name: Correct only identified null stdin access and validate syntax
+        shell: pwsh
+        working-directory: source
+        run: |
+          & node '../controls/tools/patch-fo-stdin-v30-0-16.js' --self-test
+          if($LASTEXITCODE -ne 0){throw 'FO patch self-test failed'}
+          & node '../controls/tools/patch-fo-stdin-v30-0-16.js' --apply .
+          if($LASTEXITCODE -ne 0){throw 'FO patch not safely applicable'}
+
+      - name: Stage real Chromium 142.0.7444.273 from verified ZIP
+        shell: pwsh
+        working-directory: source
+        run: |
+          $archive=Join-Path $env:RUNNER_TEMP 'authorized-chromium-142.zip'
+          & node tools/stage-full-chromium.js --archive $archive
+          if($LASTEXITCODE -ne 0){throw 'The provided Chromium ZIP is incomplete or incompatible'}
+          & node tools/stage-full-chromium.js --verify-only
+          if($LASTEXITCODE -ne 0){throw 'Chromium PE validation failed'}
+          if(-not (Test-Path 'Chromium/Application/142.0.7444.273/chrome.dll')){
+            throw 'Expected 142.0.7444.273 kernel was not supplied'
+          }
+          $count=@(Get-ChildItem -LiteralPath 'Chromium' -File -Recurse).Count
+          if($count -ne 304){throw "The validated original inventory has 304 files, got $count"}
+          Write-Host 'NATIVE_CHROMIUM_142_FILES_VERIFIED=304'
+
+      - name: Compile Windows NSIS installer
+        shell: pwsh
+        working-directory: source
+        run: |
+          & npx electron-builder install-app-deps
+          if($LASTEXITCODE -ne 0){throw 'Electron native dependency failure'}
+          & npm run build:win -- --publish never
+          if($LASTEXITCODE -ne 0){throw 'NSIS build failure'}
+
+      - name: Verify that installed Chromium files are byte-identical
+        shell: pwsh
+        working-directory: source
+        run: |
+          & node tools/verify-chromium-bundle.js release/win-unpacked
+          if($LASTEXITCODE -ne 0){throw 'Bundled Chromium hash mismatch'}
+          foreach($p in @('Dyclokpropio.exe','resources/app.asar','logo.ico','Chromium/Application/ginsbrowser.exe','Chromium/Application/142.0.7444.273/chrome.dll')){
+            if(-not (Test-Path -LiteralPath (Join-Path 'release/win-unpacked' $p) -PathType Leaf)){
+              throw "Missing installed file: $p"
+            }
+          }
+
+      - name: Smoke-test real Electron window and original IPC on Windows
+        shell: pwsh
+        working-directory: source
+        run: |
+          $started=Get-Date
+          $exe=(Resolve-Path 'release/win-unpacked/Dyclokpropio.exe').Path
+          $proc=Start-Process -FilePath $exe -PassThru
+          try{
+            Start-Sleep -Seconds 25
+            $proc.Refresh()
+            if($proc.HasExited){throw "RELEASE BLOCKED: Electron exited (code $($proc.ExitCode))"}
+            $files=@(Get-ChildItem -LiteralPath $env:APPDATA -File -Filter 'dyclok-startup-health.json' -Recurse -ErrorAction SilentlyContinue |
+              Where-Object {$_.LastWriteTime -ge $started.AddSeconds(-5)} |
+              Sort-Object LastWriteTime -Descending)
+            if($files.Count -eq 0){throw 'Electron did not write fresh startup-health status'}
+            $state=Get-Content -LiteralPath $files[0].FullName -Raw | ConvertFrom-Json
+            if($state.originalEntrypointLoaded -ne $true -or $state.electronReady -ne $true -or
+               $state.mainWindowCreated -ne $true -or $state.originalCacheHandlerRegistered -ne $true){
+              throw 'RELEASE BLOCKED: real Electron window/native cache IPC unavailable'
+            }
+            if($state.uncaughtErrorClass -ne 'none' -or $state.mainEntrypointErrorClass -ne 'none'){
+              throw 'RELEASE BLOCKED: Electron still reports an uncaught startup exception'
+            }
+            Write-Host 'ELECTRON_MAIN_WINDOW_AND_CACHE_IPC_VERIFIED=True'
+          }finally{
+            $proc.Refresh()
+            if(-not $proc.HasExited){Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue}
+          }
+
+      - name: Prepare EXE matching GitHub Releases and SHA256 checksums
+        shell: pwsh
+        working-directory: source
+        run: |
+          $original='release/Dyclokpropio_3.0.0_win_x64.exe'
+          if(-not (Test-Path -LiteralPath $original -PathType Leaf)){throw 'NSIS output is missing'}
+          New-Item -Path 'release-delivery' -ItemType Directory -Force | Out-Null
+          $name='Dyclokpropio_30.0.16_win_x64.exe'
+          Copy-Item -LiteralPath $original -Destination "release-delivery/$name"
+          $sha=(Get-FileHash -LiteralPath "release-delivery/$name" -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  $name" | Set-Content 'release-delivery/SHA256SUMS.txt' -Encoding ascii
+          @(
+            'deliveryVersion=30.0.16',
+            'releaseType=EXPERIMENTAL_PRERELEASE',
+            'internalRuntimeVersion=3.0.0',
+            'chromiumVersion=142.0.7444.273',
+            'chromiumFilesHashVerified=304',
+            'electronMainWindow=true',
+            'originalCacheIpc=true',
+            'stdinGuardInstalled=true',
+            'realUserProfilesValidated=false',
+            'gostExeENOENT=NOT_INDEPENDENTLY_RESOLVED'
+          ) | Set-Content 'release-delivery/TEST_STATUS.txt' -Encoding ascii
+          Write-Host "PRE_RELEASE_EXE_SHA256=$sha"
+
+      - name: Publish tested executable as v30.0.16 GitHub prerelease
+        shell: pwsh
+        working-directory: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag='v30.0.16'
+          & gh release view $tag --repo $env:GITHUB_REPOSITORY --json tagName 2>$null | Out-Null
+          if($LASTEXITCODE -eq 0){throw 'RELEASE BLOCKED: v30.0.16 already published'}
+          $name='Dyclokpropio_30.0.16_win_x64.exe'
+          $hash=(Get-FileHash -LiteralPath "release-delivery/$name" -Algorithm SHA256).Hash.ToLowerInvariant()
+          if((Get-Content 'release-delivery/SHA256SUMS.txt' -Raw).Trim() -ne "$hash  $name"){
+            throw 'RELEASE BLOCKED: installer SHA256 mismatch'
+          }
+          $sourceSha=(& git rev-parse HEAD).Trim()
+          $notes=@'
+          VERSION PRELIMINAR / NO ESTABLE: Dyclokpropio v30.0.16 Windows x64.
+          Incluye Chromium 142.0.7444.273 (304 archivos SHA256 verificados), instalador NSIS,
+          correccion del acceso a stdin cuando el proceso auxiliar no existe,
+          y prueba de ventana Electron e IPC nativo en Windows CI.
+
+          IMPORTANTE: no se ha validado apertura real de perfiles en el PC del usuario.
+          No desinstales la version funcional ni sobrescribas los perfiles.
+          Haz una copia de seguridad antes de instalar en una carpeta separada.
+          '@
+          & gh release create $tag 'release-delivery/Dyclokpropio_30.0.16_win_x64.exe' 'release-delivery/SHA256SUMS.txt' 'release-delivery/TEST_STATUS.txt' --repo $env:GITHUB_REPOSITORY --target $sourceSha --title 'Dyclokpropio v30.0.16 (PRUEBA - Chromium completo)' --notes $notes --prerelease --latest=false
+          if($LASTEXITCODE -ne 0){throw 'GitHub Release upload failed'}
+          Write-Host 'REAL_GITHUB_EXE_RELEASE_V30_0_16_PUBLISHED=True'
+
+      - name: Remove original binary ZIP from runner
+        if: always()
+        shell: pwsh
+        run: |
+          $archive=Join-Path $env:RUNNER_TEMP 'authorized-chromium-142.zip'
+          if(Test-Path -LiteralPath $archive){
+            Remove-Item -LiteralPath $archive -Force -ErrorAction SilentlyContinue
+          }
