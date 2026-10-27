@@ -35,7 +35,46 @@ function filenameSafe(relative){
   const parts=relative.split('/');
   return parts.every(part=>part.length>0&&part!=='.'&&part!=='..'&& !/[<>|?*]/.test(part)&& !/[. ]$/.test(part)&& !/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)/i.test(part));
 }
-function inspect(zip){
+
+/** Map the separately compressed VERSION folder into Chromium/Application/VERSION.
+ * Supports VERSION.zip with entries "chrome.dll", "VERSION/chrome.dll" or
+ * "Chromium/Application/VERSION/chrome.dll" (and bounded wrapper folders).
+ */
+function versionArchiveEntries(filename){
+  const zip=new AdmZip(filename),raw=zip.getEntries().filter(e=>!e.isDirectory);
+  const candidates=[];
+  const basename=path.basename(filename).replace(/\.zip$/i,'');
+  for(const e of raw){
+    const n=normal(e.entryName);
+    if(!filenameSafe(n))throw Error('Unsafe source path in version archive');
+    const m=n.match(/(?:^|\/)(\d+\.\d+\.\d+\.\d+)\/chrome\.dll$/i);
+    if(m){
+      const version=m[1],prefix=n.slice(0,n.length-'chrome.dll'.length);
+      candidates.push({version,prefix});
+    } else if(n.toLowerCase()==='chrome.dll'&&/^\d+\.\d+\.\d+\.\d+$/.test(basename)){
+      candidates.push({version:basename,prefix:''});
+    }
+  }
+  if(candidates.length!==1)throw Error('Separate version ZIP needs exactly one chrome.dll in one unambiguous version folder');
+  const {version,prefix}=candidates[0];
+  if(prefix.split('/').filter(Boolean).length>6)throw Error('Version folder nesting too deep');
+  const mapped=[];
+  for(const e of raw){
+    const src=normal(e.entryName);
+    if(!src.toLowerCase().startsWith(prefix.toLowerCase()))continue;
+    const tail=src.slice(prefix.length);
+    if(!tail)continue;
+    if(!filenameSafe(tail))throw Error('Unsafe member path in version ZIP');
+    const relative='Application/'+version+'/'+tail;
+    if(!filenameSafe(relative)||!isRuntimeAsset(relative))throw Error('Invalid version archive resource');
+    if((e.attr>>>16&0xf000)===0xa000)throw Error('Symlink in version archive rejected');
+    mapped.push({zipEntry:e,relative,size:e.header.size});
+  }
+  if(!mapped.some(e=>e.relative.toLowerCase()==='application/'+version+'/chrome.dll'))throw Error('Separate version archive DLL missing');
+  return {version,entries:mapped};
+}
+
+function inspect(zip,versionArchive=null){
   const list=zip.getEntries();
   // ZIPs made by Windows can contain Chromium/ or directly its contents.
   // Accept no more than three harmless wrapper directories, reject ambiguity.
@@ -64,6 +103,24 @@ function inspect(zip){
       entries.push({zipEntry:e,relative,size:e.header.size});
     }
     if(entries.length>MAX_FILES||bytes>MAX_BYTES)throw Error('Chromium archive exceeds size/count bounds');
+  }
+  if(versionArchive){
+    const extra=versionArchiveEntries(versionArchive);
+    const seen=new Map(entries.map(e=>[e.relative.toLowerCase(),e]));
+    for(const added of extra.entries){
+      const name=added.relative.toLowerCase();
+      const previous=seen.get(name);
+      if(previous){
+        if(previous.size!==added.size ||
+           digest(previous.zipEntry.getData())!==digest(added.zipEntry.getData()))
+          throw Error('Conflicting Chromium ZIP resources: '+added.relative);
+        continue; // Two identical copies are safe; preserve primary archive source.
+      }
+      seen.set(name,added);
+      entries.push(added);
+      bytes+=added.size;
+      if(entries.length>MAX_FILES||bytes>MAX_BYTES)throw Error('Combined Chromium archives exceed size/count bounds');
+    }
   }
   if(entries.length<40)throw Error('Incomplete Chromium tree: fewer than 40 files');
   const files=new Map(entries.map(e=>[e.relative.toLowerCase(),e]));
@@ -101,7 +158,7 @@ function stage(archive,into,opts={}){
   const target=path.resolve(into,'Chromium');
   if(fs.existsSync(target))throw Error('Chromium/ already exists; refusing overwrite');
   const zip=new AdmZip(archive);
-  const inventory=inspect(zip);
+  const inventory=inspect(zip,opts.versionArchive||null);
   const stageDir=path.join(path.dirname(target),'.dyclok-chromium-stage-'+crypto.randomBytes(8).toString('hex'));
   fs.mkdirSync(stageDir,{recursive:false});
   const hashes={};
@@ -126,7 +183,7 @@ function stage(archive,into,opts={}){
     if(fs.existsSync(target))throw Error('Chromium folder appeared concurrently');
     fs.renameSync(stageDir,target); committed=true;
     return {version:inventory.version,files:inventory.entries.length,bytes:inventory.bytes,
-            archiveSha256:sha256File(archive),criticalFiles:hashes};
+            archiveSha256:sha256File(archive),versionArchiveSha256:opts.versionArchive?sha256File(opts.versionArchive):null,criticalFiles:hashes};
   }finally{
     if(!committed)fs.rmSync(stageDir,{recursive:true,force:true});
   }
@@ -150,11 +207,13 @@ function main(args){
   if(args.includes('--verify-only')){
     const x=validateInstalled(process.cwd());console.log('CHROMIUM_VERIFIED='+JSON.stringify(x));return;
   }
-  if(args.length!==2||args[0]!=='--archive')throw Error('Usage: node tools/stage-full-chromium.js --archive OWN_DICloak.zip  or  --verify-only');
-  if(!fs.existsSync(args[1]))throw Error('Authorized source ZIP not found');
-  const info=stage(args[1],process.cwd(),{requirePE:true});
+  if(args.length!==2&&args.length!==4 || args[0]!=='--archive' || args.length===4&&args[2]!=='--version-archive')
+    throw Error('Usage: node tools/stage-full-chromium.js --archive Chromium.zip [--version-archive 142.0.7444.273.zip] or --verify-only');
+  if(!fs.existsSync(args[1]))throw Error('Authorized Chromium ZIP not found');
+  if(args.length===4&&!fs.existsSync(args[3]))throw Error('Separate native version ZIP not found');
+  const info=stage(args[1],process.cwd(),{requirePE:true,versionArchive:args.length===4?args[3]:null});
   validateInstalled(process.cwd());
   console.log('CHROMIUM_STAGED='+JSON.stringify(info));
 }
 if(require.main===module)try{main(process.argv.slice(2))}catch(err){console.error('CHROMIUM_PRECHECK_FAILED:',err.message);process.exitCode=1}
-module.exports={filenameSafe,isRuntimeAsset,inspect,stage,validateInstalled,assertWindowsX64PE};
+module.exports={filenameSafe,isRuntimeAsset,inspect,stage,validateInstalled,assertWindowsX64PE,versionArchiveEntries};
