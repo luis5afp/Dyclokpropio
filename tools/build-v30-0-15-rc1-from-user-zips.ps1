@@ -8,10 +8,13 @@ param(
 $ErrorActionPreference='Stop'
 $expectedVersion='142.0.7444.273'
 $expectedSha='02ac2000010e709262394e59a2875a7efab34d5fdc8fa0886d8517c70a87f5ca'
+$expectedBaseSha='b38ffca00f8d90971b207f032d74b97dda7affe56017c584df14c81c52d672c7'
 $root=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $base=(Resolve-Path -LiteralPath $ChromiumBaseZip).Path
 $version=(Resolve-Path -LiteralPath $ChromiumVersionZip).Path
 if($base -eq $version){throw 'El ZIP base y el ZIP de version deben ser distintos'}
+$actualBaseSha=(Get-FileHash -LiteralPath $base -Algorithm SHA256).Hash.ToLowerInvariant()
+if($actualBaseSha -ne $expectedBaseSha){throw ('Chromium.zip no coincide con el archivo base validado. SHA256='+$actualBaseSha)}
 foreach($needed in @('tools/build-win-with-complete-chromium.ps1','tools/stage-full-chromium.js')){
   if(-not (Test-Path -LiteralPath (Join-Path $root $needed) -PathType Leaf)){throw ('Falta constructor necesario: '+$needed)}
 }
