@@ -76,3 +76,14 @@ Se identifico otro bloqueo en el kit de reanudacion (26-oct-2026): el script inv
 El kit local `Dyclok_v30.0.15-rc1_KIT_REANUDAR_INTEGRIDAD_CORREGIDA.zip` reemplaza **solo en el flujo de reanudacion** la verificacion pristina por una verificacion con los hashes post-instrumentacion arriba, conservando los hashes originales de otros nueve archivos protegidos, identidad de `package.json`, dependencia y mecanismo seguro de aviso. Verifica asimismo el panel generado contra su fuente. El kit evita el BOM de archivos `.bat`. El constructor de compilacion desde cero DEBE seguir utilizando la verificacion pristina **antes** de aplicar cambios de renderer.
 
 Este kit es experimental: se verifico estructura ZIP y sintaxis del verificador JS en Linux; no se ha ejecutado en el equipo Windows del usuario ni pasado el build NSIS o la apertura real del perfil 244.
+
+## Primer instalador Windows empaquetado y fallo en paso 7 (26-oct-2026)
+
+El usuario obtuvo un build NSIS `release/Dyclokpropio_3.0.0_win_x64.exe` y el verificador `BUNDLED_CHROMIUM_COMPLETE` con **304/304 archivos, versiones y SHA256 coincidentes**. La validacion de Electron/IPC del paso 7 rechazo la entrega: `TypeError: Cannot read properties of null (reading 'stdin')`, `Fn`, bundle `main-CuCOh59n.js`, columna **2768493**.
+
+Analisis estatico del bundle ORIGINAL en GitHub:
+- Variable compartida `fo` del subproceso `DicSyncService.exe` arranca como `null`; la funcion de envio `Fn` intenta acceder a `fo[stdin]` para registrar un evento.
+- Existe un callback del evento `process.on('exit')` que llama a la rutina `mp`, que a su vez llama a `Fn` sin garantizar que `fo` este disponible.
+- Por tanto el TypeError puede ser **secundario durante el cierre**, y no permite concluir que el origen de la salida sea DicSyncService o Chromium. No se debe ocultarlo ni inventar que el arranque paso.
+
+Siguiente diagnostico: inspeccion SOLO LECTURA de los campos filtrados de `dyclok-startup-health.json` y de la presencia de `DicSyncService.exe` bajo el arbol instalado. El kit facilitado al usuario se llama `Dyclok_v30.0.15-rc1_DIAGNOSTICAR_ARRANQUE.zip`; genera `RESULTADO_ARRANQUE.txt`, sin ejecutar Electron, modificar perfiles ni recopilar cookies/URLs/rutas de usuario. **No se modifica el bundle original ni se marca estable la compilacion.**
