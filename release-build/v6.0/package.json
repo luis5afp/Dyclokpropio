@@ -1,0 +1,9 @@
+{
+  "name": "dyclokpro-release",
+  "version": "6.0.0",
+  "private": true,
+  "description": "Dyclokpro branded Windows NSIS release",
+  "devDependencies": {
+    "electron-builder": "26.15.3"
+  }
+}
