@@ -84,7 +84,8 @@ def patch(root):
     require_hash(asar, PATCHED_ASAR)
     js.write_bytes(fixed)
     require_hash(js, PATCHED_JS)
-    subprocess.run(["node", "--check", str(js)], check=True)
+    with js.open("rb") as module_source:
+        subprocess.run(["node", "--check", "--input-type=module"], stdin=module_source, check=True)
     print("UPDATE_CHECK_AND_DOWNLOAD_DISABLED=true")
     print("JS_SHA256=" + PATCHED_JS)
     print("ASAR_SHA256=" + PATCHED_ASAR)
