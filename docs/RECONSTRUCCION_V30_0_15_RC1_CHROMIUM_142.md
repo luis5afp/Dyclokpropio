@@ -53,3 +53,16 @@ Si el ZIP base no contiene ginsbrowser.exe, no coincide la version, o alguna pru
 - Elegibles para empaquetado: **304 archivos de runtime**.
 
 **Faltan pruebas de compilacion NSIS en Windows, arranque real del navegador y perfil 244.** No hay justificacion para afirmar aun que el error de apertura esta arreglado. El problema `gost.exe ENOENT` sigue abierto en la base experimental.
+
+## Diagnostico real del primer build Windows (26-oct-2026)
+
+El primer intento en PC alcanzo exitosamente `Step 4/7`: verifico los dos ZIP por SHA256 y extrajo **304 archivos** de runtime (444780491 bytes), incluyendo ginsbrowser.exe y chrome.dll x64. Paso la compatibilidad e instrumentacion del renderer. **Step 5/7 fallo** durante `npx electron-builder install-app-deps`, al reconstruir `bufferutil` con node-gyp:
+
+```text
+Error: Could not find any Visual Studio installation to use
+node-gyp failed to rebuild .../node_modules/bufferutil
+```
+
+Se trata de **una dependencia faltante de compilacion en la PC**, no de una discrepancia de Chromium. Instalar **Build Tools for Visual Studio 2022** desde Microsoft (https://aka.ms/vs/17/release/vs_buildtools.exe), elegir **Desktop development with C++**, **MSVC x64/x86**, **MSBuild** y un **Windows SDK**, y abrir una terminal nueva. node-gyp puede requerir tambien Python 3. La cantidad de avisos npm sobre paquetes descontinuados y las vulnerabilidades auditadas requieren revision posterior; no prueban por si mismas fallo en Chromium ni deben solventarse ejecutando `npm audit fix --force` sin analisis.
+
+Para ahorrar repetir etapas 1-4, se ha proporcionado un **kit independiente para reanudar desde paso 5** al usuario. Comprueba el renderer final, hashes de chrome.dll y ginsbrowser.exe, baseline protegido, MSVC, empaquetado byte a byte y arranque electron/IPC. **No publica automaticamente ni permite llamar estable al resultado.** Esta ayuda no ha sido ejecutada en la PC del usuario aun.
