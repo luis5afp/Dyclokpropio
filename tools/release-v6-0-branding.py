@@ -15,7 +15,7 @@ from PIL import Image
 SRC_SHA = "98e36c196372e56e1e79fdfd8705ba46d272b55b0ddcf0d7ad24209207d89ed3"
 SRC_ASAR_SHA = "0e2b3cb2375b20e40ddc4a56d36841c1be64024f6dfa1e7e553fbd411de49c5d"
 PATCHED_UPDATE_JS_SHA = "d9095f040f99cd8104d624a7385716cc84a4b77bc4b475139c6d3e8765da3a3e"
-ICON_INPUT_SHA = "b109d4b64ea568ed1f3897797e5a24b301ffa0c3f4c99f725b704b030685ba9d"
+ICON_INPUT_SHA = "389e9025df97f2743609670d00f13b349854cec167b758ab7c72bd32df8f9d46"
 SIG = bytes.fromhex("377abcaf271c")
 NAME = "Dyclokpro"
 
@@ -68,7 +68,7 @@ def extract(exe, dest):
 
 def prepare_icon(asset_file, dest):
     raw=base64.b64decode(asset_file.read_text(encoding="ascii").strip(),validate=True)
-    if not raw.startswith(bytes.fromhex("89504e470d0a1a0a")):
+    if sha(raw) != ICON_INPUT_SHA or not raw.startswith(bytes.fromhex("89504e470d0a1a0a")):
         raise RuntimeError("User icon resource is not a PNG file")
     import io
     image=Image.open(io.BytesIO(raw))
@@ -104,7 +104,7 @@ def modify_asar(root, canvas, ico):
     asar=root/"resources/app.asar"
     with asar.open("rb") as f:
         a,b,c,d=struct.unpack("<IIII", f.read(16))
-        if a!=4 or c!=d+4 or b<d+8:
+        if a!=4 or c!=d+4+(-d)%4 or b!=d+8+(-d)%4:
             raise RuntimeError("Unexpected ASAR format")
         original=f.read(d)
         hdr=json.loads(original)
@@ -176,7 +176,7 @@ def modify_asar(root, canvas, ico):
     # segment; moving the whole segment preserves every original file offset.
     rewritten=json.dumps(hdr,separators=(",",":"),ensure_ascii=True).encode("utf8")
     pad=(-len(rewritten))%4
-    prefix=struct.pack("<IIII",4,8+len(rewritten)+pad,4+len(rewritten),len(rewritten))
+    prefix=struct.pack("<IIII",4,8+len(rewritten)+pad,4+len(rewritten)+pad,len(rewritten))
     previous_data_offset=8+b
     temp=asar.with_suffix(".rebrand-temp.asar")
     with asar.open("rb") as old, temp.open("wb") as new:
@@ -186,7 +186,7 @@ def modify_asar(root, canvas, ico):
     temp.replace(asar)
     with asar.open("rb") as f:
         pa,pb,pc,pd=struct.unpack("<IIII",f.read(16))
-        if pa!=4 or pb!=8+pd+(-pd)%4 or pc!=pd+4:
+        if pa!=4 or pb!=8+pd+(-pd)%4 or pc!=pd+4+(-pd)%4:
             raise RuntimeError("ASAR header rebuild failed")
         json.loads(f.read(pd))
     print("ASAR_BRANDING_METADATA_VERIFIED=true")
