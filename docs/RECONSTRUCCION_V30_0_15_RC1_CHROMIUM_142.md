@@ -66,3 +66,13 @@ node-gyp failed to rebuild .../node_modules/bufferutil
 Se trata de **una dependencia faltante de compilacion en la PC**, no de una discrepancia de Chromium. Instalar **Build Tools for Visual Studio 2022** desde Microsoft (https://aka.ms/vs/17/release/vs_buildtools.exe), elegir **Desktop development with C++**, **MSVC x64/x86**, **MSBuild** y un **Windows SDK**, y abrir una terminal nueva. node-gyp puede requerir tambien Python 3. La cantidad de avisos npm sobre paquetes descontinuados y las vulnerabilidades auditadas requieren revision posterior; no prueban por si mismas fallo en Chromium ni deben solventarse ejecutando `npm audit fix --force` sin analisis.
 
 Para ahorrar repetir etapas 1-4, se ha proporcionado un **kit independiente para reanudar desde paso 5** al usuario. Comprueba el renderer final, hashes de chrome.dll y ginsbrowser.exe, baseline protegido, MSVC, empaquetado byte a byte y arranque electron/IPC. **No publica automaticamente ni permite llamar estable al resultado.** Esta ayuda no ha sido ejecutada en la PC del usuario aun.
+
+## Reanudacion posterior a paso 3: hashes del workspace instrumentado
+
+Se identifico otro bloqueo en el kit de reanudacion (26-oct-2026): el script invocaba `tools/verify-safe-base.js` DESPUES de aplicar las modificaciones autorizadas de `tools/install-diagnostic-panel.js` y del renderer. Por tanto, el comparador del instalador pristino fallaba contra cambios esperados:
+- `dist/index.html` pristino SHA256 `fa8e6050165005724614d39b26641bdc4d1be1ceeea39bf7b0d84c49444dd667`; HTML ya instrumentado SHA256 `b1198c0a496b154e075a9189e881d2c575544632087d001128cbd96a00549dfc`.
+- `dist/assets/index-BUIbb6Pa.js` pristino SHA256 `7de2a353b92c130b93b5c455826efaa6e1c8788cf44f99185b450e61379dc0df`; renderer instrumentado SHA256 `eed73506a145a58be6e9e226c2a1167482d380cf8334896ae9e3f174b7614824`.
+
+El kit local `Dyclok_v30.0.15-rc1_KIT_REANUDAR_INTEGRIDAD_CORREGIDA.zip` reemplaza **solo en el flujo de reanudacion** la verificacion pristina por una verificacion con los hashes post-instrumentacion arriba, conservando los hashes originales de otros nueve archivos protegidos, identidad de `package.json`, dependencia y mecanismo seguro de aviso. Verifica asimismo el panel generado contra su fuente. El kit evita el BOM de archivos `.bat`. El constructor de compilacion desde cero DEBE seguir utilizando la verificacion pristina **antes** de aplicar cambios de renderer.
+
+Este kit es experimental: se verifico estructura ZIP y sintaxis del verificador JS en Linux; no se ha ejecutado en el equipo Windows del usuario ni pasado el build NSIS o la apertura real del perfil 244.
