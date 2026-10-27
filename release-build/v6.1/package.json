@@ -1,0 +1,9 @@
+{
+  "name": "dyclokpro-release",
+  "version": "6.1.0",
+  "private": true,
+  "description": "Dyclokpro profile-lock recovery Windows NSIS release",
+  "devDependencies": {
+    "electron-builder": "26.15.3"
+  }
+}
