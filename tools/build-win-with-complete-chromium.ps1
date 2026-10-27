@@ -1,7 +1,8 @@
 param(
   [Parameter(Mandatory=$true)]
   [ValidateScript({Test-Path -LiteralPath $_ -PathType Leaf})]
-  [string] $ArchivoZipAntiguo
+  [string] $ArchivoZipAntiguo,
+  [string] $ZipVersionChromium
 )
 # Local Windows build. The authorized Chromium archive is only read on this PC.
 # This script deliberately does NOT upload or publish proprietary binaries.
@@ -18,6 +19,8 @@ function RunNode([string]$path,[switch]$apply) {
 }
 $root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $sourceZip=(Resolve-Path -LiteralPath $ArchivoZipAntiguo).Path
+$versionZip=$null
+if($ZipVersionChromium){$versionZip=(Resolve-Path -LiteralPath $ZipVersionChromium -ErrorAction Stop).Path}
 Push-Location $root
 try{
   if(-not $IsWindows -and $PSVersionTable.PSVersion.Major -ge 6){
@@ -51,7 +54,11 @@ try{
     'tools/instrument-expand-integrity.js'
   )){RunNode $script -apply}
   Write-Host 'Step 4/7: Stage ALL original Chromium files from the authorized user ZIP'
-  & node tools/stage-full-chromium.js --archive $sourceZip
+  if($versionZip){
+    & node tools/stage-full-chromium.js --archive $sourceZip --version-archive $versionZip
+  }else{
+    & node tools/stage-full-chromium.js --archive $sourceZip
+  }
   Check $LASTEXITCODE 'stage complete original Chromium'
   & node tools/stage-full-chromium.js --verify-only
   Check $LASTEXITCODE 'verify local Chromium'
@@ -105,6 +112,7 @@ try{
     'source=rc4-verified-runtime',
     'completeChromiumBundled=true',
     'chromiumStagedFromUserOwnedArchive=true',
+    ('separateChromiumVersionZipUsed=' + [bool]$versionZip),
     'nativeCacheIpcRegistered=true',
     'profile244OpenedOnUserPC=UNVERIFIED',
     'gostExeENOENT=NOT_YET_RESOLVED',
