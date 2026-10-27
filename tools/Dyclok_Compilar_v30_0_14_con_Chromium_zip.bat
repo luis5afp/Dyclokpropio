@@ -35,23 +35,71 @@ try{
     return
   }
   $zip=$dlg.FileName
+  $versionZip=$null
+  $extraDialog=New-Object System.Windows.Forms.OpenFileDialog
+  $extraDialog.Title='Opcional: selecciona 142.0.7444.273.zip (Cancelar si el motor ya esta completo en Chromium.zip)'
+  $extraDialog.Filter='ZIP de la version Chromium (*.zip)|*.zip'
+  $extraDialog.CheckFileExists=$true
+  if($extraDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK){
+    $versionZip=$extraDialog.FileName
+    if([IO.Path]::GetFullPath($versionZip) -ieq [IO.Path]::GetFullPath($zip)){
+      throw 'La carpeta principal y el ZIP de version deben ser archivos distintos.'
+    }
+  }
+  $extraNames=@()
+  $nativeVersion=''
+  if($versionZip){
+    $nativeVersion=[IO.Path]::GetFileNameWithoutExtension($versionZip)
+    if($nativeVersion -notmatch '^\d+\.\d+\.\d+\.\d+$'){
+      throw 'ZIP_VERSION_INVALIDO: se espera un archivo llamado 142.0.7444.273.zip.'
+    }
+    $vArchive=[IO.Compression.ZipFile]::OpenRead($versionZip)
+    try{
+      $extraNames=@($vArchive.Entries|Where-Object{-not [string]::IsNullOrEmpty($_.Name)}|
+        ForEach-Object{$_.FullName.Replace('\','/')})
+    }finally{$vArchive.Dispose()}
+    $extraDll=@($extraNames|Where-Object{
+      $_ -ieq 'chrome.dll' -or
+      $_ -match ('(^|/)'+[regex]::Escape($nativeVersion)+'/chrome\.dll$')
+    })
+    if($extraDll.Count -ne 1){
+      throw 'ZIP_VERSION_INVALIDO: no hay un unico chrome.dll con la version indicada.'
+    }
+    $extraPrefix=$extraDll[0].Substring(0,$extraDll[0].Length-'chrome.dll'.Length)
+    foreach($needed in @('icudtl.dat','resources.pak','v8_context_snapshot.bin')){
+      if($extraNames -notcontains ($extraPrefix+$needed)){
+        throw 'ZIP_VERSION_INCOMPLETO: faltan archivos obligatorios.'
+      }
+    }
+    Report ('CHROMIUM_VERSION_ZIP='+$nativeVersion)
+    Report ('CHROMIUM_VERSION_ZIP_ARCHIVOS='+$extraNames.Count)
+  }
   $archive=[IO.Compression.ZipFile]::OpenRead($zip)
   try{
     $names=@($archive.Entries | Where-Object {-not [string]::IsNullOrEmpty($_.Name)} | ForEach-Object {$_.FullName.Replace('\','/')})
     $engine=@($names | Where-Object {$_ -match '^(?:[^/]+/){0,3}(?:Chromium/)?Application/ginsbrowser\.exe$'})
     $dll=@($names | Where-Object {$_ -match '^(?:[^/]+/){0,3}(?:Chromium/)?Application/\d+\.\d+\.\d+\.\d+/chrome\.dll$'})
-    if($engine.Count -ne 1 -or $dll.Count -ne 1) {
-      throw 'ZIP_INCOMPLETO: no hay un unico ginsbrowser.exe y chrome.dll dentro de Chromium/Application.'
+    if($engine.Count -ne 1 -or ($dll.Count -ne 1 -and -not $versionZip)) {
+      throw 'ZIP_INCOMPLETO: falta ginsbrowser.exe o no hay chrome.dll y tampoco ZIP de version.'
     }
     # Resolve archives with Chromium/ and those with Application/ at ZIP root.
     $one=$engine[0]
     $prefix=$one.Substring(0,$one.Length-'Application/ginsbrowser.exe'.Length)
-    $version=[regex]::Match($dll[0],'Application/(\d+\.\d+\.\d+\.\d+)/chrome\.dll$').Groups[1].Value
+    $version=$nativeVersion
+    if($dll.Count -eq 1){
+      $primaryVersion=[regex]::Match($dll[0],'Application/(\d+\.\d+\.\d+\.\d+)/chrome\.dll$').Groups[1].Value
+      if($version -and $primaryVersion -ne $version){
+        throw 'VERSIONES_INCOMPATIBLES: los ZIP indican versiones diferentes de chrome.dll.'
+      }
+      $version=$primaryVersion
+    }
     if(-not $version){throw 'ZIP_INCOMPLETO: falta la version del motor Chromium'}
     foreach($required in @('Application/'+$version+'/icudtl.dat',
                            'Application/'+$version+'/resources.pak',
                            'Application/'+$version+'/v8_context_snapshot.bin')){
-      if($names -notcontains ($prefix+$required)){
+      $nativeRelative=$required.Substring(('Application/'+$version+'/').Length)
+      if($names -notcontains ($prefix+$required) -and
+         (-not $versionZip -or $extraNames -notcontains ($extraPrefix+$nativeRelative))){
         throw 'ZIP_INCOMPLETO: falta dependencia nativa de Chromium.'
       }
     }
@@ -59,7 +107,7 @@ try{
       $_.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase) -and
       $_.Substring($prefix.Length) -match '^(Application/|ginsbrowser/|version\.json$)'
     })
-    if($runtime.Count -lt 40){throw 'ZIP_INCOMPLETO: menos de 40 archivos del motor Chromium.'}
+    if($runtime.Count -lt 40 -and -not $versionZip){throw 'ZIP_INCOMPLETO: menos de 40 archivos del motor Chromium.'}
     $versionFile=@($names|Where-Object{$_ -ieq ($prefix+'version.json')})
     $bundles=@($names|Where-Object{$_ -match '(?i)\.ginsextension[23]\.zip$'})
     Report ('CHROMIUM_ZIP_VERIFICADO: entradas='+$names.Count)
@@ -72,6 +120,10 @@ try{
   }finally{$archive.Dispose()}
   $originalSha=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
   Report ('CHROMIUM_ZIP_SHA256='+$originalSha)
+  if($versionZip){
+    $versionSHA=(Get-FileHash -LiteralPath $versionZip -Algorithm SHA256).Hash.ToLowerInvariant()
+    Report ('CHROMIUM_VERSION_ZIP_SHA256='+$versionSHA)
+  }
   foreach($command in @('git','node','npm')){
     if(-not (Get-Command $command -ErrorAction SilentlyContinue)){
       throw ('FALTA_HERRAMIENTA: '+$command+'. Instale Git for Windows y Node.js LTS.')
@@ -106,7 +158,11 @@ try{
   $build=Join-Path $source 'tools/build-win-with-complete-chromium.ps1'
   if(-not (Test-Path -LiteralPath $build)){throw 'Falta el compilador del repositorio.'}
   Report 'FASE 2: Validar Chromium real y compilar instalador completo.'
-  & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File $build -ArchivoZipAntiguo $zip
+  if($versionZip){
+    & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File $build -ArchivoZipAntiguo $zip -ZipVersionChromium $versionZip
+  }else{
+    & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File $build -ArchivoZipAntiguo $zip
+  }
   if($LASTEXITCODE -ne 0){throw 'Compilacion o verificacion fallida. No se ha creado una release.'}
   $from=Join-Path $source 'release-delivery/Dyclokpropio_30.0.14_CHROMIUM_COMPLETO_PRUEBA_win_x64.exe'
   $status=Join-Path $source 'release-delivery/TEST_STATUS-CHROMIUM-COMPLETO.txt'
