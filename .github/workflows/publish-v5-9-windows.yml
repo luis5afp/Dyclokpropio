@@ -1,0 +1,125 @@
+name: Dyclokpropio v5.9 - Installer Windows sin actualizaciones automaticas
+
+on:
+  push:
+    branches:
+      - 'release/v5.9-no-auto-updates'
+    paths:
+      - '.github/workflows/publish-v5-9-windows.yml'
+      - 'tools/release-v5-9.py'
+      - 'release-build/v5.9/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dyclok-v5-9-windows-release
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    if: github.repository == 'luis5afp/Dyclokpropio'
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout verified v5.9 release controller
+        uses: actions/checkout@v4
+
+      - name: Verify release has not already been published
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          & gh release view 'v5.9' --repo $env:GITHUB_REPOSITORY --json tagName 2>$null | Out-Null
+          if($LASTEXITCODE -eq 0){throw 'BLOCKED: v5.9 already exists; refusing overwrite'}
+
+      - name: Download and SHA256-check published complete Windows v5.8 EXE
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          & gh release download 'v5.8' --repo $env:GITHUB_REPOSITORY --pattern 'Dyclokpropio_5.8_win_x64.exe' --dir $env:RUNNER_TEMP --clobber
+          if($LASTEXITCODE -ne 0){throw 'Could not download original installer'}
+          $source=Join-Path $env:RUNNER_TEMP 'Dyclokpropio_5.8_win_x64.exe'
+          if(-not(Test-Path -LiteralPath $source -PathType Leaf)){throw 'Installer v5.8 missing'}
+          $actual=(Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($actual -ne '61e53a27a492834abe9377b75714293bdb4b9a39c603bba924cf9b5ac171e265'){
+            throw 'BLOCKED: original installer hash changed'
+          }
+
+      - name: Restore original Chromium and safely disable software update module
+        shell: pwsh
+        run: |
+          $source=Join-Path $env:RUNNER_TEMP 'Dyclokpropio_5.8_win_x64.exe'
+          $destination=Join-Path $env:RUNNER_TEMP 'dyclok-v5.9-prepackaged'
+          & python tools/release-v5-9.py --installer $source --out $destination
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED: extraction, required files, hashes or JS syntax test failed'}
+
+      - name: Compile real offline Windows x64 NSIS installer
+        shell: pwsh
+        working-directory: release-build/v5.9
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          ELECTRON_BUILDER_7Z_FILTER: BCJ
+        run: |
+          & npm install --no-fund --no-audit --ignore-scripts
+          if($LASTEXITCODE -ne 0){throw 'NSIS dependencies failed'}
+          $application=Join-Path $env:RUNNER_TEMP 'dyclok-v5.9-prepackaged'
+          & npx electron-builder --win nsis --x64 --prepackaged $application --publish never --config electron-builder.json
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED: NSIS build failed'}
+          $installer='out/Dyclokpropio_5.9_win_x64.exe'
+          if(-not(Test-Path -LiteralPath $installer -PathType Leaf)){throw 'No Windows EXE generated'}
+          $size=(Get-Item -LiteralPath $installer).Length
+          if($size -lt 180000000){throw "BLOCKED: installer is unexpectedly small: $size"}
+          $sha=(Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  Dyclokpropio_5.9_win_x64.exe" | Set-Content 'out/SHA256SUMS_v5.9.txt' -Encoding ascii
+          Write-Host "INSTALLER_V5_9_SIZE=$size"
+          Write-Host "INSTALLER_V5_9_SHA256=$sha"
+
+      - name: Verify output has valid Windows NSIS structure
+        shell: pwsh
+        run: |
+          $installer='release-build/v5.9/out/Dyclokpropio_5.9_win_x64.exe'
+          $stream=[System.IO.File]::OpenRead((Resolve-Path $installer).Path)
+          try {
+            $header=New-Object byte[] 2
+            if($stream.Read($header,0,2) -ne 2 -or $header[0] -ne 77 -or $header[1] -ne 90){
+              throw 'BLOCKED: output lacks MZ EXE header'
+            }
+          } finally { $stream.Dispose() }
+          & 7z l $installer | Out-Null
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED: installer archive cannot be read'}
+          Write-Host 'WINDOWS_NSIS_EXE_VALIDATED=true'
+
+      - name: Upload new v5.9 EXE to GitHub Releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $installer='release-build/v5.9/out/Dyclokpropio_5.9_win_x64.exe'
+          $sum='release-build/v5.9/out/SHA256SUMS_v5.9.txt'
+          $hash=(Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          if((Get-Content $sum -Raw).Trim() -ne "$hash  Dyclokpropio_5.9_win_x64.exe"){
+            throw 'BLOCKED: delivery hash mismatch'
+          }
+          $notes=@'
+          # Dyclokpropio v5.9 (Windows x64)
+
+          Instalador EXE completo, derivado del v5.8 publicado y comprobado por SHA256.
+
+          - Desactivada la consulta al aviso de nuevas versiones al inicio de la aplicacion.
+          - Desactivada la comprobacion repetitiva de software cada 10 minutos.
+          - Desactivada la descarga desde el modulo de avisos de actualizacion.
+          - Chromium 142.0.7444.273 y componentes originales de perfiles conservados.
+          - Los datos privados (SourceData y Chromium/User Data) no se redistribuyen.
+          - Se verifican los SHA256 original y corregidos, sintaxis JavaScript y estructura NSIS.
+
+          La apertura de perfiles reales y el funcionamiento completo en el PC del usuario requieren validacion tras instalar.
+          Otros mensajes de notificaciones generales del software pueden mantenerse.
+          Al desactivar estas verificaciones, revisa manualmente en GitHub las actualizaciones de seguridad.
+          La redistribucion publica de componentes de terceros exige los permisos correspondientes.
+          '@
+          & gh release create 'v5.9' $installer $sum --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'Dyclokpropio v5.9 - Sin actualizaciones automaticas' --notes $notes --latest
+          if($LASTEXITCODE -ne 0){throw 'GitHub EXE publication failed'}
+          Write-Host 'REAL_V5_9_EXE_PUBLISHED_IN_GITHUB_RELEASES=true'
