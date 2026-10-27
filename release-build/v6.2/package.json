@@ -1,0 +1,9 @@
+{
+  "name": "dyclokpro-release",
+  "version": "6.2.0",
+  "private": true,
+  "description": "Dyclokpro with separate offline local Chromium profiles",
+  "devDependencies": {
+    "electron-builder": "26.15.3"
+  }
+}
