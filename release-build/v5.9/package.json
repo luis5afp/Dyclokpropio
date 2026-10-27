@@ -1,0 +1,9 @@
+{
+  "name": "dyclokpropio-v5-9-release-controller",
+  "version": "5.9.0",
+  "private": true,
+  "description": "Repackage the verified Dyclokpropio v5.8 application as a v5.9 Windows installer",
+  "devDependencies": {
+    "electron-builder": "26.15.3"
+  }
+}
