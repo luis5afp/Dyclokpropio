@@ -51,6 +51,10 @@ extraResources:
 # The recovered runtime may resolve legacy binaries/plugins relative to the
 # installed executable. Duplicate (do not move) original paths for compatibility.
 extraFiles:
+  # Entire externally supplied native Chromium engine incl. ginsbrowser extensions.
+  # The source directory must pass tools/stage-full-chromium.js --verify-only.
+  - from: Chromium
+    to: Chromium
   # DICloak 2.8.17 installed logo.ico next to DICloak.exe. Its original
   # Windows Tray constructor runs before cache IPC registration; a missing
   # icon aborts CL at statement 23 and leaves clear-dev-cache unavailable.

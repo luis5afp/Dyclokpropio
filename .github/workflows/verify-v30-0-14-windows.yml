@@ -1,4 +1,4 @@
-name: Verify v30.0.14 real Windows runtime (no publish)
+name: Verify v30.0.14 Electron startup with SYNTHETIC Chromium (no publish)
 
 on:
   pull_request:
@@ -8,6 +8,7 @@ on:
       - 'tools/verify-startup-health.js'
       - 'tools/verify-bootstrap-diagnostics.js'
       - '.github/workflows/verify-v30-0-14-windows.yml'
+      - 'tools/create-synthetic-chromium-ci-only.js'
   workflow_dispatch:
 
 permissions:
@@ -51,6 +52,16 @@ jobs:
             & node $cmd --apply
             if($LASTEXITCODE -ne 0){throw "Failed protected renderer patch: $cmd"}
           }
+      - name: Stage synthetic NONEXECUTABLE Chromium ONLY for native Electron smoke
+        shell: pwsh
+        env:
+          DYCLOK_CI_SYNTHETIC_CHROMIUM: I_UNDERSTAND_THIS_IS_NOT_A_REAL_BROWSER
+        run: |
+          & node tools/create-synthetic-chromium-ci-only.js
+          if($LASTEXITCODE -ne 0){throw 'Synthetic test asset creation failed'}
+          & node tools/stage-full-chromium.js --verify-only
+          if($LASTEXITCODE -ne 0){throw 'Synthetic test asset directory failed prebuild sanity check'}
+          Write-Host 'WARNING: Synthetic Chromium is NOT a real browser and cannot validate profile opening'
       - name: Rebuild Windows native modules and stage full directory
         shell: pwsh
         run: |
@@ -58,6 +69,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Native rebuild failed' }
           npm run build:dir -- --publish never
           if ($LASTEXITCODE -ne 0) { throw 'Windows build failed' }
+          & node tools/verify-chromium-bundle.js release/win-unpacked
+          if ($LASTEXITCODE -ne 0) { throw 'Windows packaging lost synthetic Chromium assets' }
       - name: Verify original and new compatibility paths
         shell: pwsh
         run: |

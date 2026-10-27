@@ -1,0 +1,50 @@
+name: Validate complete Chromium packaging (synthetic binary fixture)
+
+on:
+  push:
+    branches:
+      - feature/v30-0-14-rc4-chromium-completo-20261026
+    paths:
+      - 'tools/stage-full-chromium.js'
+      - 'tools/verify-chromium-bundle.js'
+      - 'tools/test-chromium-packager.js'
+      - 'electron-builder.yml'
+      - '.github/workflows/verify-full-chromium-package.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Node.js syntax and packaging configuration
+        shell: pwsh
+        run: |
+          node --check tools/stage-full-chromium.js
+          node --check tools/verify-chromium-bundle.js
+          node --check tools/test-chromium-packager.js
+          if($LASTEXITCODE -ne 0){throw 'Node source parse failed'}
+      - name: Install test-only ZIP parser (no application scripts)
+        shell: pwsh
+        run: |
+          npm install --prefix .ci-chromium-deps --no-audit --no-fund --ignore-scripts --no-save adm-zip@0.5.16
+          if($LASTEXITCODE -ne 0){throw 'ZIP-parser dependency installation failed'}
+      - name: Synthetic Chromium layout, hash, no-overwrite and tamper tests
+        shell: pwsh
+        env:
+          NODE_PATH: ${{ github.workspace }}/.ci-chromium-deps/node_modules
+        run: |
+          node tools/test-chromium-packager.js
+          if($LASTEXITCODE -ne 0){throw 'Full Chromium package contract failure'}
+      - name: Ensure neither source ZIP nor proprietary binaries are committed
+        shell: pwsh
+        run: |
+          if(Test-Path -LiteralPath Chromium){throw 'Chromium binaries must be staged from authorized archive, not committed'}
+          if(Test-Path -LiteralPath DICloak.zip){throw 'The user archive must never be committed'}
+          if(-not (Select-String -Quiet -LiteralPath .gitignore -Pattern '^/Chromium/$')){
+            throw 'Chromium root must remain gitignored'
+          }
+          Write-Host 'PASS: no proprietary browser binaries are committed to GitHub'

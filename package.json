@@ -98,7 +98,9 @@
   },
   "scripts": {
     "start": "electron .",
+    "prebuild:win": "node tools/stage-full-chromium.js --verify-only",
     "build:win": "electron-builder --win nsis --x64",
+    "prebuild:dir": "node tools/stage-full-chromium.js --verify-only",
     "build:dir": "electron-builder --dir --win --x64"
   },
   "devDependencies": {
