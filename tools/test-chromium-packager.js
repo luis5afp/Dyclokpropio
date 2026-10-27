@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const AdmZip=require('adm-zip');
-const {stage,inspect,filenameSafe,isRuntimeAsset,assertWindowsX64PE}=require('./stage-full-chromium.js');
+const {stage,inspect,filenameSafe,isRuntimeAsset,assertWindowsX64PE,versionArchiveEntries}=require('./stage-full-chromium.js');
 const {verify}=require('./verify-chromium-bundle.js');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-chromium-fixture-'));
 try {
@@ -69,6 +69,40 @@ try {
   assert.ok(fs.existsSync(path.join(stagedBare,'Chromium','version.json')));
   assert.ok(!fs.existsSync(path.join(stagedBare,'Chromium','User Data')));
 
+  // The real user supplied a SEPARATE 142.0.7444.273.zip containing
+  // the native version folder; Chromium.zip may have only the launcher.
+  const versionZip=new AdmZip();
+  versionZip.addLocalFolder(base,ver);
+  const versionZipPath=path.join(tmp,ver+'.zip');
+  versionZip.writeZip(versionZipPath);
+  assert.equal(versionArchiveEntries(versionZipPath).version,ver);
+  const partialSource=path.join(tmp,'separate-source','Chromium');
+  fs.mkdirSync(path.join(partialSource,'Application'),{recursive:true});
+  fs.cpSync(path.join(files,'Application','ginsbrowser.exe'),path.join(partialSource,'Application','ginsbrowser.exe'));
+  fs.cpSync(path.join(files,'ginsbrowser'),path.join(partialSource,'ginsbrowser'),{recursive:true});
+  fs.copyFileSync(path.join(files,'version.json'),path.join(partialSource,'version.json'));
+  const partialZip=new AdmZip();partialZip.addLocalFolder(path.dirname(partialSource));
+  const partialZipPath=path.join(tmp,'partial-chromium.zip');
+  partialZip.writeZip(partialZipPath);
+  const missingVersion=path.join(tmp,'missing-version');
+  fs.mkdirSync(missingVersion);
+  assert.throws(()=>stage(partialZipPath,missingVersion),/fewer than 40|chrome\.dll/);
+  const joined=path.join(tmp,'joined-chromium');
+  fs.mkdirSync(joined);
+  const pair=stage(partialZipPath,joined,{versionArchive:versionZipPath});
+  assert.equal(pair.version,ver);
+  assert.equal(typeof pair.versionArchiveSha256,'string');
+  assert.equal(pair.versionArchiveSha256.length,64);
+  assert.ok(fs.existsSync(path.join(joined,'Chromium','Application',ver,'chrome.dll')));
+  assert.ok(fs.existsSync(path.join(joined,'Chromium','ginsbrowser','.ginsextension2.zip')));
+  const conflictZip=new AdmZip();
+  conflictZip.addLocalFolder(base,ver);
+  // Override the DLL with different data under the same relative path.
+  conflictZip.updateFile(ver+'/chrome.dll',Buffer.from('conflicting duplicate DLL'));
+  const conflictZipPath=path.join(tmp,'conflict-version.zip');conflictZip.writeZip(conflictZipPath);
+  const conflictDest=path.join(tmp,'duplicate-conflict');fs.mkdirSync(conflictDest);
+  assert.throws(()=>stage(zipFile,conflictDest,{versionArchive:conflictZipPath}),/Conflicting Chromium ZIP resources/);
+  assert.ok(!fs.existsSync(path.join(conflictDest,'Chromium')));
   const packaged=path.join(tmp,'win-unpacked');
   fs.mkdirSync(packaged);
   fs.cpSync(path.join(staged,'Chromium'),path.join(packaged,'Chromium'),{recursive:true});
