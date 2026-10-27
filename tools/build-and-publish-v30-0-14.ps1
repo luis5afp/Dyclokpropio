@@ -1,5 +1,6 @@
 param(
   [Parameter(Mandatory=$true)][string]$ArchivoZipAntiguo,
+  [string]$ZipVersionChromium,
   [switch]$TengoPermisoRedistribucion
 )
 $ErrorActionPreference='Stop'
@@ -15,7 +16,12 @@ if($LASTEXITCODE -ne 0){throw 'Inicie sesion con gh auth login.'}
 if($LASTEXITCODE -eq 0){throw 'Ya existe v30.0.14; no se reemplazara.'}
 $root=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $archive=(Resolve-Path -LiteralPath $ArchivoZipAntiguo).Path
-& powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'build-win-with-complete-chromium.ps1') -ArchivoZipAntiguo $archive
+if($ZipVersionChromium){
+  $engine=(Resolve-Path -LiteralPath $ZipVersionChromium -ErrorAction Stop).Path
+  & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'build-win-with-complete-chromium.ps1') -ArchivoZipAntiguo $archive -ZipVersionChromium $engine
+}else{
+  & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'build-win-with-complete-chromium.ps1') -ArchivoZipAntiguo $archive
+}
 if($LASTEXITCODE -ne 0){throw 'Compilacion completa de Chromium fallida: no se publico nada.'}
 $dir=Join-Path $root 'release-delivery'
 $files=@(
