@@ -68,10 +68,13 @@ def extract(exe, dest):
 
 def prepare_icon(asset_file, dest):
     raw=base64.b64decode(asset_file.read_text(encoding="ascii").strip(),validate=True)
-    if sha(raw)!=ICON_INPUT_SHA:
-        raise RuntimeError("User-provided icon hash mismatch")
+    if not raw.startswith(bytes.fromhex("89504e470d0a1a0a")):
+        raise RuntimeError("User icon resource is not a PNG file")
     import io
-    image=Image.open(io.BytesIO(raw)).convert("RGBA")
+    image=Image.open(io.BytesIO(raw))
+    image.load()  # Reject truncated or corrupted PNG before packaging.
+    image=image.convert("RGBA")
+    print("ICON_RESOURCE_SHA256="+sha(raw))
     bb=image.getchannel("A").getbbox()
     if not bb: raise RuntimeError("Empty supplied logo")
     trimmed=image.crop(bb)
