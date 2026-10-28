@@ -91,5 +91,6 @@ ipcMain.handle("dyclokpro:archive:openInstallFolder",async ev=>{
   if(message)throw Error(message);
   return {opened:true,...result};
 });
+ensureLink();
 app.whenReady().then(()=>{ensureLink()}).catch(()=>{});
 })();
