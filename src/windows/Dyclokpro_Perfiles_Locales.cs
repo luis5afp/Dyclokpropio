@@ -67,7 +67,7 @@ namespace DyclokproLocal
 
             message.SetBounds(24, 411, 665, 34);
             message.ForeColor = Color.FromArgb(114, 230, 200);
-            message.Text = "No se consulta /lock_env. El navegador usa una carpeta nueva por perfil.";
+            message.Text = "Sin bloqueo remoto. Chromium usa una carpeta nueva por perfil.";
             message.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             Controls.Add(message);
             title.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
