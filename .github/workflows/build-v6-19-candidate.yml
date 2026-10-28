@@ -5,7 +5,7 @@ on:
     branches:
       - 'fix/v6.19-window-session-diagnostics'
     paths:
-      - '.github/workflows/publish-v6-19-version-policy.yml'
+      - '.github/workflows/build-v6-19-candidate.yml'
       - 'release-build/v6.19/**'
       - 'tools/release-v6-19-version-policy.py'
       - 'tools/test-v6-19-version-policy.cjs'
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-publish:
+  build-candidate:
     if: github.repository == 'luis5afp/Dyclokpropio'
     runs-on: windows-latest
     timeout-minutes: 120
