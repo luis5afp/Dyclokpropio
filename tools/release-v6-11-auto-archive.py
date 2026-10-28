@@ -100,7 +100,7 @@ def modify(root,backend,archiveui):
  archive_rel="dist/dyclokpro-archive.js"
  archive=archiveui.read_bytes()
  subprocess.run(["node","--check",str(archiveui)],check=True)
- if b"dyclokpro:archive:capture" not in archive or b"XMLHttpRequest.prototype.open" not in archive:
+ if b"async function capture(" not in archive or b"dyclokpro:archive:" not in archive or b"XMLHttpRequest.prototype.open" not in archive:
   raise RuntimeError("Automatic archive UI incomplete")
  edit_unpacked(archive_rel,archive)
  # Keep all existing packed content byte-for-byte. Append modified entry,
