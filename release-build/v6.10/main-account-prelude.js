@@ -102,7 +102,7 @@ const runningPath=id=>path.join(BASE,"running-"+id+".json");
 const focusRequestPrefix=id=>"focus-"+id+"-";
 const sleep=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
 function isPrimaryWindow(win){
- try{return /\\/dist\\/index\\.html(?:[?#]|$)/i.test(win.webContents.getURL())}catch{return false}
+ try{return /\/dist\/index\.html(?:[?#]|$)/i.test(win.webContents.getURL())}catch{return false}
 }
 function accountWindow(){
  const {BrowserWindow}=require("electron");
