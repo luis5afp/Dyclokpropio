@@ -57,8 +57,8 @@ jobs:
           & node --check release-build/v6.4/archive.js
           if($LASTEXITCODE -ne 0){throw 'Invalid JavaScript in local archive'}
           $script=Get-Content -LiteralPath 'release-build/v6.4/archive.js' -Raw
-          foreach($check in @('AES-GCM','PBKDF2','indexedDB.open','crypto.subtle.encrypt','crypto.subtle.decrypt',
-            'response.clone().text()','archive','Dyclokpro_proxy_','Dyclokpro_')){
+          foreach($check in @('indexedDB.open','MAX_RESPONSE=1048576','raw:body',
+            'showDirectoryPicker','r.clone().text()','Dyclokpro_','sin cifrar')){
             if(-not $script.Contains($check)){throw "Missing required local archive component: $check"}
           }
           foreach($unsafe in @('sendBeacon(', 'document.cookie=', 'console.log(', 'localStorage.setItem(')){
@@ -66,7 +66,7 @@ jobs:
           }
           Write-Host 'LOCAL_ARCHIVE_STATIC_CHECK=PASS'
 
-      - name: Add encrypted persistent archive to verified Electron ASAR
+      - name: Add plaintext original-response archive to verified Electron ASAR
         shell: pwsh
         run: |
           $exe=Join-Path $env:RUNNER_TEMP 'Dyclokpro_6.3_win_x64.exe'
@@ -128,22 +128,27 @@ jobs:
           & 7z l $exe | Out-Null
           if($LASTEXITCODE -ne 0){throw 'NSIS installer compressed package is invalid'}
           $notes=@'
-          # Dyclokpro v6.4 - Archivo local de respuestas originales
+          # Dyclokpro v6.4 - Archivo local de respuestas originales sin cifrar
 
           Instalador completo Windows 64 bits actualizado desde v6.3.
 
           - Boton inferior izquierdo **Archivo local - Cookies y Proxy**.
           - Historial local persistente de metadatos de las respuestas HTTP observadas por Dyclokpro.
-          - Al activar el archivo con una contrasena local (minimo 12 caracteres),
-            las nuevas respuestas HTTP observadas se guardan con su texto original cifrado mediante AES-GCM.
+          - Al activar voluntariamente el guardado, las respuestas HTTP observadas por
+            Dyclokpro se guardan como texto original sin cifrado, sin modificarlas.
           - El archivador no modifica las peticiones ni las respuestas del servidor.
-          - Exportacion explicita de las respuestas originales observadas por categoria:
-            cookies en JSON, proxy en TXT, configuracion y parametros en JSON.
-          - Ninguna contrasena de cifrado se transmite al proveedor ni se almacena como texto plano.
-          - Los archivos exportados por decision del usuario estan descifrados y pueden incluir
-            credenciales/sesiones: guardarlos en un lugar privado y no subirlos a repositorios.
-          - La copia original solo existe para respuestas observadas despues de activar el archivo;
-            los registros antiguos conservan un indice sin el texto original.
+          - Permite seleccionar una carpeta (si la ventana ofrece File System Access)
+            para guardar directamente respuestas originales en archivos JSON o TXT.
+          - Si la seleccion de carpeta no esta disponible, permite guardar copias
+            originales mediante los botones de exportacion por categoria.
+          - Persistencia local mediante IndexedDB, en el almacenamiento propio
+            de la aplicacion Electron, con limite de 1200 registros.
+          - IMPORTANTE: las copias estan SIN CIFRAR. Pueden contener cookies de sesion,
+            claves, contrasenas y configuraciones privadas. Usar solamente en un equipo
+            y con perfiles propios autorizados; evitar carpetas compartidas y GitHub.
+          - Los archivos locales no modifican el flujo de autorizacion remoto.
+          - El archivo guarda respuestas nuevas despues de que se active en el panel.
+            La aplicacion no recupera automaticamente respuestas anteriores a esa activacion.
           - Se conserva Dyclokpro v6.3, Chromium 142, el gestor de perfiles locales y la
             desactivacion de comprobacion automatica de actualizaciones.
           - Los perfiles remotos siguen utilizando su bloqueo y autorizacion existentes.
@@ -157,6 +162,6 @@ jobs:
           empaquetado NSIS y SHA256 verificados automaticamente. Uso con datos reales
           y apertura grafica del panel no comprobados en la PC de destino.
           '@
-          & gh release create 'v6.4' $exe $sums --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'Dyclokpro v6.4 - Archivo local de respuestas originales' --notes $notes --latest
+          & gh release create 'v6.4' $exe $sums --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'Dyclokpro v6.4 - Respuestas originales sin cifrar' --notes $notes --latest
           if($LASTEXITCODE -ne 0){throw 'Uploading the v6.4 installer failed'}
           Write-Host 'DYCLOKPRO_V6_4_RELEASE_PUBLISHED=true'
