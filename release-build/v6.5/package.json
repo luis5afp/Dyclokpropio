@@ -1,0 +1,9 @@
+{
+  "name": "dyclokpro-desktop",
+  "version": "6.5.0",
+  "private": true,
+  "description": "DyclokPRO Windows installer with new logo and fixed per-user install directory",
+  "devDependencies": {
+    "electron-builder": "26.15.3"
+  }
+}
