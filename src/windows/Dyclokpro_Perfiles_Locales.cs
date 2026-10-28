@@ -253,8 +253,21 @@ namespace DyclokproLocal
         }
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            // Build-time validation without opening the GUI or accessing user profiles.
+            if(args.Length == 1 && args[0] == "--self-test")
+            {
+                string chrome = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                   "Chromium", "Application", "ginsbrowser.exe");
+                if (!File.Exists(chrome))
+                {
+                    Console.Error.WriteLine("LOCAL_PROFILE_TEST=CHROMIUM_MISSING");
+                    Environment.Exit(2);
+                }
+                Console.WriteLine("LOCAL_PROFILE_TEST=PASS");
+                return;
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Window());
