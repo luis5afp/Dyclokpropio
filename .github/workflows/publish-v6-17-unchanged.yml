@@ -1,0 +1,59 @@
+name: Publish DyclokPRO v6.17 (unchanged v6.16 binary)
+on:
+  push:
+    branches:
+      - fix/v6.17-session-stability
+    paths:
+      - .github/workflows/publish-v6-17-unchanged.yml
+      - release-build/v6.17/PUBLISH_TRIGGER.txt
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: dyclokpro-v6-17-unchanged-release
+  cancel-in-progress: false
+jobs:
+  publish-unchanged:
+    if: github.repository == 'luis5afp/Dyclokpropio'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refuse overwrite and download verified v6.16
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          & gh release view v6.17 --repo $env:GITHUB_REPOSITORY *> $null
+          if($LASTEXITCODE -eq 0){throw 'Release v6.17 already exists; not overwriting'}
+          & gh release download v6.16 --repo $env:GITHUB_REPOSITORY --pattern 'DyclokPRO_6.16_win_x64.exe' --dir $env:RUNNER_TEMP
+          if($LASTEXITCODE -ne 0){throw 'Missing v6.16 release asset'}
+          $src=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.16_win_x64.exe'
+          $expected='03621252bb532766d984838213e25411b69220ff491ea86d0f81a928c104ff81'
+          $actual=(Get-FileHash $src -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($actual -ne $expected){throw 'v6.16 installer SHA256 does not match published release'}
+          if((Get-Item $src).Length -ne 330867583){throw 'Installer file size differs from published v6.16'}
+          & 7z t $src | Out-Null
+          if($LASTEXITCODE -ne 0){throw 'NSIS installer integrity validation failed'}
+          New-Item -ItemType Directory -Path 'published' -Force | Out-Null
+          Copy-Item $src 'published/DyclokPRO_6.17_win_x64.exe'
+          "$actual  DyclokPRO_6.17_win_x64.exe" | Set-Content 'published/SHA256SUMS_v6.17.txt' -Encoding ascii
+      - name: Publish unchanged installer with explicit limitations
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $notes=@'
+          # DyclokPRO v6.17 — reedición sin cambios de v6.16
+          
+          Esta publicación contiene **exactamente el mismo instalador binario de v6.16**, distribuido con nombre de archivo v6.17 por petición expresa del usuario.
+          
+          **No incorpora correcciones nuevas**. El ejecutable y la versión interna continúan siendo v6.16. Los problemas conocidos, incluido el posible cierre inesperado de sesión, **no están corregidos ni verificados**.
+          
+          SHA-256 del binario (idéntico a v6.16): `03621252bb532766d984838213e25411b69220ff491ea86d0f81a928c104ff81`.
+          
+          El Release v6.16 original no se modifica. Se conservan las características y limitaciones descritas en sus notas.
+          '@
+          & gh release create v6.17 'published/DyclokPRO_6.17_win_x64.exe' 'published/SHA256SUMS_v6.17.txt' --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'DyclokPRO v6.17 — reedición de v6.16 sin correcciones' --notes $notes
+          if($LASTEXITCODE -ne 0){throw 'GitHub release publication failed'}
