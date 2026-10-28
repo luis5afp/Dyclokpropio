@@ -5,17 +5,17 @@ on:
     branches:
       - 'release/v6.13-direct-local-profiles'
     paths:
-      - '.github/workflows/publish-v6-12-persistent-sessions.yml'
+      - '.github/workflows/publish-v6-13-local-profiles.yml'
       - 'release-build/v6.13/**'
-      - 'tools/release-v6-12-persistent-session.py'
-      - 'tools/test-v6-12-persistence.cjs'
+      - 'tools/release-v6-13-direct-local.py'
+      - 'tools/test-v6-13-local-profiles.cjs'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: dyclokpro-v6-12-persistent-sessions
+  group: dyclokpro-v6-13-local-profiles
   cancel-in-progress: false
 
 jobs:
