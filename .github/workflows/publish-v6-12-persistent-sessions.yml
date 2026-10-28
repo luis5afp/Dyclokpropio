@@ -5,17 +5,17 @@ on:
     branches:
       - 'release/v6.12-persistent-valid-sessions'
     paths:
-      - '.github/workflows/publish-v6-11-auto-archive.yml'
+      - '.github/workflows/publish-v6-12-persistent-sessions.yml'
       - 'release-build/v6.12/**'
-      - 'tools/release-v6-11-auto-archive.py'
-      - 'tools/test-v6-11-archive.cjs'
+      - 'tools/release-v6-12-persistent-session.py'
+      - 'tools/test-v6-12-persistence.cjs'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: dyclokpro-v6-11-auto-archive
+  group: dyclokpro-v6-12-persistent-sessions
   cancel-in-progress: false
 
 jobs:
