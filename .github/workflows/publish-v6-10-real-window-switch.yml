@@ -8,6 +8,7 @@ on:
       - '.github/workflows/publish-v6-10-real-window-switch.yml'
       - 'release-build/v6.10/**'
       - 'tools/release-v6-10-window-switch.py'
+      - 'tools/test-v6-10-focus.cjs'
   workflow_dispatch:
 
 permissions:
