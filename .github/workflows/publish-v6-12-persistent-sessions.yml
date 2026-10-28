@@ -78,7 +78,7 @@ jobs:
           if(Test-Path (Join-Path $dest 'SourceData')){throw 'Private profiles included'}
           if(Test-Path (Join-Path $dest 'Chromium/User Data')){throw 'Private Chromium user data included'}
           Copy-Item -LiteralPath (Join-Path $dest 'DyclokPRO.ico') -Destination 'release-build/v6.12/DyclokPRO.ico' -Force
-          Copy-Item -LiteralPath 'release-build/v6.11/installer.nsh' -Destination 'release-build/v6.12/installer.nsh' -Force
+          Copy-Item -LiteralPath 'release-build/v6.10/installer.nsh' -Destination 'release-build/v6.12/installer.nsh' -Force
 
       - name: Prepare Windows NSIS packager and native resource editor
         shell: pwsh
