@@ -96,10 +96,16 @@ def modify(root,backend):
  if branding.count(b"v6.16")<2:raise RuntimeError("Expected v6.16 branding not found")
  edit_unpacked(brandingrel,branding.replace(b"v6.16",b"v50.8"))
  pkginfo=info(hdr,"package.json")
- if pkginfo.get("unpacked"):raise RuntimeError("Unexpected unpacked app package")
- with asar.open("rb") as f:
-  f.seek(old_payload_start+int(pkginfo["offset"]))
-  rawpkg=f.read(int(pkginfo["size"]))
+ pkg_unpacked=bool(pkginfo.get("unpacked"))
+ if pkg_unpacked:
+  pkgfile=files/"package.json"
+  if not pkgfile.is_file() or pkginfo.get("integrity",{}).get("hash")!=filehash(pkgfile):
+   raise RuntimeError("Unpacked app package metadata does not match original ASAR")
+  rawpkg=pkgfile.read_bytes()
+ else:
+  with asar.open("rb") as f:
+   f.seek(old_payload_start+int(pkginfo["offset"]))
+   rawpkg=f.read(int(pkginfo["size"]))
  pkg=json.loads(rawpkg)
  old_version=pkg.get("version")
  if not isinstance(old_version,str) or not old_version:
@@ -107,15 +113,18 @@ def modify(root,backend):
  print("ORIGINAL_INTERNAL_VERSION="+old_version)
  pkg["version"]="50.8.0"
  new_pkg=json.dumps(pkg,ensure_ascii=True,separators=(",",":")).encode("utf8")
+ if pkg_unpacked:
+  edit_unpacked("package.json",new_pkg)
  # Keep all existing packed content byte-for-byte. Append modified entry,
  # then update ASAR offset/size/integrity for main.js only. Other offsets remain.
  packed_size=asar.stat().st_size-old_payload_start
  maininfo["offset"]=str(packed_size)
  maininfo["size"]=len(new_main)
  maininfo["integrity"]=integrity(new_main,maininfo["integrity"]["blockSize"])
- pkginfo["offset"]=str(packed_size+len(new_main))
- pkginfo["size"]=len(new_pkg)
- pkginfo["integrity"]=integrity(new_pkg,pkginfo.get("integrity",{}).get("blockSize",4194304))
+ if not pkg_unpacked:
+  pkginfo["offset"]=str(packed_size+len(new_main))
+  pkginfo["size"]=len(new_pkg)
+  pkginfo["integrity"]=integrity(new_pkg,pkginfo.get("integrity",{}).get("blockSize",4194304))
  header=json.dumps(hdr,ensure_ascii=True,separators=(",",":")).encode("utf8")
  pad=(-len(header))%4
  packedhead=struct.pack("<IIII",4,len(header)+8+pad,len(header)+4+pad,len(header))
@@ -125,7 +134,7 @@ def modify(root,backend):
   original.seek(old_payload_start)
   shutil.copyfileobj(original,output,8*1024*1024)
   output.write(new_main)
-  output.write(new_pkg)
+  if not pkg_unpacked:output.write(new_pkg)
  temporary.replace(asar)
  # All header and packed JS bytes must match after full rewrite
  verified,newbase=read_hdr(asar)
@@ -135,9 +144,12 @@ def modify(root,backend):
   if sha(stream.read(mi["size"]))!=mi["integrity"]["hash"]:
    raise RuntimeError("Repacked main.js did not verify")
  new_pkg_info=info(verified,"package.json")
- with asar.open("rb") as stream:
-  stream.seek(newbase+int(new_pkg_info["offset"]))
-  final_pkg=stream.read(int(new_pkg_info["size"]))
+ if pkg_unpacked:
+  final_pkg=(files/"package.json").read_bytes()
+ else:
+  with asar.open("rb") as stream:
+   stream.seek(newbase+int(new_pkg_info["offset"]))
+   final_pkg=stream.read(int(new_pkg_info["size"]))
  if sha(final_pkg)!=new_pkg_info["integrity"]["hash"] or json.loads(final_pkg).get("version")!="50.8.0":
   raise RuntimeError("Internal Electron app version not correctly repacked")
  for rel in [htmlrel,brandingrel,"dist/dyclokpro-archive.js","dist/dyclokpro-local-access.js","dist/dyclokpro-users-v66.js",
