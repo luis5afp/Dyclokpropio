@@ -34,11 +34,25 @@ if(launchArgs.length>1||(launchId&&!UUID.test(launchId)))throw Error("Invalid la
 if(launchId){
  const marker=path.join(BASE,"launch-"+launchId+".json");
  app.on("browser-window-created",(_event,win)=>{
-  const ready=()=>{
+  const ready=async()=>{
    try{
     const url=win.webContents.getURL();
-    fs.writeFileSync(marker,JSON.stringify({account:active,pid:process.pid,url,created:Date.now()}),{flag:"wx",mode:0o600});
-   }catch{}
+    const payload={account:active,pid:process.pid,url,created:Date.now()};
+    if(process.argv.includes("--dyclok-login-smoke")){
+      // A real login page is required, not merely a process launched.
+      await new Promise(resolve=>setTimeout(resolve,3000));
+      const state=await win.webContents.executeJavaScript(
+        "(()=>{const password=document.querySelector('input[type=password]');"+
+        "const text=(document.body?.innerText||'').slice(0,30000);"+
+        "return {passwordInput:!!password,loginLabel:/Iniciar sesi[oó]n ahora|Sign in now|Recordar contrase[nñ]a/i.test(text),"+
+        "passwordBlank:!password?.value};})()",true);
+      payload.loginFormVisible=!!(state.passwordInput&&state.loginLabel);
+      payload.passwordBlank=!!state.passwordBlank;
+    }
+    fs.writeFileSync(marker,JSON.stringify(payload),{flag:"wx",mode:0o600});
+   }catch(err){
+    try{fs.writeFileSync(marker,JSON.stringify({account:active,pid:process.pid,error:String(err.message||err).slice(0,160)}),{flag:"wx"});}catch{}
+   }
   };
   win.webContents.once("did-finish-load",ready);
  });
