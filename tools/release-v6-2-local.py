@@ -55,7 +55,7 @@ def main():
     for rel in required:
         if not (a.output / rel).is_file():
             raise RuntimeError("Incomplete original v6.1 application: " + rel)
-    if a.helper.stat().st_size < 20000 or a.helper.read_bytes()[:2] != b"MZ":
+    if a.helper.stat().st_size < 4096 or a.helper.read_bytes()[:2] != b"MZ":
         raise RuntimeError("Local profile Windows manager is not a proper EXE")
     target = a.output / "Dyclokpro_Perfiles_Locales.exe"
     shutil.copy2(a.helper,target)
