@@ -167,8 +167,13 @@ jobs:
           if(-not(Test-Path -LiteralPath $manager -PathType Leaf)){
             throw 'Offline local profile manager is missing'
           }
-          & $manager --self-test
-          if($LASTEXITCODE -ne 0){throw 'Chromium local profiles manager did not pass its self-test'}
+          $output=(& $manager --self-test 2>&1 | Out-String)
+          if($LASTEXITCODE -ne $null -and $LASTEXITCODE -ne 0){
+            throw "Chromium local manager exit failure: $LASTEXITCODE"
+          }
+          if(-not $output.Contains('LOCAL_PROFILE_TEST=PASS')){
+            throw "Chromium local manager did not confirm self-test: $output"
+          }
           Write-Host 'OFFLINE_CHROMIUM_LOCAL_MANAGER_PRESENT=PASS'
 
       - name: Verify separate user shows actual login screen with blank password
