@@ -18,6 +18,7 @@ fs.mkdirSync(BASE,{recursive:true});
 if(active!=="legacy"){
   const directory=path.join(BASE,active,"Electron");
   fs.mkdirSync(directory,{recursive:true});
+  fs.mkdirSync(path.join(directory,"Session"),{recursive:true});
   // Electron requires setting userData/sessionData before the original main code
   // creates any browser window, session, or single-instance lock.
   app.setPath("userData",directory);
