@@ -1,0 +1,71 @@
+name: Publish v6.19 Windows diagnostic prerelease from verified build
+on:
+  push:
+    branches:
+      - fix/v6.19-window-session-diagnostics
+    paths:
+      - .github/workflows/publish-v6-19-candidate-release.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: dyclokpro-v619-gated-publication
+  cancel-in-progress: false
+jobs:
+  publish-verified-artifact:
+    if: github.repository == 'luis5afp/Dyclokpropio'
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check release absence and verified Windows build
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & gh release view v6.19 --repo $env:GITHUB_REPOSITORY *> $null
+          if($LASTEXITCODE -eq 0){throw 'Refusing to replace an existing v6.19 release'}
+          $run = & gh api 'repos/luis5afp/Dyclokpropio/actions/runs/40737936170' | ConvertFrom-Json
+          if($LASTEXITCODE -ne 0 -or $run.conclusion -ne 'success') {throw 'Windows candidate workflow is not successful'}
+          if($run.head_branch -ne 'fix/v6.19-window-session-diagnostics') {throw 'Candidate is from unexpected branch'}
+          & gh run download 40737936170 --repo $env:GITHUB_REPOSITORY --name 'DyclokPRO-v6.19-Windows-candidate-NOT-LOGIN-VERIFIED' --dir 'candidate'
+          if($LASTEXITCODE -ne 0) {throw 'Cannot download verified Windows build artifact'}
+          $exe = @(Get-ChildItem 'candidate' -Recurse -Filter 'DyclokPRO_6.19_win_x64.exe' -File)
+          $sums = @(Get-ChildItem 'candidate' -Recurse -Filter 'SHA256SUMS_v6.19.txt' -File)
+          if($exe.Count -ne 1 -or $sums.Count -ne 1){throw 'Unexpected installer asset or checksum layout'}
+          $size=$exe[0].Length
+          if($size -lt 180000000){throw 'Incomplete Chromium installer'}
+          $hash=(Get-FileHash -Algorithm SHA256 $exe[0].FullName).Hash.ToLowerInvariant()
+          $expected=(Get-Content $sums[0].FullName -Raw).Trim()
+          if($expected -ne "$hash  DyclokPRO_6.19_win_x64.exe"){throw 'SHA256 verification failed'}
+          & 7z t $exe[0].FullName | Out-Null
+          if($LASTEXITCODE -ne 0){throw 'NSIS archive test failed'}
+          New-Item -ItemType Directory 'publication' -Force | Out-Null
+          Copy-Item $exe[0].FullName 'publication/DyclokPRO_6.19_win_x64.exe'
+          Copy-Item $sums[0].FullName 'publication/SHA256SUMS_v6.19.txt'
+          Write-Host "VERIFIED_WINDOWS_EXE_SHA256=$hash"
+      - name: Publish diagnostic prerelease with clear authentication limitation
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          $notes=@'
+          # DyclokPRO v6.19 — instalador de diagnóstico (versión de prueba)
+
+          - Instalador Windows x64 generado por GitHub Actions a partir del instalador v6.16 verificado.
+          - Versión interna 6.19.0, título de ventana corregido a DyclokPRO.
+          - Registros de errores de carga de interfaz por cuenta, sin registrar cookies, contraseñas ni tokens.
+          - Comprobado en Windows: instalación, arranque, aislamiento básico entre cuentas y formulario de acceso para cuenta nueva.
+          - Se mantienen los componentes Chromium, los perfiles y los archivos locales.
+
+          **Advertencia:** todavía NO se ha verificado un inicio de sesión autenticado con carga completa de perfiles.
+          El cierre de sesión inesperado y la pantalla negra pueden persistir. No considerar esta versión una corrección confirmada.
+          Los datos de Cuentas deben conservarse y respaldarse antes de actualizar.
+          El acceso y la revocación de las sesiones siguen bajo control del servidor.
+          '@
+          & gh release create v6.19 'publication/DyclokPRO_6.19_win_x64.exe' 'publication/SHA256SUMS_v6.19.txt' --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'DyclokPRO v6.19 — diagnóstico Windows (prueba)' --notes $notes --prerelease
+          if($LASTEXITCODE -ne 0){throw 'Failed to publish v6.19'}
+          & gh release view v6.19 --repo $env:GITHUB_REPOSITORY --json tagName,isPrerelease,assets
+          if($LASTEXITCODE -ne 0){throw 'Could not verify release'}
