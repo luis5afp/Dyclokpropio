@@ -50,9 +50,11 @@ function makeEnvironment(root,id){
   const remote={url:"https://example.com/dist/index.html"};
   assert.throws(()=>handler({sender:{mainFrame:remote},senderFrame:remote}),/no autorizado/);
   // Do not replace a genuine directory which a user already placed inside the installation.
-  const different=path.join(temp,"another");const c=makeEnvironment(different,null);
-  fs.mkdirSync(path.join(c.install,"Cuentas"),{recursive:true});
-  fs.writeFileSync(path.join(c.install,"Cuentas","user-note.txt"),"keep");
+  const different=path.join(temp,"another");
+  const preExisting=path.join(different,"Programs","DyclokPRO","Cuentas");
+  fs.mkdirSync(preExisting,{recursive:true});
+  fs.writeFileSync(path.join(preExisting,"user-note.txt"),"keep");
+  const c=makeEnvironment(different,null);
   const conflict=c.call("installFolderStatus");
   assert.equal(conflict.linked,false);
   assert.equal(fs.readFileSync(path.join(c.install,"Cuentas","user-note.txt"),"utf8"),"keep");
