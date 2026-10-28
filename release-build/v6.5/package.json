@@ -4,6 +4,7 @@
   "private": true,
   "description": "DyclokPRO Windows installer with new logo and fixed per-user install directory",
   "devDependencies": {
-    "electron-builder": "26.15.3"
+    "electron-builder": "26.15.3",
+    "rcedit": "5.0.2"
   }
 }
