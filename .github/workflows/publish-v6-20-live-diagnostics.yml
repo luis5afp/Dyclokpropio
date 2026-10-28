@@ -5,10 +5,11 @@ on:
     branches:
       - 'feature/v6.20-live-diagnostics'
     paths:
-      - '.github/workflows/publish-v6-20-version-policy.yml'
+      - '.github/workflows/publish-v6-20-live-diagnostics.yml'
       - 'release-build/v6.20/**'
       - 'tools/release-v6-20-diagnostics.py'
-      - 'tools/test-v6-20-version-policy.cjs'\n      - 'release-build/v6.20/live-diagnostics.js'
+      - 'tools/test-v6-20-version-policy.cjs'
+      - 'release-build/v6.20/live-diagnostics.js'
   workflow_dispatch:
 
 permissions:
