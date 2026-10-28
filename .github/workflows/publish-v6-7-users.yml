@@ -110,17 +110,17 @@ jobs:
           $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-7-prepackaged'
           & npx electron-builder --win nsis --x64 --prepackaged $app --publish never --config electron-builder.json
           if($LASTEXITCODE -ne 0){throw 'NSIS Windows packaging failed'}
-          $out='out/DyclokPRO_6.6_win_x64.exe'
+          $out='out/DyclokPRO_6.7_win_x64.exe'
           if(-not(Test-Path $out -PathType Leaf)){throw 'Compiled installer missing'}
           if((Get-Item $out).Length -lt 180000000){throw 'EXE smaller than complete Chromium installer'}
           $hash=(Get-FileHash -Algorithm SHA256 $out).Hash.ToLowerInvariant()
-          "$hash  DyclokPRO_6.6_win_x64.exe" | Set-Content 'out/SHA256SUMS_v6.7.txt' -Encoding ascii
+          "$hash  DyclokPRO_6.7_win_x64.exe" | Set-Content 'out/SHA256SUMS_v6.7.txt' -Encoding ascii
           Write-Host "INSTALLER_SHA256=$hash"
 
       - name: Test Windows installation and two isolated account startup paths
         shell: pwsh
         run: |
-          $exe=(Resolve-Path -LiteralPath 'release-build/v6.7/out/DyclokPRO_6.6_win_x64.exe').Path
+          $exe=(Resolve-Path -LiteralPath 'release-build/v6.7/out/DyclokPRO_6.7_win_x64.exe').Path
           $install=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO'
           if(Test-Path -LiteralPath $install){throw 'Dirty Windows test runner'}
           $setup=Start-Process -FilePath $exe -ArgumentList '/S' -Wait -PassThru
@@ -191,10 +191,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $exe='release-build/v6.7/out/DyclokPRO_6.6_win_x64.exe'
+          $exe='release-build/v6.7/out/DyclokPRO_6.7_win_x64.exe'
           $sum='release-build/v6.7/out/SHA256SUMS_v6.7.txt'
           $sha=(Get-FileHash -Algorithm SHA256 $exe).Hash.ToLowerInvariant()
-          if((Get-Content $sum -Raw).Trim() -ne "$sha  DyclokPRO_6.6_win_x64.exe"){
+          if((Get-Content $sum -Raw).Trim() -ne "$sha  DyclokPRO_6.7_win_x64.exe"){
             throw 'Checksum does not match uploaded installer'
           }
           & 7z l $exe | Out-Null
