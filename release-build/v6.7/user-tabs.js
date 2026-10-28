@@ -12,12 +12,14 @@ async function call(name,...args){
 }
 function message(text){if(alertNode){alertNode.textContent=text;alertNode.hidden=!text;}}
 function loginPageVisible(){
- const hash=String(location.hash||"");
- if(/(?:^|\\/)(?:login|sign-in|signin)(?:[/?#]|$)/i.test(hash))return true;
+ const hash=String(location.hash||"").toLowerCase();
+ const segments=hash.split(/[/?#]/);
+ if(segments.some(x=>x==="login"||x==="sign-in"||x==="signin"))return true;
  const password=document.querySelector('input[type="password"]');
  if(!password)return false;
  const text=(document.body?.innerText||"").slice(0,30000);
- return /Iniciar sesi[oó]n ahora|Recordar contrase[nñ]a|Sign in now|Forgot password|Correo electr[oó]nico\\/Nombre de usuario/i.test(text);
+ return /Iniciar sesi[oó]n ahora|Recordar contrase[nñ]a|Sign in now|Forgot password/i.test(text)
+   || text.includes("Correo electrónico/Nombre de usuario");
 }
 function authInfo(){
  try{
