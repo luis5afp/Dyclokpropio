@@ -5,17 +5,17 @@ on:
     branches:
       - 'release/v6.11-auto-secure-profile-archive'
     paths:
-      - '.github/workflows/publish-v6-10-real-window-switch.yml'
+      - '.github/workflows/publish-v6-11-auto-archive.yml'
       - 'release-build/v6.11/**'
-      - 'tools/release-v6-10-window-switch.py'
-      - 'tools/test-v6-10-focus.cjs'
+      - 'tools/release-v6-11-auto-archive.py'
+      - 'tools/test-v6-11-archive.cjs'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: dyclokpro-v6-10-real-switch
+  group: dyclokpro-v6-11-auto-archive
   cancel-in-progress: false
 
 jobs:
@@ -220,4 +220,4 @@ jobs:
           '@
           & gh release create v6.11 $exe $sum --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'DyclokPRO v6.11 - Archivo automático cifrado por cuenta' --notes $notes --latest
           if($LASTEXITCODE -ne 0){throw 'Could not publish v6.11 to GitHub'}
-          Write-Host 'DYCLOKPRO_V6_10_RELEASE_PUBLISHED=true'
+          Write-Host 'DYCLOKPRO_V6_11_RELEASE_PUBLISHED=true'
