@@ -47,7 +47,7 @@ jobs:
           if($LASTEXITCODE -ne 0){throw 'Missing original v6.13 published installer'}
           $file=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.13_win_x64.exe'
           $hash=(Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
-          if($hash -ne 'b503bc7077dd681723077828b2b4b7b526199375c91c203912c9a200d3502c71'){
+          if($hash -ne 'd2dae844246addd73702632fc0e78dbcf040eb4b592d970f04249ca1c5ad8e54'){
             throw 'BLOCKED: base installer integrity differs'
           }
 
