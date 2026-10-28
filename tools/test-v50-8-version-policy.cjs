@@ -33,14 +33,12 @@ ipcMain.handle("version-local-info",async()=>({
  assert.equal(info.patchVersion,"old");
  const upd=await handlers.get("update-app-check-pack")();
  assert.equal(upd.disabled,true);
- const empty={ipcMain:{on:(channel,fn)=>{},handle:(channel,fn)=>{}}};
- const bad={app:{getVersion:()=>"2.8.17"},ipcMain:empty.ipcMain};
+ const badHandlers=new Map();
+ const bad={app:{getVersion:()=>"2.8.17"},
+  ipcMain:{on(){return this},handle(channel,fn){badHandlers.set(channel,fn);return this}}};
  vm.runInNewContext(src,{require:()=>bad,process:{platform:"win32"}});
- let local;
- bad.ipcMain.handle=(channel,fn)=>{if(channel==="version-local-info")local=fn};
- // isolated test for genuine bundle version assert
- vm.runInNewContext(src,{require:()=>bad,process:{platform:"win32"}});
- await assert.rejects(local(),/versión interna esperada/);
+ bad.ipcMain.handle("version-local-info",async()=>({version:"2.8.17"}));
+ await assert.rejects(badHandlers.get("version-local-info")(),/versión interna esperada/);
  console.log("APP_VERSION_50_8_VISIBLE_TO_RENDERER=PASS");
  console.log("ORIGINAL_CHROMIUM_AND_BROWSER_VERSION_PRESERVED=PASS");
  console.log("LEGACY_AUTO_UPDATE_CHANNELS_DISABLED=PASS");
