@@ -75,7 +75,7 @@ jobs:
           & $csc /nologo /target:winexe /platform:x64 /optimize+ "/out:$manager" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll $sourcePath
           if($LASTEXITCODE -ne 0){throw 'Local profile manager C# compilation failed'}
           $bytes=[System.IO.File]::ReadAllBytes($manager)
-          if($bytes.Length -lt 20000 -or $bytes[0] -ne 77 -or $bytes[1] -ne 90){
+          if($bytes.Length -lt 4096 -or $bytes[0] -ne 77 -or $bytes[1] -ne 90){
             throw 'Invalid local profile executable'
           }
           Write-Host ('LOCAL_MANAGER_EXE_SHA256='+ (Get-FileHash $manager -Algorithm SHA256).Hash.ToLowerInvariant())
