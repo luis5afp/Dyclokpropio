@@ -116,12 +116,14 @@ ipcMain.handle("dyclokpro:users:list",async ev=>{
  ensureSender(ev);
  return {active,accounts:list()};
 });
-ipcMain.handle("dyclokpro:users:add",async(ev,label)=>{
+ipcMain.handle("dyclokpro:users:add",async(ev)=>{
  ensureSender(ev);
- const name=safeName(label);if(!name)throw Error("El nombre debe tener entre 2 y 40 caracteres.");
  const accounts=list();
  if(accounts.length>=24)throw Error("Límite de 24 espacios locales.");
  const id=crypto.randomBytes(16).toString("hex");
+ // + Usuario opens the real provider login screen. No name/password prompt here.
+ // Never copy remembered passwords or tokens from the first account.
+ const name="Nueva cuenta "+accounts.length;
  accounts.push({id,name});write(accounts);
  const launched=await start(id);
  return {id,name,...launched};
@@ -137,6 +139,16 @@ ipcMain.handle("dyclokpro:users:renameCurrent",async(ev,label)=>{
  const accounts=list(),account=accounts.find(a=>a.id===active);
  if(!account)throw Error("Cuenta inexistente.");
  account.name=name;write(accounts);
+ return {active,accounts:list()};
+});
+ipcMain.handle("dyclokpro:users:logoutCurrent",async ev=>{
+ ensureSender(ev);
+ const accounts=list(),account=accounts.find(a=>a.id===active);
+ if(!account)throw Error("Cuenta inexistente");
+ // Invalidate only the displayed nickname; preserve all account data/credentials
+ // as managed by the original provider login/logout process.
+ account.name=active==="legacy"?"Cuenta principal":("Iniciar sesión "+accounts.indexOf(account));
+ write(accounts);
  return {active,accounts:list()};
 });
 ipcMain.handle("dyclokpro:users:current",async ev=>{
