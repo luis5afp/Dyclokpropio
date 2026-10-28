@@ -39,7 +39,7 @@ function ensureLink(){
     return false
   }
   try{
-    fs.mkdirSync(target,{recursive:true,mode:0o700});
+    fs.mkdirSync(path.join(target,account,"ArchivoOriginal","Perfiles"),{recursive:true,mode:0o700});
     if(fs.existsSync(junction)||fs.existsSync(junction)&&!checkLink()){
       if(!checkLink()){
         lastError="La carpeta Cuentas de la instalación ya existe y no apunta al archivo persistente. No se modificó.";
