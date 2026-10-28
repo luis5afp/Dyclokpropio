@@ -43,7 +43,7 @@ function instance(id){
   await a.invoke("openProfileFolder","244");
   assert.deepEqual(a.opened,[x.folder]);
   assert.throws(()=>a.invoke("registerProfile",{id:"../profile244"}));
-  assert.throws(()=>a.invoke("openProfileFolder","../244"));
+  await assert.rejects(a.invoke("openProfileFolder","../244"),/Invalid profile ID/);
   const handler=a.handlers.get("dyclokpro:archive:registerProfile");
   const frame={url:"https://evil.example/dist/index.html"};
   assert.throws(()=>handler({sender:{mainFrame:frame},senderFrame:frame},{id:"123"}));
