@@ -1,0 +1,9 @@
+{
+  "name": "dyclokpro-release",
+  "version": "6.3.0",
+  "private": true,
+  "description": "Dyclokpro Windows data inspector and local profiles",
+  "devDependencies": {
+    "electron-builder": "26.15.3"
+  }
+}
