@@ -113,7 +113,7 @@ def patch(root, script_file):
     inspector_meta=hdr["files"]["dist"]["files"]
     if "dyclokpro-archive.js" in inspector_meta:
         raise RuntimeError("Inspector entry already exists")
-    inspector_meta["dyclokpro-inspector.js"]={
+    inspector_meta["dyclokpro-archive.js"]={
         "size":len(script),"unpacked":True,"integrity":integrity(script)}
     newfile=external/inspector_rel
     newfile.write_bytes(script)
