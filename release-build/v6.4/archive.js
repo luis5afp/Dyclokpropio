@@ -1,278 +1,263 @@
-/* Dyclokpro v6.4 — archivo local persistente de respuestas observables.
- * No cambia solicitudes ni respuestas. El texto original se guarda cifrado
- * (AES-GCM) solo tras activación con contraseña. No registra tráfico Chromium.
+/* Dyclokpro v6.4 - Archivo de respuestas originales SIN CIFRAR.
+ * Captura respuestas visibles a esta interfaz, nunca cambia lo recibido.
+ * Los datos originales se guardan como texto plano SOLO tras activación explícita.
+ * No intercepta el tráfico de Chromium ni sustituye autorizaciones del servidor.
  */
-(() => {
+(()=>{
 "use strict";
-if (window.__dyclokArchiveV64) return;
-Object.defineProperty(window,"__dyclokArchiveV64",{value:true});
-const NAME="Dyclokpro_Archivo_Servidor_v1", MAX=1200, MAX_RESPONSE=1048576;
-const encoder=new TextEncoder(),decoder=new TextDecoder();
-let db=null,key=null,records=[],status="iniciando",lastError="",dialog=null,filter="todos",pending=0;
-const el=(tag,content,cls)=>{const x=document.createElement(tag);if(content!==undefined)x.textContent=content;if(cls)x.className=cls;return x};
-function reqPromise(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function openDb(){
- if(!window.indexedDB){status="sin almacenamiento";lastError="IndexedDB no disponible";return}
- const request=indexedDB.open(NAME,1);
- request.onupgradeneeded=()=>{
-   const d=request.result;
-   if(!d.objectStoreNames.contains("captures"))d.createObjectStore("captures",{keyPath:"id",autoIncrement:true});
-   if(!d.objectStoreNames.contains("settings"))d.createObjectStore("settings",{keyPath:"id"});
- };
- request.onsuccess=()=>{db=request.result;status="metadatos guardados";refresh()};
- request.onerror=()=>{status="error";lastError="No se pudo abrir el archivo local";draw()};
+if(window.__dyclokArchivePlain64)return;
+Object.defineProperty(window,"__dyclokArchivePlain64",{value:true});
+const DB="Dyclokpro_Respuestas_Originales_v64",MAX_RESPONSE=1048576,MAX_RECORDS=1200;
+const EXCLUDE=/(?:^|\/)(?:login|logout|auth|authorize|password|refresh_token|access_token)(?:\/|$)/i;
+let db=null,records=[],enabled=false,panel=null,folder=null,errors="",pending=0;
+const CATEGORIES=["cookies","proxy","configuracion","parametros","otros"];
+const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n};
+const transaction=(r)=>new Promise((resolve,reject)=>{r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+function getPath(url){
+  try{
+    const u=new URL(String(url),location.href);
+    if(u.protocol!=="https:"&&u.protocol!=="http:")return null;
+    if(!/(?:\/v\d+\/|\/env\/|\/profile\/|\/cookies?\/|\/proxy\/|\/settings\/|\/config\/)/i.test(u.pathname))return null;
+    if(EXCLUDE.test(u.pathname))return null;
+    return u.pathname.replace(/[a-f0-9-]{18,}/gi,":id").replace(/\/\d{3,}(?=\/|$)/g,"/:id").slice(0,180);
+  }catch{return null}
 }
-async function settingsGet(id){
- return reqPromise(db.transaction("settings","readonly").objectStore("settings").get(id))
+function classify(raw,path){
+  let data;
+  try{data=JSON.parse(raw)}catch{return null}
+  const kinds=new Set(),visited=new WeakSet();
+  if(/cookies?/i.test(path))kinds.add("cookies");
+  if(/proxy/i.test(path))kinds.add("proxy");
+  if(/kernel|launch|start|open_env|browser/i.test(path))kinds.add("parametros");
+  if(/config|fingerprint|settings/i.test(path))kinds.add("configuracion");
+  let examined=0;
+  function visit(obj,depth){
+    if(depth>7||!obj||typeof obj!=="object"||visited.has(obj)||++examined>600)return;
+    visited.add(obj);
+    if(Array.isArray(obj)){for(const item of obj.slice(0,90))visit(item,depth+1);return}
+    for(const [key,value] of Object.entries(obj).slice(0,90)){
+      if(/cookies?|cookieList|cookieData|cookieStorage/i.test(key))kinds.add("cookies");
+      if(/proxy|socks/i.test(key))kinds.add("proxy");
+      if(/fingerprint|timezone|webrtc|webgl|canvas|browserConfig|preferences/i.test(key))kinds.add("configuracion");
+      if(/userAgent|launch|arguments|kernel|browserVersion|startup/i.test(key))kinds.add("parametros");
+      if(value&&typeof value==="object")visit(value,depth+1);
+    }
+  }
+  visit(data,0);
+  if(!kinds.size)kinds.add("otros");
+  return Array.from(kinds);
 }
-async function settingsPut(value){
- return reqPromise(db.transaction("settings","readwrite").objectStore("settings").put(value))
+async function load(){
+  if(!db)return;
+  try{
+    records=(await transaction(db.transaction("records","readonly").objectStore("records").getAll()))
+      .sort((a,b)=>b.id-a.id);
+    const state=await transaction(db.transaction("settings","readonly").objectStore("settings").get("enabled"));
+    enabled=state?.value===true;
+  }catch{errors="No se pudo consultar el almacenamiento local."}
+  render();
 }
-async function derive(password){
- if(!crypto.subtle)throw Error("WebCrypto no está disponible en esta ventana.");
- if(password.length<12)throw Error("La contraseña necesita al menos 12 caracteres.");
- let salt=await settingsGet("salt");
- if(!salt){salt={id:"salt",value:Array.from(crypto.getRandomValues(new Uint8Array(16)))};await settingsPut(salt)}
- const master=await crypto.subtle.importKey("raw",encoder.encode(password),"PBKDF2",false,["deriveKey"]);
- const derived=await crypto.subtle.deriveKey({name:"PBKDF2",salt:new Uint8Array(salt.value),
-   iterations:310000,hash:"SHA-256"},master,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
- let verifier=await settingsGet("verifier");
- if(verifier){
-   try{
-     const result=await crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(verifier.iv)},
-       derived,new Uint8Array(verifier.cipher));
-     if(decoder.decode(result)!=="DyclokproArchivoV64")throw Error("Clave inválida");
-   }catch{throw Error("La contraseña no coincide con el archivo existente.")}
- }else{
-   const iv=crypto.getRandomValues(new Uint8Array(12));
-   const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},derived,encoder.encode("DyclokproArchivoV64"));
-   verifier={id:"verifier",iv:Array.from(iv),cipher:new Uint8Array(cipher)};
-   await settingsPut(verifier);
- }
- return derived
+function startDB(){
+  if(!window.indexedDB){errors="IndexedDB no está disponible en este entorno.";return}
+  const request=indexedDB.open(DB,1);
+  request.onupgradeneeded=()=>{
+    const d=request.result;
+    if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:"id",autoIncrement:true});
+    if(!d.objectStoreNames.contains("settings"))d.createObjectStore("settings",{keyPath:"id"});
+  };
+  request.onsuccess=()=>{db=request.result;void load()};
+  request.onerror=()=>{errors="No se pudo inicializar el archivo local.";render()};
 }
-async function unlock(){
- if(!db){alert("El archivo local no está disponible todavía.");return}
- const password=prompt("Contraseña para guardar respuestas originales cifradas (12 caracteres mínimo). Usa la misma tras reiniciar. Nunca se transmite al servidor.");
- if(password===null)return;
- try{key=await derive(password);lastError="";status="archivo cifrado activo";
-   alert("Archivo activado. Las nuevas respuestas visibles a Dyclokpro quedarán archivadas con cifrado AES-GCM.");
- }catch(err){lastError=String(err.message||"No se pudo desbloquear");alert(lastError)}
- draw();
+async function setEnabled(on){
+  if(on&&!confirm("AVISO: se guardarán respuestas originales SIN CIFRAR en este equipo. Pueden contener cookies de sesión, proxies, contraseñas y tokens. Solo actívalo en tu propio equipo y perfiles autorizados. ¿Activar?"))return;
+  if(!db){alert("El almacenamiento local no está disponible.");return}
+  try{
+    await transaction(db.transaction("settings","readwrite").objectStore("settings").put({id:"enabled",value:on}));
+    enabled=on;errors="";render();
+  }catch{errors="No se pudo modificar la configuración del archivo.";render()}
 }
-async function encryptRaw(text){
- const current=key;
- if(!current)return null;
- const iv=crypto.getRandomValues(new Uint8Array(12));
- const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},current,encoder.encode(text));
- return {iv:Array.from(iv),cipher:new Uint8Array(cipher)}
+function filename(type,row){
+  const stamp=new Date(row.timestamp).toISOString().replace(/[:.]/g,"-");
+  return "Dyclokpro_"+type+"_"+stamp+"_"+row.id+(type==="proxy"?".txt":".json")
 }
-async function decryptRaw(row){
- if(!key||!row.raw)throw Error("Archivo bloqueado o respuesta sin original cifrado.");
- const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(row.raw.iv)},
-   key,new Uint8Array(row.raw.cipher));
- return decoder.decode(plain);
+async function writeToSelectedFolder(row){
+  if(!folder)return;
+  for(const type of row.types){
+    const name=filename(type,row);
+    const handle=await folder.getFileHandle(name,{create:true});
+    const writable=await handle.createWritable();
+    try{await writable.write(row.raw)}finally{await writable.close()}
+  }
 }
-function sourcePath(url){
- try{
-   const u=new URL(String(url),location.href);
-   if(!/^https?:$/.test(u.protocol))return null;
-   if(!/(?:\/v\d+\/|\/api\/|\/env\/|\/profile\/|\/cookies?\/|\/proxy\/)/i.test(u.pathname))return null;
-   // No registrar queries, hosts, tokens, IDs de perfil u otros datos personales de la URL.
-   return u.pathname.replace(/[a-f0-9-]{18,}/gi,":id").replace(/\/\d{3,}(?=\/|$)/g,"/:id").slice(0,180);
- }catch{return null}
+async function chooseFolder(){
+  if(typeof window.showDirectoryPicker!=="function"){
+    alert("La selección automática de carpetas no está disponible en esta ventana. Usa los botones Guardar JSON/TXT.");
+    return
+  }
+  try{
+    folder=await window.showDirectoryPicker({mode:"readwrite"});
+    errors="";render();
+  }catch(e){if(e?.name!=="AbortError"){errors="No se pudo usar la carpeta elegida.";render()}}
 }
-function inspectShape(raw,path){
- const kinds=new Set();
- if(/cookie/i.test(path))kinds.add("cookies");
- if(/proxy/i.test(path))kinds.add("proxy");
- if(/kernel|start|launch|open_env|browser/i.test(path))kinds.add("parametros");
- if(/fingerprint|config|settings/i.test(path))kinds.add("configuracion");
- let json;try{json=JSON.parse(raw)}catch{return null}
- const seen=new WeakSet();let count=0;
- function visit(obj,level){
-   if(!obj||typeof obj!=="object"||seen.has(obj)||level>6||++count>450)return;
-   seen.add(obj);
-   if(Array.isArray(obj)){for(const value of obj.slice(0,80))visit(value,level+1);return}
-   for(const [field,value] of Object.entries(obj).slice(0,70)){
-     if(/cookies?|cookieList|cookieStorage|cookieData/i.test(field))kinds.add("cookies");
-     if(/proxy|socks/i.test(field))kinds.add("proxy");
-     if(/fingerprint|timezone|webrtc|webgl|canvas|browserConfig/i.test(field))kinds.add("configuracion");
-     if(/userAgent|launch|arguments|kernel|browserVersion/i.test(field))kinds.add("parametros");
-     if(value&&typeof value==="object")visit(value,level+1);
-   }
- }
- visit(json,0);
- if(!kinds.size)kinds.add("otros");
- return Array.from(kinds);
+async function capture(body,url,method,status){
+  if(!enabled||!db||pending>12||typeof body!=="string"||body.length>MAX_RESPONSE||status<200||status>=300)return;
+  const path=getPath(url);
+  if(!path)return;
+  const types=classify(body,path);
+  if(!types)return;
+  pending++;
+  try{
+    // Texto de respuesta íntegro, sin JSON.parse/serialize ni cifrado.
+    const row={timestamp:Date.now(),path,method:String(method||"GET").slice(0,16),
+      status,types,raw:body};
+    row.id=await transaction(db.transaction("records","readwrite").objectStore("records").add(row));
+    if(folder){
+      try{await writeToSelectedFolder(row)}
+      catch{errors="La copia en la carpeta seleccionada falló; se conserva en el archivo local."}
+    }
+    const all=await transaction(db.transaction("records","readonly").objectStore("records").getAll());
+    if(all.length>MAX_RECORDS){
+      const tx=db.transaction("records","readwrite");
+      for(const old of all.slice(0,all.length-MAX_RECORDS))tx.objectStore("records").delete(old.id);
+    }
+    records=all.slice(-MAX_RECORDS).sort((a,b)=>b.id-a.id);
+    render();
+  }catch{errors="No se pudo guardar la respuesta; verifica almacenamiento y permisos.";render()}
+  finally{pending--}
 }
-async function refresh(){
- if(!db)return;
- try{
-   records=(await reqPromise(db.transaction("captures","readonly").objectStore("captures").getAll()))
-     .sort((a,b)=>b.id-a.id);
-   draw();
- }catch{lastError="Error al leer el índice local.";draw()}
-}
-async function saveObserved(raw,url,method,statusCode){
- if(!db||pending>12||typeof raw!=="string"||raw.length>MAX_RESPONSE||statusCode<200||statusCode>=300)return;
- const path=sourcePath(url);
- if(!path)return;
- const types=inspectShape(raw,path);
- if(!types)return;
- pending++;
- try{
-   const encrypted=await encryptRaw(raw);
-   const row={timestamp:Date.now(),path,method:String(method||"GET").slice(0,12),status:statusCode,
-     types,originalLength:raw.length,raw:encrypted};
-   await reqPromise(db.transaction("captures","readwrite").objectStore("captures").add(row));
-   const all=await reqPromise(db.transaction("captures","readonly").objectStore("captures").getAll());
-   if(all.length>MAX){
-     const tx=db.transaction("captures","readwrite");for(const old of all.slice(0,all.length-MAX))tx.objectStore("captures").delete(old.id);
-   }
-   records=all.slice(-MAX).sort((a,b)=>b.id-a.id);
-   status=key?"archivo cifrado activo":"solo metadatos";
-   draw();
- }catch{lastError="No se pudo conservar una respuesta; comprueba espacio y permisos."}
- finally{pending--}
-}
-// Una copia asíncrona del cuerpo no interfiere con el consumidor original.
-const xhrOpen=XMLHttpRequest.prototype.open,xhrSend=XMLHttpRequest.prototype.send;
-const xhrInfo=new WeakMap();
+// No cambia los argumentos ni las respuestas entregadas a la aplicación.
+const xhrOpen=XMLHttpRequest.prototype.open,xhrSend=XMLHttpRequest.prototype.send,xhrMeta=new WeakMap();
 XMLHttpRequest.prototype.open=function(method,url,...args){
- xhrInfo.set(this,{method,url});return xhrOpen.call(this,method,url,...args)
+  xhrMeta.set(this,{method,url});
+  return xhrOpen.call(this,method,url,...args)
 };
 XMLHttpRequest.prototype.send=function(...args){
- const info=xhrInfo.get(this);
- if(info&&sourcePath(info.url)){
-   this.addEventListener("loadend",function(){
-     try{if(this.responseType===""||this.responseType==="text")
-       void saveObserved(this.responseText,info.url,info.method,this.status)
-     }catch{}
-   },{once:true});
- }
- return xhrSend.apply(this,args)
+  const info=xhrMeta.get(this);
+  if(info&&getPath(info.url)){
+    this.addEventListener("loadend",function(){
+      try{
+        if(this.responseType===""||this.responseType==="text")
+          void capture(this.responseText,info.url,info.method,this.status)
+      }catch{}
+    },{once:true});
+  }
+  return xhrSend.apply(this,args)
 };
 if(typeof window.fetch==="function"){
- const original=window.fetch;
- window.fetch=function(...args){
-   const promise=original.apply(this,args);
-   try{
-     const r=args[0],url=typeof r==="string"?r:r?.url,opts=args[1];
-     if(sourcePath(url))promise.then(response=>{
-       const reported=Number(response.headers?.get("content-length")||0);
-       if(reported>MAX_RESPONSE)return;
-       response.clone().text().then(body=>saveObserved(body,url,opts?.method||r?.method||"GET",response.status)).catch(()=>{});
-     }).catch(()=>{});
-   }catch{}
-   return promise
- }
+  const originalFetch=window.fetch;
+  window.fetch=function(...args){
+    const response=originalFetch.apply(this,args);
+    try{
+      const a=args[0],url=typeof a==="string"?a:a?.url,options=args[1];
+      if(getPath(url))response.then(r=>{
+        const size=Number(r.headers?.get("content-length")||0);
+        if(size>MAX_RESPONSE)return;
+        r.clone().text().then(body=>capture(body,url,options?.method||a?.method||"GET",r.status)).catch(()=>{});
+      }).catch(()=>{});
+    }catch{}
+    return response
+  }
 }
-function dl(filename,contents,mime){
- const blob=new Blob([contents],{type:mime});
- const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;
- document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),12000)
+function download(filename,text,mime){
+  const blob=new Blob([text],{type:mime});
+  const href=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=href;a.download=filename;document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(href),10000)
 }
-async function exportType(type){
- if(!key){alert("Desbloquea el archivo con tu contraseña antes de exportar originales.");return}
- const list=records.filter(r=>r.raw&&r.types.includes(type)).slice().reverse();
- if(!list.length){alert("No hay respuestas originales cifradas de esta categoría. Recarga el perfil después de desbloquear.");return}
- if(!confirm("ATENCIÓN: el archivo exportado puede contener cookies de sesión, contraseñas y tokens. Guarda el archivo solo en una carpeta privada. ¿Exportar?"))return;
- try{
-   const items=[];
-   for(const row of list){
-     const original=await decryptRaw(row);
-     items.push({fecha:new Date(row.timestamp).toISOString(),origen_ruta:row.path,
-       tipo:row.types,metodo:row.method,respuesta_original_texto:original})
-   }
-   const date=new Date().toISOString().slice(0,10);
-   if(type==="proxy"){
-     const text=items.map((item,i)=>"===== PROXY "+(i+1)+" "+item.fecha+" =====\r\n"+item.respuesta_original_texto)
-       .join("\r\n\r\n");
-     dl("Dyclokpro_proxy_"+date+".txt",text,"text/plain;charset=utf-8");
-   }else{
-     const names={cookies:"cookies",configuracion:"configuracion",parametros:"parametros_inicio",otros:"otros"};
-     dl("Dyclokpro_"+names[type]+"_"+date+".json",JSON.stringify({tipo: type,fuente:"Dyclokpro HTTP",
-       capturas:items},null,2),"application/json;charset=utf-8")
-   }
- }catch{alert("Falló la exportación. Comprueba la contraseña o la integridad del archivo local.")}
+function exportType(type){
+  const items=records.filter(r=>r.types.includes(type)).slice().reverse();
+  if(!items.length){alert("No hay respuestas observadas de este tipo.");return}
+  if(!confirm("Los archivos se guardarán SIN CIFRAR y pueden contener claves de sesión, cookies o contraseñas. ¿Exportarlos a tu carpeta de descargas?"))return;
+  for(const row of items){
+    download(filename(type,row),row.raw,type==="proxy"?"text/plain;charset=utf-8":"application/json;charset=utf-8");
+  }
 }
-function closePanel(){if(dialog){dialog.remove();dialog=null}}
-function draw(){
- if(!dialog)return;
- const body=dialog.querySelector(".dy-arch-body");
- if(!body)return;
- body.replaceChildren();
- const p=el("p","Estado: "+status+". Registros locales: "+records.length+". Originales cifrados: "+records.filter(r=>r.raw).length);
- body.append(p);
- const note=el("p","Se guarda un índice automáticamente. Para conservar los textos originales tal como llegaron, desbloquea el cifrado; al reiniciar deberás introducir la contraseña otra vez.");
- note.className="dy-arch-note";body.append(note);
- if(lastError){const warn=el("p",lastError);warn.style.color="#ffbd86";body.append(warn)}
- const control=el("div",undefined,"dy-arch-controls");
- const on=el("button",key?"Archivo desbloqueado":"Activar / desbloquear cifrado");
- on.disabled=!!key;on.addEventListener("click",unlock);control.append(on);
- const off=el("button","Bloquear");
- off.disabled=!key;off.addEventListener("click",()=>{key=null;status="solo metadatos";draw()});control.append(off);
- const reload=el("button","Actualizar");
- reload.addEventListener("click",refresh);control.append(reload);body.append(control);
- const hint=el("p","Exportaciones manuales por categoría. Cookies se guardan en JSON, proxy en TXT y las demás configuraciones en JSON. Los originales pueden contener secretos.");
- hint.className="dy-arch-note";body.append(hint);
- const buttons=el("div",undefined,"dy-arch-controls");
- for(const [kind,label,ext] of [["cookies","Cookies","JSON"],["proxy","Proxy","TXT"],["configuracion","Configuración","JSON"],["parametros","Parámetros de inicio","JSON"],["otros","Otros","JSON"]]){
-   const count=records.filter(x=>x.types.includes(kind)).length;
-   const b=el("button",label+" ("+count+") · "+ext);b.addEventListener("click",()=>exportType(kind));buttons.append(b)
- }
- body.append(buttons);
- const table=el("table",undefined,"dy-arch-table"),thead=el("thead"),h=el("tr");
- for(const title of ["Fecha","Categoría","Ruta","Original guardado"]){h.append(el("th",title))}
- thead.append(h);table.append(thead);
- const tbody=el("tbody");
- for(const item of records.slice(0,80)){
-   const tr=el("tr");
-   for(const val of [new Date(item.timestamp).toLocaleString(),item.types.join(", "),item.path,item.raw?"Cifrado":"Solo índice"])
-     tr.append(el("td",val));
-   tbody.append(tr);
- }
- table.append(tbody);body.append(table);
+async function clearArchive(){
+  if(!confirm("¿Borrar permanentemente las copias locales de este archivo? No afecta al servidor, a Chromium ni a sus perfiles."))return;
+  if(!confirm("Confirma nuevamente que deseas borrar únicamente los registros archivados."))return;
+  try{await transaction(db.transaction("records","readwrite").objectStore("records").clear());records=[];render()}
+  catch{errors="No se pudo borrar el archivo local.";render()}
+}
+function close(){if(panel){panel.remove();panel=null}}
+function render(){
+  if(!panel)return;
+  const area=panel.querySelector(".dy-save-body");
+  if(!area)return;
+  area.replaceChildren();
+  area.append(el("p","Estado: "+(enabled?"Guardado original ACTIVADO":"Guardado detenido")+
+    " · Respuestas guardadas: "+records.length+" · Carpeta de archivos: "+(folder?"Seleccionada":"No seleccionada")));
+  const caution=el("p","ATENCIÓN: LAS COPIAS ESTÁN EN TEXTO PLANO, SIN CIFRADO. Resguarda tu PC. No compartas estos archivos ni los subas a GitHub.","dy-save-warning");
+  area.append(caution);
+  area.append(el("p","Los registros se conservan localmente. Para crear .json/.txt automáticamente, selecciona una carpeta y mantenla autorizada mientras la ventana esté abierta.","dy-save-note"));
+  if(errors)area.append(el("p",errors,"dy-save-warning"));
+  const controls=el("div",undefined,"dy-save-controls");
+  function action(title,fn){const b=el("button",title);b.type="button";b.addEventListener("click",fn);controls.append(b);return b}
+  action(enabled?"Detener guardado":"Activar guardado original",()=>setEnabled(!enabled));
+  action("Elegir carpeta para archivos .json / .txt",chooseFolder);
+  action("Actualizar listado",load);
+  action("Borrar archivo local",clearArchive);
+  area.append(controls);
+  area.append(el("p","Exportar las respuestas originales, por tipo y sin alteraciones, aunque no se haya seleccionado una carpeta:","dy-save-note"));
+  const exports=el("div",undefined,"dy-save-controls");
+  for(const [type,title,ext] of [["cookies","Cookies","JSON"],["proxy","Proxy","TXT"],
+    ["configuracion","Configuración","JSON"],["parametros","Inicio de Chromium","JSON"],["otros","Otros","JSON"]]){
+    const count=records.filter(r=>r.types.includes(type)).length;
+    const b=el("button",title+" ("+count+") · "+ext);
+    b.addEventListener("click",()=>exportType(type));exports.append(b)
+  }
+  area.append(exports);
+  const table=el("table",undefined,"dy-save-table"),thead=el("thead"),heading=el("tr");
+  for(const label of ["Hora","Categoría","Ruta","Estado"]){heading.append(el("th",label))}
+  thead.append(heading);table.append(thead);
+  const tbody=el("tbody");
+  for(const r of records.slice(0,100)){
+    const tr=el("tr");
+    for(const v of [new Date(r.timestamp).toLocaleString(),r.types.join(", "),r.path,r.status])
+      tr.append(el("td",String(v)));
+    tbody.append(tr)
+  }
+  table.append(tbody);area.append(table);
+  area.append(el("p","Limitación: solo registra solicitudes HTTP visibles a la ventana de Dyclokpro. No intercepta el tráfico de ginsbrowser.exe ni copia por sí solo las cookies cifradas de Chromium.","dy-save-note"))
+}
+function openPanel(){
+  close();
+  const backdrop=el("div");backdrop.id="dy-save-backdrop";panel=backdrop;
+  const box=el("section");box.id="dy-save-dialog";box.setAttribute("role","dialog");
+  box.setAttribute("aria-modal","true");
+  const heading=el("header"),title=el("h2","Archivo local de respuestas originales · Dyclokpro");
+  const closeBtn=el("button","Cerrar ×");closeBtn.addEventListener("click",close);
+  heading.append(title,closeBtn);box.append(heading);box.append(el("div",undefined,"dy-save-body"));
+  backdrop.append(box);document.body.append(backdrop);
+  backdrop.addEventListener("click",e=>{if(e.target===backdrop)close()});
+  backdrop.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
+  render();closeBtn.focus()
 }
 const css=[
-"#dy-arch-launch{position:fixed;left:16px;bottom:18px;z-index:10000;background:#123a2f;color:#ecfff7;border:1px solid #0fc69d;padding:11px 14px;border-radius:9px;cursor:pointer;font:600 13px system-ui}",
-"#dy-arch-backdrop{position:fixed;inset:0;background:#000c;z-index:2147483500;display:flex;align-items:center;justify-content:center;padding:18px}",
-"#dy-arch-modal{width:min(960px,98vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;background:#1c2021;color:#eef7f3;border:1px solid #627269;border-radius:12px;font:14px system-ui}",
-"#dy-arch-modal header{padding:16px;border-bottom:1px solid #47504b;display:flex;align-items:center;justify-content:space-between}",
-"#dy-arch-modal h2{font-size:21px;color:#25ddb1;margin:0}",
-"#dy-arch-modal button{cursor:pointer;background:#234a3e;border:1px solid #338768;color:white;border-radius:6px;padding:9px}",
-"#dy-arch-modal button:disabled{opacity:.55;cursor:default}",
-"#dy-arch-modal .dy-arch-body{padding:16px;overflow:auto}",
-"#dy-arch-modal .dy-arch-note{font-size:12px;color:#bed5c9;line-height:1.55}",
-"#dy-arch-modal .dy-arch-controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}",
-"#dy-arch-modal .dy-arch-table{width:100%;font-size:12px;border-collapse:collapse}",
-"#dy-arch-modal td,#dy-arch-modal th{padding:9px;text-align:left;border-bottom:1px solid #38463e;overflow-wrap:anywhere}",
-"#dy-arch-modal th{color:#29dbad}",
-"#dp-inspector-open{display:none!important}"
+  "#dy-save-button{position:fixed;left:16px;bottom:18px;z-index:19000;background:#0e4035;color:white;border:1px solid #00bd95;border-radius:9px;cursor:pointer;padding:11px 14px;font:600 13px system-ui}",
+  "#dy-save-backdrop{position:fixed;inset:0;background:#000c;z-index:2147483500;display:flex;align-items:center;justify-content:center;padding:14px}",
+  "#dy-save-dialog{background:#1d2221;color:#f4fffa;border:1px solid #547566;border-radius:12px;width:min(1000px,96vw);max-height:92vh;display:flex;flex-direction:column;font:14px system-ui}",
+  "#dy-save-dialog header{display:flex;justify-content:space-between;align-items:center;padding:14px;border-bottom:1px solid #526257}",
+  "#dy-save-dialog h2{color:#24d3a3;font-size:20px;margin:0}",
+  "#dy-save-dialog .dy-save-body{overflow:auto;padding:16px}",
+  "#dy-save-dialog button{background:#255246;border:1px solid #4c937e;color:white;padding:9px;cursor:pointer;border-radius:6px}",
+  "#dy-save-dialog .dy-save-controls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}",
+  "#dy-save-dialog .dy-save-warning{color:#ffcc8f;font-weight:600}",
+  "#dy-save-dialog .dy-save-note{font-size:12px;line-height:1.6;color:#bbd0c9}",
+  "#dy-save-dialog .dy-save-table{width:100%;border-collapse:collapse;font-size:12px}",
+  "#dy-save-dialog th,#dy-save-dialog td{border-bottom:1px solid #3d4c44;padding:8px;text-align:left;overflow-wrap:anywhere}",
+  "#dy-save-dialog th{color:#1cddb0}",
+  "#dp-inspector-open,#dy-arch-launch{display:none!important}"
 ].join("\n");
-function openPanel(){
- closePanel();
- const backdrop=el("div");backdrop.id="dy-arch-backdrop";dialog=backdrop;
- const modal=el("section");modal.id="dy-arch-modal";modal.setAttribute("role","dialog");
- modal.setAttribute("aria-modal","true");modal.setAttribute("aria-label","Archivo local del servidor");
- const head=el("header"),title=el("h2","Archivo local · Cookies / Proxy / Configuración");
- const close=el("button","Cerrar ×");close.addEventListener("click",closePanel);
- head.append(title,close);modal.append(head);modal.append(el("div",undefined,"dy-arch-body"));
- const foot=el("p","Solo copia datos que la aplicación puede observar. No intercepta los datos privados del proceso Chromium, no modifica el servidor ni garantiza que lleguen todos los tipos de datos.","dy-arch-note");
- foot.style.padding="0 16px";modal.append(foot);
- backdrop.append(modal);document.body.append(backdrop);
- backdrop.addEventListener("click",e=>{if(e.target===backdrop)closePanel()});
- backdrop.addEventListener("keydown",e=>{if(e.key==="Escape")closePanel()});
- draw();close.focus();
-}
 function mount(){
- if(!document.body||document.getElementById("dy-arch-launch"))return;
- const style=el("style");style.textContent=css;document.head.append(style);
- const button=el("button","▣  Archivo local · Cookies y Proxy");
- button.id="dy-arch-launch";button.type="button";button.title="Respuestas del servidor guardadas localmente, con originales cifrados";
- button.addEventListener("click",openPanel);document.body.append(button)
+  if(!document.body||document.getElementById("dy-save-button"))return;
+  const style=el("style");style.textContent=css;document.head.append(style);
+  const button=el("button","▣  Archivo original · Cookies / Proxy");
+  button.id="dy-save-button";button.type="button";
+  button.title="Guardar respuestas visibles sin cifrar y sin modificar el servidor";
+  button.addEventListener("click",openPanel);
+  document.body.append(button)
 }
-openDb();
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mount,{once:true});else mount();
+startDB();
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mount,{once:true});
+else mount();
 })();
