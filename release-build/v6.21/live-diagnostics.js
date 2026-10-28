@@ -140,7 +140,12 @@ function attach(win){
         log(e.kind,id+" "+e.group+" codigo="+e.status+detail);
        }
    }catch{}
-  }else if(level===3||level==="error")log("CONSOLE_ERROR",id+" error JavaScript (contenido omitido)");
+  }else if(level===3||level==="error"){
+    const source=String(typeof args[0]?.sourceId==="string"?args[0].sourceId:args[4]||"");
+    const m=source.match(/([A-Za-z0-9_.-]+\.js)(?::(\d+))?/);
+    const line=Number(typeof args[0]?.lineNumber==="number"?args[0].lineNumber:args[3]||0);
+    log("CONSOLE_ERROR",id+" modulo="+(m?m[1]:"unknown")+":"+(Number.isInteger(line)&&line>=0&&line<=999999?line:0));
+   }
  });
  rename();
  if(!panel&&app.isReady())setImmediate(createPanel);
