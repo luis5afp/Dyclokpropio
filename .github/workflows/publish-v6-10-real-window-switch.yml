@@ -142,10 +142,10 @@ jobs:
           & python -m pip install --disable-pip-version-check 'pefile==2024.8.26' 'Pillow==11.3.0'
           if($LASTEXITCODE -ne 0){throw 'Cannot install Windows resource inspection tools'}
           $installer='release-build/v6.10/out/DyclokPRO_6.10_win_x64.exe'
-          & python tools/verify-v6-9-windows-icon.py --installer $installer --icon release-build/v6.10/DyclokPRO.ico --label 'NSIS installer'
+          & python tools/verify-v6-8-windows-icon.py --installer $installer --icon release-build/v6.10/DyclokPRO.ico --label 'NSIS installer'
           if($LASTEXITCODE -ne 0){throw 'BLOCKED: installer still contains generic Windows icon'}
           $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-10-prepackaged\DICloak.exe'
-          & python tools/verify-v6-9-windows-icon.py --installer $app --icon release-build/v6.10/DyclokPRO.ico --label 'Installed application'
+          & python tools/verify-v6-8-windows-icon.py --installer $app --icon release-build/v6.10/DyclokPRO.ico --label 'Installed application'
           if($LASTEXITCODE -ne 0){throw 'BLOCKED: installed application icon differs from DyclokPRO artwork'}
 
       - name: Test Windows installation and two isolated account startup paths
