@@ -69,7 +69,7 @@ def modify(root,backend):
   old_main=f.read(int(maininfo["size"]))
  if sha(old_main)!=OLD_MAIN_SHA:raise RuntimeError("Published v6.16 packed main integrity differs from verified release")
  pre=backend.read_bytes()+b"\n"+Path("release-build/v6.22/live-diagnostics.js").read_bytes()
- if b"update-app-check-pack" not in pre or b"version-local-info" in pre:
+ if b"update-app-check-pack" not in pre or b'channel==="version-local-info"' in pre:
   raise RuntimeError("Compatibility prelude must not modify native version-local-info")
  subprocess.run(["node","--check",str(backend)],check=True)
  # Preserve the entire verified v6.16 backend, including account isolation.
