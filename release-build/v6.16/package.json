@@ -4,7 +4,7 @@
   "private": true,
   "description": "DyclokPRO named top account tabs and separated Electron sessions",
   "devDependencies": {
-    "electron-builder": "26.16.3",
+    "electron-builder": "26.15.3",
     "rcedit": "5.0.2"
   }
 }
