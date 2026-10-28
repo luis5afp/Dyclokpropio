@@ -1,0 +1,29 @@
+{
+  "appId": "com.dyclokpropio.desktop",
+  "productName": "Dyclokpro",
+  "artifactName": "Dyclokpro_6.3_win_x64.exe",
+  "electronVersion": "31.7.7",
+  "directories": {
+    "output": "out"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "executableName": "DICloak",
+    "icon": "Dyclokpro.ico",
+    "signAndEditExecutable": true,
+    "requestedExecutionLevel": "asInvoker"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false,
+    "include": "installer.nsh"
+  }
+}
