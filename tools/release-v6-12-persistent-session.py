@@ -137,7 +137,7 @@ def modify(root,backend,tabs):
  print("LEGACY_PROFILE_USERDATA_PRESERVED=true")
  print("ORIGINAL_CHROMIUM_BINARY_UNMODIFIED=true")
  print("NEW_MAIN_SHA256="+mi["integrity"]["hash"])
- print("ARCHIVE_UI_SHA256="+filehash(files/archive_rel))
+ print("USER_TABS_SHA256="+filehash(files/tabs_rel))
  print("ASAR_SHA256="+filehash(asar))
  print("SESSION_EXPIRY_AND_REMOTE_AUTH_UNMODIFIED=true")
  print("CHILD_WINDOW_LOAD_CHECK=enabled")
