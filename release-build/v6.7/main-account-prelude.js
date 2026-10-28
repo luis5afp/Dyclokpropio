@@ -60,7 +60,7 @@ if(launchId){
 // Test-only startup check: runs before loading any legacy service code.
 if(process.argv.includes("--dyclok-self-test")){
   const result={id:active,userData:app.getPath("userData"),sessionData:app.getPath("sessionData")};
-  const file=path.join(os.tmpdir(),"dyclokpro-v66-check-"+active+".json");
+  const file=path.join(os.tmpdir(),"dyclokpro-v67-check-"+active+".json");
   fs.writeFileSync(file,JSON.stringify(result),{encoding:"utf8"});
   process.exit(0);
 }
