@@ -222,7 +222,8 @@
     const overlay=el("div",{id:"dp-inspector-overlay"});
     panel=el("section",{id:"dp-inspector-panel",role:"dialog","aria-modal":"true","aria-label":"Datos de perfil"});
     const header=el("header"),title=el("h2",{},"Datos de perfil · Dyclokpro"),close=el("button",{type:"button","aria-label":"Cerrar"},"Cerrar ×");
-    close.addEventListener("click",()=>overlay.remove());
+    const dismiss=()=>{overlay.remove();panel=null;};
+    close.addEventListener("click",dismiss);
     header.append(title,close);panel.append(header);
     const tabs=el("nav",{class:"dp-inspector-tabs"});
     for(const [key,title] of [["cookies","Cookies"],["proxy","Proxy"],["config","Configuración"],["requests","Respuestas del servidor"]]){
@@ -234,8 +235,8 @@
     const note=el("p",{class:"dp-inspector-caption",style:{padding:"10px 18px",margin:0,borderTop:"1px solid #3c4945"}},
       "Solo metadatos captados por Dyclokpro. No lee ni exporta cookies guardadas por Chromium, no intercepta tráfico de otros programas ni cambia permisos del servidor.");
     panel.append(tabs,content,note);overlay.append(panel);document.body.append(overlay);
-    overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.remove();});
-    panel.addEventListener("keydown",e=>{if(e.key==="Escape")overlay.remove();});
+    overlay.addEventListener("click",e=>{if(e.target===overlay)dismiss();});
+    panel.addEventListener("keydown",e=>{if(e.key==="Escape")dismiss();});
     render();
     close.focus();
   }
