@@ -1,0 +1,47 @@
+name: DyclokPRO v51 Windows candidate (manual and gated)
+on:
+  workflow_dispatch:
+    inputs:
+      payload_zip_url:
+        description: 'HTTPS URL to a ZIP of the complete extracted v50.8 app patched for v51 (no personal data)'
+        required: true
+        type: string
+      payload_zip_sha256:
+        description: 'SHA256 (64 hex digits) of that ZIP'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  build-candidate:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify user-provided payload
+        shell: pwsh
+        env:
+          PAYLOAD_URL: ${{ inputs.payload_zip_url }}
+          PAYLOAD_SHA256: ${{ inputs.payload_zip_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:PAYLOAD_URL -notmatch '^https://') { throw 'Only HTTPS payload URLs allowed' }
+          if ($env:PAYLOAD_SHA256 -notmatch '^[a-fA-F0-9]{64}$') { throw 'Expected 64-character SHA256' }
+          Invoke-WebRequest -Uri $env:PAYLOAD_URL -OutFile payload.zip
+          $actual = (Get-FileHash payload.zip -Algorithm SHA256).Hash
+          if ($actual -ne $env:PAYLOAD_SHA256) { throw "Payload SHA256 mismatch" }
+          Expand-Archive -Path payload.zip -DestinationPath tools/v51.0/payload -Force
+      - name: Install NSIS
+        shell: pwsh
+        run: choco install nsis --yes --no-progress
+      - name: Validate and build (not a functional login test)
+        shell: pwsh
+        run: |
+          & ./tools/v51.0/Compilar_v51_0.ps1
+      - name: Upload candidate EXE (not a public Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: DyclokPRO-51.0-UNVERIFIED-Windows-candidate
+          path: tools/v51.0/DyclokPRO_51.0_win_x64.exe
+          if-no-files-found: error
+          retention-days: 7
