@@ -1,0 +1,3 @@
+Requested release: v6.17
+Source: published DyclokPRO v6.16 installer, identical binary.
+This is not an authentication fix. Do not claim session issue resolved.
