@@ -1,0 +1,195 @@
+name: DyclokPRO v6.6 - Pestanas de usuarios
+
+on:
+  push:
+    branches:
+      - 'feature/v6.6-pestanas-usuarios'
+    paths:
+      - '.github/workflows/publish-v6-6-users.yml'
+      - 'release-build/v6.6/**'
+      - 'tools/release-v6-6-users.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dyclokpro-v6-6-users
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    if: github.repository == 'luis5afp/Dyclokpropio'
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout verified user-tabs source
+        uses: actions/checkout@v4
+
+      - name: Refuse overwriting any published v6.6
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $versions=@(& gh release list --repo $env:GITHUB_REPOSITORY --limit 100 --json tagName | ConvertFrom-Json)
+          if($LASTEXITCODE -ne 0){throw 'Cannot enumerate existing releases'}
+          if(@($versions | Where-Object {$_.tagName -eq 'v6.6'}).Count -gt 0){
+            throw 'BLOCKED: immutable v6.6 release already exists'
+          }
+
+      - name: Download complete v6.5 original installer with SHA256 check
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          & gh release download v6.5 --repo $env:GITHUB_REPOSITORY --pattern 'DyclokPRO_6.5_win_x64.exe' --dir $env:RUNNER_TEMP
+          if($LASTEXITCODE -ne 0){throw 'Missing v6.5 published installer'}
+          $file=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.5_win_x64.exe'
+          $hash=(Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($hash -ne '24d64c0b4774e6af8ac0c9a2ed98a9de72b025a87f0e1f0d74ac4ad3a11da5d2'){
+            throw 'BLOCKED: base installer integrity differs'
+          }
+
+      - name: Verify account session isolation and JavaScript syntax
+        shell: pwsh
+        run: |
+          & node --check 'release-build/v6.6/main-account-prelude.js'
+          if($LASTEXITCODE -ne 0){throw 'Invalid multiaccount Electron main prelude'}
+          & node --check 'release-build/v6.6/user-tabs.js'
+          if($LASTEXITCODE -ne 0){throw 'Invalid top tab frontend'}
+          $main=Get-Content 'release-build/v6.6/main-account-prelude.js' -Raw
+          foreach($marker in @('app.setPath("userData"','app.setPath("sessionData"','app.commandLine.appendSwitch("user-data-dir"',
+            'dyclokpro:users:add','dyclokpro:users:open','--dyclok-account=')){
+            if(-not $main.Contains($marker)){throw "Missing mandatory multiuser isolation step: $marker"}
+          }
+          if($main.Contains('fs.copyFileSync(') -or $main.Contains('session.token') -or $main.Contains('stealCookie')){
+            throw 'BLOCKED: multiuser code must never copy credentials or session secrets'
+          }
+          Write-Host 'ACCOUNT_SEPARATION_STATIC_CHECK=PASS'
+
+      - name: Rebuild ASAR safely with multiuser bootstrap and named top tabs
+        shell: pwsh
+        run: |
+          $file=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.5_win_x64.exe'
+          $dest=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-6-prepackaged'
+          & python 'tools/release-v6-6-users.py' --installer $file --destination $dest --prelude 'release-build/v6.6/main-account-prelude.js' --tabs 'release-build/v6.6/user-tabs.js'
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED: full ASAR repackage or integrity check failed'}
+          foreach($path in @('DICloak.exe','DyclokPRO.ico','Dyclokpro_Perfiles_Locales.exe',
+            'Chromium/Application/ginsbrowser.exe','Chromium/Application/142.0.7444.273/chrome.dll',
+            'resources/app.asar','resources/app.asar.unpacked/dist/dyclokpro-users-v66.js',
+            'resources/app.asar.unpacked/dist/dyclokpro-archive.js')){
+            if(-not(Test-Path -LiteralPath (Join-Path $dest $path) -PathType Leaf)){
+              throw "BLOCKED: component missing from v6.6: $path"
+            }
+          }
+          Copy-Item -LiteralPath (Join-Path $dest 'DyclokPRO.ico') -Destination 'release-build/v6.6/DyclokPRO.ico' -Force
+
+      - name: Prepare Windows NSIS packager and native resource editor
+        shell: pwsh
+        working-directory: release-build/v6.6
+        run: |
+          & npm install --no-fund --no-audit --ignore-scripts
+          if($LASTEXITCODE -ne 0){throw 'Cannot install Windows packaging dependencies'}
+          $source=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-6-prepackaged\DICloak.exe'
+          $icon=(Resolve-Path -LiteralPath 'DyclokPRO.ico').Path
+          & node patch-windows-exe.mjs $source $icon
+          if($LASTEXITCODE -ne 0){throw 'Cannot stamp Windows v6.6 executable'}
+          if((Get-Item $source).VersionInfo.ProductName -ne 'DyclokPRO'){
+            throw 'Native Windows product branding invalid'
+          }
+
+      - name: Build real complete Windows x64 NSIS installer
+        shell: pwsh
+        working-directory: release-build/v6.6
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-6-prepackaged'
+          & npx electron-builder --win nsis --x64 --prepackaged $app --publish never --config electron-builder.json
+          if($LASTEXITCODE -ne 0){throw 'NSIS Windows packaging failed'}
+          $out='out/DyclokPRO_6.6_win_x64.exe'
+          if(-not(Test-Path $out -PathType Leaf)){throw 'Compiled installer missing'}
+          if((Get-Item $out).Length -lt 180000000){throw 'EXE smaller than complete Chromium installer'}
+          $hash=(Get-FileHash -Algorithm SHA256 $out).Hash.ToLowerInvariant()
+          "$hash  DyclokPRO_6.6_win_x64.exe" | Set-Content 'out/SHA256SUMS_v6.6.txt' -Encoding ascii
+          Write-Host "INSTALLER_SHA256=$hash"
+
+      - name: Test Windows installation and two isolated account startup paths
+        shell: pwsh
+        run: |
+          $exe=(Resolve-Path -LiteralPath 'release-build/v6.6/out/DyclokPRO_6.6_win_x64.exe').Path
+          $install=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO'
+          if(Test-Path -LiteralPath $install){throw 'Dirty Windows test runner'}
+          $setup=Start-Process -FilePath $exe -ArgumentList '/S' -Wait -PassThru
+          if($setup.ExitCode -ne 0){throw "Silent installer returned $($setup.ExitCode)"}
+          $program=Join-Path $install 'DICloak.exe'
+          if(-not(Test-Path -LiteralPath $program -PathType Leaf)){throw 'Wrong installation path'}
+          if((Get-Item $program).VersionInfo.ProductName -ne 'DyclokPRO'){
+            throw 'Legacy product name still in Windows PE metadata'
+          }
+          $id='0123456789abcdef0123456789abcdef'
+          $legacyTest=Join-Path $env:TEMP 'dyclokpro-v66-check-legacy.json'
+          $isolatedTest=Join-Path $env:TEMP "dyclokpro-v66-check-$id.json"
+          foreach($f in @($legacyTest,$isolatedTest)){
+            if(Test-Path $f){Remove-Item $f -Force}
+          }
+          $a=Start-Process -FilePath $program -ArgumentList '--dyclok-self-test' -Wait -PassThru
+          if($a.ExitCode -ne 0){throw "Existing user startup smoke test failed: $($a.ExitCode)"}
+          $b=Start-Process -FilePath $program -ArgumentList "--dyclok-account=$id --dyclok-self-test" -Wait -PassThru
+          if($b.ExitCode -ne 0){throw "Isolated user startup smoke test failed: $($b.ExitCode)"}
+          if(-not(Test-Path $legacyTest) -or -not(Test-Path $isolatedTest)){
+            throw 'Account bootstrap did not execute its smoke tests'
+          }
+          $old=Get-Content $legacyTest -Raw | ConvertFrom-Json
+          $new=Get-Content $isolatedTest -Raw | ConvertFrom-Json
+          if($old.id -ne 'legacy' -or $new.id -ne $id){throw 'Unexpected active account identifiers'}
+          if($old.userData -eq $new.userData){throw 'BLOCKED: both accounts share Electron userData'}
+          $expected=Join-Path $env:LOCALAPPDATA "DyclokPRO\Cuentas\$id\Electron"
+          if($new.userData -ine $expected){throw "Unexpected isolated userData path: $($new.userData)"}
+          if($new.sessionData -eq $old.sessionData){throw 'BLOCKED: sessions are not isolated'}
+          Write-Host "ACCOUNT_ISOLATION_WINDOWS_SMOKE_TEST=PASS"
+          Write-Host "INSTALL_DIR=$install"
+          Write-Host 'REMOTE_LOGIN_CONCURRENT_ACCEPTANCE=NOT_TESTED'
+
+      - name: Verify EXE checksum and publish new v6.6 Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $exe='release-build/v6.6/out/DyclokPRO_6.6_win_x64.exe'
+          $sum='release-build/v6.6/out/SHA256SUMS_v6.6.txt'
+          $sha=(Get-FileHash -Algorithm SHA256 $exe).Hash.ToLowerInvariant()
+          if((Get-Content $sum -Raw).Trim() -ne "$sha  DyclokPRO_6.6_win_x64.exe"){
+            throw 'Checksum does not match uploaded installer'
+          }
+          & 7z l $exe | Out-Null
+          if($LASTEXITCODE -ne 0){throw 'Compiled NSIS package integrity failed'}
+          $notes=@'
+          # DyclokPRO v6.6 - Pestañas de usuarios
+
+          Instalador completo Windows x64. Conserva instalacion en:
+          %LOCALAPPDATA%\Programs\DyclokPRO
+
+          - Pestañas superiores con el nombre de cada usuario.
+          - La cuenta que ya existía sigue siendo Cuenta principal y conserva sus datos.
+          - Botón + Usuario para agregar un espacio de sesión propio.
+          - Cada nuevo usuario abre en ventana independiente para mantener sesiones Electron separadas.
+          - Cada cuenta nueva tiene su propia carpeta userData/sessionData.
+          - El nombre de la pestaña puede actualizarse desde el nombre de sesión autenticado, cuando esté disponible.
+          - No se copian ni reutilizan contraseñas, cookies de sesión o tokens entre cuentas.
+          - No se modifica la autenticación, el bloqueo ni los permisos del servidor original.
+          - Se mantienen icono DyclokPRO, Chromium, gestor de perfiles locales y archivo de respuestas v6.4.
+          - Las actualizaciones automáticas del programa continúan desactivadas.
+
+          PRUEBAS AUTOMÁTICAS: JS, ASAR, NSIS, instalación y arranque aislado de
+          dos identificadores de cuenta Windows comprobados antes de publicar.
+
+          LIMITACIÓN: el proveedor original puede impedir la conexión simultánea de
+          varias cuentas en un mismo equipo. Estas pruebas no incluyen inicio de
+          sesión real con varios usuarios. Si el servidor rechaza una segunda sesión,
+          la aplicación mantiene ese rechazo. Cada cuenta se muestra en su propia
+          ventana, no dentro de un navegador compartido.
+          '@
+          & gh release create v6.6 $exe $sum --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'DyclokPRO v6.6 - Pestañas de usuarios' --notes $notes --latest
+          if($LASTEXITCODE -ne 0){throw 'Could not publish v6.6 to GitHub'}
+          Write-Host 'DYCLOKPRO_V6_6_RELEASE_PUBLISHED=true'
