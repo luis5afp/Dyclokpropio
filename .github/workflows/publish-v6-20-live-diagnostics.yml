@@ -72,7 +72,7 @@ jobs:
         run: |
           $source=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.16_win_x64.exe'
           $dest=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-20-prepackaged'
-          & python tools/release-v6-20-version-policy.py --installer $source --destination $dest --backend 'release-build/v6.20/version-policy-prelude.js'
+          & python tools/release-v6-20-diagnostics.py --installer $source --destination $dest --backend 'release-build/v6.20/version-policy-prelude.js'
           if($LASTEXITCODE -ne 0){throw 'Verified v6.16 installed version fix failed'}
           foreach($p in @('DICloak.exe','DyclokPRO.ico','Dyclokpro_Perfiles_Locales.exe',
             'Chromium/Application/ginsbrowser.exe','Chromium/Application/142.0.7444.273/chrome.dll',
