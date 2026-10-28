@@ -27,7 +27,7 @@ jobs:
       - name: Checkout verified user-tabs source
         uses: actions/checkout@v4
 
-      - name: Refuse overwriting any published v6.10
+      - name: Refuse overwriting published v6.11
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -86,7 +86,7 @@ jobs:
         run: |
           & npm install --no-fund --no-audit --ignore-scripts
           if($LASTEXITCODE -ne 0){throw 'Cannot install Windows packaging dependencies'}
-          $source=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-10-prepackaged\DICloak.exe'
+          $source=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-11-prepackaged\DICloak.exe'
           $icon=(Resolve-Path -LiteralPath 'DyclokPRO.ico').Path
           & node patch-windows-exe.mjs $source $icon
           if($LASTEXITCODE -ne 0){throw 'Cannot stamp Windows v6.11 executable'}
@@ -100,7 +100,7 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: |
-          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-10-prepackaged'
+          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-11-prepackaged'
           & npx electron-builder --win nsis --x64 --prepackaged $app --publish never --config electron-builder.json
           if($LASTEXITCODE -ne 0){throw 'NSIS Windows packaging failed'}
           $out='out/DyclokPRO_6.11_win_x64.exe'
@@ -118,7 +118,7 @@ jobs:
           $installer='release-build/v6.11/out/DyclokPRO_6.11_win_x64.exe'
           & python tools/verify-v6-8-windows-icon.py --installer $installer --icon release-build/v6.11/DyclokPRO.ico --label 'NSIS installer'
           if($LASTEXITCODE -ne 0){throw 'BLOCKED: installer still contains generic Windows icon'}
-          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-10-prepackaged\DICloak.exe'
+          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-11-prepackaged\DICloak.exe'
           & python tools/verify-v6-8-windows-icon.py --installer $app --icon release-build/v6.11/DyclokPRO.ico --label 'Installed application'
           if($LASTEXITCODE -ne 0){throw 'BLOCKED: installed application icon differs from DyclokPRO artwork'}
 
