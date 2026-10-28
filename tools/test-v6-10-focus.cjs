@@ -8,7 +8,7 @@ const source=fs.readFileSync(path.join(__dirname,"../release-build/v6.10/main-ac
 const begin=source.indexOf("// Cross-process switching:");
 const end=source.indexOf("\nasync function start(id){",begin);
 assert(begin>=0&&end>begin,"Cannot locate cross-account focus code");
-assert(source.includes("const already=await focusRunningAccount(id);\n if(already)return already;"),"Live accounts must not respawn");
+assert(/const already=await focusRunningAccount\(id\);\s*if\(already\)return already;/.test(source),"Live accounts must not respawn");
 const base=fs.mkdtempSync(path.join(os.tmpdir(),"dyclokpro-focus-regression-"));
 let windows=[];
 const fakeElectron={BrowserWindow:{getAllWindows:()=>windows}};
