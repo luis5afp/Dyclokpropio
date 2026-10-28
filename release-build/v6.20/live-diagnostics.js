@@ -38,7 +38,7 @@ function createPanel(){
   if(url==="https://dyclok-diagnostic.invalid/copy")clipboard.writeText(outfile);
   return {action:"deny"};
  });
- panel.webContents.on("did-finish-load",()=>{ready=true;log("PANEL_READY","Registro visible en tiempo real")});
+ panel.webContents.on("did-finish-load",()=>{ready=true;log("PANEL_READY","Registro visible en tiempo real");if(process.argv.includes("--dyclok-diagnostics-smoke")){try{fs.writeFileSync(path.join(os.tmpdir(),"dyclokpro-v620-diag-smoke.json"),JSON.stringify({ready:true,txt:outfile,account:account}));}catch{}}});
  panel.webContents.on("render-process-gone",(_,d)=>{ready=false;log("PANEL_CRASH",String(d.reason||"unknown"))});
  panel.on("closed",()=>{panel=null;ready=false});
  panel.loadURL("data:text/html;charset=utf-8,"+encodeURIComponent(markup)).catch(()=>log("PANEL_LOAD_ERROR","Fallo carga del panel"));
