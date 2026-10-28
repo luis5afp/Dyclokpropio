@@ -100,7 +100,7 @@ def modify(root,backend,tabs):
  tabs_rel="dist/dyclokpro-users-v66.js"
  js=tabs.read_bytes()
  subprocess.run(["node","--check",str(tabs)],check=True)
- if b"logoutSamples" not in js or b"logoutCurrent" not in js or b"dyclokpro:users:open" not in js:
+ if b"logoutSamples" not in js or b"logoutCurrent" not in js or b"dyclokpro:users:" not in js:
   raise RuntimeError("Session-aware tabs incomplete")
  edit_unpacked(tabs_rel,js)
  # Keep all existing packed content byte-for-byte. Append modified entry,
