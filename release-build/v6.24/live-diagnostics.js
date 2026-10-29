@@ -181,6 +181,7 @@ function attach(win){
  wc.on("dom-ready",()=>{
   log("DOM_READY",id);rename();
   wc.executeJavaScript("("+instrument.toString()+")()").then(()=>{
+   syncTab(!!panel&&!panel.isDestroyed());
    if(process.argv.includes("--dyclok-diagnostics-smoke")&&!smokeInitiated){
     smokeInitiated=true;smokeTarget=wc;
     if(panel)throw Error("Diagnostic panel must start closed");
