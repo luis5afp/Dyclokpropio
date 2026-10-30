@@ -7,8 +7,8 @@ await rcedit(exe,{
   "version-string":{
     ProductName:"DyclokPRO",FileDescription:"DyclokPRO — Navegador de perfiles",
     InternalName:"DyclokPRO",OriginalFilename:"DICloak.exe",CompanyName:"DyclokPRO",
-    Comments:"DyclokPRO v6.26 — motor original v6.16"
+    Comments:"DyclokPRO v6.27 — motor original v6.16"
   },
-  "file-version":"6.26.0","product-version":"6.26.0"
+  "file-version":"6.27.0","product-version":"6.27.0"
 });
 console.log("NATIVE_WINDOWS_V626_BRANDING=PASS");
