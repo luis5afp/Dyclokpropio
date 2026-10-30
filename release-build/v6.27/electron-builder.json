@@ -1,7 +1,7 @@
 {
   "appId": "com.dyclokpro.desktop",
   "productName": "DyclokPRO",
-  "artifactName": "DyclokPRO_6.26_win_x64.exe",
+  "artifactName": "DyclokPRO_6.27_win_x64.exe",
   "electronVersion": "31.7.7",
   "directories": {"output": "out"},
   "win": {
