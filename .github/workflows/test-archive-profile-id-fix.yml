@@ -1,0 +1,23 @@
+name: Archive profile ID correction - isolated test
+on:
+  push:
+    branches:
+      - 'fix/archive-profile-id-classification-20261030'
+    paths:
+      - '.github/workflows/test-archive-profile-id-fix.yml'
+      - 'release-build/archive-profile-correction/**'
+      - 'tools/test-archive-profile-id-fix.cjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JS syntax
+        run: node --check release-build/archive-profile-correction/archive-ui.js
+      - name: Compare with original and run synthetic test scenarios
+        run: node tools/test-archive-profile-id-fix.cjs
