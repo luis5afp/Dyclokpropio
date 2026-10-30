@@ -48,7 +48,14 @@ function profileFrom(url,obj){
   }
   // A path segment is an ID only when it has the form of a numeric
   // profile identifier or UUID, not an operation or descriptive route.
-  return u.pathname.match(/\\/(?:env|profile|browser)s?\\/([0-9]{1,25}|[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f-]{27,36})(?:\\/|$)/i)?.[1]||"";
+  const parts=u.pathname.split("/").filter(Boolean);
+  for(let i=0;i+1<parts.length;i++){
+   if(!/^(?:env|envs|profile|profiles|browser|browsers)$/i.test(parts[i]))continue;
+   const id=parts[i+1];
+   if(/^(?:[0-9]{1,25}|[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f-]{27,36})$/i.test(id))
+    return id;
+  }
+  return "";
  }catch{return ""}
 }
 function classify(obj,route){
