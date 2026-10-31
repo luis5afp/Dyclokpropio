@@ -80,6 +80,8 @@ internal sealed class OfficialApiArchiveWindow:Form{
         var all=Make("Guardar todos",140);
         all.Click+=async (_,_)=>await SaveAll();
         var folder=Make("Abrir archivos",135);
+        var rename=Make("Nombre de cuenta (API)",183);
+        rename.Click+=async (_,_)=>await SyncAccountName();
         folder.Click+=(_,_)=>{
             string root=ArchiveRoot();
             Directory.CreateDirectory(root);
@@ -87,7 +89,7 @@ internal sealed class OfficialApiArchiveWindow:Form{
                 ArgumentList={root},UseShellExecute=true
             });
         };
-        operations.Controls.Add(save);operations.Controls.Add(all);operations.Controls.Add(folder);
+        operations.Controls.Add(save);operations.Controls.Add(all);operations.Controls.Add(folder);operations.Controls.Add(rename);
 
         var flags=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=58,FlowDirection=FlowDirection.TopDown,WrapContents=false};
         flags.Controls.Add(auto);
@@ -281,4 +283,33 @@ internal sealed class OfficialApiArchiveWindow:Form{
         }
         return total;
     }
+    // Older official Local API V1 documents /v1/members plus X-API-KEY.
+    // It is optional; never infer a login identity from a profile's name.
+    // Only a uniquely marked current_user may rename a DyclokPRO tab.
+    private async Task SyncAccountName()=>await Busy(async()=>{
+        using var client=Client();
+        var result=await Get(client,"/openapi/v1/members?all=true");
+        using var doc=result.Item2;
+        var data=doc.RootElement.GetProperty("data");
+        if(!data.TryGetProperty("list",out var list)||list.ValueKind!=JsonValueKind.Array)
+            throw new InvalidOperationException("La API no devolvió una lista de miembros.");
+        var current=new List<string>();
+        foreach(var member in list.EnumerateArray()){
+            if(member.TryGetProperty("current_user",out var marker)&&marker.ValueKind==JsonValueKind.True&&
+               member.TryGetProperty("name",out var n)&&n.ValueKind==JsonValueKind.String){
+                string val=n.GetString()?.Trim()??"";
+                if(val.Length is >=2 and <=80&&!val.Any(char.IsControl))current.Add(val);
+            }
+        }
+        if(current.Count!=1)
+            throw new InvalidOperationException("No se encontró un único miembro actual. No se cambió el nombre de la cuenta.");
+        if(MessageBox.Show(this,
+           "La API autorizada identifica al miembro actual como:\n"+current[0]+
+           "\n\n¿Actualizar el nombre visible de esta cuenta en DyclokPRO? "+
+           "No se modificarán credenciales ni perfiles.",
+           "Nombre del usuario",MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)return;
+        AccountStore.SaveName(accountId,current[0]);
+        notice.Text="Nombre actualizado desde miembro actual de la API autorizada. "+
+            "Los archivos y la sesión no se alteraron.";
+    });
 }
