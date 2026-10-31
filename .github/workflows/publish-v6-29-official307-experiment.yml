@@ -97,8 +97,18 @@ jobs:
           $legacy=Join-Path $env:TEMP 'dyclokpro-v629-test-legacy.json'
           $second=Join-Path $env:TEMP "dyclokpro-v629-test-$id.json"
           foreach($f in @($legacy,$second)){if(Test-Path $f){Remove-Item $f -Force}}
-          $one=Start-Process -FilePath $app -ArgumentList '--dyclok-self-test' -Wait -PassThru
-          if($one.ExitCode -ne 0){throw 'Main account self-test failed'}
+          $stderr=Join-Path $env:RUNNER_TEMP 'dyclok-v629-startup-stderr.log'
+          $stdout=Join-Path $env:RUNNER_TEMP 'dyclok-v629-startup-stdout.log'
+          $one=Start-Process -FilePath $app -ArgumentList '--dyclok-self-test --enable-logging=stderr --v=1' -Wait -PassThru -RedirectStandardError $stderr -RedirectStandardOutput $stdout
+          Write-Host "MAIN_ACCOUNT_EXIT_CODE=$($one.ExitCode)"
+          Write-Host "LEGACY_MARKER_EXISTS=$(Test-Path $legacy)"
+          if(Test-Path $stderr){$log=Get-Content $stderr -Tail 75 -ErrorAction SilentlyContinue;Write-Host "MAIN_STDERR: $log"}
+          if(Test-Path $stdout){$out=Get-Content $stdout -Tail 50 -ErrorAction SilentlyContinue;Write-Host "MAIN_STDOUT: $out"}
+          if($one.ExitCode -ne 0){
+            $events=Get-WinEvent -FilterHashtable @{LogName='Application';StartTime=(Get-Date).AddMinutes(-10)} -ErrorAction SilentlyContinue | Where-Object { $_.Message -match 'DICloak|Electron|dyclok' } | Select-Object -First 4
+            foreach($ev in $events){Write-Host "WINDOWS_EVENT=$($ev.ProviderName) $($ev.Id) $($ev.Message.Substring(0,[math]::Min(700,$ev.Message.Length)))"}
+            throw 'Main account self-test failed'
+          }
           $two=Start-Process -FilePath $app -ArgumentList "--dyclok-account=$id --dyclok-self-test" -Wait -PassThru
           if($two.ExitCode -ne 0){throw 'Second account self-test failed'}
           if(-not(Test-Path $legacy) -or -not(Test-Path $second)){throw 'Startup markers absent'}
