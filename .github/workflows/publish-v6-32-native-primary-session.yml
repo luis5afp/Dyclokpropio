@@ -1,0 +1,230 @@
+name: DyclokPRO v6.32 - native Windows session for official 3.0.7 primary account
+on:
+  push:
+    branches: ['fix/v6.32-native-primary-session-paths']
+    paths:
+      - '.github/workflows/publish-v6-31-direct-launch.yml'
+      - 'release-build/v6.32/**'
+      - 'tools/release-v6-30-intact307.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: dyclokpro-v632-before-frontend
+  cancel-in-progress: false
+jobs:
+  build-publish:
+    if: github.repository == 'luis5afp/Dyclokpropio'
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check release does not already exist
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $list=@(& gh release list --repo $env:GITHUB_REPOSITORY --limit 100 --json tagName | ConvertFrom-Json)
+          if($LASTEXITCODE -ne 0){throw 'Unable to list releases'}
+          if(@($list | Where-Object {$_.tagName -eq 'v6.32'}).Count -gt 0){throw 'v6.32 already published'}
+      - name: Verify source and build independent Windows manager
+        shell: pwsh
+        run: |
+          & python -m py_compile tools/release-v6-30-intact307.py
+          if($LASTEXITCODE -ne 0){throw 'Python source invalid'}
+          & dotnet --info
+          if($LASTEXITCODE -ne 0){throw 'Windows .NET SDK not available'}
+          & dotnet publish release-build/v6.32/Launcher/DyclokPRO.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o "$env:RUNNER_TEMP\dyclokpro-launcher"
+          if($LASTEXITCODE -ne 0){throw 'External launcher compile failed'}
+          $launcher=Join-Path $env:RUNNER_TEMP 'dyclokpro-launcher\DyclokPRO.exe'
+          if(-not(Test-Path $launcher -PathType Leaf)){throw 'External WinForms manager EXE missing'}
+          Write-Host 'EXTERNAL_LAUNCHER_COMPILED=PASS'
+      - name: Download and verify exact official DICloak 3.0.7
+        shell: pwsh
+        run: |
+          $download=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $download -TimeoutSec 900
+          if(-not(Test-Path $download -PathType Leaf)){throw 'Official installer missing'}
+          $sha=(Get-FileHash $download -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($sha -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae'){
+            throw "BLOCKED: 3.0.7 official installer hash changed ($sha)"
+          }
+      - name: Restore original signed application without ANY ASAR modifications
+        shell: pwsh
+        run: |
+          $download=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          $target=Join-Path $env:RUNNER_TEMP 'dyclokpro-630-pack'
+          & python tools/release-v6-30-intact307.py --installer $download --destination $target
+          if($LASTEXITCODE -ne 0){throw 'Official 3.0.7 integrity guard failed'}
+          $launcher=Join-Path $env:RUNNER_TEMP 'dyclokpro-launcher\DyclokPRO.exe'
+          Copy-Item -LiteralPath $launcher -Destination (Join-Path $target 'DyclokPRO.exe') -Force
+          Copy-Item -LiteralPath 'application.ico' -Destination (Join-Path $target 'DyclokPRO.ico') -Force
+          Copy-Item -LiteralPath 'application.ico' -Destination 'release-build/v6.32/DyclokPRO.ico' -Force
+          if(Test-Path "$target\SourceData"){throw 'Private account data bundled'}
+          if(Test-Path "$target\Chromium\User Data"){throw 'Private Chromium profile data bundled'}
+          $original=(Get-FileHash (Join-Path $target 'DICloak.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
+          Set-Content -Path (Join-Path $env:RUNNER_TEMP 'original-dicloak307.sha') -Value $original
+          $asar=(Get-FileHash (Join-Path $target 'resources\app.asar') -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($asar -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf'){
+            throw 'BLOCKED: ASAR differs from the official original'
+          }
+          Write-Host 'OFFICIAL_EXE_AND_ASAR_UNCHANGED=PASS'
+      - name: Build NSIS installer WITHOUT editing official EXE or ASAR
+        shell: pwsh
+        working-directory: release-build/v6.32
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          & npm install --no-audit --no-fund --ignore-scripts
+          if($LASTEXITCODE -ne 0){throw 'Packager dependency install failed'}
+          $app=Join-Path $env:RUNNER_TEMP 'dyclokpro-630-pack'
+          & npx electron-builder --win nsis --x64 --prepackaged $app --publish never --config electron-builder.json
+          if($LASTEXITCODE -ne 0){throw 'NSIS packaging failed'}
+          $exe='out/DyclokPRO_6.32_win_x64.exe'
+          if(-not(Test-Path $exe -PathType Leaf)){throw 'Installer missing'}
+          if((Get-Item $exe).Length -lt 140000000){throw 'Installer incomplete'}
+          $sha=(Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  DyclokPRO_6.32_win_x64.exe" | Set-Content -Path 'out/SHA256SUMS_v6.32.txt' -Encoding ascii
+          Write-Host "DYCLOKPRO_INSTALLER_SHA256=$sha"
+      - name: Verify Windows installation and unmodified engine integrity
+        shell: pwsh
+        run: |
+          $installer=(Resolve-Path 'release-build/v6.32/out/DyclokPRO_6.32_win_x64.exe').Path
+          $root=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO'
+          if(Test-Path $root){throw 'Unexpected previous installation on runner'}
+          $installed=Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if($installed.ExitCode -ne 0){throw "Installation failed: $($installed.ExitCode)"}
+          $main=Join-Path $root 'DICloak.exe'
+          $launcher=Join-Path $root 'DyclokPRO.exe'
+          $asar=Join-Path $root 'resources\app.asar'
+          foreach($p in @($main,$launcher,$asar)){
+            if(-not(Test-Path $p -PathType Leaf)){throw "Missing installed file $p"}
+          }
+          $asarHash=(Get-FileHash $asar -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($asarHash -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf'){
+            throw 'BLOCKED: NSIS altered original ASAR'
+          }
+          $baseline=(Get-Content (Join-Path $env:RUNNER_TEMP 'original-dicloak307.sha') -Raw).Trim()
+          $installedHash=(Get-FileHash $main -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($baseline -ne $installedHash){throw 'BLOCKED: packaging modified official DICloak.exe PE'}
+          $marker=Join-Path $env:TEMP 'dyclokpro-v632-selftest.json'
+          Remove-Item $marker -Force -ErrorAction SilentlyContinue
+          $self=Start-Process -FilePath $launcher -ArgumentList '--dyclok-self-test' -Wait -PassThru
+          if($self.ExitCode -ne 0 -or -not(Test-Path $marker)){throw 'Independent Windows launcher self-test failed'}
+          $test=Get-Content $marker -Raw | ConvertFrom-Json
+          if(-not $test.validOriginalEngine -or $test.version -ne '6.32.0'){throw 'Manager reported invalid official runtime'}
+          Write-Host 'OFFICIAL_PE_AND_ASAR_BYTE_IDENTICAL=PASS'
+          Write-Host 'EXTERNAL_LAUNCHER_SELF_TEST=PASS'
+          $registry=Join-Path $env:LOCALAPPDATA 'DyclokPRO\Cuentas\cuentas.json'
+          $parent=Split-Path -Path $registry -Parent
+          New-Item -Path $parent -ItemType Directory -Force | Out-Null
+          $fixture='{"schema":1,"accounts":[{"id":"legacy","name":"Cuenta principal verificada"},{"id":"0123456789abcdef0123456789abcdef","name":"Usuario autentico de prueba"}]}'
+          Set-Content -Path $registry -Value $fixture -Encoding UTF8
+          Remove-Item -LiteralPath $marker -Force
+          $again=Start-Process -FilePath $launcher -ArgumentList '--dyclok-self-test' -Wait -PassThru
+          if($again.ExitCode -ne 0){throw 'Self test with legacy account names failed'}
+          $names=Get-Content $marker -Raw|ConvertFrom-Json
+          $legacy=@($names.accounts|Where-Object {$_.id -eq 'legacy'}|Select-Object -ExpandProperty name)
+          $named=@($names.accounts|Where-Object {$_.id -eq '0123456789abcdef0123456789abcdef'}|Select-Object -ExpandProperty name)
+          if($legacy.Count -ne 1 -or $legacy[0] -ne 'Cuenta principal verificada' -or
+             $named.Count -ne 1 -or $named[0] -ne 'Usuario autentico de prueba'){
+            throw 'Legacy cuentas.json names not restored'
+          }
+          if(-not $names.directLaunch -or $names.automaticServerCapture){throw 'Startup or archive capability inaccurately reported'}
+          if(-not $names.nativePrincipal -or -not $names.secondaryIsolated){
+            throw 'BLOCKED: original Windows APPDATA/LOCALAPPDATA not restored for principal'
+          }
+          Write-Host 'PRIMARY_NATIVE_WINDOWS_ENVIRONMENT=PASS'
+          Write-Host 'SECONDARY_ENGINE307_PATHS_PRESERVED=PASS'
+          Write-Host 'LEGACY_V627_ACCOUNT_NAMES_RECOVERED=PASS'
+      - name: Verify original DICloak starts without ASAR integrity error
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DICloak.exe'
+          $err=Join-Path $env:RUNNER_TEMP 'genuine-307-stderr.txt'
+          $out=Join-Path $env:RUNNER_TEMP 'genuine-307-stdout.txt'
+          $p=Start-Process -FilePath $exe -PassThru -RedirectStandardError $err -RedirectStandardOutput $out
+          Start-Sleep -Seconds 15
+          $p.Refresh()
+          $logs=if(Test-Path $err){Get-Content $err -Raw -ErrorAction SilentlyContinue}else{''}
+          if($logs -match 'Integrity check failed for asar archive|FATAL:asar_util.cc'){
+            throw 'BLOCKED: official runtime still reports ASAR integrity failure'
+          }
+          if($p.HasExited -and $p.ExitCode -ne 0){
+            Write-Host "OFFICIAL_PROCESS_EXIT=$($p.ExitCode)"
+            Write-Host (($logs -split [Environment]::NewLine | Select-Object -Last 15) -join [Environment]::NewLine)
+            throw 'Original 3.0.7 runtime exited with error'
+          }
+          if(-not $p.HasExited){Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue}
+          Write-Host 'OFFICIAL_DICLOAK_307_STARTUP_NO_ASAR_FATAL=PASS'
+          Write-Host 'REAL_USER_LOGIN_AND_PROFILE_LOADING=NOT_TESTED'
+      - name: Verify direct launch opens original official program with unchanged Windows environment
+        shell: pwsh
+        run: |
+          $launcher=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DyclokPRO.exe'
+          $stamp=Join-Path $env:TEMP 'dyclokpro-v632-direct-launch.json'
+          Remove-Item -LiteralPath $stamp -Force -ErrorAction SilentlyContinue
+          $process=Start-Process -FilePath $launcher -ArgumentList '--dyclok-direct-launch-smoke' -PassThru
+          $ready=$false
+          for($i=0;$i -lt 50;$i++){
+            Start-Sleep -Milliseconds 400
+            if(Test-Path $stamp){$ready=$true;break}
+            $process.Refresh()
+            if($process.HasExited){break}
+          }
+          if(-not $ready){
+            if(-not $process.HasExited){Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue}
+            throw 'Direct launch did not open official client within bounded startup check'
+          }
+          $result=Get-Content $stamp -Raw|ConvertFrom-Json
+          $process.Refresh()
+          if(-not $process.HasExited){Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue}
+          if(-not $result.openedNative -or $result.pid -le 0 -or $result.largeManagerWindow){
+            throw 'Did not open original browser directly'
+          }
+          Write-Host 'DIRECT_OFFICIAL_BROWSER_LAUNCH=PASS'
+          Write-Host 'LEGACY_ACCOUNT_TABS=IN_EXTERNAL_RIBBON'
+          Write-Host 'LIVE_API_ARCHIVE=NOT_AVAILABLE_WITH_SIGNED_ASAR'
+      - name: Publish v6.32 experimental release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $exe='release-build/v6.32/out/DyclokPRO_6.32_win_x64.exe'
+          $sum='release-build/v6.32/out/SHA256SUMS_v6.32.txt'
+          $sha=(Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          if((Get-Content $sum -Raw).Trim() -ne "$sha  DyclokPRO_6.32_win_x64.exe"){throw 'Checksum mismatch'}
+          $notes=@'
+          # DyclokPRO v6.32 EXPERIMENTAL — sesion principal con entorno nativo
+
+          Prueba controlada para el error de cierre de sesion de v6.31:
+          la cuenta principal ya NO redirige APPDATA, LOCALAPPDATA, TEMP ni TMP.
+          El cliente oficial 3.0.7 inicia con las rutas normales de Windows,
+          como cuando se abre DICloak.exe directamente.
+
+          Las cuentas secundarias conservan sus rutas Engine307 de v6.31,
+          de forma NO validada con login real. Los registros cuentas.json,
+          Electron y ArchivoOriginal se mantienen sin cambios ni migraciones.
+          No se copia, descifra ni sobrescribe contenido de sesion anterior.
+          El navegador oficial DICloak.exe, su ASAR y sus cabeceras firmadas
+          permanecen estrictamente inalterados.
+
+          CI verifica el entorno nativo de la cuenta principal, instalacion,
+          integridad del motor, nombres historicos, y lanzamiento directo.
+          NO puede garantizar que el servidor acepte sesiones/profiles:
+          necesita prueba A/B en Windows del usuario con DICloak.exe directo.
+
+          Aviso: esta variante es SOLO una prueba de compatibilidad y no
+          garantiza que el mensaje "Tu sesion ha expirado" desaparezca.
+          La ruta Engine307 principal anterior se conserva por seguridad;
+          si la cuenta nativa pide login, debe autenticarse normalmente.
+          El archivado automatico de nuevas respuestas sigue pendiente de
+          una interfaz autorizada con el motor firmado 3.0.7.
+
+          Respalde %LOCALAPPDATA%\DyclokPRO\Cuentas antes de instalar.
+          Conserve el instalador anterior; no borre carpetas ni tokens.
+          '@
+          & gh release create v6.32 $exe $sum --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'DyclokPRO v6.32 - motor 3.0.7 intacto (experimental)' --notes $notes --prerelease
+          if($LASTEXITCODE -ne 0){throw 'Could not publish experimental EXE'}
+          Write-Host 'DYCLOKPRO_V630_PUBLISHED=PASS'
