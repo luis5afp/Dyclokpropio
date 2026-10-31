@@ -10,7 +10,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: dyclokpro-v631-external307
+  group: dyclokpro-v631-bounded-direct-startup
   cancel-in-progress: false
 jobs:
   build-publish:
