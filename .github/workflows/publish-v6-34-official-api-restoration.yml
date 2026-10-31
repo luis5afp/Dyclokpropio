@@ -3,7 +3,7 @@ on:
   push:
     branches: ['feature/v6.34-official-api-legacy-functions']
     paths:
-      - '.github/workflows/publish-v6-32-native-primary-session.yml'
+      - '.github/workflows/publish-v6-34-official-api-restoration.yml'
       - 'release-build/v6.34/**'
       - 'tools/release-v6-30-intact307.py'
   workflow_dispatch:
@@ -49,10 +49,10 @@ jobs:
           if($src -notmatch '127.0.0.1:' -or $src -notmatch 'X-API-KEY'){
             throw 'Missing authorized loopback API'
           }
-          if($src -match 'HttpMethod\\.(Post|Put|Patch|Delete)|X-DC-M1|X-DC-M2'){
+          if($src -match 'HttpMethod\.(Post|Put|Patch|Delete)|X-DC-M1|X-DC-M2'){
             throw 'Blocked: API module may not mutate accounts or signed requests'
           }
-          if($main -notmatch 'if\\(id=="legacy"\\)return info;'){
+          if(-not $main.Contains('if(id=="legacy")return info;')){
             throw 'Blocked: primary account must use native Windows session'
           }
           if($viewer -notmatch 'ExportEncrypted' -or $main -notmatch 'new LocalProfilesWindow'){
