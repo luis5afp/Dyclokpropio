@@ -10,8 +10,7 @@ INSTALLER_SHA="01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae"
 ASAR_SHA="b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf"
 SIGNATURE=bytes.fromhex("377abcaf271c")
 REQUIRED=(
-    "DICloak.exe","resources/app.asar",
-    "resources/app.asar.unpacked/dist/index.html"
+    "DICloak.exe","resources/app.asar"
 )
 
 def sha(path):
