@@ -20,7 +20,33 @@ jobs:
         run: |
           $src=Get-Content -LiteralPath 'release-build/v6.33/Launcher/ArchiveAuditWindow.cs' -Raw
           $main=Get-Content -LiteralPath 'release-build/v6.33/Launcher/Program.cs' -Raw
-          if($src -match 'HttpClient|CookieContainer|Decrypt|safeStorage|X-Version|X-DC-M1|X-DC-M2|ProcessStartInfo\("DICloak"'){
+          $code = $src -replace '(?m)^\s*//[^\r\n]*
+            throw 'BLOCKED: archive viewer must remain local and read-only'
+          }
+          if($src -notmatch 'ReparsePoint' -or $src -notmatch 'ArchiveOriginal'){
+            throw 'Missing local folder audit safety conditions'
+          }
+          if($main -notmatch 'new ArchiveAuditWindow\(active,Name\(active\)\)'){
+            throw 'New viewer not linked from Archivos menu'
+          }
+          Write-Host 'LOCAL_ARCHIVE_AUDIT_SAFE_BY_DESIGN=PASS'
+      - name: Compile standalone WinForms launcher with archive inspector
+        shell: pwsh
+        run: |
+          & dotnet publish release-build/v6.33/Launcher/DyclokPRO.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o "$env:RUNNER_TEMP\dyclokpro-v633-test"
+          if($LASTEXITCODE -ne 0){throw 'v6.33 WinForms compilation failed'}
+          if(-not(Test-Path "$env:RUNNER_TEMP\dyclokpro-v633-test\DyclokPRO.exe")){
+            throw 'v6.33 executable not generated'
+          }
+          Write-Host 'EXTERNAL_ARCHIVE_INSPECTOR_COMPILED=PASS'
+      - name: Upload non-installer compile artifact for integration testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: v6.33-external-inspector-compile-only
+          path: ${{ runner.temp }}\dyclokpro-v633-test\DyclokPRO.exe
+          retention-days: 7
+, ''
+          if($code -match 'HttpClient|CookieContainer|\bDecrypt\s*\(|safeStorage|X-Version|X-DC-M1|X-DC-M2|ProcessStartInfo\("DICloak"'){
             throw 'BLOCKED: archive viewer must remain local and read-only'
           }
           if($src -notmatch 'ReparsePoint' -or $src -notmatch 'ArchiveOriginal'){
