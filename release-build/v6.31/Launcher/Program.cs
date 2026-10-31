@@ -128,7 +128,8 @@ internal static class Program {
             Environment.ExitCode=valid?0:5;return;
         }
         ApplicationConfiguration.Initialize();
-        Application.Run(new BrowserRibbon());
+        bool smoke=args.Contains("--dyclok-direct-launch-smoke",StringComparer.OrdinalIgnoreCase);
+        Application.Run(new BrowserRibbon(smoke));
     }
 }
 internal sealed class BrowserRibbon:Form{
@@ -148,12 +149,14 @@ internal sealed class BrowserRibbon:Form{
     private readonly System.Windows.Forms.Timer clock=new(){Interval=750};
     private readonly NotifyIcon tray=new(){Icon=SystemIcons.Application,Text="DyclokPRO v6.31 · Cuentas"};
     private string active="legacy";
+    private readonly bool directSmoke;
     private bool exiting=false, loading=false;
     private string? errorMessage;
     private static readonly string Client=Path.Combine(AppContext.BaseDirectory,"DICloak.exe");
     protected override bool ShowWithoutActivation=>true;
 
-    public BrowserRibbon(){
+    public BrowserRibbon(bool smoke=false){
+        directSmoke=smoke;
         Text="DyclokPRO v6.31";
         FormBorderStyle=FormBorderStyle.None;
         StartPosition=FormStartPosition.Manual;
@@ -195,6 +198,13 @@ internal sealed class BrowserRibbon:Form{
             try{AccountStore.Get();RebuildTabs();OpenAccount("legacy");}
             catch(Exception ex){MessageBox.Show(ex.Message,"DyclokPRO no pudo abrir");errorMessage=ex.Message;}
             clock.Start();
+            if(directSmoke){
+                int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v631-direct-launch.json"),
+                    JsonSerializer.Serialize(new{openedNative=pid>0,pid,largeManagerWindow=false}));
+                var done=new System.Windows.Forms.Timer{Interval=1800};
+                done.Tick+=(_,_)=>{done.Stop();done.Dispose();Exit();};done.Start();
+            }
         };
     }
     private static Button Button(string text,int width)=>new(){
