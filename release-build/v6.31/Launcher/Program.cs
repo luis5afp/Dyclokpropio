@@ -129,7 +129,20 @@ internal static class Program {
         }
         ApplicationConfiguration.Initialize();
         bool smoke=args.Contains("--dyclok-direct-launch-smoke",StringComparer.OrdinalIgnoreCase);
-        Application.Run(new BrowserRibbon(smoke));
+        try{
+            // The official browser starts BEFORE any optional user-account
+            // ribbon is constructed. No intermediate manager screen.
+            Process official=BrowserRibbon.StartNative("legacy");
+            if(smoke){
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v631-direct-launch.json"),
+                    JsonSerializer.Serialize(new{openedNative=official.Id>0,pid=official.Id,
+                        largeManagerWindow=false,startedBeforeRibbon=true}));
+            }
+            Application.Run(new BrowserRibbon(official,smoke));
+        }catch(Exception ex){
+            MessageBox.Show(ex.Message,"No se pudo iniciar DyclokPRO",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            Environment.ExitCode=2;
+        }
     }
 }
 internal sealed class BrowserRibbon:Form{
@@ -155,8 +168,9 @@ internal sealed class BrowserRibbon:Form{
     private static readonly string Client=Path.Combine(AppContext.BaseDirectory,"DICloak.exe");
     protected override bool ShowWithoutActivation=>true;
 
-    public BrowserRibbon(bool smoke=false){
+    public BrowserRibbon(Process official,bool smoke=false){
         directSmoke=smoke;
+        running["legacy"]=official;
         Text="DyclokPRO v6.31";
         FormBorderStyle=FormBorderStyle.None;
         StartPosition=FormStartPosition.Manual;
@@ -195,8 +209,8 @@ internal sealed class BrowserRibbon:Form{
         clock.Tick+=(_,_)=>PositionBar();
         Shown+=(_,_)=>{
             tray.Visible=true;
-            try{AccountStore.Get();RebuildTabs();OpenAccount("legacy");}
-            catch(Exception ex){MessageBox.Show(ex.Message,"DyclokPRO no pudo abrir");errorMessage=ex.Message;}
+            try{AccountStore.Get();RebuildTabs();}
+            catch(Exception ex){MessageBox.Show(ex.Message,"DyclokPRO no pudo mostrar las cuentas");errorMessage=ex.Message;}
             clock.Start();
             if(directSmoke){
                 int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
@@ -227,6 +241,23 @@ internal sealed class BrowserRibbon:Form{
         }
         tabs.ResumeLayout();
     }
+    internal static Process StartNative(string id){
+        _=AccountStore.DirectoryFor(id);
+        if(!File.Exists(Client))throw new FileNotFoundException("Falta el navegador oficial.",Client);
+        // Reuse v6.30 Engine307 locations. NEVER copy or delete older sessions.
+        string engine=Path.Combine(AccountStore.DirectoryFor(id),"Engine307");
+        string roaming=Path.Combine(engine,"Roaming");
+        string local=Path.Combine(engine,"Local");
+        string temp=Path.Combine(engine,"Temp");
+        foreach(string dir in new[]{roaming,local,temp})Directory.CreateDirectory(dir);
+        var info=new ProcessStartInfo{
+            FileName=Client,WorkingDirectory=AppContext.BaseDirectory,UseShellExecute=false
+        };
+        info.Environment["APPDATA"]=roaming;
+        info.Environment["LOCALAPPDATA"]=local;
+        info.Environment["TEMP"]=temp;info.Environment["TMP"]=temp;
+        return Process.Start(info)??throw new InvalidOperationException("Windows no inició DICloak.");
+    }
     private void OpenAccount(string id){
         try{
             _=AccountStore.DirectoryFor(id);
@@ -236,20 +267,7 @@ internal sealed class BrowserRibbon:Form{
                 if(!old.HasExited){active=id;RebuildTabs();BringToFront(old);return;}
                 old.Dispose();running.Remove(id);
             }
-            // Use v6.30 Engine307 locations to preserve any sessions already
-            // established there. Never copy, decrypt or delete legacy Electron data.
-            string engine=Path.Combine(AccountStore.DirectoryFor(id),"Engine307");
-            string roaming=Path.Combine(engine,"Roaming");
-            string local=Path.Combine(engine,"Local");
-            string temp=Path.Combine(engine,"Temp");
-            foreach(string dir in new[]{roaming,local,temp})Directory.CreateDirectory(dir);
-            var info=new ProcessStartInfo{
-                FileName=Client,WorkingDirectory=AppContext.BaseDirectory,UseShellExecute=false
-            };
-            info.Environment["APPDATA"]=roaming;
-            info.Environment["LOCALAPPDATA"]=local;
-            info.Environment["TEMP"]=temp;info.Environment["TMP"]=temp;
-            var process=Process.Start(info)??throw new InvalidOperationException("Windows no inició DICloak.");
+            var process=StartNative(id);
             running[id]=process;active=id;RebuildTabs();
             errorMessage=null;
         }catch(Exception ex){
