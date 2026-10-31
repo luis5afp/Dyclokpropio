@@ -20,6 +20,7 @@ internal static class AccountStore
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"DyclokPRO","Cuentas");
     public static readonly string Registry=Path.Combine(Root,"cuentas.json");
     public static readonly Regex ValidId=new("^[a-f0-9]{32}$",RegexOptions.CultureInvariant);
+    public static event Action? NamesChanged;
     public static string DirectoryFor(string id) {
         if(id!="legacy"&&!ValidId.IsMatch(id))throw new ArgumentException("Identificador incorrecto");
         return Path.Combine(Root,id);
@@ -96,6 +97,7 @@ internal static class AccountStore
         // Compatibility with the v6.30 manager. This is not profile metadata.
         Directory.CreateDirectory(DirectoryFor(id));
         File.WriteAllText(Path.Combine(DirectoryFor(id),"cuenta-nombre.txt"),name);
+        NamesChanged?.Invoke();
     }
     public static UserAccount Create(){
         string id=Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
@@ -180,6 +182,7 @@ internal sealed class BrowserRibbon:Form{
 
     public BrowserRibbon(Process official,bool smoke=false){
         directSmoke=smoke;
+        AccountStore.NamesChanged+=()=>{if(IsHandleCreated)BeginInvoke((Action)RebuildTabs);};
         running["legacy"]=official;
         Text="DyclokPRO v6.34";
         FormBorderStyle=FormBorderStyle.None;
