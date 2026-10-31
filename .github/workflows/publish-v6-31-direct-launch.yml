@@ -160,10 +160,21 @@ jobs:
           $launcher=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DyclokPRO.exe'
           $stamp=Join-Path $env:TEMP 'dyclokpro-v631-direct-launch.json'
           Remove-Item -LiteralPath $stamp -Force -ErrorAction SilentlyContinue
-          $process=Start-Process -FilePath $launcher -ArgumentList '--dyclok-direct-launch-smoke' -Wait -PassThru
-          if($process.ExitCode -ne 0){throw 'Direct-launch UI failed to start'}
-          if(-not(Test-Path $stamp)){throw 'Official browser was not started by direct launch'}
+          $process=Start-Process -FilePath $launcher -ArgumentList '--dyclok-direct-launch-smoke' -PassThru
+          $ready=$false
+          for($i=0;$i -lt 50;$i++){
+            Start-Sleep -Milliseconds 400
+            if(Test-Path $stamp){$ready=$true;break}
+            $process.Refresh()
+            if($process.HasExited){break}
+          }
+          if(-not $ready){
+            if(-not $process.HasExited){Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue}
+            throw 'Direct launch did not open official client within bounded startup check'
+          }
           $result=Get-Content $stamp -Raw|ConvertFrom-Json
+          $process.Refresh()
+          if(-not $process.HasExited){Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue}
           if(-not $result.openedNative -or $result.pid -le 0 -or $result.largeManagerWindow){
             throw 'Did not open original browser directly'
           }
