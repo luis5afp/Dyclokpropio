@@ -3,7 +3,7 @@ on:
   push:
     branches: ['fix/v6.32-native-primary-session-paths']
     paths:
-      - '.github/workflows/publish-v6-31-direct-launch.yml'
+      - '.github/workflows/publish-v6-32-native-primary-session.yml'
       - 'release-build/v6.32/**'
       - 'tools/release-v6-30-intact307.py'
   workflow_dispatch:
