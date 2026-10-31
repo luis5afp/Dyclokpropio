@@ -1,0 +1,38 @@
+name: DyclokPRO v6.34 - compile official API and archive restoration
+on:
+  push:
+    branches: ['feature/v6.34-official-api-legacy-functions']
+    paths:
+      - '.github/workflows/test-v6-34-feature-compile.yml'
+      - 'release-build/v6.34/Launcher/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect official-only integrations for prohibited modifications
+        shell: pwsh
+        run: |
+          $src=Get-Content 'release-build/v6.34/Launcher/OfficialApiArchiveWindow.cs' -Raw
+          if($src -notmatch '127.0.0.1:' -or $src -notmatch 'X-API-KEY'){
+            throw 'Only local API with authorized key may be used'
+          }
+          if($src -match 'PATCH|PUT|DELETE|X-DC-M1|X-DC-M2|HttpMethod.Post'){
+            throw 'Read-only local API module must never change profiles or auth'
+          }
+          $main=Get-Content 'release-build/v6.34/Launcher/Program.cs' -Raw
+          if($main -notmatch 'if\(id=="legacy"\)return info;'){
+            throw 'Primary official Windows session paths must be native'
+          }
+          Write-Host 'OFFICIAL_API_V2_ONLY_READS=PASS'
+      - name: Compile Windows standalone manager with Local API module
+        shell: pwsh
+        run: |
+          & dotnet publish release-build/v6.34/Launcher/DyclokPRO.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o "$env:RUNNER_TEMP\dyclokpro-v634-compiled"
+          if($LASTEXITCODE -ne 0){throw 'Compilation failed'}
+          if(-not(Test-Path "$env:RUNNER_TEMP\dyclokpro-v634-compiled\DyclokPRO.exe")){throw 'Executable missing'}
+          Write-Host 'V634_EXTERNAL_CLIENT_COMPILED=PASS'
