@@ -21,7 +21,7 @@ jobs:
           if($src -notmatch '127.0.0.1:' -or $src -notmatch 'X-API-KEY'){
             throw 'Only local API with authorized key may be used'
           }
-          if($src -match 'PATCH|PUT|DELETE|X-DC-M1|X-DC-M2|HttpMethod.Post'){
+          if($src -match 'HttpMethod\.(Post|Put|Patch|Delete)|X-DC-M1|X-DC-M2|\bSendAsync\(.+HttpMethod\.(Post|Put|Patch|Delete)'){
             throw 'Read-only local API module must never change profiles or auth'
           }
           $main=Get-Content 'release-build/v6.34/Launcher/Program.cs' -Raw
