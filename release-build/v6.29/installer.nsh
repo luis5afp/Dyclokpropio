@@ -6,8 +6,8 @@
 !macroend
 
 !macro customInstall
-  CreateDirectory "$SMPROGRAMS\DyclokPRO"
-  CreateShortCut "$SMPROGRAMS\DyclokPRO\Perfiles locales.lnk" "$INSTDIR\Dyclokpro_Perfiles_Locales.exe" "" "$INSTDIR\DyclokPRO.ico" 0
+  ; User data always stays outside the installation directory.
+  CreateDirectory "$LOCALAPPDATA\DyclokPRO\Cuentas"
 !macroend
 
 !macro customUnInstall
@@ -18,6 +18,4 @@
       DetailPrint "Cuentas cannot be unlinked safely. Preserving user data."
       Abort "No se puede desvincular Cuentas. Se cancela para proteger los perfiles."
   dyclok_no_cuentas:
-  Delete "$SMPROGRAMS\DyclokPRO\Perfiles locales.lnk"
-  RMDir "$SMPROGRAMS\DyclokPRO"
 !macroend
