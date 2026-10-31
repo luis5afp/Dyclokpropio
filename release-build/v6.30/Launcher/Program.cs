@@ -13,8 +13,29 @@ namespace DyclokPRO;
 internal static class Program
 {
     [STAThread]
-    private static void Main()
+    private static void Main(string[] args)
     {
+        if (args.Contains("--dyclok-self-test", StringComparer.OrdinalIgnoreCase))
+        {
+            string root = AppContext.BaseDirectory;
+            string official = Path.Combine(root, "DICloak.exe");
+            string asar = Path.Combine(root, "resources", "app.asar");
+            const string expected = "b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf";
+            string digest = File.Exists(asar)
+                ? Convert.ToHexString(SHA256.HashData(File.OpenRead(asar))).ToLowerInvariant()
+                : "missing";
+            bool valid = File.Exists(official) && digest == expected;
+            string json = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                version = "6.30.0",
+                originalAsarSha256 = digest,
+                officialExeExists = File.Exists(official),
+                validOriginalEngine = valid
+            });
+            File.WriteAllText(Path.Combine(Path.GetTempPath(), "dyclokpro-v630-selftest.json"), json);
+            Environment.ExitCode = valid ? 0 : 5;
+            return;
+        }
         ApplicationConfiguration.Initialize();
         Application.Run(new ManagerWindow());
     }
