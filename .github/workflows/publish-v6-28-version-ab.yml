@@ -4,7 +4,7 @@ on:
     branches:
       - 'experiment/v6.28-internal-3-0-7'
     paths:
-      - '.github/workflows/publish-v6-28-raw-archive.yml'
+      - '.github/workflows/publish-v6-28-version-ab.yml'
       - 'release-build/v6.28/**'
       - 'tools/release-v6-28-internal307-ab.py'
       - 'tools/test-v6-28-internal307.cjs'
@@ -12,7 +12,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: dyclokpro-v626-legacy-restore
+  group: dyclokpro-v628-experimental
   cancel-in-progress: false
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
       - name: Validate internal 3.0.7 packaging guards and original archive
         shell: pwsh
         run: |
-          & python -m py_compile tools/release-v6-28-plain-archive.py
+          & python -m py_compile tools/release-v6-28-internal307-ab.py
           if($LASTEXITCODE -ne 0){throw 'Python script syntax failed'}
           & node --check release-build/v6.28/patch-windows-exe.mjs
           if($LASTEXITCODE -ne 0){throw 'PE patch syntax failed'}
@@ -46,7 +46,7 @@ jobs:
           if($LASTEXITCODE -ne 0){throw 'Archive backend syntax error'}
           & node --check release-build/v6.28/raw-archive-ui.js
           if($LASTEXITCODE -ne 0){throw 'Archive frontend syntax error'}
-          & node tools/test-v6-28-raw-archive.cjs
+          & node tools/test-v6-28-internal307.cjs
           if($LASTEXITCODE -ne 0){throw 'Legacy auth preservation guard failed'}
 
       - name: Download and verify known-good v6.16 EXE
@@ -67,7 +67,7 @@ jobs:
         run: |
           $original=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.16_win_x64.exe'
           $dest=Join-Path $env:RUNNER_TEMP 'dyclokpro-v6-28-prepackaged'
-          & python tools/release-v6-28-plain-archive.py --installer $original --destination $dest
+          & python tools/release-v6-28-internal307-ab.py --installer $original --destination $dest
           if($LASTEXITCODE -ne 0){throw 'Could not restore exact native v6.16 auth runtime'}
           Copy-Item -LiteralPath (Join-Path $dest 'DyclokPRO.ico') -Destination release-build/v6.28/DyclokPRO.ico -Force
           if(Test-Path (Join-Path $dest 'SourceData')){throw 'Private profile data bundled'}
