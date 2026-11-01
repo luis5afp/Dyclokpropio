@@ -188,8 +188,9 @@ internal sealed class IntegratedAccountsWindow : Form
         }
         string label=accountTabs.TabPages[e.Index].Text;
         var textRect=new Rectangle(rect.Left+13,rect.Top+1,rect.Width-22,rect.Height-6);
-        TextRenderer.DrawText(e.Graphics,label,new Font("Segoe UI",9.3f,
-            active?FontStyle.Bold:FontStyle.Regular),textRect,
+        using var labelFont=new Font("Segoe UI",9.3f,
+            active?FontStyle.Bold:FontStyle.Regular);
+        TextRenderer.DrawText(e.Graphics,label,labelFont,textRect,
             active?Color.White:Color.FromArgb(174,190,193),
             TextFormatFlags.EndEllipsis|TextFormatFlags.VerticalCenter|
             TextFormatFlags.SingleLine|TextFormatFlags.NoPrefix);
