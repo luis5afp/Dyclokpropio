@@ -63,7 +63,7 @@ internal sealed class IntegratedAccountsWindow : Form
         Dock=DockStyle.Right,Width=335,Visible=false,
         BackColor=Color.FromArgb(20,27,31)
     };
-    private readonly Process initial;
+    private readonly Process? initial;
     private readonly bool embedSmoke;
     private readonly bool twoTabSmoke;
     private int smokePhase;
@@ -82,7 +82,7 @@ internal sealed class IntegratedAccountsWindow : Form
         Padding = new Padding(12, 6, 3, 3)
     };
 
-    internal IntegratedAccountsWindow(Process initial, bool embedSmoke=false,bool twoTabSmoke=false)
+    internal IntegratedAccountsWindow(Process? initial, bool embedSmoke=false,bool twoTabSmoke=false)
     {
         this.initial = initial;
         this.embedSmoke=embedSmoke;
@@ -283,23 +283,39 @@ internal sealed class IntegratedAccountsWindow : Form
     private void Start()
     {
         starting=true;
-        SessionDiagnostics.Observe(initial,"legacy");
         try{
-            // Saved accounts are NOT tabs. One tab exists only for a running
-            // native engine (principal starts with the launcher).
+            // Show our OWN interface first. The principal engine starts only
+            // after the account's host panel is already visible.
             var principal=EnsureOpenAccount("legacy",select:false);
-            principal.Process=initial;
-            principal.StartedUtc=DateTime.UtcNow;
-            principal.Status.Text="Iniciando cuenta principal…";
-            initialTabCount=accountTabs.TabCount;
-            if(twoTabSmoke){
-                // Fixture-only: open the first auxiliary via the same user path
-                // AFTER principal is visible. Never preload all saved accounts.
-                smokeSecondaryId=AccountStore.Get().FirstOrDefault(a=>a.Id!="legacy")?.Id;
+            if(initial is not null){
+                SessionDiagnostics.Observe(initial,"legacy");
+                principal.Process=initial;
+                principal.StartedUtc=DateTime.UtcNow;
             }
+            principal.Status.Text="Conectando al motor oficial 3.0.7…";
+            initialTabCount=accountTabs.TabCount;
+            if(twoTabSmoke)
+                smokeSecondaryId=AccountStore.Get().FirstOrDefault(a=>a.Id!="legacy")?.Id;
+        }catch(Exception ex){
+            ShowFatalStartError(ex);
+            return;
         }finally{starting=false;}
-        Select("legacy");
+        Select("legacy"); // Launch/reuse only when UI exists.
         poll.Start();
+    }
+    private void ShowFatalStartError(Exception ex){
+        // A broken account registry or a failed engine guard must never yield
+        // an empty, apparently healthy white DyclokPRO window.
+        var failure=new Label{
+            Dock=DockStyle.Fill,BackColor=Surface,ForeColor=Color.FromArgb(235,171,124),
+            TextAlign=ContentAlignment.MiddleCenter,Padding=new Padding(36),
+            Text="DyclokPRO no pudo recuperar la sesión principal.\n\n"+
+                ex.Message+"\n\nNo se borraron las cuentas. "+
+                "Comprueba el diagnóstico antes de volver a iniciar."
+        };
+        Controls.Add(failure);
+        failure.BringToFront();
+        SessionDiagnostics.Record("START_FAILED","legacy");
     }
 
     private AccountPage EnsureOpenAccount(string id,bool select=true)
@@ -423,7 +439,8 @@ internal sealed class IntegratedAccountsWindow : Form
             SessionDiagnostics.Observe(launched,id);
             entry.StartedUtc=DateTime.UtcNow;
             entry.AttemptedExternalFallback=false;
-            entry.Status.Text="Cargando motor oficial 3.0.7…";
+            entry.Status.Text="Integrando ventana oficial 3.0.7…";
+            if(ActiveId==id)UpdateHost(entry);
         }
         catch(Exception ex){
             if(!closing&&!IsDisposed){
@@ -632,7 +649,7 @@ internal sealed class IntegratedAccountsWindow : Form
     private void RecordSmokeResult(bool switched){
         try {
             File.WriteAllText(Path.Combine(Path.GetTempPath(),
-                switched?"dyclokpro-v642-two-tabs.json":"dyclokpro-v642-embedded-window.json"),
+                switched?"dyclokpro-v643-two-tabs.json":"dyclokpro-v643-embedded-window.json"),
                 JsonSerializer.Serialize(new {
                     integratedHostShown=true,
                     originalMotorChildWindowAttached=SmokeSucceeded,
@@ -663,12 +680,14 @@ internal sealed class IntegratedAccountsWindow : Form
             return;
         }
         if(!entry.AttemptedExternalFallback &&
-            DateTime.UtcNow - entry.StartedUtc > TimeSpan.FromSeconds(18))
+            DateTime.UtcNow-entry.StartedUtc > TimeSpan.FromSeconds(12))
         {
             entry.AttemptedExternalFallback=true;
             entry.Status.Visible=true;
-            entry.Status.Text = "No se pudo integrar la ventana de esta cuenta. Usa ⋯ → Ventana externa.";
-            overall.Text = "El motor continúa intacto. El alojamiento HWND depende de compatibilidad de Windows/DPI.";
+            entry.Status.Text = "No se pudo integrar el motor 3.0.7 en esta ventana.\n"+
+                (entry.Host.LastError??"No se encontró una ventana del proceso.")+
+                "\nAbre ⋯ → Ventana externa o consulta Diagnóstico.";
+            SessionDiagnostics.Record("WINDOW_MISSING",entry.Id,entry.Process.Id);
         }
     }
 
