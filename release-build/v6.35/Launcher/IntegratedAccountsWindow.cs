@@ -118,13 +118,13 @@ internal sealed class IntegratedAccountsWindow : Form
         var add=TopButton("+",42,()=>OpenAccountPicker());
         var nameButton=TopButton("Nombre",67,()=>RenameActive());
         var folderButton=TopButton("Carpeta",73,()=>OpenActiveDiagnosticFolder());
-        var diagButton=TopButton("Diag",59,()=>ToggleDiagnostics());
+        var diagButton=TopButton("Diagnóstico",103,()=>ToggleDiagnostics());
         topActions.Controls.Add(more);
         topActions.Controls.Add(add);
         topActions.Controls.Add(nameButton);
         topActions.Controls.Add(folderButton);
         topActions.Controls.Add(diagButton);
-        topActions.Width=307;
+        topActions.Width=352;
 
         accountTabs.BackColor=Ink;
         accountTabs.ForeColor=Color.White;
