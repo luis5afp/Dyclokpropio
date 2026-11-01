@@ -108,6 +108,7 @@ internal sealed class EngineWindowHost : Panel
             CreateControl();
             if (!IsHandleCreated) { LastError = "El panel no tiene HWND."; return false; }
             formerParent = GetParent(window);
+            rememberedInputHwnd=EngineInputFocus.Remember(window);
             formerStyle = GetWindowLongPtr(window, GWL_STYLE);
             if(GetWindowRect(window,out var rectBeforeEmbedding)){
                 originalX=rectBeforeEmbedding.Left;originalY=rectBeforeEmbedding.Top;
@@ -128,7 +129,6 @@ internal sealed class EngineWindowHost : Panel
                 return false;
             }
             embeddedWindow = window;
-            rememberedInputHwnd=IntPtr.Zero;
             ResizeEmbedded();
             ShowWindow(embeddedWindow, 5);
             LastError = null;
