@@ -351,7 +351,7 @@ internal sealed class IntegratedAccountsWindow : Form
         if(embedSmoke && (entry.Host.IsEmbedded || firstTick>=32)){
             SmokeSucceeded=entry.Host.IsEmbedded;
             try{
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v638-embedded-window.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v639-embedded-window.json"),
                     JsonSerializer.Serialize(new {
                         integratedHostShown=true,
                         originalMotorChildWindowAttached=SmokeSucceeded,
