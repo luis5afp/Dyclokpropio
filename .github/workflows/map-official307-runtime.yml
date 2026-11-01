@@ -45,8 +45,10 @@ jobs:
           dotnet publish release-build/v6.35/Launcher/DyclokPRO.csproj -c Release -r win-x64 --self-contained false -o engine307-launcher
           if($LASTEXITCODE -ne 0){throw 'DyclokPRO source compilation failed'}
           $launcher=(Resolve-Path engine307-launcher/DyclokPRO.exe).Path
-          Copy-Item -LiteralPath $launcher -Destination "$env:RUNNER_TEMP\official307\DyclokPRO.exe" -Force
+          # Framework-dependent WinExe requires its adjacent DLL, runtimeconfig and deps.
+          Copy-Item -Path "engine307-launcher\*" -Destination "$env:RUNNER_TEMP\official307" -Recurse -Force
           $binary=(Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe')
+          Write-Host "OFFICIAL_PE_FILE_VERSION=$((Get-Item (Join-Path $env:RUNNER_TEMP 'official307\DICloak.exe')).VersionInfo.FileVersion)"
           $test=Start-Process -FilePath $binary -ArgumentList '--dyclok-engine-guard-test' -Wait -PassThru
           if($test.ExitCode -ne 0){throw 'Official engine checksum/PE version test failed'}
           $contract=Start-Process -FilePath $launcher -ArgumentList '--dyclok-api-contract-test' -Wait -PassThru
