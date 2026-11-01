@@ -21,8 +21,10 @@ jobs:
       - name: Run provider contract tests without account or key
         shell: pwsh
         run: |
-          & ./API_TEST/DyclokPRO.exe --dyclok-api-contract-test
-          if ($LASTEXITCODE -ne 0) { throw "API contract test failed ($LASTEXITCODE)" }
+          # WinExe is a GUI subsystem app: PowerShell may not populate LASTEXITCODE.
+          # Wait for the process and check its actual ExitCode.
+          $test = Start-Process -FilePath (Resolve-Path "./API_TEST/DyclokPRO.exe").Path -ArgumentList "--dyclok-api-contract-test" -Wait -PassThru
+          if ($test.ExitCode -ne 0) { throw "API contract test failed ($($test.ExitCode))" }
       - name: Ensure documented V1 is primary and forbidden auth changes absent
         shell: pwsh
         run: |
