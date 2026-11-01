@@ -384,6 +384,7 @@ internal sealed class BrowserRibbon:Form{
         m.Items.Add("Ver estado de archivos",null,(_,_)=>ArchiveStatus());
         m.Items.Add("Diagnóstico detallado por perfil",null,(_,_)=>new ArchiveAuditWindow(active,Name(active)).Show(this));
         m.Items.Add("Perfiles locales (solo lectura)",null,(_,_)=>new LocalProfilesWindow(active,Name(active)).Show(this));
+        m.Items.Add("Perfiles del motor 3.0.7 (API local V1)",null,(_,_)=>new OfficialProfilesV1Window(Name(active)).Show(this));
         m.Items.Add("API oficial V2: respaldar JSON autorizado",null,(_,_)=>OpenOfficialApi());
         m.Items.Add("Importar exportación oficial sin modificar",null,(_,_)=>ImportOfficialFiles());
         m.Items.Add(new ToolStripSeparator());
@@ -440,6 +441,7 @@ internal sealed class BrowserRibbon:Form{
         m.Items.Add("Carpeta de la cuenta",null,(_,_)=>OpenDirectory(AccountStore.DirectoryFor(active)));
         m.Items.Add("Vincular carpeta Cuentas a la instalación",null,(_,_)=>CreateAccountJunction());
         m.Items.Add("Perfiles locales",null,(_,_)=>new LocalProfilesWindow(active,Name(active)).Show(this));
+        m.Items.Add("Perfiles oficiales 3.0.7 (API V1)",null,(_,_)=>new OfficialProfilesV1Window(Name(active)).Show(this));
         m.Items.Add("API oficial V2",null,(_,_)=>OpenOfficialApi());
         m.Items.Add("Abrir motor oficial 3.0.7",null,(_,_)=>OpenAccount(active));
         m.Items.Add("Ver el gestor en área de notificación",null,(_,_)=>{Hide();});
