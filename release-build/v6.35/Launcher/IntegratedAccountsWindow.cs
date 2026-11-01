@@ -147,7 +147,17 @@ internal sealed class IntegratedAccountsWindow : Form
             poll.Stop();
             foreach(var p in pages.Values) p.Host.Detach();
             if(diagnostic is not null && !diagnostic.IsDisposed) diagnostic.Close();
-            // Intentional: official account processes remain alive.
+            // Smoke-only teardown: CI must not leave a DICloak singleton
+            // running that contaminates the next multi-account check.
+            if(embedSmoke){
+                foreach(var page in pages.Values){
+                    if(page.Process is null)continue;
+                    try{if(!page.Process.HasExited)page.Process.Kill(entireProcessTree:true);}
+                    catch(InvalidOperationException){}
+                    catch(System.ComponentModel.Win32Exception){}
+                }
+            }
+            // Production: official account sessions remain running.
         };
         FormClosed += (_, _) => poll.Dispose();
     }
