@@ -109,9 +109,14 @@ internal static class AccountStore
 }
 internal static class Program {
     internal const string AsarSha="b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf";
-    internal const string MarketingVersion="6.41.0";
+    internal const string MarketingVersion="6.42.0";
     [STAThread]
     private static void Main(string[] args){
+        if(args.Contains("--dyclok-netlog-self-test",StringComparer.OrdinalIgnoreCase)){
+            try{Environment.ExitCode=NativeNetLogCapture.SelfTest()?0:21;}
+            catch(Exception){Environment.ExitCode=21;}
+            return;
+        }
         if(args.Contains("--dyclok-focus-child",StringComparer.OrdinalIgnoreCase)){
             Environment.ExitCode=EngineFocusSmoke.Child();return;
         }
@@ -137,7 +142,7 @@ internal static class Program {
             bool secondaryIsolated=
                 !string.Equals(separatedInfo.Environment["APPDATA"],officialInfo.Environment["APPDATA"],StringComparison.OrdinalIgnoreCase)
                 &&!string.Equals(separatedInfo.Environment["LOCALAPPDATA"],officialInfo.Environment["LOCALAPPDATA"],StringComparison.OrdinalIgnoreCase);
-            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v641-selftest.json"),
+            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v642-selftest.json"),
                 JsonSerializer.Serialize(new {
                     version=MarketingVersion,validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
                     sha256=digest,accounts=accounts.Select(x=>new {id=x.Id,name=x.Name}).ToArray(),
@@ -190,7 +195,7 @@ internal static class Program {
                     if(!sExited)sReady=secondary.MainWindowHandle!=IntPtr.Zero;
                     if((pReady&&sReady)||pExited||sExited)break;
                 }
-                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v641-multiwindow-smoke.json");
+                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v642-multiwindow-smoke.json");
                 File.WriteAllText(marker,JsonSerializer.Serialize(new {
                     tested="native_official_307_two_windows",
                     principalReady=pReady,secondaryReady=sReady,
@@ -219,7 +224,7 @@ internal static class Program {
             // ribbon is constructed. No intermediate manager screen.
             Process official=BrowserRibbon.StartNative("legacy");
             if(smoke){
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v641-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v642-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=official.Id>0,pid=official.Id,
                         largeManagerWindow=false,startedBeforeRibbon=true}));
             }
@@ -314,7 +319,7 @@ internal sealed class BrowserRibbon:Form{
             clock.Start();
             if(directSmoke){
                 int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v641-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v642-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=pid>0,pid,largeManagerWindow=false}));
                 var done=new System.Windows.Forms.Timer{Interval=1800};
                 done.Tick+=(_,_)=>{done.Stop();done.Dispose();Exit();};done.Start();
@@ -369,7 +374,10 @@ internal sealed class BrowserRibbon:Form{
         // native Windows environment and native 3.0.7 device/session paths.
         // Never alter APPDATA/LOCALAPPDATA/TEMP/TMP for "legacy".
         // The old v6.27 Electron directory is preserved, not silently migrated.
-        if(id=="legacy")return info;
+        if(id=="legacy"){
+            if(createDirectories)NativeNetLogCapture.PrepareArguments(info,id);
+            return info;
+        }
         // Chromium user data must be explicitly isolated as well as Windows
         // environment paths. Without this, Electron may reuse its first
         // instance's singleton lock and never create another account window.
@@ -390,6 +398,7 @@ internal sealed class BrowserRibbon:Form{
         info.Environment["LOCALAPPDATA"]=local;
         info.Environment["TEMP"]=temp;
         info.Environment["TMP"]=temp;
+        if(createDirectories)NativeNetLogCapture.PrepareArguments(info,id);
         return info;
     }
     internal static Process StartNative(string id){
