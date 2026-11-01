@@ -59,3 +59,17 @@ jobs:
           }
           Write-Host 'TWO_OFFICIAL_WINDOWS_IN_SEPARATE_SESSIONS=PASS'
           Write-Host 'LIVE_REMOTE_LOGIN=NOT_TESTED'
+      - name: Verify actual HWND integration within one host window
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          $probe=Start-Process -FilePath $exe -ArgumentList '--dyclok-integrated-window-smoke' -Wait -PassThru
+          $marker=Join-Path $env:TEMP 'dyclokpro-v638-embedded-window.json'
+          if(-not(Test-Path $marker)){throw 'Integrated tab smoke report missing'}
+          $result=Get-Content $marker -Raw | ConvertFrom-Json
+          Write-Host "INTEGRATED_HOST_SHOWN=$($result.integratedHostShown)"
+          Write-Host "OFFICIAL_CHILD_WINDOW_EMBEDDED=$($result.originalMotorChildWindowAttached)"
+          if($probe.ExitCode -ne 0 -or -not $result.originalMotorChildWindowAttached){
+            throw 'Windows could not embed the original DICloak window; keep integrated UI experimental'
+          }
+          Write-Host 'OFFICIAL_307_WINDOW_EMBEDDED_WITHOUT_ASAR_PATCH=PASS'
