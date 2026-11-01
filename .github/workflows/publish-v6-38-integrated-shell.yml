@@ -185,6 +185,26 @@ jobs:
           Write-Host 'PRIMARY_NATIVE_WINDOWS_ENVIRONMENT=PASS'
           Write-Host 'SECONDARY_ENGINE307_PATHS_PRESERVED=PASS'
           Write-Host 'LEGACY_V627_ACCOUNT_NAMES_RECOVERED=PASS'
+      - name: Verify two official 3.0.7 account windows and internal tab embedding
+        shell: pwsh
+        run: |
+          $launcher=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DyclokPRO.exe'
+          $test=Start-Process -FilePath $launcher -ArgumentList '--dyclok-account-isolation-test' -Wait -PassThru
+          if($test.ExitCode -ne 0){throw 'Auxiliary account paths were not isolated'}
+          $dual=Start-Process -FilePath $launcher -ArgumentList '--dyclok-multi-account-native-smoke' -PassThru
+          if(-not $dual.WaitForExit(45000)){Stop-Process -Id $dual.Id -Force -ErrorAction SilentlyContinue;throw 'Two accounts timed out'}
+          if($dual.ExitCode -ne 0){throw 'Original DICloak engine did not open two windows'}
+          $internal=Start-Process -FilePath $launcher -ArgumentList '--dyclok-integrated-window-smoke' -PassThru
+          if(-not $internal.WaitForExit(40000)){Stop-Process -Id $internal.Id -Force -ErrorAction SilentlyContinue;throw 'Internal tabs timed out'}
+          $marker=Join-Path $env:TEMP 'dyclokpro-v638-embedded-window.json'
+          if(-not(Test-Path $marker)){throw 'No embedded-window report'}
+          $result=Get-Content $marker -Raw | ConvertFrom-Json
+          if($internal.ExitCode -ne 0 -or -not $result.originalMotorChildWindowAttached){
+            throw 'The official engine window was not integrated into a tab'
+          }
+          Write-Host 'TWO_NATIVE_OFFICIAL_307_ACCOUNT_WINDOWS=PASS'
+          Write-Host 'ENGINE307_RENDERER_HOSTED_IN_INTERNAL_TAB=PASS'
+          Write-Host 'REAL_ACCOUNT_REMOTE_LOGIN=NOT_TESTED'
       - name: Verify original DICloak starts without ASAR integrity error
         shell: pwsh
         run: |
@@ -233,26 +253,6 @@ jobs:
           Write-Host 'DIRECT_OFFICIAL_BROWSER_LAUNCH=PASS'
           Write-Host 'LEGACY_ACCOUNT_TABS=IN_EXTERNAL_RIBBON'
           Write-Host 'LIVE_API_ARCHIVE=OPTIONAL_OFFICIAL_LOCAL_API_V2_KEY_REQUIRED'
-      - name: Verify two official 3.0.7 account windows and internal tab embedding
-        shell: pwsh
-        run: |
-          $launcher=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DyclokPRO.exe'
-          $test=Start-Process -FilePath $launcher -ArgumentList '--dyclok-account-isolation-test' -Wait -PassThru
-          if($test.ExitCode -ne 0){throw 'Auxiliary account paths were not isolated'}
-          $dual=Start-Process -FilePath $launcher -ArgumentList '--dyclok-multi-account-native-smoke' -PassThru
-          if(-not $dual.WaitForExit(45000)){Stop-Process -Id $dual.Id -Force -ErrorAction SilentlyContinue;throw 'Two accounts timed out'}
-          if($dual.ExitCode -ne 0){throw 'Original DICloak engine did not open two windows'}
-          $internal=Start-Process -FilePath $launcher -ArgumentList '--dyclok-integrated-window-smoke' -PassThru
-          if(-not $internal.WaitForExit(40000)){Stop-Process -Id $internal.Id -Force -ErrorAction SilentlyContinue;throw 'Internal tabs timed out'}
-          $marker=Join-Path $env:TEMP 'dyclokpro-v638-embedded-window.json'
-          if(-not(Test-Path $marker)){throw 'No embedded-window report'}
-          $result=Get-Content $marker -Raw | ConvertFrom-Json
-          if($internal.ExitCode -ne 0 -or -not $result.originalMotorChildWindowAttached){
-            throw 'The official engine window was not integrated into a tab'
-          }
-          Write-Host 'TWO_NATIVE_OFFICIAL_307_ACCOUNT_WINDOWS=PASS'
-          Write-Host 'ENGINE307_RENDERER_HOSTED_IN_INTERNAL_TAB=PASS'
-          Write-Host 'REAL_ACCOUNT_REMOTE_LOGIN=NOT_TESTED'
       - name: Publish v6.38 experimental release
         shell: pwsh
         env:
