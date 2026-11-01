@@ -33,6 +33,8 @@ internal sealed class IntegratedAccountsWindow : Form
     private readonly System.Windows.Forms.Timer poll = new() { Interval = 600 };
     private SessionDiagnosticsWindow? diagnostic;
     private readonly Process initial;
+    private readonly bool embedSmoke;
+    internal bool SmokeSucceeded { get; private set; }
     private bool closing;
     private bool starting;
     private int firstTick;
@@ -42,9 +44,10 @@ internal sealed class IntegratedAccountsWindow : Form
         Padding = new Padding(12, 6, 3, 3)
     };
 
-    internal IntegratedAccountsWindow(Process initial)
+    internal IntegratedAccountsWindow(Process initial, bool embedSmoke=false)
     {
         this.initial = initial;
+        this.embedSmoke=embedSmoke;
         Text = "DyclokPRO v6.38 | DICloak 3.0.7";
         Width = 1280; Height = 820; MinimumSize = new Size(800, 560);
         StartPosition = FormStartPosition.CenterScreen;
@@ -239,6 +242,20 @@ internal sealed class IntegratedAccountsWindow : Form
         firstTick++;
         if(!pages.TryGetValue(ActiveId,out var entry))return;
         UpdateHost(entry);
+        if(embedSmoke && (entry.Host.IsEmbedded || firstTick>=32)){
+            SmokeSucceeded=entry.Host.IsEmbedded;
+            try{
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v638-embedded-window.json"),
+                    JsonSerializer.Serialize(new {
+                        integratedHostShown=true,
+                        originalMotorChildWindowAttached=SmokeSucceeded,
+                        internalTabCount=accountTabs.TabPages.Count,
+                        accountSessionDataCopied=false
+                    }));
+            }catch(IOException){}
+            Close();
+            return;
+        }
         if(entry.Process is not null && HasExited(entry.Process) && !entry.AttemptedExternalFallback)
         {
             entry.AttemptedExternalFallback=true;
