@@ -15,7 +15,7 @@ namespace DyclokPRO;
 internal static class EngineFocusSmoke
 {
     internal const string Text="DYTEST456";
-    internal static readonly string Marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v643-input-test.json");
+    internal static readonly string Marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v644-input-test.json");
 
     internal static int Child()
     {
