@@ -38,8 +38,6 @@ internal static class EngineInputFocus
     private static extern bool IsWindow(IntPtr hwnd);
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
-    [DllImport("user32.dll")]
-    private static extern bool SetForegroundWindow(IntPtr hwnd);
 
     private static bool Within(IntPtr root,IntPtr candidate) =>
         root!=IntPtr.Zero && candidate!=IntPtr.Zero && IsWindow(candidate) &&
@@ -80,8 +78,9 @@ internal static class EngineInputFocus
         // This method is only called on genuine user tab activation or the
         // first provider HWND attachment. Keep application in foreground.
         IntPtr fg=GetForegroundWindow();
-        if(fg!=topLevelHost && !IsChild(topLevelHost,fg))
-            SetForegroundWindow(topLevelHost);
+        // Never steal focus from an unrelated application. Only transfer
+        // keyboard input if this account host is already in the foreground.
+        if(fg!=topLevelHost && !IsChild(topLevelHost,fg))return false;
 
         bool attached=false;
         try {
