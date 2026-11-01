@@ -157,6 +157,53 @@ internal static class NativeNetLogCapture
         }
     }
 
+    // GitHub Actions-only integration probe. Uses a disposable local account;
+    // never reads real credentials or exports actual user session data.
+    internal static int RunNativeSmoke()
+    {
+        if(Environment.GetEnvironmentVariable("GITHUB_ACTIONS")!="true")return 23;
+        string id=Guid.NewGuid().ToString("N");
+        const string alias="Diagnostico KAIZEN CI";
+        Process? proc=null;
+        try {
+            AccountStore.SaveName(id,alias);
+            Save(id,new NetLogSettings(Enabled:true,Everything:false));
+            string dir=DirectoryFor(id,alias);
+            proc=BrowserRibbon.StartNative(id);
+            string? capture=null;
+            for(int i=0;i<65;i++){
+                System.Threading.Thread.Sleep(450);
+                var files=Directory.Exists(dir)
+                    ?Directory.EnumerateFiles(dir,"*.netlog.json",SearchOption.AllDirectories)
+                        .ToArray():Array.Empty<string>();
+                capture=files.FirstOrDefault(f=>new FileInfo(f).Length>0);
+                if(capture is not null)break;
+                proc.Refresh();
+                if(proc.HasExited)break;
+            }
+            if(capture is null)return 24;
+            string manifest=Path.ChangeExtension(capture,"info.json");
+            if(!File.Exists(manifest))return 25;
+            return 0;
+        }catch(Exception ex) when(ex is IOException or UnauthorizedAccessException or
+                                  InvalidOperationException or
+                                  System.ComponentModel.Win32Exception){
+            return 26;
+        }finally{
+            if(proc is not null){
+                try{
+                    if(!proc.HasExited){
+                        proc.CloseMainWindow();
+                        if(!proc.WaitForExit(1500))
+                            proc.Kill(entireProcessTree:true);
+                    }
+                }catch(InvalidOperationException){}
+                catch(System.ComponentModel.Win32Exception){}
+                proc.Dispose();
+            }
+        }
+    }
+
     internal static bool SelfTest()
     {
         var flags=NetLogArguments(@"C:\Test\Danna\red.netlog.json",true);
