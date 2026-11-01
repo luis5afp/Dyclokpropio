@@ -61,6 +61,11 @@ internal sealed class IntegratedAccountsWindow : Form
     };
     private readonly Process initial;
     private readonly bool embedSmoke;
+    private readonly bool twoTabSmoke;
+    private int smokePhase;
+    private string? smokeSecondaryId;
+    private int smokePrincipalPid;
+    private int smokeSecondaryPid;
     internal bool SmokeSucceeded { get; private set; }
     private bool closing;
     private bool starting;
@@ -71,10 +76,11 @@ internal sealed class IntegratedAccountsWindow : Form
         Padding = new Padding(12, 6, 3, 3)
     };
 
-    internal IntegratedAccountsWindow(Process initial, bool embedSmoke=false)
+    internal IntegratedAccountsWindow(Process initial, bool embedSmoke=false,bool twoTabSmoke=false)
     {
         this.initial = initial;
         this.embedSmoke=embedSmoke;
+        this.twoTabSmoke=twoTabSmoke;
         Text = "DyclokPRO  ·  DICloak 3.0.7";
         Width = 1280; Height = 820; MinimumSize = new Size(800, 560);
         StartPosition = FormStartPosition.CenterScreen;
@@ -353,17 +359,45 @@ internal sealed class IntegratedAccountsWindow : Form
         firstTick++;
         if(!pages.TryGetValue(ActiveId,out var entry))return;
         UpdateHost(entry);
+        if(twoTabSmoke){
+            // Proves actual visual tab switching, not merely two Process.Start
+            // PIDs. The CI creates a disposable auxiliary account beforehand.
+            if(smokePhase==0 && entry.Id=="legacy" && entry.Host.IsEmbedded){
+                smokePrincipalPid=entry.Process?.Id??0;
+                var auxiliary=pages.Values.FirstOrDefault(p=>p.Id!="legacy");
+                if(auxiliary is not null){
+                    smokeSecondaryId=auxiliary.Id;
+                    smokePhase=1;
+                    Select(auxiliary.Id);
+                    return;
+                }
+            }
+            if(smokePhase==1 && entry.Id==smokeSecondaryId && entry.Host.IsEmbedded){
+                smokeSecondaryPid=entry.Process?.Id??0;
+                smokePhase=2;
+                Select("legacy");
+                return;
+            }
+            if(smokePhase==2 && entry.Id=="legacy" && entry.Host.IsEmbedded){
+                var aux=pages.Values.FirstOrDefault(p=>p.Id==smokeSecondaryId);
+                SmokeSucceeded=aux is not null && aux.Host.IsEmbedded
+                    && smokePrincipalPid>0 && smokeSecondaryPid>0
+                    && smokePrincipalPid!=smokeSecondaryPid
+                    && accountTabs.TabCount>=2;
+                RecordSmokeResult(true);
+                Close();
+                return;
+            }
+            if(firstTick>=90){
+                SmokeSucceeded=false;
+                RecordSmokeResult(true);
+                Close();
+            }
+            return;
+        }
         if(embedSmoke && (entry.Host.IsEmbedded || firstTick>=32)){
             SmokeSucceeded=entry.Host.IsEmbedded;
-            try{
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v639-embedded-window.json"),
-                    JsonSerializer.Serialize(new {
-                        integratedHostShown=true,
-                        originalMotorChildWindowAttached=SmokeSucceeded,
-                        internalTabCount=accountTabs.TabPages.Count,
-                        accountSessionDataCopied=false
-                    }));
-            }catch(IOException){}
+            RecordSmokeResult(false);
             Close();
             return;
         }
@@ -375,6 +409,22 @@ internal sealed class IntegratedAccountsWindow : Form
         }
     }
 
+    private void RecordSmokeResult(bool switched){
+        try {
+            File.WriteAllText(Path.Combine(Path.GetTempPath(),
+                switched?"dyclokpro-v639-two-tabs.json":"dyclokpro-v639-embedded-window.json"),
+                JsonSerializer.Serialize(new {
+                    integratedHostShown=true,
+                    originalMotorChildWindowAttached=SmokeSucceeded,
+                    verifiedTwoTabs=switched && SmokeSucceeded,
+                    principalPid=smokePrincipalPid,
+                    secondaryPid=smokeSecondaryPid,
+                    activeAccountId=switched?ActiveId:"legacy",
+                    internalTabCount=accountTabs.TabCount,
+                    accountSessionDataCopied=false
+                }));
+        }catch(IOException){}
+    }
     private void UpdateHost(AccountPage entry)
     {
         if(entry.Process is null || entry.Host.IsEmbedded)return;
