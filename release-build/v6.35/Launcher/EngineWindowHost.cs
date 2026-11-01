@@ -62,7 +62,8 @@ internal sealed class EngineWindowHost : Panel
     }
     [DllImport("user32.dll")]
     private static extern bool GetWindowRect(IntPtr hwnd,out WinRect rect);
-    internal bool IsEmbedded => embeddedWindow != IntPtr.Zero && IsWindow(embeddedWindow);
+    internal bool IsEmbedded => embeddedWindow != IntPtr.Zero && IsHandleCreated &&
+        IsWindow(embeddedWindow) && GetParent(embeddedWindow) == Handle;
     internal string? LastError { get; private set; }
 
     internal EngineWindowHost()
