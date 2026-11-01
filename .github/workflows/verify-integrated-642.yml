@@ -1,0 +1,179 @@
+name: Verify v6.42 KAIZEN-style native NetLog per account and tab lifecycle
+on:
+  push:
+    branches: [feature/v6.42-kaizen-diagnostic-capture]
+    paths:
+      - '.github/workflows/verify-integrated-642.yml'
+      - 'release-build/v6.35/Launcher/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compile integrated shell with untouched engine
+        shell: pwsh
+        run: |
+          dotnet publish release-build/v6.35/Launcher/DyclokPRO.csproj -c Release -r win-x64 --self-contained false -o integrated-host
+          if($LASTEXITCODE -ne 0){throw 'Internal tabs did not compile'}
+          $src=Get-Content release-build/v6.35/Launcher/IntegratedAccountsWindow.cs -Raw
+          $main=Get-Content release-build/v6.35/Launcher/Program.cs -Raw
+          if(-not $src.Contains('EngineWindowHost') -or -not $main.Contains('new IntegratedAccountsWindow(official,embedSmoke || multiTabSmoke,multiTabSmoke)')){throw 'Missing internal main interface'}
+          if(-not $main.Contains('--user-data-dir=')){throw 'Secondary session lacks Chromium data isolation'}
+          $hosting=Get-Content release-build/v6.35/Launcher/EngineWindowHost.cs -Raw
+          if(-not $hosting.Contains('HideInnerTitle') -or -not $hosting.Contains('0, -cut, w, h')){
+            throw 'Provider title row is not clipped by new host'
+          }
+          if(-not $src.Contains('DrawTab') -or -not $src.Contains('TopButton') -or $src.Contains('Controls.Add(overall)')){
+            throw 'v6.42 must have dark account tabs with no duplicated footer'
+          }
+          if(-not $src.Contains('DarkTitleBar(Handle)')){throw 'Missing dark Windows titlebar'}
+          $focus=Get-Content release-build/v6.35/Launcher/EngineInputFocus.cs -Raw
+          if(-not $focus.Contains('AttachThreadInput') -or -not $focus.Contains('GetGUIThreadInfo') -or -not $src.Contains('ScheduleAccountFocus')){
+            throw 'Provider keyboard input focus restoration not connected'
+          }
+          Write-Host 'FOCUS_RESTORATION_SOURCE_WIRED=PASS'
+          Write-Host 'VISUAL_INTEGRATION_NO_DOUBLE_TOOLBARS=PASS'
+          if(-not $src.Contains('OpenAccountPicker()') -or
+             -not $src.Contains('Where(a=>!pages.ContainsKey(a.Id))') -or
+             -not $src.Contains('CloseAccount(string id)') -or
+             -not $src.Contains('RemoveOpenTab(string id)')){
+            throw 'Saved/open account state must be separated and X must close'
+          }
+          if($src.Contains('foreach(var account in all)') -and $src.Contains('accountTabs.TabPages.Add(tab)')){
+            throw 'Old eager tab loading detected'
+          }
+          Write-Host 'VISIBLE_TABS_ONLY_FOR_RUNNING_ACCOUNTS_SOURCE=PASS'
+          Write-Host 'INTEGRATED_SHELL_SOURCE_COMPILES=PASS'
+      - name: Verify diagnostic capture flags, folder naming and opt-in-only default
+        shell: pwsh
+        run: |
+          $exe=(Resolve-Path integrated-host/DyclokPRO.exe).Path
+          $test=Start-Process -FilePath $exe -ArgumentList '--dyclok-netlog-self-test' -Wait -PassThru
+          if($test.ExitCode -ne 0){throw 'NetLog safe names or diagnostic capture flags failed self-test'}
+          $code=Get-Content 'release-build/v6.35/Launcher/NativeNetLogCapture.cs' -Raw
+          $launch=Get-Content 'release-build/v6.35/Launcher/Program.cs' -Raw
+          if(-not $code.Contains('icacls.exe') -or
+             -not $code.Contains('NetLogSettings(false,false)') -or
+             -not $code.Contains('Everything') -or
+             -not $launch.Contains('NativeNetLogCapture.PrepareArguments(info,id)')){
+            throw 'Missing opt-in raw logging, directory ACL or launch integration'
+          }
+          Write-Host 'OPT_IN_NATIVE_CAPTURE_FLAGS_AND_NAMED_FOLDERS=PASS'
+      - name: Verify real cross-process typing into a native embedded input
+        shell: pwsh
+        run: |
+          $exe=(Resolve-Path integrated-host/DyclokPRO.exe).Path
+          $probe=Start-Process -FilePath $exe -ArgumentList '--dyclok-focus-parent-smoke' -PassThru
+          if(-not $probe.WaitForExit(35000)){
+            Stop-Process -Id $probe.Id -Force -ErrorAction SilentlyContinue
+            throw 'Cross-process keyboard test timed out'
+          }
+          $marker=Join-Path $env:TEMP 'dyclokpro-v642-input-test.json'
+          if(-not(Test-Path $marker)){throw 'Synthetic child field never received keyboard text'}
+          $result=Get-Content $marker -Raw | ConvertFrom-Json
+          if($probe.ExitCode -ne 0 -or -not $result.received -or -not $result.syntheticOnly){
+            throw 'Embedded account input still does not receive keyboard events'
+          }
+          Write-Host 'CROSS_PROCESS_KEYBOARD_INPUT_IN_EMBEDDED_TEXT_FIELD=PASS'
+          Write-Host 'REAL_DICLOAK_PASSWORD_CONTENT_NOT_READ=PASS'
+      - name: Download and verify exact unmodified official engine
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $exe -TimeoutSec 900
+          python tools/release-v6-30-intact307.py --installer $exe --destination "$env:RUNNER_TEMP\official307"
+          if($LASTEXITCODE -ne 0){throw 'Original 3.0.7 integrity check failed'}
+          Copy-Item integrated-host/* "$env:RUNNER_TEMP\official307\" -Recurse -Force
+      - name: Verify real unmodified motor creates a NetLog in its own account folder
+        shell: pwsh
+        env:
+          GITHUB_ACTIONS: 'true'
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          $capture=Start-Process -FilePath $exe -ArgumentList '--dyclok-netlog-native-smoke' -PassThru
+          if(-not $capture.WaitForExit(65000)){
+            Stop-Process -Id $capture.Id -Force -ErrorAction SilentlyContinue
+            throw 'NetLog from official engine timed out'
+          }
+          if($capture.ExitCode -ne 0){
+            throw "The unmodified motor did not write a per-account NetLog ($($capture.ExitCode))"
+          }
+          Write-Host 'OFFICIAL_307_WRITES_RAW_NETLOG_WITHOUT_ASAR_PATCH=PASS'
+      - name: Verify separate Chromium storage arguments for auxiliary accounts
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          $p=Start-Process -FilePath $exe -ArgumentList '--dyclok-account-isolation-test' -Wait -PassThru
+          if($p.ExitCode -ne 0){throw "Auxiliary account storage isolation failed ($($p.ExitCode))"}
+          Write-Host 'ISOLATED_OFFICIAL_307_USER_DATA_DIR=PASS'
+      - name: Verify the original motor can open TWO separate account windows
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          $probe=Start-Process -FilePath $exe -ArgumentList '--dyclok-multi-account-native-smoke' -Wait -PassThru
+          $marker=Join-Path $env:TEMP 'dyclokpro-v642-multiwindow-smoke.json'
+          if(Test-Path $marker){
+            $data=Get-Content $marker -Raw|ConvertFrom-Json
+            Write-Host "OFFICIAL_PRIMARY_WINDOW=$($data.principalReady)"
+            Write-Host "OFFICIAL_SECONDARY_WINDOW=$($data.secondaryReady)"
+            Write-Host "OFFICIAL_SECONDARY_PROCESS_EXITED=$($data.secondaryExited)"
+          }
+          if($probe.ExitCode -ne 0){
+            throw 'Official 3.0.7 did NOT demonstrate two independent windows on this runner; do not ship multiaccount as working'
+          }
+          Write-Host 'TWO_OFFICIAL_WINDOWS_IN_SEPARATE_SESSIONS=PASS'
+          Write-Host 'LIVE_REMOTE_LOGIN=NOT_TESTED'
+      - name: Verify actual HWND integration within one host window
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          # Start-Process -Wait also waits for descendants; the official
+          # DICloak.exe intentionally remains alive after the host closes.
+          $probe=Start-Process -FilePath $exe -ArgumentList '--dyclok-integrated-window-smoke' -PassThru
+          if(-not $probe.WaitForExit(40000)){
+            Stop-Process -Id $probe.Id -Force -ErrorAction SilentlyContinue
+            throw 'Integrated shell did not exit its smoke mode'
+          }
+          $marker=Join-Path $env:TEMP 'dyclokpro-v642-embedded-window.json'
+          if(-not(Test-Path $marker)){throw 'Integrated tab smoke report missing'}
+          $result=Get-Content $marker -Raw | ConvertFrom-Json
+          Write-Host "INTEGRATED_HOST_SHOWN=$($result.integratedHostShown)"
+          Write-Host "OFFICIAL_CHILD_WINDOW_EMBEDDED=$($result.originalMotorChildWindowAttached)"
+          if($probe.ExitCode -ne 0 -or -not $result.originalMotorChildWindowAttached){
+            throw 'Windows could not embed the original DICloak window; keep integrated UI experimental'
+          }
+          Write-Host 'OFFICIAL_307_WINDOW_EMBEDDED_WITHOUT_ASAR_PATCH=PASS'
+      - name: Test actual switching between two native account tabs
+        shell: pwsh
+        run: |
+          $folder=Join-Path $env:LOCALAPPDATA 'DyclokPRO\Cuentas'
+          New-Item -Path $folder -ItemType Directory -Force | Out-Null
+          @'
+          {"schema":1,"accounts":[{"id":"legacy","name":"Cuenta principal"},{"id":"0123456789abcdef0123456789abcdef","name":"Cuenta secundaria de prueba"}]}
+          '@ | Set-Content -Path (Join-Path $folder 'cuentas.json') -Encoding UTF8
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          $test=Start-Process -FilePath $exe -ArgumentList '--dyclok-internal-two-tabs-smoke' -PassThru
+          if(-not $test.WaitForExit(65000)){
+            Stop-Process -Id $test.Id -Force -ErrorAction SilentlyContinue
+            throw 'Two-tab integration did not complete'
+          }
+          $marker=Join-Path $env:TEMP 'dyclokpro-v642-two-tabs.json'
+          if(-not(Test-Path $marker)){throw 'Two-tab report missing'}
+          $r=Get-Content $marker -Raw | ConvertFrom-Json
+          Write-Host "TWO_TABS=$($r.internalTabCount)"
+          Write-Host "PRIMARY_PROCESS=$($r.principalPid)"
+          Write-Host "SECONDARY_PROCESS=$($r.secondaryPid)"
+          Write-Host "TABS_SWITCHED_AND_RETURNED=$($r.verifiedTwoTabs)"
+          if($test.ExitCode -ne 0 -or -not $r.verifiedTwoTabs -or
+             -not $r.closedAccountTabRemoved -or $r.initialTabCount -ne 1 -or
+             $r.internalTabCount -ne 1 -or $r.savedAccountsCount -lt 2){
+            throw 'Tabs did not close back to one open account while preserving saved users'
+          }
+          Write-Host 'TWO_ACCOUNT_INTERNAL_TABS_SWITCH=PASS'
