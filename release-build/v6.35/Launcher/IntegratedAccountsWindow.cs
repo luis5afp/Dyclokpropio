@@ -29,6 +29,8 @@ internal sealed class IntegratedAccountsWindow : Form
         internal DateTime StartedUtc;
         internal bool AttemptedExternalFallback;
         internal bool Starting;
+        internal bool Closing;
+        internal DateTime CloseRequestedUtc;
     }
 
     private static readonly Color Ink = Color.FromArgb(13, 16, 19);
@@ -71,6 +73,8 @@ internal sealed class IntegratedAccountsWindow : Form
     internal bool SmokeSucceeded { get; private set; }
     private bool closing;
     private bool starting;
+    private bool rebuildingTabs;
+    private int initialTabCount;
     private int firstTick;
     private readonly Label overall = new() {
         Dock = DockStyle.Bottom, Height = 30, ForeColor = Color.Khaki,
@@ -102,22 +106,13 @@ internal sealed class IntegratedAccountsWindow : Form
             ForeColor=Color.White,
             Font=new Font("Segoe UI Semibold",11.5f,FontStyle.Bold)
         };
-        var engineVersion=new Label {
-            Text="MOTOR 3.0.7", Dock=DockStyle.Left, Width=114,
-            TextAlign=ContentAlignment.MiddleLeft,
-            ForeColor=Color.FromArgb(131,151,153),
-            Font=new Font("Segoe UI",8f)
-        };
         bar.Controls.Add(topActions);
-        bar.Controls.Add(engineVersion);
         bar.Controls.Add(brand);
-        var more=TopButton("⋯",36,()=>OpenMenu());
-        var add=TopButton("+ Cuenta",91,()=>AddUser());
-        var file=TopButton("Archivos",75,()=>ShowFiles());
+        var more=TopButton("⋯",38,()=>OpenMenu());
+        var add=TopButton("+",42,()=>OpenAccountPicker());
         topActions.Controls.Add(more);
         topActions.Controls.Add(add);
-        topActions.Controls.Add(file);
-        topActions.Width=248;
+        topActions.Width=94;
 
         accountTabs.BackColor=Ink;
         accountTabs.ForeColor=Color.White;
@@ -136,6 +131,18 @@ internal sealed class IntegratedAccountsWindow : Form
         accountTabs.SelectedIndexChanged += (_, _) => {
             OnAccountSelected();
             accountTabs.Invalidate();
+        };
+        accountTabs.MouseDown += (_, args) => {
+            if(args.Button != MouseButtons.Left) return;
+            for(int i=0;i<accountTabs.TabCount;i++){
+                var rect=accountTabs.GetTabRect(i);
+                if(CloseButtonRect(rect).Contains(args.Location)){
+                    var tab=accountTabs.TabPages[i];
+                    var page=pages.Values.FirstOrDefault(p=>ReferenceEquals(p.Page,tab));
+                    if(page is not null)CloseAccount(page.Id);
+                    return;
+                }
+            }
         };
         accountTabs.MouseUp += (_, args) => {
             if(args.Button==MouseButtons.Right){
@@ -200,21 +207,28 @@ internal sealed class IntegratedAccountsWindow : Form
             e.Graphics.FillRectangle(brush,border);
         }
         string label=accountTabs.TabPages[e.Index].Text;
-        var textRect=new Rectangle(rect.Left+13,rect.Top+1,rect.Width-22,rect.Height-6);
+        var textRect=new Rectangle(rect.Left+13,rect.Top+1,rect.Width-46,rect.Height-6);
         using var labelFont=new Font("Segoe UI",9.3f,
             active?FontStyle.Bold:FontStyle.Regular);
         TextRenderer.DrawText(e.Graphics,label,labelFont,textRect,
             active?Color.White:Color.FromArgb(174,190,193),
             TextFormatFlags.EndEllipsis|TextFormatFlags.VerticalCenter|
             TextFormatFlags.SingleLine|TextFormatFlags.NoPrefix);
+        TextRenderer.DrawText(e.Graphics,"×",Font,CloseButtonRect(rect),
+            active?Color.FromArgb(219,234,234):Color.FromArgb(137,159,159),
+            TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|
+            TextFormatFlags.NoPrefix);
     }
+    private static Rectangle CloseButtonRect(Rectangle tab) =>
+        new(tab.Right-29,tab.Top+5,25,Math.Max(18,tab.Height-11));
     private void OpenMenu(){
         var menu=new ContextMenuStrip {
             BackColor=Color.FromArgb(24,30,35),ForeColor=Color.White,
             Renderer=new ToolStripProfessionalRenderer()
         };
         menu.Items.Add("Cambiar nombre de cuenta",null,(_,_)=>RenameActive());
-        menu.Items.Add("Mostrar todas las cuentas",null,(_,_)=>ChooseAccount());
+        menu.Items.Add("Abrir otra cuenta",null,(_,_)=>OpenAccountPicker());
+        menu.Items.Add("Cerrar cuenta seleccionada",null,(_,_)=>CloseAccount(ActiveId));
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Perfiles (API oficial)",null,(_,_)=>ShowProfiles());
         menu.Items.Add("Panel de diagnóstico",null,(_,_)=>ToggleDiagnostics());
@@ -225,15 +239,28 @@ internal sealed class IntegratedAccountsWindow : Form
         menu.Items.Add("Abrir cuenta en ventana externa",null,(_,_)=>OpenExternal());
         menu.Show(topActions,new Point(4,topActions.Height));
     }
-    private void ChooseAccount(){
+    private void OpenAccountPicker(){
         var menu=new ContextMenuStrip{
-            BackColor=Color.FromArgb(24,30,35),ForeColor=Color.White
+            BackColor=Color.FromArgb(24,30,35),ForeColor=Color.White,
+            ShowImageMargin=false
         };
-        foreach(var account in AccountStore.Get()){
-            string id=account.Id;
-            menu.Items.Add(account.Name,null,(_,_)=>Select(id));
+        var unopened=AccountStore.Get().Where(a=>!pages.ContainsKey(a.Id)).ToArray();
+        if(unopened.Length==0){
+            menu.Items.Add(new ToolStripMenuItem("Todas las cuentas guardadas están abiertas"){Enabled=false});
+        }else{
+            foreach(var account in unopened){
+                string id=account.Id;
+                menu.Items.Add(account.Name,null,(_,_)=>ShowSavedAccount(id));
+            }
         }
-        menu.Show(this,new Point(Math.Min(280,Math.Max(40,Width-260)),43));
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add("Nueva cuenta…",null,(_,_)=>AddUser());
+        menu.Show(topActions,new Point(0,topActions.Height));
+    }
+    private void ShowSavedAccount(string id){
+        // The saved account is not an open session until the user chooses it.
+        EnsureOpenAccount(id);
+        Select(id);
     }
     private void ToggleOriginalHeader(){
         if(!pages.TryGetValue(ActiveId,out var entry))return;
@@ -256,45 +283,63 @@ internal sealed class IntegratedAccountsWindow : Form
         starting=true;
         SessionDiagnostics.Observe(initial,"legacy");
         try{
-            RefreshAccounts();
-            pages["legacy"].Process = initial;
-            pages["legacy"].StartedUtc = DateTime.UtcNow;
-            pages["legacy"].Status.Text = "Iniciando cliente oficial de la cuenta principal…";
+            // Saved accounts are NOT tabs. One tab exists only for a running
+            // native engine (principal starts with the launcher).
+            var principal=EnsureOpenAccount("legacy",select:false);
+            principal.Process=initial;
+            principal.StartedUtc=DateTime.UtcNow;
+            principal.Status.Text="Iniciando cuenta principal…";
+            initialTabCount=accountTabs.TabCount;
+            if(twoTabSmoke){
+                // Fixture-only: open the first auxiliary via the same user path
+                // AFTER principal is visible. Never preload all saved accounts.
+                smokeSecondaryId=AccountStore.Get().FirstOrDefault(a=>a.Id!="legacy")?.Id;
+            }
         }finally{starting=false;}
         Select("legacy");
         poll.Start();
     }
 
+    private AccountPage EnsureOpenAccount(string id,bool select=true)
+    {
+        if(pages.TryGetValue(id,out var existing)){
+            if(select)accountTabs.SelectedTab=existing.Page;
+            return existing;
+        }
+        var account=AccountStore.Get().FirstOrDefault(x=>x.Id==id)
+            ??throw new InvalidOperationException("Cuenta local no encontrada.");
+        var tab=new TabPage(account.Name){
+            BackColor=Surface,ForeColor=Color.White,Padding=Padding.Empty,
+            UseVisualStyleBackColor=false
+        };
+        var host=new EngineWindowHost();
+        var status=new Label{
+            Dock=DockStyle.Fill,TextAlign=ContentAlignment.MiddleCenter,
+            ForeColor=Color.FromArgb(177,190,194),BackColor=Surface,
+            Font=new Font("Segoe UI",11f),
+            Text="Preparando cuenta…"
+        };
+        tab.Controls.Add(host);
+        tab.Controls.Add(status);
+        status.BringToFront();
+        var entry=new AccountPage{Id=id,Page=tab,Host=host,Status=status};
+        pages.Add(id,entry);
+        bool old=rebuildingTabs;
+        rebuildingTabs=true;
+        try{
+            accountTabs.TabPages.Add(tab);
+            if(select)accountTabs.SelectedTab=tab;
+        }finally{rebuildingTabs=old;}
+        accountTabs.Invalidate();
+        return entry;
+    }
     private void RefreshAccounts()
     {
-        var all = AccountStore.Get();
-        accountTabs.SuspendLayout();
-        foreach(var account in all)
-        {
-            if(pages.TryGetValue(account.Id,out var existing)){
-                existing.Page.Text = account.Name;
-                continue;
-            }
-            var tab = new TabPage(account.Name) {
-                BackColor = Surface, ForeColor = Color.White,
-                Padding=Padding.Empty, UseVisualStyleBackColor=false
-            };
-            var host = new EngineWindowHost();
-            var status = new Label {
-                Dock = DockStyle.Fill,TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(177,190,194), BackColor = Surface,
-                Font = new Font("Segoe UI",11f),
-                Text = "Selecciona esta cuenta para iniciar su sesión."
-            };
-            tab.Controls.Add(host);tab.Controls.Add(status);
-            status.BringToFront();
-            var entry = new AccountPage {
-                Id = account.Id, Page = tab, Host = host, Status = status
-            };
-            pages[account.Id] = entry;
-            accountTabs.TabPages.Add(tab);
-        }
-        accountTabs.ResumeLayout();
+        // Refresh ONLY labels of visible sessions. No new TabPage here.
+        var names=AccountStore.Get().ToDictionary(x=>x.Id,x=>x.Name,StringComparer.Ordinal);
+        foreach(var p in pages.Values)
+            if(names.TryGetValue(p.Id,out var name))p.Page.Text=name;
+        accountTabs.Invalidate();
     }
 
     private void Select(string id)
@@ -306,7 +351,7 @@ internal sealed class IntegratedAccountsWindow : Form
 
     private void OnAccountSelected()
     {
-        if(closing || starting || !IsHandleCreated || pages.Count==0) return;
+        if(closing || starting || rebuildingTabs || !IsHandleCreated || pages.Count==0) return;
         string id=ActiveId;
         if(!pages.TryGetValue(id,out var entry))return;
         if(entry.Process is null || HasExited(entry.Process))
@@ -392,13 +437,20 @@ internal sealed class IntegratedAccountsWindow : Form
 
     private void AddUser()
     {
-        try
-        {
+        string? alias=Microsoft.VisualBasic.Interaction.InputBox(
+            "Nombre para identificar la cuenta (2–80 caracteres)",
+            "Nueva cuenta de DyclokPRO","Cuenta nueva");
+        if(string.IsNullOrWhiteSpace(alias))return;
+        try{
+            if(alias.Trim().Length is <2 or >80 || alias.Any(char.IsControl))
+                throw new ArgumentException("Nombre: entre 2 y 80 caracteres.");
             var account=AccountStore.Create();
-            RefreshAccounts();
+            AccountStore.SaveName(account.Id,alias.Trim());
+            EnsureOpenAccount(account.Id);
             Select(account.Id);
+        }catch(Exception ex){
+            MessageBox.Show(this,ex.Message,"No se pudo agregar la cuenta");
         }
-        catch(Exception ex) { MessageBox.Show(this,ex.Message,"No se pudo agregar la cuenta"); }
     }
 
     private void RenameActive()
