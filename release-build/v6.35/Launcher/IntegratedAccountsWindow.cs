@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace DyclokPRO;
@@ -27,6 +28,7 @@ internal sealed class IntegratedAccountsWindow : Form
         internal Process? Process;
         internal DateTime StartedUtc;
         internal bool AttemptedExternalFallback;
+        internal bool Starting;
     }
 
     private static readonly Color Ink = Color.FromArgb(13, 16, 19);
@@ -346,28 +348,45 @@ internal sealed class IntegratedAccountsWindow : Form
         catch(InvalidOperationException) {return true;}
     }
 
-    private void OpenAccount(string id)
+    private async void OpenAccount(string id)
     {
-        if(!pages.TryGetValue(id,out var entry))return;
+        if(!pages.TryGetValue(id,out var entry)||closing||entry.Starting)return;
         if(entry.Process is not null && !HasExited(entry.Process)){
-            UpdateHost(entry);return;
+            UpdateHost(entry);
+            ScheduleAccountFocus();
+            return;
         }
+        entry.Starting=true;
+        entry.Status.Visible=true;
+        entry.Status.Text="Abriendo "+(id=="legacy"?"cuenta principal":"sesión independiente")+"…";
+        // SHA256 verification and Windows process launch were synchronous in
+        // v6.39. They blocked the entire tab UI, so run them off the UI thread.
+        Process? launched=null;
         try
         {
+            launched=await Task.Run(()=>BrowserRibbon.StartNative(id));
+            if(closing||IsDisposed){
+                // A native process that already launched must retain its
+                // independent user data, not be abruptly logged out.
+                launched.Dispose();
+                return;
+            }
             entry.Process?.Dispose();
-            entry.Process = BrowserRibbon.StartNative(id);
-            SessionDiagnostics.Observe(entry.Process,id);
+            entry.Process=launched;
+            SessionDiagnostics.Observe(launched,id);
             entry.StartedUtc=DateTime.UtcNow;
             entry.AttemptedExternalFallback=false;
-            entry.Status.Visible=true;
-            entry.Status.Text = "Abriendo "+(id=="legacy"?"la cuenta principal":"una sesión independiente")+"…";
-            overall.Text = "Motor 3.0.7 — "+pages.Count+" cuentas locales, datos aislados.";
+            entry.Status.Text="Cargando motor oficial 3.0.7…";
         }
-        catch(Exception ex)
-        {
-            entry.Status.Visible=true;
-            entry.Status.Text = "No se pudo iniciar la cuenta: "+ex.Message;
-            SessionDiagnostics.Record("START_FAILED",id);
+        catch(Exception ex){
+            if(!closing&&!IsDisposed){
+                entry.Status.Visible=true;
+                entry.Status.Text="No se pudo iniciar la cuenta: "+ex.Message;
+                SessionDiagnostics.Record("START_FAILED",id);
+            }
+        }
+        finally {
+            entry.Starting=false;
         }
     }
 
