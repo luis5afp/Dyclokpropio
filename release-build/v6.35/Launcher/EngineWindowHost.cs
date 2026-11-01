@@ -51,6 +51,13 @@ internal sealed class EngineWindowHost : Panel
     private IntPtr embeddedWindow;
     private IntPtr formerParent;
     private IntPtr formerStyle;
+    // DICloak paints its own title/status chrome inside Electron. Windows
+    // WS_CAPTION removal alone is insufficient (v6.38 screenshot). Clip the
+    // inner 28px app header, keeping the actual engine unmodified.
+    internal bool HideInnerTitle { get; set; } = true;
+    private int originalX=100, originalY=90, originalWidth=1100, originalHeight=780;
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hwnd,out Rectangle rect);
     internal bool IsEmbedded => embeddedWindow != IntPtr.Zero && IsWindow(embeddedWindow);
     internal string? LastError { get; private set; }
 
@@ -81,6 +88,10 @@ internal sealed class EngineWindowHost : Panel
             if (!IsHandleCreated) { LastError = "El panel no tiene HWND."; return false; }
             formerParent = GetParent(window);
             formerStyle = GetWindowLongPtr(window, GWL_STYLE);
+            if(GetWindowRect(window,out var original)){
+                originalX=original.Left;originalY=original.Top;
+                originalWidth=original.Width;originalHeight=original.Height;
+            }
             long original = formerStyle.ToInt64();
             long style = (original &
                 ~(WS_POPUP | WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX |
@@ -111,10 +122,12 @@ internal sealed class EngineWindowHost : Panel
     internal void ResizeEmbedded()
     {
         if (!IsEmbedded) return;
-        MoveWindow(embeddedWindow, 0, 0,
-            Math.Max(1, ClientSize.Width), Math.Max(1, ClientSize.Height), true);
-        SetWindowPos(embeddedWindow, IntPtr.Zero, 0, 0,
-            Math.Max(1, ClientSize.Width), Math.Max(1, ClientSize.Height),
+        // Negative child-window offset clips the provider's self-painted
+        // Electron title row. This is visual hosting, not HTML or ASAR patching.
+        int cut=HideInnerTitle ? Math.Max(26, 28 * DeviceDpi / 96) : 0;
+        int w=Math.Max(1,ClientSize.Width),h=Math.Max(1,ClientSize.Height+cut);
+        MoveWindow(embeddedWindow, 0, -cut, w, h, true);
+        SetWindowPos(embeddedWindow, IntPtr.Zero, 0, -cut, w, h,
             SWP_FRAMECHANGED | SWP_NOZORDER | SWP_SHOWWINDOW);
     }
 
@@ -127,7 +140,8 @@ internal sealed class EngineWindowHost : Panel
         // Restore normal styles before returning its HWND to the desktop.
         SetParent(child, formerParent);
         SetWindowLongPtr(child, GWL_STYLE, formerStyle);
-        SetWindowPos(child, IntPtr.Zero, 120, 110, 1100, 740,
+        SetWindowPos(child, IntPtr.Zero, originalX, originalY,
+            Math.Max(originalWidth,800),Math.Max(originalHeight,550),
             SWP_FRAMECHANGED | SWP_NOZORDER | SWP_SHOWWINDOW);
     }
 }
