@@ -668,7 +668,9 @@ internal sealed class IntegratedAccountsWindow : Form
                 SmokeSucceeded=aux is not null && aux.Host.IsEmbedded
                     && smokePrincipalPid>0 && smokeSecondaryPid>0
                     && smokePrincipalPid!=smokeSecondaryPid
-                    && initialTabCount==1 && accountTabs.TabCount==2;
+                    && initialTabCount==1 && accountTabs.TabCount==2
+                    && entry.Process is not null && TopLevelEngineWindows.VisibleFor(entry.Process)==0
+                    && aux.Process is not null && TopLevelEngineWindows.VisibleFor(aux.Process)==0;
                 if(SmokeSucceeded && aux?.Process is not null){
                     // CI only: simulate closing a disposable account; assert
                     // the opened tab disappears while its saved registry remains.
@@ -690,8 +692,10 @@ internal sealed class IntegratedAccountsWindow : Form
             }
             return;
         }
-        if(embedSmoke && (entry.Host.IsEmbedded || firstTick>=32)){
-            SmokeSucceeded=entry.Host.IsEmbedded;
+        if(embedSmoke && (entry.Host.IsEmbedded || firstTick>=40)){
+            SmokeSucceeded=entry.Host.IsEmbedded &&
+                entry.Process is not null &&
+                TopLevelEngineWindows.VisibleFor(entry.Process)==0;
             RecordSmokeResult(false);
             Close();
             return;
@@ -711,6 +715,8 @@ internal sealed class IntegratedAccountsWindow : Form
                 JsonSerializer.Serialize(new {
                     integratedHostShown=true,
                     originalMotorChildWindowAttached=SmokeSucceeded,
+                    noStandaloneNativeWindow=pages.Values.All(p=>p.Process is null ||
+                        HasExited(p.Process) || TopLevelEngineWindows.VisibleFor(p.Process)==0),
                     verifiedTwoTabs=switched && SmokeSucceeded,
                     principalPid=smokePrincipalPid,
                     secondaryPid=smokeSecondaryPid,
