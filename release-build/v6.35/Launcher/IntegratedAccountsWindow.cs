@@ -840,17 +840,18 @@ internal sealed class IntegratedAccountsWindow : Form
         var records=new List<(string Account,int Pid,string State)>();
         foreach(var item in pages.Values)
         {
-            if(item.Process is null){records.Add((item.Id=="legacy"?"Principal":"Auxiliar",0,"No iniciada"));continue;}
+            if(item.Process is null){records.Add((
+                    AccountFriendlyName.Label(item.Id,Name(item.Id)),0,"Motor no iniciado"));continue;}
             try
             {
                 item.Process.Refresh();
-                records.Add((item.Id=="legacy"?"Principal":"Auxiliar",item.Process.Id,
+                records.Add((AccountFriendlyName.Label(item.Id,Name(item.Id)),item.Process.Id,
                     item.Process.HasExited?"Terminada ("+item.Process.ExitCode+")":
                     item.Host.IsEmbedded?"Motor visible; login/perfiles NO verificados":
                         "Motor activo; integración pendiente"));
             }
             catch(InvalidOperationException)
-            { records.Add((item.Id=="legacy"?"Principal":"Auxiliar",0,"Terminada")); }
+            { records.Add((AccountFriendlyName.Label(item.Id,Name(item.Id)),0,"Proceso terminado")); }
         }
         return records;
     }
