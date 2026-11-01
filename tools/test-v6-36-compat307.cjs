@@ -52,7 +52,7 @@ async function rejects(label,fn,pattern){
  await assert.rejects(fn,pattern,label);
 }
 (async()=>{
- assert.equal(handlers.size,5);
+ assert.equal(handlers.size,6);
  const creds={port:"52140",apiKey:"1234567890ABCDEF"};
  let profiles=await invoke("list",{...creds,version:"v2",page:1});
  assert.equal(profiles.rows[0].id,"2097722254089396228");
@@ -72,6 +72,22 @@ async function rejects(label,fn,pattern){
  await rejects("300003 cannot be archived",
   ()=>invoke("save-detail",{...creds,id:"2097722254089396228"}),/300003/);
  assert.equal(writes.length,saved);
+ responseRaw=Buffer.from('{"code":0,"data":{"profiles":true,"cookies":false,"bookmarks":true,"fingerprints":true}}');
+ let resCount=0;
+ const originalEnd=http.request;
+ http.request=(args,receive)=>{
+  if(args.path==="/openapi/v2/version")
+   responseRaw=Buffer.from('{"code":0,"data":{"api_version":"2.0.0","client_version":"3.0.7","kernel":{"installed":["142.0.7444.273"]}}}');
+  return originalEnd(args,receive);
+ };
+ const component=await invoke("components",creds);
+ assert.equal(component.clientVersion,"3.0.7");
+ assert.equal(component.capabilities.profiles,true);
+ assert.equal(component.capabilities.cookies,false);
+ assert.equal(component.capabilities.bookmarks,true);
+ assert.equal(component.capabilities.extensions,null);
+ assert.deepEqual(Array.from(component.installedKernels),["142.0.7444.273"]);
+ http.request=originalEnd;
  await rejects("request from alien frame",
   ()=>invoke("list",creds,wrongFrame),/Untrusted/);
  await rejects("invalid operation-like profile ID",
@@ -88,12 +104,14 @@ async function rejects(label,fn,pattern){
  assert(ui.includes("type=\"password\""));
  assert(ui.includes('key.value=""'));
  assert(ui.includes("Motor oficial 3.0.7"));
+ assert(ui.includes("Componentes"));
  assert(!ui.includes("XMLHttpRequest.prototype"));
  assert(build.includes("SOURCE_SHA=\"954016364fe3e4c1a41b54d810388f8ca79d67a184d3ad25993b74c2d2b1c606\""));
  assert(build.includes("ORIGINAL_AUTH_BUNDLE_SHA"));
  assert(!code.includes("X-DC-M1")&&!code.includes("X-DC-M2"));
  console.log("PASS: exact v6.28 base source hash guard");
  console.log("PASS: official v1/v2 Open API read-only profiles");
+ console.log("PASS: genuine official Local API capability flags and Chromium kernels");
  console.log("PASS: original JSON bytes retained under real profile ID/name");
  console.log("PASS: HTTP 200 business error 300003 rejected");
  console.log("PASS: untrusted IPC, invalid profile IDs, CRLF and remote URL blocked");
