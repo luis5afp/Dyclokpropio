@@ -36,10 +36,10 @@ function mount(){
   const o=el("option",text);o.value=value;mode.append(o);
  }
  const buttons=el("div",undefined,"display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 6px");
- const test=el("button","Comprobar",css.button),list=el("button","Listar perfiles",css.button);
+ const test=el("button","Comprobar",css.button),components=el("button","Componentes",css.button),list=el("button","Listar perfiles",css.button);
  const saveList=el("button","Guardar lista",css.button),save=el("button","Guardar perfil",css.button);
  const next=el("button","Página siguiente",css.button);
- buttons.append(test,list,saveList,save,next);
+ buttons.append(test,components,list,saveList,save,next);
  const status=el("div","Sin conexión. Se necesita la autorización API del programa oficial.",
   "white-space:pre-line;color:#b9cbcf;margin:7px 0");
  const select=el("select",undefined,css.input);select.size=7;
@@ -47,7 +47,7 @@ function mount(){
  const warning=el("div","Los JSON se guardan sin cifrar y pueden contener información privada. No se descargan bases de datos completas de Chromium.","color:#ffd68a;margin-top:10px");
  const creds=()=>({port:port.value,apiKey:key.value,version:mode.value});
  async function operation(action,data,onSuccess){
-  for(const b of [test,list,saveList,save,next])b.disabled=true;
+  for(const b of [test,components,list,saveList,save,next])b.disabled=true;
   status.textContent="Consultando API local autorizada...";
   try{
    const x=await invoke(action,{...creds(),...data});
@@ -56,7 +56,7 @@ function mount(){
   }catch(e){
    const msg=String(e?.message||"API no disponible").slice(0,180);
    status.textContent="No se pudo completar: "+msg;
-  }finally{for(const b of [test,list,saveList,save,next])b.disabled=false}
+  }finally{for(const b of [test,components,list,saveList,save,next])b.disabled=false}
  }
  function populate(result){
   select.replaceChildren();active=null;
@@ -70,6 +70,14 @@ function mount(){
  test.addEventListener("click",()=>void operation("status",{},x=>{
   status.textContent=x.serviceReady?"Servicio oficial disponible, cliente "+x.clientVersion+
    ", API "+x.apiVersion:"Servicio local no listo. Comprueba que el cliente oficial esté abierto.";
+ }));
+ components.addEventListener("click",()=>void operation("components",{},x=>{
+  const lines=Object.entries(x.capabilities||{}).map(([name,enabled])=>
+   name+": "+(enabled===true?"admitida":enabled===false?"no disponible":"no declarada"));
+  status.textContent="Cliente oficial: "+x.clientVersion+
+   "\nVersión API: "+x.apiVersion+
+   "\nNúcleos instalados: "+(x.installedKernels?.join(", ")||"no declarados")+
+   "\n"+lines.join("\n");
  }));
  list.addEventListener("click",()=>{page=1;void operation("list",{page},populate)});
  next.addEventListener("click",()=>{page++;void operation("list",{page},populate)});
