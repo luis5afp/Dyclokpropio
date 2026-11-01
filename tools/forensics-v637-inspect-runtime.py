@@ -19,6 +19,7 @@ PATTERNS={
  "version-header":rb"(?:X-Version|version-local-info|X-DEVICE-ID)",
  "profile-preload":rb"(?:render-process-gone|did-fail-load|preload-error)",
 }
+AUTH_TOKENS=(b"GHOST_USER",b"300003",b"X-Version",b"X-DC-M1",b"X-DC-M2",b"version-local-info",b"getLocalVersionInfo",b"/env/list")
 MAX_FILE=35_000_000
 def digest(p):
  h=hashlib.sha256()
@@ -92,8 +93,25 @@ def inspect(root,label):
    relevant_hashes[rel]={"size":len(data),"sha256":hashlib.sha256(data).hexdigest()}
   if rel=="dist/index.html":
    relevant_hashes[rel]={"size":len(data),"sha256":hashlib.sha256(data).hexdigest()}
+ auth_refs={}
+ for token in AUTH_TOKENS:
+  target=[]
+  for rel,data in items:
+   offset=0
+   for index in range(5):
+    at=data.find(token,offset)
+    if at<0:break
+    width=100 if token in (b"X-DC-M1",b"X-DC-M2",b"X-Version") else 145
+    raw=data[max(0,at-width):min(len(data),at+len(token)+width)]
+    raw=re.sub(rb"[\\x00-\\x1f]+",b" ",raw)
+    raw=re.sub(rb"[A-Za-z0-9_-]{45,}",b"[LONG_STRING_REDACTED]",raw)
+    target.append({"module":rel,"offset":at,
+      "code_context":raw.decode("utf8","replace")[:300]})
+    offset=at+len(token)
+   if len(target)>=12:break
+  auth_refs[token.decode()]=target[:12]
  summary={"label":label,"asar_sha256":digest(root/"resources/app.asar"),
-  "code_files_scanned":len(items),"modules":relevant_hashes,"search":{}}
+  "code_files_scanned":len(items),"modules":relevant_hashes,"auth_signature_paths":auth_refs,"search":{}}
  for key,expr in PATTERNS.items():
   match=re.compile(expr,re.IGNORECASE)
   found=[]
@@ -138,5 +156,7 @@ def main():
   print("MAIN",record["modules"].get("dist-electron/main.js"))
   for pattern in PATTERNS:
    print("CODE_MARKER",key,pattern,json.dumps(record["search"][pattern],ensure_ascii=False)[:2200])
+  for token in AUTH_TOKENS:
+   print("AUTH_PATH",key,token.decode(),json.dumps(record["auth_signature_paths"][token.decode()],ensure_ascii=False)[:3200])
  print("FORENSIC_REPORT_WRITTEN",a.output)
 if __name__=="__main__":main()
