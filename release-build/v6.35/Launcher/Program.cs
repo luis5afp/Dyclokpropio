@@ -109,7 +109,7 @@ internal static class AccountStore
 }
 internal static class Program {
     internal const string AsarSha="b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf";
-    internal const string MarketingVersion="6.42.0";
+    internal const string MarketingVersion="6.43.0";
     [STAThread]
     private static void Main(string[] args){
         if(args.Contains("--dyclok-netlog-self-test",StringComparer.OrdinalIgnoreCase)){
@@ -146,7 +146,7 @@ internal static class Program {
             bool secondaryIsolated=
                 !string.Equals(separatedInfo.Environment["APPDATA"],officialInfo.Environment["APPDATA"],StringComparison.OrdinalIgnoreCase)
                 &&!string.Equals(separatedInfo.Environment["LOCALAPPDATA"],officialInfo.Environment["LOCALAPPDATA"],StringComparison.OrdinalIgnoreCase);
-            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v642-selftest.json"),
+            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v643-selftest.json"),
                 JsonSerializer.Serialize(new {
                     version=MarketingVersion,validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
                     sha256=digest,accounts=accounts.Select(x=>new {id=x.Id,name=x.Name}).ToArray(),
@@ -199,7 +199,7 @@ internal static class Program {
                     if(!sExited)sReady=secondary.MainWindowHandle!=IntPtr.Zero;
                     if((pReady&&sReady)||pExited||sExited)break;
                 }
-                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v642-multiwindow-smoke.json");
+                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v643-multiwindow-smoke.json");
                 File.WriteAllText(marker,JsonSerializer.Serialize(new {
                     tested="native_official_307_two_windows",
                     principalReady=pReady,secondaryReady=sReady,
@@ -221,19 +221,54 @@ internal static class Program {
             }
             return;
         }
+        if(args.Contains("--dyclok-recover-existing-smoke",StringComparer.OrdinalIgnoreCase)){
+            // Regression: Electron may leave an official singleton alive after
+            // a manager exit. Reopening must REUSE that PID, not launch a
+            // second DICloak.exe and show an empty DyclokPRO window.
+            Process? first=null,recovered=null;
+            try{
+                first=BrowserRibbon.StartNative("legacy");
+                recovered=BrowserRibbon.StartNative("legacy");
+                bool ok=first.Id==recovered.Id && !first.HasExited;
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),
+                    "dyclokpro-v643-singleton-recovery.json"),
+                    JsonSerializer.Serialize(new{
+                        primaryPid=first.Id,reusedPid=recovered.Id,
+                        reusedExistingWindow=ok,credentialsRead=false
+                    }));
+                Environment.ExitCode=ok?0:27;
+            }catch(Exception ex){
+                Console.Error.WriteLine(ex.GetType().Name);
+                Environment.ExitCode=27;
+            }finally{
+                if(first is not null){
+                    try{if(!first.HasExited)first.Kill(entireProcessTree:true);}
+                    catch(InvalidOperationException){}
+                    catch(System.ComponentModel.Win32Exception){}
+                    NativeAccountProcess.ClearIfMatches("legacy",first.Id);
+                    first.Dispose();
+                }
+                if(recovered is not null && !ReferenceEquals(first,recovered))
+                    recovered.Dispose();
+            }
+            return;
+        }
         ApplicationConfiguration.Initialize();
         bool smoke=args.Contains("--dyclok-direct-launch-smoke",StringComparer.OrdinalIgnoreCase);
         try{
-            // The official browser starts BEFORE any optional user-account
-            // ribbon is constructed. No intermediate manager screen.
-            Process official=BrowserRibbon.StartNative("legacy");
+            // PRODUCTION: create DyclokPRO's unified window FIRST. This avoids
+            // flashing an independent DICloak window while our shell is still
+            // missing. Only legacy/smoke mode launches the engine first.
+            bool oldRibbon=smoke ||
+                args.Contains("--dyclok-legacy-ribbon",StringComparer.OrdinalIgnoreCase);
+            Process? official=oldRibbon ? BrowserRibbon.StartNative("legacy") : null;
             if(smoke){
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v642-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v643-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=official.Id>0,pid=official.Id,
                         largeManagerWindow=false,startedBeforeRibbon=true}));
             }
-            if(smoke || args.Contains("--dyclok-legacy-ribbon",StringComparer.OrdinalIgnoreCase))
-                Application.Run(new BrowserRibbon(official,smoke));
+            if(oldRibbon)
+                Application.Run(new BrowserRibbon(official!,smoke));
             else {
                 bool embedSmoke=args.Contains("--dyclok-integrated-window-smoke",StringComparer.OrdinalIgnoreCase);
                 bool multiTabSmoke=args.Contains("--dyclok-internal-two-tabs-smoke",StringComparer.OrdinalIgnoreCase);
@@ -323,7 +358,7 @@ internal sealed class BrowserRibbon:Form{
             clock.Start();
             if(directSmoke){
                 int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v642-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v643-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=pid>0,pid,largeManagerWindow=false}));
                 var done=new System.Windows.Forms.Timer{Interval=1800};
                 done.Tick+=(_,_)=>{done.Stop();done.Dispose();Exit();};done.Start();
@@ -407,8 +442,13 @@ internal sealed class BrowserRibbon:Form{
     }
     internal static Process StartNative(string id){
         Engine307Guard.Validate(AppContext.BaseDirectory);
-        var info=BuildNativeStartInfo(id,true);
-        return Process.Start(info)??throw new InvalidOperationException("Windows no inició DICloak.");
+        // Recover previously owned engine or a single exact-path original
+        // principal from v6.42. Do NOT create a competing Electron singleton.
+        return NativeAccountProcess.StartOrRecover(id,Client,()=>{
+            var info=BuildNativeStartInfo(id,true);
+            return Process.Start(info)??throw new InvalidOperationException(
+                "Windows no inició el motor oficial DICloak.");
+        });
     }
     private void OpenAccount(string id){
         try{
