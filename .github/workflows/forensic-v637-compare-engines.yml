@@ -1,0 +1,60 @@
+name: Forensic v6.37 - origin of black window and 300003 runtime divergence
+on:
+  push:
+    branches: ['investigation/v6.37-black-screen-auth-root-cause']
+    paths:
+      - '.github/workflows/forensic-v637-compare-engines.yml'
+      - 'tools/forensics-v637-inspect-runtime.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: windows-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify forensic source, no source executables run
+        shell: pwsh
+        run: |
+          & python -m py_compile tools/forensics-v637-inspect-runtime.py
+          if($LASTEXITCODE -ne 0){throw 'Forensic parser syntax invalid'}
+      - name: Download authenticated reference v6.28 without executing it
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $file=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.28_win_x64.exe'
+          & gh release download v6.28 --repo $env:GITHUB_REPOSITORY --pattern 'DyclokPRO_6.28_win_x64.exe' --dir $env:RUNNER_TEMP
+          if($LASTEXITCODE -ne 0){throw 'Original v6.28 download failed'}
+          if((Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant() -ne '954016364fe3e4c1a41b54d810388f8ca79d67a184d3ad25993b74c2d2b1c606'){
+            throw 'Original v6.28 differs from verified binary'
+          }
+      - name: Download genuine 3.0.7 official binary without executing it
+        shell: pwsh
+        run: |
+          $file=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $file -TimeoutSec 900
+          if((Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant() -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae'){
+            throw 'Official 3.0.7 binary checksum differs from verified reference'
+          }
+      - name: Compare internal source paths, runtime title, login and profile list
+        shell: pwsh
+        run: |
+          $out=Join-Path $env:RUNNER_TEMP 'forensics-report.json'
+          $work=Join-Path $env:RUNNER_TEMP 'forensic-v637-files'
+          & python tools/forensics-v637-inspect-runtime.py --v628 (Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.28_win_x64.exe') --official (Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe') --workdir $work --output $out
+          if($LASTEXITCODE -ne 0){throw 'Static ASAR forensic inspection failed'}
+          $json=Get-Content $out -Raw | ConvertFrom-Json
+          if($json.original_v628.modules.'dist-electron/main.js'.sha256 -eq $json.genuine_307.modules.'dist-electron/main.js'.sha256){
+            throw 'Unexpected: original and official main runtime identical'
+          }
+          Write-Host 'REAL_ENGINE307_DIFFERS_FROM_V628=CONFIRMED'
+          Write-Host 'BLACK_SCREEN_TITLE_SOURCE_SCANNED=PASS'
+          Write-Host 'AUTH_PROFILE_LIST_MODULES_COMPARED=PASS'
+      - name: Retain code-only, no-user-data forensic report
+        uses: actions/upload-artifact@v4
+        with:
+          name: v637-source-only-black-window-profile-auth-forensics
+          path: ${{ runner.temp }}\forensics-report.json
+          retention-days: 14
