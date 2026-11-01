@@ -6,9 +6,10 @@ assert(legacy.includes('if(!obj||typeof obj!=="object")return;'));
 assert(next.includes("if(!Number.isInteger(obj.code)||obj.code!==0)return;"));
 // All archive functionality after the introduced check remains identical.
 // Exclude the explanatory banner, which is not executable functionality.
-const active=next.replace(' // Official JSON API uses code=0 for success; HTTP 200 with 300003 is NOT valid.\n if(!Number.isInteger(obj.code)||obj.code!==0)return;\n',"");
+const normalize=s=>s.replace(/\r\n/g,"\n");
+const active=normalize(next).replace(' // Official JSON API uses code=0 for success; HTTP 200 with 300003 is NOT valid.\n if(!Number.isInteger(obj.code)||obj.code!==0)return;\n',"");
 const withoutHeader=s=>s.replace(/^\/\*[^]*?\*\//,"");
-assert.equal(withoutHeader(active),withoutHeader(legacy),"Unexpected modification to legacy archive logic");
+assert.equal(withoutHeader(active),withoutHeader(normalize(legacy)),"Unexpected modification to legacy archive logic");
 const calls=[];
 class FakeXHR {
  constructor(){this.listeners={};this.status=200;this.responseType="";this.responseText="";}
