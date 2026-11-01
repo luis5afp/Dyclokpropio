@@ -24,7 +24,7 @@ jobs:
           if($LASTEXITCODE -ne 0){throw 'Internal tabs did not compile'}
           $src=Get-Content release-build/v6.35/Launcher/IntegratedAccountsWindow.cs -Raw
           $main=Get-Content release-build/v6.35/Launcher/Program.cs -Raw
-          if(-not $src.Contains('EngineWindowHost') -or -not $main.Contains('new IntegratedAccountsWindow(official)')){throw 'Missing internal main interface'}
+          if(-not $src.Contains('EngineWindowHost') -or -not $main.Contains('new IntegratedAccountsWindow(official,embedSmoke)')){throw 'Missing internal main interface'}
           if(-not $main.Contains('--user-data-dir=')){throw 'Secondary session lacks Chromium data isolation'}
           Write-Host 'INTEGRATED_SHELL_SOURCE_COMPILES=PASS'
       - name: Download and verify exact unmodified official engine
