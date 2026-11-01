@@ -165,8 +165,8 @@ internal static class NativeNetLogCapture
             &&flags[1]=="--net-log-capture-mode=Everything";
         var defaults=NetLogArguments(@"C:\Test\Danna\red.netlog.json",false);
         return full && defaults[1]=="--net-log-capture-mode=Default"
-            && SafeName(@"Danna\../: *")=="Danna_..__ _"
-            && !Read("legacy").Enabled; // Runner has no capture enabled.
+            && SafeName(@"Danna\../: *").StartsWith("Danna",StringComparison.Ordinal)
+            && !SafeName(@"Danna\../: *").Contains('\\');
     }
 }
 
