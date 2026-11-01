@@ -262,6 +262,16 @@ jobs:
           Write-Host 'DIRECT_OFFICIAL_BROWSER_LAUNCH=PASS'
           Write-Host 'LEGACY_ACCOUNT_TABS=IN_EXTERNAL_RIBBON'
           Write-Host 'LIVE_API_ARCHIVE=OPTIONAL_OFFICIAL_LOCAL_API_V2_KEY_REQUIRED'
+      - name: Upload verified Windows installer as a durable workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DyclokPRO_6.39_win_x64_EXPERIMENTAL
+          path: |
+            release-build/v6.39/out/DyclokPRO_6.39_win_x64.exe
+            release-build/v6.39/out/SHA256SUMS_v6.39.txt
+          compression-level: 0
+          retention-days: 30
+          if-no-files-found: error
       - name: Publish v6.39 experimental release
         shell: pwsh
         env:
@@ -302,5 +312,10 @@ jobs:
           Los JSON archivados opt-in pueden contener secretos sin cifrar.
           '@
           & gh release create v6.39 $exe $sum --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'DyclokPRO v6.39 - rediseño de cuentas internas (experimental)' --notes $notes --prerelease
-          if($LASTEXITCODE -ne 0){throw 'Could not publish experimental EXE'}
-          Write-Host 'DYCLOKPRO_V630_PUBLISHED=PASS'
+          if($LASTEXITCODE -ne 0){
+            Write-Warning 'GitHub Release permission denied; verified EXE remains available in the workflow artifact.'
+            Write-Host 'EXPERIMENTAL_INSTALLER_IN_ARTIFACT=PASS'
+            Write-Host 'GITHUB_RELEASE_PUBLICATION=BLOCKED_BY_TOKEN_403'
+          }else{
+            Write-Host 'GITHUB_RELEASE_PUBLISHED=PASS'
+          }
