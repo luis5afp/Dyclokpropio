@@ -630,7 +630,7 @@ internal sealed class IntegratedAccountsWindow : Form
     private void RecordSmokeResult(bool switched){
         try {
             File.WriteAllText(Path.Combine(Path.GetTempPath(),
-                switched?"dyclokpro-v640-two-tabs.json":"dyclokpro-v640-embedded-window.json"),
+                switched?"dyclokpro-v641-two-tabs.json":"dyclokpro-v641-embedded-window.json"),
                 JsonSerializer.Serialize(new {
                     integratedHostShown=true,
                     originalMotorChildWindowAttached=SmokeSucceeded,
