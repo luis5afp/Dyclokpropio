@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,8 @@ internal sealed class OfficialProfilesV1Window : Form
     private readonly DataGridView list = new();
     private readonly Label status = new();
     private readonly Button fetch = new() { Text = "Consultar perfiles", Width = 155, Height = 34 };
+    private readonly Button open = new() { Text = "Abrir perfil", Width = 110, Height = 34 };
+    private readonly Button close = new() { Text = "Cerrar perfil", Width = 115, Height = 34 };
     private bool busy;
 
     internal OfficialProfilesV1Window(string accountName)
@@ -44,6 +47,8 @@ internal sealed class OfficialProfilesV1Window : Form
         top.Controls.Add(new Label { Text = "X-API-KEY:", AutoSize = true, Padding = new Padding(6, 7, 0, 0) });
         top.Controls.Add(key);
         top.Controls.Add(fetch);
+        top.Controls.Add(open);
+        top.Controls.Add(close);
 
         list.Dock = DockStyle.Fill;
         list.ReadOnly = true;
@@ -53,7 +58,7 @@ internal sealed class OfficialProfilesV1Window : Form
         list.MultiSelect = false;
         list.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         list.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        foreach (var name in new[] { "Perfil", "ID", "Estado", "Abierto", "Número" })
+        foreach (var name in new[] { "Perfil", "ID", "Estado", "Ejecución", "Número" })
             list.Columns.Add(name, name);
 
         status.Dock = DockStyle.Bottom;
@@ -66,6 +71,10 @@ internal sealed class OfficialProfilesV1Window : Form
         Controls.Add(status);
         Controls.Add(top);
         fetch.Click += async (_, _) => await Reload();
+        open.Click += async (_, _) => await ChangeProfile(true);
+        close.Click += async (_, _) => await ChangeProfile(false);
+        list.SelectionChanged += (_, _) => UpdateActions();
+        UpdateActions();
         FormClosed += (_, _) => { key.Text = string.Empty; };
     }
 
@@ -167,6 +176,90 @@ internal sealed class OfficialProfilesV1Window : Form
         {
             fetch.Enabled = true;
             busy = false;
+            UpdateActions();
         }
     }
+    private void UpdateActions()
+    {
+        bool selected = list.SelectedRows.Count == 1 && list.SelectedRows[0].Cells.Count > 1;
+        open.Enabled = !busy && selected;
+        close.Enabled = !busy && selected;
+    }
+
+    // Documented official endpoint. Never constructs an internal signed request.
+    internal static string ProfileActionPath(string id, bool launch)
+    {
+        if (!OfficialApiContract.ValidProfileId(id))
+            throw new InvalidOperationException("ID de perfil inválido.");
+        return "/openapi/v1/env/" + id + (launch ? "/open" : "/close");
+    }
+
+    private async Task ChangeProfile(bool launch)
+    {
+        if (busy || list.SelectedRows.Count != 1) return;
+        var row = list.SelectedRows[0];
+        string id = Convert.ToString(row.Cells[1].Value) ?? "";
+        string name = Convert.ToString(row.Cells[0].Value) ?? "perfil";
+        string operation = launch ? "abrir" : "cerrar";
+        if (MessageBox.Show(this,
+            "¿Deseas " + operation + " el perfil seleccionado mediante la API oficial?\n\n" +
+            name + "\n\nEsta operación no modifica tu sesión de DICloak.",
+            "Confirmar " + operation, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            != DialogResult.Yes) return;
+        busy = true;
+        fetch.Enabled = false;
+        UpdateActions();
+        bool success = false;
+        try
+        {
+            string route = ProfileActionPath(id, launch);
+            if (!int.TryParse(port.Text, out int p) || p < 1024 || p > 65535)
+                throw new InvalidOperationException("Puerto inválido.");
+            if (string.IsNullOrWhiteSpace(key.Text) || key.Text.Length > 512)
+                throw new InvalidOperationException("Falta una clave API local válida.");
+
+            using var handler = new HttpClientHandler {
+                UseCookies = false, UseProxy = false, AllowAutoRedirect = false
+            };
+            using var client = new HttpClient(handler) {
+                BaseAddress = new Uri("http://127.0.0.1:" + p),
+                Timeout = TimeSpan.FromSeconds(25)
+            };
+            client.DefaultRequestHeaders.Add("X-API-KEY", key.Text);
+            using var request = new HttpRequestMessage(new HttpMethod("PATCH"), route);
+            request.Content = new StringContent("{}", Encoding.UTF8, "application/json");
+            using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(
+                    "La API local respondió HTTP " + (int)response.StatusCode +
+                    ". Comprueba permisos y sesión.");
+            if (response.Content.Headers.ContentLength > 1_000_000)
+                throw new InvalidOperationException("Respuesta demasiado grande.");
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            if (bytes.Length > 1_000_000)
+                throw new InvalidOperationException("Respuesta demasiado grande.");
+            using var doc = OfficialApiContract.RequireSuccess(bytes);
+            success = true;
+            status.Text = "La API oficial confirmó la operación " + operation + " para " + name +
+                          ". Consulta perfiles para actualizar su estado.";
+        }
+        catch (Exception ex) when (ex is HttpRequestException ||
+                                   ex is TaskCanceledException ||
+                                   ex is InvalidOperationException ||
+                                   ex is JsonException ||
+                                   ex is ProviderApiFailure)
+        {
+            status.Text = ex is HttpRequestException or TaskCanceledException
+                ? "No se pudo conectar con la API local. Comprueba el puerto."
+                : ex.Message;
+        }
+        finally
+        {
+            busy = false;
+            fetch.Enabled = true;
+            UpdateActions();
+        }
+        if (success) await Reload();
+    }
+
 }
