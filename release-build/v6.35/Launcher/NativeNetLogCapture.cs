@@ -300,10 +300,10 @@ internal sealed class NativeNetLogCaptureWindow:Form
             "respuestas de KAIZEN dentro de un Electron modificado.";
     }
     private void OpenFolder(){
-        string path=NativeNetLogCapture.DirectoryFor(accountId,alias);
-        Directory.CreateDirectory(path);
-        Process.Start(new ProcessStartInfo("explorer.exe"){
-            ArgumentList={path},UseShellExecute=true
-        });
+        try{AccountDiagnosticFolder.Open(accountId,alias);}
+        catch(Exception ex) when(ex is IOException or UnauthorizedAccessException or
+                              System.ComponentModel.Win32Exception or ArgumentException){
+            MessageBox.Show(this,ex.Message,"No se pudo abrir la carpeta");
+        }
     }
 }
