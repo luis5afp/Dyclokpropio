@@ -72,6 +72,11 @@ internal sealed class IntegratedAccountsWindow : Form
     private int smokeSecondaryPid;
     internal bool SmokeSucceeded { get; private set; }
     private bool closing;
+    private bool finalCloseAllowed;
+    [DllImport("user32.dll",SetLastError=true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool ShowWindow(IntPtr hwnd,int command);
+    private const int SW_HIDE=0;
     private bool starting;
     private bool rebuildingTabs;
     private int initialTabCount;
@@ -162,24 +167,77 @@ internal sealed class IntegratedAccountsWindow : Form
             Start();
         };
         poll.Tick += (_, _) => Tick();
-        FormClosing += (_, _) => {
-            closing = true;
+        FormClosing += OnHostClosing;
+        FormClosed += (_, _) => poll.Dispose();
+    }
+
+    private async void OnHostClosing(object? sender,FormClosingEventArgs e){
+        if(embedSmoke){
+            closing=true;
             poll.Stop();
-            foreach(var p in pages.Values) p.Host.Detach();
-            if(diagnostic is not null && !diagnostic.IsDisposed) diagnostic.Close();
-            // Smoke-only teardown: CI must not leave a DICloak singleton
-            // running that contaminates the next multi-account check.
-            if(embedSmoke){
-                foreach(var page in pages.Values){
-                    if(page.Process is null)continue;
-                    try{if(!page.Process.HasExited)page.Process.Kill(entireProcessTree:true);}
+            foreach(var p in pages.Values){
+                p.Host.Detach();
+                if(p.Process is null)continue;
+                try{if(!p.Process.HasExited)p.Process.Kill(entireProcessTree:true);}
+                catch(InvalidOperationException){}
+                catch(System.ComponentModel.Win32Exception){}
+                NativeAccountProcess.ClearIfMatches(p.Id,p.Process.Id);
+            }
+            return;
+        }
+        if(finalCloseAllowed){
+            closing=true;poll.Stop();
+            foreach(var page in pages.Values)page.Host.Detach();
+            if(diagnostic is not null&&!diagnostic.IsDisposed)diagnostic.Close();
+            return;
+        }
+        e.Cancel=true;
+        if(closing)return;
+        closing=true;
+        poll.Stop();
+        // Closing DyclokPRO should not leave its official child windows
+        // behind as separate desktop applications (v6.42 regression).
+        // Request the provider's normal WM_CLOSE: never log out, never
+        // force-kill or delete Chromium data automatically.
+        foreach(var page in pages.Values){
+            if(page.Process is null||HasExited(page.Process))continue;
+            bool requested=false;
+            var hwnd=page.Host.ProviderHwnd;
+            if(hwnd!=IntPtr.Zero)
+                requested=PostMessage(hwnd,WM_CLOSE,IntPtr.Zero,IntPtr.Zero);
+            if(!requested) {
+                try{page.Process.CloseMainWindow();}
+                catch(InvalidOperationException){}
+            }
+        }
+        await Task.Delay(2200);
+        if(IsDisposed)return;
+        var pending=pages.Values.Where(p=>p.Process is not null&&!HasExited(p.Process)).ToArray();
+        if(pending.Length>0){
+            var choice=MessageBox.Show(this,
+                "DICloak aún tiene "+pending.Length+" proceso(s) abiertos.\n\n"+
+                "Sí: forzar cierre (puede perder cambios no guardados).\n"+
+                "No: dejar las ventanas oficiales abiertas fuera de DyclokPRO.\n"+
+                "Cancelar: volver a DyclokPRO.",
+                "Cerrar gestor y motor oficial",MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Warning);
+            if(choice==DialogResult.Cancel){
+                closing=false;poll.Start();return;
+            }
+            if(choice==DialogResult.Yes){
+                foreach(var page in pending){
+                    try{page.Process!.Kill(entireProcessTree:true);}
                     catch(InvalidOperationException){}
                     catch(System.ComponentModel.Win32Exception){}
                 }
             }
-            // Production: official account sessions remain running.
-        };
-        FormClosed += (_, _) => poll.Dispose();
+        }
+        foreach(var page in pages.Values){
+            if(page.Process is not null&&HasExited(page.Process))
+                NativeAccountProcess.ClearIfMatches(page.Id,page.Process.Id);
+        }
+        finalCloseAllowed=true;
+        Close();
     }
 
     private static Button TopButton(string label,int width,Action action){
