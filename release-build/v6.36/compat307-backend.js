@@ -108,6 +108,21 @@ async function status(e,input){
  return {serviceReady:value?.data?.status==="ok",apiVersion:String(value?.data?.api_version||"unknown"),
   clientVersion:String(value?.data?.client_version||"unknown").slice(0,40)};
 }
+async function components(e,input){
+ trust(e);
+ const cap=await get(input,"/openapi/v2/capabilities");
+ const version=await get(input,"/openapi/v2/version");
+ const src=cap.value?.data||{}, info=version.value?.data||{};
+ const names=["profiles","cookies","proxies","fingerprints","bookmarks","extensions","tags",
+  "profile_groups","members","permissions","start_stop","kernels"];
+ const declared={};
+ for(const k of names)declared[k]=typeof src[k]==="boolean"?src[k]:null;
+ const raw=info.kernel?.installed;
+ const installed=Array.isArray(raw)?raw.filter(x=>typeof x==="string").map(x=>x.slice(0,45)).slice(0,30):[];
+ return {apiVersion:String(info.api_version||"unknown").slice(0,40),
+  clientVersion:String(info.client_version||"unknown").slice(0,40),
+  installedKernels:installed,capabilities:declared};
+}
 async function list(e,input){
  trust(e);
  const page=Number(input?.page||1);
@@ -158,6 +173,7 @@ async function saveList(e,input){
  return archive({id:"1",name:"General"},raw,version==="v1"?"lista-v1":"lista-v2");
 }
 ipcMain.handle("dyclokpro:compat307:status",status);
+ipcMain.handle("dyclokpro:compat307:components",components);
 ipcMain.handle("dyclokpro:compat307:list",list);
 ipcMain.handle("dyclokpro:compat307:detail",detail);
 ipcMain.handle("dyclokpro:compat307:save-detail",saveDetail);
