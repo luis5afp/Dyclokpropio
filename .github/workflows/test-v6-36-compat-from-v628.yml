@@ -7,6 +7,7 @@ on:
       - 'release-build/v6.36/**'
       - 'tools/release-v6-36-from-v628-compat.py'
       - 'tools/test-v6-36-compat307.cjs'
+      - 'tools/test-v6-36-archive-300003.cjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,6 +27,10 @@ jobs:
           if($LASTEXITCODE -ne 0){throw 'UI module syntax invalid'}
           & node tools/test-v6-36-compat307.cjs
           if($LASTEXITCODE -ne 0){throw 'Open API compatibility contract failed'}
+          & node --check release-build/v6.36/raw-archive-ui.js
+          if($LASTEXITCODE -ne 0){throw 'Legacy archive filter syntax invalid'}
+          & node tools/test-v6-36-archive-300003.cjs
+          if($LASTEXITCODE -ne 0){throw 'Old archive behavior changed or 300003 was persisted'}
           & python -m py_compile tools/release-v6-36-from-v628-compat.py
           if($LASTEXITCODE -ne 0){throw 'Installer patch source invalid'}
       - name: Download EXACT original v6.28 release installer
