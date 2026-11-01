@@ -55,6 +55,10 @@ internal sealed class IntegratedAccountsWindow : Form
     private readonly Dictionary<string, AccountPage> pages = new(StringComparer.Ordinal);
     private readonly System.Windows.Forms.Timer poll = new() { Interval = 600 };
     private SessionDiagnosticsWindow? diagnostic;
+    private readonly Panel sidePanel=new(){
+        Dock=DockStyle.Right,Width=335,Visible=false,
+        BackColor=Color.FromArgb(20,27,31)
+    };
     private readonly Process initial;
     private readonly bool embedSmoke;
     internal bool SmokeSucceeded { get; private set; }
@@ -125,6 +129,7 @@ internal sealed class IntegratedAccountsWindow : Form
             }
         };
         Controls.Add(accountTabs);
+        Controls.Add(sidePanel);
         Controls.Add(bar);
         Shown += (_, _) => {
             DarkTitleBar(Handle);
@@ -441,11 +446,21 @@ internal sealed class IntegratedAccountsWindow : Form
     private void ToggleDiagnostics()
     {
         if(diagnostic is not null && !diagnostic.IsDisposed){
-            diagnostic.Close();diagnostic=null;return;
+            diagnostic.Close();diagnostic=null;
+            sidePanel.Visible=false;
+            return;
         }
-        diagnostic=new SessionDiagnosticsWindow(DiagnosticSnapshot);
-        diagnostic.FormClosed+=(_,_)=>diagnostic=null;
-        diagnostic.Show(this);
+        diagnostic=new SessionDiagnosticsWindow(DiagnosticSnapshot){
+            TopLevel=false,FormBorderStyle=FormBorderStyle.None,
+            ShowInTaskbar=false,Dock=DockStyle.Fill
+        };
+        diagnostic.FormClosed+=(_,_)=>{
+            diagnostic=null;sidePanel.Visible=false;
+        };
+        sidePanel.Controls.Add(diagnostic);
+        sidePanel.Visible=true;
+        diagnostic.Show();
+        diagnostic.BringToFront();
     }
 
     private void OpenExternal()
