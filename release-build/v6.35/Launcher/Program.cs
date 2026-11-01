@@ -109,6 +109,7 @@ internal static class AccountStore
 }
 internal static class Program {
     internal const string AsarSha="b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf";
+    internal const string MarketingVersion="6.37.0";
     [STAThread]
     private static void Main(string[] args){
         if(args.Contains("--dyclok-self-test",StringComparer.OrdinalIgnoreCase)){
@@ -132,7 +133,7 @@ internal static class Program {
                 &&!string.Equals(separatedInfo.Environment["LOCALAPPDATA"],officialInfo.Environment["LOCALAPPDATA"],StringComparison.OrdinalIgnoreCase);
             File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v635-selftest.json"),
                 JsonSerializer.Serialize(new {
-                    version="6.35.0",validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
+                    version=MarketingVersion,validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
                     sha256=digest,accounts=accounts.Select(x=>new {id=x.Id,name=x.Name}).ToArray(),
                     directLaunch=true,
                     automaticServerCapture=false
@@ -182,7 +183,8 @@ internal sealed class BrowserRibbon:Form{
         WrapContents=false,AutoScroll=false,Padding=new Padding(4,2,0,0)
     };
     private readonly System.Windows.Forms.Timer clock=new(){Interval=750};
-    private readonly NotifyIcon tray=new(){Icon=SystemIcons.Application,Text="DyclokPRO v6.35 · Cuentas"};
+    private readonly NotifyIcon tray=new(){Icon=SystemIcons.Application,Text="DyclokPRO v6.37 · Cuentas"};
+    private SessionDiagnosticsWindow? diagnostics;
     private string active="legacy";
     private readonly bool directSmoke;
     private bool exiting=false, loading=false;
@@ -194,7 +196,8 @@ internal sealed class BrowserRibbon:Form{
         directSmoke=smoke;
         AccountStore.NamesChanged+=()=>{if(IsHandleCreated)BeginInvoke((Action)RebuildTabs);};
         running["legacy"]=official;
-        Text="DyclokPRO v6.35";
+        SessionDiagnostics.Observe(official,"legacy");
+        Text="DyclokPRO v6.37";
         FormBorderStyle=FormBorderStyle.None;
         StartPosition=FormStartPosition.Manual;
         ShowInTaskbar=false;
@@ -210,22 +213,25 @@ internal sealed class BrowserRibbon:Form{
             TextAlign=ContentAlignment.MiddleCenter
         };
         var right=new FlowLayoutPanel{
-            Dock=DockStyle.Right,Width=230,WrapContents=false,FlowDirection=FlowDirection.LeftToRight,
+            Dock=DockStyle.Right,Width=311,WrapContents=false,FlowDirection=FlowDirection.LeftToRight,
             Padding=new Padding(0,2,0,0)
         };
         var add=Button("+ Cuenta",77);
         add.Click+=(_,_)=>AddUser();
         var files=Button("Archivos",81);
         files.Click+=(_,_)=>ShowArchiveMenu(files);
+        var diag=Button("Diag",74);
+        diag.Click+=(_,_)=>ToggleDiagnostics();
         var more=Button("⋯",46);
         more.Click+=(_,_)=>ShowSettingsMenu(more);
-        right.Controls.Add(add);right.Controls.Add(files);right.Controls.Add(more);
+        right.Controls.Add(add);right.Controls.Add(files);right.Controls.Add(diag);right.Controls.Add(more);
         Controls.Add(tabs);Controls.Add(right);Controls.Add(label);
         var menu=new ContextMenuStrip();
         menu.Items.Add("Abrir cuenta principal",null,(_,_)=>OpenAccount("legacy"));
         menu.Items.Add("Mostrar pestañas",null,(_,_)=>MakeVisible());
         menu.Items.Add("Abrir archivos guardados",null,(_,_)=>OpenArchive(active));
         menu.Items.Add("API oficial: consultar y respaldar",null,(_,_)=>OpenOfficialApi());
+        menu.Items.Add("Diagnóstico de sesiones (activar)",null,(_,_)=>ToggleDiagnostics());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Salir del gestor",null,(_,_)=>Exit());
         tray.ContextMenuStrip=menu;
@@ -321,14 +327,15 @@ internal sealed class BrowserRibbon:Form{
             if(!File.Exists(Client))throw new FileNotFoundException("Falta el navegador oficial.",Client);
             if(running.TryGetValue(id,out var old)){
                 old.Refresh();
-                if(!old.HasExited){active=id;RebuildTabs();BringToFront(old);return;}
+                if(!old.HasExited){active=id;RebuildTabs();BringToFront(old);SessionDiagnostics.Record("ALREADY_OPEN",id,old.Id);return;}
                 old.Dispose();running.Remove(id);
             }
             var process=StartNative(id);
-            running[id]=process;active=id;RebuildTabs();
+            running[id]=process;active=id;SessionDiagnostics.Observe(process,id);RebuildTabs();
             errorMessage=null;
         }catch(Exception ex){
             errorMessage=ex.Message;
+            SessionDiagnostics.Record("START_FAILED",id);
             MessageBox.Show(ex.Message,"No se pudo abrir "+Name(id),MessageBoxButtons.OK,MessageBoxIcon.Error);
         }
     }
@@ -363,6 +370,29 @@ internal sealed class BrowserRibbon:Form{
     private void MakeVisible(){
         if(running.TryGetValue(active,out var p))BringToFront(p);
         PositionBar();
+    }
+    private IReadOnlyList<(string Account,int Pid,string State)> DiagnosticSnapshot(){
+        var records=new List<(string Account,int Pid,string State)>();
+        foreach(var (id,proc) in running){
+            try{
+                proc.Refresh();
+                records.Add((id=="legacy"?"Principal":"Auxiliar",proc.Id,
+                    proc.HasExited?"Cerrado ("+proc.ExitCode+")":
+                    proc.MainWindowHandle==IntPtr.Zero?"Iniciando/sin ventana":"Ejecutándose"));
+            }catch(InvalidOperationException){
+                records.Add((id=="legacy"?"Principal":"Auxiliar",0,"Finalizado"));
+            }
+        }
+        return records;
+    }
+    private void ToggleDiagnostics(){
+        if(diagnostics is not null&&!diagnostics.IsDisposed){
+            diagnostics.Close();diagnostics=null;return;
+        }
+        diagnostics=new SessionDiagnosticsWindow(DiagnosticSnapshot);
+        diagnostics.FormClosed+=(_,_)=>diagnostics=null;
+        diagnostics.Location=new Point(Math.Max(0,Left),Math.Max(0,Top+Height+3));
+        diagnostics.Show();
     }
     private void AddUser(){
         try{
@@ -447,6 +477,7 @@ internal sealed class BrowserRibbon:Form{
         m.Items.Add("Vincular carpeta Cuentas a la instalación",null,(_,_)=>CreateAccountJunction());
         m.Items.Add("Perfiles locales",null,(_,_)=>new LocalProfilesWindow(active,Name(active)).Show(this));
         m.Items.Add("Perfiles oficiales 3.0.7 (API V1)",null,(_,_)=>new OfficialProfilesV1Window(Name(active)).Show(this));
+        m.Items.Add("Diagnóstico de sesión",null,(_,_)=>ToggleDiagnostics());
         m.Items.Add("API oficial V2",null,(_,_)=>OpenOfficialApi());
         m.Items.Add("Abrir motor oficial 3.0.7",null,(_,_)=>OpenAccount(active));
         m.Items.Add("Ver el gestor en área de notificación",null,(_,_)=>{Hide();});
@@ -494,7 +525,9 @@ internal sealed class BrowserRibbon:Form{
         }catch(Exception ex){MessageBox.Show(this,ex.Message,"No se creó el enlace");}
     }
     private void Exit(){
-        exiting=true;clock.Stop();tray.Visible=false;tray.Dispose();
+        exiting=true;clock.Stop();
+        if(diagnostics is not null&&!diagnostics.IsDisposed)diagnostics.Close();
+        tray.Visible=false;tray.Dispose();
         Close();
     }
     protected override void OnFormClosing(FormClosingEventArgs e){
