@@ -92,10 +92,10 @@ internal sealed class EngineWindowHost : Panel
             if (!IsHandleCreated) { LastError = "El panel no tiene HWND."; return false; }
             formerParent = GetParent(window);
             formerStyle = GetWindowLongPtr(window, GWL_STYLE);
-            if(GetWindowRect(window,out var original)){
-                originalX=original.Left;originalY=original.Top;
-                originalWidth=original.Right-original.Left;
-                originalHeight=original.Bottom-original.Top;
+            if(GetWindowRect(window,out var rectBeforeEmbedding)){
+                originalX=rectBeforeEmbedding.Left;originalY=rectBeforeEmbedding.Top;
+                originalWidth=rectBeforeEmbedding.Right-rectBeforeEmbedding.Left;
+                originalHeight=rectBeforeEmbedding.Bottom-rectBeforeEmbedding.Top;
             }
             long original = formerStyle.ToInt64();
             long style = (original &
