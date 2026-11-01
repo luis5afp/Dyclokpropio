@@ -79,6 +79,7 @@ internal sealed class IntegratedAccountsWindow : Form
     private const int SW_HIDE=0;
     private bool starting;
     private bool rebuildingTabs;
+    private bool identifyingAccount;
     private int initialTabCount;
     private int firstTick;
     private readonly Label overall = new() {
@@ -115,9 +116,15 @@ internal sealed class IntegratedAccountsWindow : Form
         bar.Controls.Add(brand);
         var more=TopButton("⋯",38,()=>OpenMenu());
         var add=TopButton("+",42,()=>OpenAccountPicker());
+        var nameButton=TopButton("Nombre",67,()=>RenameActive());
+        var folderButton=TopButton("Carpeta",73,()=>OpenActiveDiagnosticFolder());
+        var diagButton=TopButton("Diag",59,()=>ToggleDiagnostics());
         topActions.Controls.Add(more);
         topActions.Controls.Add(add);
-        topActions.Width=94;
+        topActions.Controls.Add(nameButton);
+        topActions.Controls.Add(folderButton);
+        topActions.Controls.Add(diagButton);
+        topActions.Width=307;
 
         accountTabs.BackColor=Ink;
         accountTabs.ForeColor=Color.White;
@@ -288,8 +295,10 @@ internal sealed class IntegratedAccountsWindow : Form
         menu.Items.Add("Abrir otra cuenta",null,(_,_)=>OpenAccountPicker());
         menu.Items.Add("Cerrar cuenta seleccionada",null,(_,_)=>CloseAccount(ActiveId));
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Perfiles (API oficial)",null,(_,_)=>ShowProfiles());
+        menu.Items.Add("Perfiles por API V1 (requiere clave propia)",null,(_,_)=>ShowProfiles());
         menu.Items.Add("Panel de diagnóstico",null,(_,_)=>ToggleDiagnostics());
+        menu.Items.Add("Abrir carpeta de diagnóstico de la cuenta",null,
+            (_,_)=>OpenActiveDiagnosticFolder());
         menu.Items.Add("Capturar conexiones originales (KAIZEN)",null,
             (_,_)=>OpenConnectionDiagnostics());
         menu.Items.Add("Archivos y exportaciones",null,(_,_)=>ShowFiles());
@@ -318,9 +327,11 @@ internal sealed class IntegratedAccountsWindow : Form
         menu.Show(topActions,new Point(0,topActions.Height));
     }
     private void ShowSavedAccount(string id){
-        // The saved account is not an open session until the user chooses it.
+        // Opening a saved account does not imply that its server login or
+        // list of remote profiles has succeeded.
         EnsureOpenAccount(id);
         Select(id);
+        BeginInvoke(new Action(()=>OfferIdentification(id)));
     }
     private void ToggleOriginalHeader(){
         if(!pages.TryGetValue(ActiveId,out var entry))return;
@@ -384,9 +395,12 @@ internal sealed class IntegratedAccountsWindow : Form
         }
         var account=AccountStore.Get().FirstOrDefault(x=>x.Id==id)
             ??throw new InvalidOperationException("Cuenta local no encontrada.");
-        var tab=new TabPage(account.Name){
+        var tab=new TabPage(AccountFriendlyName.Label(id,account.Name)){
             BackColor=Surface,ForeColor=Color.White,Padding=Padding.Empty,
-            UseVisualStyleBackColor=false
+            UseVisualStyleBackColor=false,
+            ToolTipText=AccountFriendlyName.NeedsIdentification(account.Name)
+                ?"Sin nombre confirmado. Pulsa Nombre para identificarla."
+                :account.Name
         };
         var host=new EngineWindowHost();
         var status=new Label{
@@ -414,7 +428,12 @@ internal sealed class IntegratedAccountsWindow : Form
         // Refresh ONLY labels of visible sessions. No new TabPage here.
         var names=AccountStore.Get().ToDictionary(x=>x.Id,x=>x.Name,StringComparer.Ordinal);
         foreach(var p in pages.Values)
-            if(names.TryGetValue(p.Id,out var name))p.Page.Text=name;
+            if(names.TryGetValue(p.Id,out var name)){
+                p.Page.Text=AccountFriendlyName.Label(p.Id,name);
+                p.Page.ToolTipText=AccountFriendlyName.NeedsIdentification(name)
+                    ?"Sin nombre confirmado. Pulsa Nombre para identificarla."
+                    :name;
+            }
         accountTabs.Invalidate();
     }
 
@@ -608,20 +627,39 @@ internal sealed class IntegratedAccountsWindow : Form
             OnAccountSelected();
     }
 
-    private void RenameActive()
-    {
-        string id=ActiveId;
+    private void RenameActive() => Identify(ActiveId);
+
+    private void OfferIdentification(string id){
+        if(embedSmoke||identifyingAccount||IsDisposed||!pages.ContainsKey(id))return;
         var account=AccountStore.Get().FirstOrDefault(x=>x.Id==id);
-        string? text=Microsoft.VisualBasic.Interaction.InputBox(
-            "Nombre de la cuenta (2 a 80 caracteres)","Renombrar cuenta",
-            account?.Name ?? "Cuenta");
-        if(string.IsNullOrWhiteSpace(text))return;
-        try
-        {
-            AccountStore.SaveName(id,text);
-            if(pages.TryGetValue(id,out var page))page.Page.Text=text.Trim();
-        }
-        catch(Exception ex){MessageBox.Show(this,ex.Message,"No se guardó el nombre");}
+        if(account is null || !AccountFriendlyName.NeedsIdentification(account.Name) ||
+            AccountFriendlyName.WasDismissed(id))return;
+        Identify(id);
+    }
+
+    private void Identify(string id){
+        if(identifyingAccount||!pages.ContainsKey(id))return;
+        identifyingAccount=true;
+        try {
+            var account=AccountStore.Get().FirstOrDefault(x=>x.Id==id);
+            string previous=account?.Name??"";
+            string initial=AccountFriendlyName.NeedsIdentification(previous)?"":previous;
+            string answer=Microsoft.VisualBasic.Interaction.InputBox(
+                "Escribe el nombre del usuario o un alias que puedas reconocer."+
+                "\nSe guardará únicamente de forma local en DyclokPRO."+
+                "\nNo lee contraseñas ni identifica automáticamente el login oficial.",
+                "Identificar cuenta",initial);
+            if(string.IsNullOrWhiteSpace(answer)){
+                if(AccountFriendlyName.NeedsIdentification(previous))
+                    AccountFriendlyName.Dismiss(id);
+                return;
+            }
+            AccountStore.SaveName(id,answer.Trim());
+            AccountFriendlyName.Reset(id);
+            RefreshAccounts();
+        }catch(Exception ex){
+            MessageBox.Show(this,ex.Message,"No se pudo guardar el nombre");
+        }finally{identifyingAccount=false;}
     }
 
     private void Tick()
@@ -711,7 +749,7 @@ internal sealed class IntegratedAccountsWindow : Form
     private void RecordSmokeResult(bool switched){
         try {
             File.WriteAllText(Path.Combine(Path.GetTempPath(),
-                switched?"dyclokpro-v643-two-tabs.json":"dyclokpro-v643-embedded-window.json"),
+                switched?"dyclokpro-v644-two-tabs.json":"dyclokpro-v644-embedded-window.json"),
                 JsonSerializer.Serialize(new {
                     integratedHostShown=true,
                     originalMotorChildWindowAttached=SmokeSucceeded,
@@ -755,6 +793,15 @@ internal sealed class IntegratedAccountsWindow : Form
         }
     }
 
+    private void OpenActiveDiagnosticFolder(){
+        try{
+            string id=ActiveId;
+            AccountDiagnosticFolder.Open(id,Name(id));
+        }catch(Exception ex){
+            MessageBox.Show(this,ex.Message,"No se pudo abrir el diagnóstico",
+                MessageBoxButtons.OK,MessageBoxIcon.Warning);
+        }
+    }
     private void OpenConnectionDiagnostics(){
         string id=ActiveId;
         using var capture=new NativeNetLogCaptureWindow(id,Name(id));
@@ -799,7 +846,8 @@ internal sealed class IntegratedAccountsWindow : Form
                 item.Process.Refresh();
                 records.Add((item.Id=="legacy"?"Principal":"Auxiliar",item.Process.Id,
                     item.Process.HasExited?"Terminada ("+item.Process.ExitCode+")":
-                    item.Host.IsEmbedded?"Ventana integrada":"Ejecutándose/sin integrar"));
+                    item.Host.IsEmbedded?"Motor visible; login/perfiles NO verificados":
+                        "Motor activo; integración pendiente"));
             }
             catch(InvalidOperationException)
             { records.Add((item.Id=="legacy"?"Principal":"Auxiliar",0,"Terminada")); }
