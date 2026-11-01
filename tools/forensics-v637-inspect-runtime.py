@@ -103,7 +103,7 @@ def inspect(root,label):
     if at<0:break
     width=100 if token in (b"X-DC-M1",b"X-DC-M2",b"X-Version") else 145
     raw=data[max(0,at-width):min(len(data),at+len(token)+width)]
-    raw=re.sub(rb"[\\x00-\\x1f]+",b" ",raw)
+    raw=re.sub(rb"[\x00-\x1f]+",b" ",raw)
     raw=re.sub(rb"[A-Za-z0-9_-]{45,}",b"[LONG_STRING_REDACTED]",raw)
     target.append({"module":rel,"offset":at,
       "code_context":raw.decode("utf8","replace")[:300]})
