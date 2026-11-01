@@ -65,6 +65,7 @@ internal static class OfficialApiContract {
             string name=Value(entry,"name").Trim();
             if(!ValidProfileId(id)||name.Length is <1 or >300)continue;
             string status=Value(entry,"run_status");
+            if(string.IsNullOrWhiteSpace(status))status=Value(entry,"operate_status");
             parsed.Add(new OfficialProfile(id,name,status));
         }
         return parsed;
@@ -125,6 +126,15 @@ internal static class OfficialApiContract {
                ProfileDirectoryName(list[0])!="1#KAIZEN_FLOW-ULTRA ["+ident+"]"||
                HasMorePages(doc.RootElement,1,1))
                 throw new InvalidDataException("El nombre, ID o paginación del perfil cambió.");
+        }
+        // Documented Local V1 returns operate_status rather than run_status.
+        byte[] v1=Encoding.UTF8.GetBytes(
+            "{\"code\":0,\"data\":{\"list\":[{\"id\":\""+ident+"\",\"name\":\"Perfil oficial\",\"operate_status\":\"ENABLED\"}],\"total\":1}}");
+        using(var v1Doc=RequireSuccess(v1)){
+            var list=ParseProfilesPage(v1Doc.RootElement);
+            if(list.Count!=1||list[0].Name!="Perfil oficial"||list[0].Status!="ENABLED"||
+               HasMorePages(v1Doc.RootElement,1,list.Count))
+                throw new InvalidDataException("La API local V1 devolvió un contrato incompatible.");
         }
         byte[] rejected=Encoding.UTF8.GetBytes("{\"code\":300003,\"msg\":\"sesión inválida\",\"data\":null}");
         try{
