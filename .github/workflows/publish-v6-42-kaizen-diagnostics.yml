@@ -54,7 +54,7 @@ jobs:
           if($src -match 'HttpMethod\.(Post|Put|Patch|Delete)|X-DC-M1|X-DC-M2'){
             throw 'Blocked: API module may not mutate accounts or signed requests'
           }
-          if(-not $main.Contains('if(id=="legacy")return info;')){
+          if(-not $main.Contains('if(id=="legacy"){') -or -not $main.Contains('NativeNetLogCapture.PrepareArguments(info,id)')){
             throw 'Blocked: primary account must use native Windows session'
           }
           if($viewer -notmatch 'ExportEncrypted' -or $main -notmatch 'new LocalProfilesWindow'){
