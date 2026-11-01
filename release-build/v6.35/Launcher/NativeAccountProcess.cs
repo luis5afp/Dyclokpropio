@@ -63,9 +63,18 @@ internal static class NativeAccountProcess
             // in the same Windows session and with a real main window.
             // Never infer auxiliary account identity from an arbitrary PID.
             if(id=="legacy"){
+                var auxiliaryPids=new HashSet<int>();
+                foreach(var account in AccountStore.Get().Where(a=>a.Id!="legacy")){
+                    try{
+                        string journal=RecordPath(account.Id);
+                        if(!File.Exists(journal))continue;
+                        var aux=JsonSerializer.Deserialize<Instance>(File.ReadAllText(journal));
+                        if(aux is not null)auxiliaryPids.Add(aux.Pid);
+                    }catch(Exception ex) when(ex is IOException or JsonException or UnauthorizedAccessException){}
+                }
                 var matches=new List<Process>();
                 foreach(var p in Process.GetProcessesByName("DICloak")){
-                    if(SameExecutable(p,executable)&&HasMainWindow(p))matches.Add(p);
+                    if(!auxiliaryPids.Contains(p.Id)&&SameExecutable(p,executable)&&HasMainWindow(p))matches.Add(p);
                     else p.Dispose();
                 }
                 if(matches.Count==1){
