@@ -232,6 +232,8 @@ internal sealed class IntegratedAccountsWindow : Form
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Perfiles (API oficial)",null,(_,_)=>ShowProfiles());
         menu.Items.Add("Panel de diagnóstico",null,(_,_)=>ToggleDiagnostics());
+        menu.Items.Add("Capturar conexiones originales (KAIZEN)",null,
+            (_,_)=>OpenConnectionDiagnostics());
         menu.Items.Add("Archivos y exportaciones",null,(_,_)=>ShowFiles());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Mostrar título original de DICloak",null,(_,_)=>ToggleOriginalHeader());
@@ -630,7 +632,7 @@ internal sealed class IntegratedAccountsWindow : Form
     private void RecordSmokeResult(bool switched){
         try {
             File.WriteAllText(Path.Combine(Path.GetTempPath(),
-                switched?"dyclokpro-v641-two-tabs.json":"dyclokpro-v641-embedded-window.json"),
+                switched?"dyclokpro-v642-two-tabs.json":"dyclokpro-v642-embedded-window.json"),
                 JsonSerializer.Serialize(new {
                     integratedHostShown=true,
                     originalMotorChildWindowAttached=SmokeSucceeded,
@@ -668,6 +670,12 @@ internal sealed class IntegratedAccountsWindow : Form
             entry.Status.Text = "No se pudo integrar la ventana de esta cuenta. Usa ⋯ → Ventana externa.";
             overall.Text = "El motor continúa intacto. El alojamiento HWND depende de compatibilidad de Windows/DPI.";
         }
+    }
+
+    private void OpenConnectionDiagnostics(){
+        string id=ActiveId;
+        using var capture=new NativeNetLogCaptureWindow(id,Name(id));
+        capture.ShowDialog(this);
     }
 
     private void ShowFiles()
