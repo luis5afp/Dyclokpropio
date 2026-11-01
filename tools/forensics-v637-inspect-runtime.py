@@ -14,7 +14,7 @@ PATTERNS={
  "window-title-full":rb"DICloak\s*-\s*V3\.0\.7\s*\|",
  "title-native-build":rb"1\.2\.4\.1",
  "title-renderer":rb"(?:DICloak\s*-\s*V|document\.title|setTitle\()",
- "session-error":rb"(?:GHOST_USER|300003|Tu sesi[oó]n ha expirado)",
+ "session-error":rb"(?:GHOST_USER|300003|session expired)",
  "profile-list":rb"(?:/v1/env/list|/env/list|env/list)",
  "version-header":rb"(?:X-Version|version-local-info|X-DEVICE-ID)",
  "profile-preload":rb"(?:render-process-gone|did-fail-load|preload-error)",
