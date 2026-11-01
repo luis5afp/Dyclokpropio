@@ -306,6 +306,7 @@ internal sealed class BrowserRibbon:Form{
         return info;
     }
     internal static Process StartNative(string id){
+        Engine307Guard.Validate(AppContext.BaseDirectory);
         var info=BuildNativeStartInfo(id,true);
         return Process.Start(info)??throw new InvalidOperationException("Windows no inició DICloak.");
     }
