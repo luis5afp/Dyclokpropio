@@ -131,26 +131,6 @@ jobs:
           }
           Write-Host 'OFFICIAL_LOCAL_V1_PROFILE_OPEN_CLOSE_SOURCE=PASS'
           Write-Host 'PRIVACY_SAFE_SIDE_DIAGNOSTICS_SOURCE=PASS'
-      - name: Verify that a real embedded cross-process text field receives typed characters
-        shell: pwsh
-        run: |
-          $exe=(Resolve-Path release-build/v6.35/Launcher/bin/Release/net8.0-windows/win-x64/publish/DyclokPRO.exe -ErrorAction SilentlyContinue)
-          if(-not $exe){$exe=Join-Path $env:RUNNER_TEMP 'focus-probe-runtime/DyclokPRO.exe'}
-          $actual=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DyclokPRO.exe'
-          if(-not(Test-Path $actual)){throw 'DyclokPRO not installed for synthetic keyboard regression'}
-          $test=Start-Process -FilePath $actual -ArgumentList '--dyclok-focus-parent-smoke' -PassThru
-          if(-not $test.WaitForExit(35000)){
-            Stop-Process -Id $test.Id -Force -ErrorAction SilentlyContinue
-            throw 'Native typing test did not complete in 35 seconds'
-          }
-          $marker=Join-Path $env:TEMP 'dyclokpro-v640-input-test.json'
-          if(-not(Test-Path $marker)){throw 'Text was not received by an embedded cross-process field'}
-          $result=Get-Content $marker -Raw | ConvertFrom-Json
-          if($test.ExitCode -ne 0 -or -not $result.received){
-            throw 'Native embedded input was not delivered correctly'
-          }
-          Write-Host 'EMBEDDED_TEXT_FIELD_RECEIVES_KEYBOARD_INPUT=PASS'
-          Write-Host 'REAL_REMOTE_LOGIN_NOT_TESTED=TRUE'
       - name: Verify Windows installation and unmodified engine integrity
         shell: pwsh
         run: |
@@ -205,6 +185,24 @@ jobs:
           Write-Host 'PRIMARY_NATIVE_WINDOWS_ENVIRONMENT=PASS'
           Write-Host 'SECONDARY_ENGINE307_PATHS_PRESERVED=PASS'
           Write-Host 'LEGACY_V627_ACCOUNT_NAMES_RECOVERED=PASS'
+      - name: Verify that a real embedded cross-process text field receives typed characters
+        shell: pwsh
+        run: |
+          $actual=Join-Path $env:LOCALAPPDATA 'Programs\DyclokPRO\DyclokPRO.exe'
+          if(-not(Test-Path $actual)){throw 'DyclokPRO not installed for synthetic keyboard regression'}
+          $test=Start-Process -FilePath $actual -ArgumentList '--dyclok-focus-parent-smoke' -PassThru
+          if(-not $test.WaitForExit(35000)){
+            Stop-Process -Id $test.Id -Force -ErrorAction SilentlyContinue
+            throw 'Native typing test did not complete in 35 seconds'
+          }
+          $marker=Join-Path $env:TEMP 'dyclokpro-v640-input-test.json'
+          if(-not(Test-Path $marker)){throw 'Text was not received by an embedded cross-process field'}
+          $result=Get-Content $marker -Raw | ConvertFrom-Json
+          if($test.ExitCode -ne 0 -or -not $result.received){
+            throw 'Native embedded input was not delivered correctly'
+          }
+          Write-Host 'EMBEDDED_TEXT_FIELD_RECEIVES_KEYBOARD_INPUT=PASS'
+          Write-Host 'REAL_REMOTE_LOGIN_NOT_TESTED=TRUE'
       - name: Verify two official 3.0.7 account windows and internal tab embedding
         shell: pwsh
         run: |
