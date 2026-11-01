@@ -46,7 +46,9 @@ Documentación:
 2. `release-build/v6.36/compat307-ui.js`: panel lateral **cerrado por defecto**, clave de API en campo de contraseña y borrado al ocultar, botón para listas, consulta de un perfil y guardado puntual. No intercepta XMLHttpRequest ni modifica el login.
 3. `tools/release-v6-36-from-v628-compat.py`: comienza **exclusivamente** con el EXE original v6.28 cuyo SHA-256 coincide; comprueba el código HTTP y main originales, copia todos los recursos del v6.28 y agrega el adaptador opcional al propio paquete antiguo. Conserva la versión técnica ya experimental que tenía v6.28, **sin simular que contiene el motor genuino**.
 4. `tools/test-v6-36-compat307.cjs`: test simulado para respuesta exitosa y rechazo `300003`, carpetas por nombre real, bytes idénticos, origen IPC y host local.
-5. `.github/workflows/test-v6-36-compat-from-v628.yml`: prueba en Windows, incluyendo extracción del instalador publicado exacto y revisión del arranque heredado.
+5. `release-build/v6.36/raw-archive-ui.js`: el mismo archivador de v6.28, con una única validación adicional (`code === 0`) para NO guardar como archivos originales respuestas de sesión rechazada `300003`; nunca altera las respuestas de red ni los códigos que recibe el cliente.
+6. `tools/test-v6-36-archive-300003.cjs`: compara el JavaScript anterior y el nuevo tras normalizar los saltos de línea; simula una respuesta de error y otra válida y comprueba que esta última conserva su texto exacto.
+7. `.github/workflows/test-v6-36-compat-from-v628.yml`: prueba en Windows, incluyendo extracción del instalador publicado exacto y revisión del arranque heredado.
 
 ## Qué NO se puede concluir ni prometer
 
