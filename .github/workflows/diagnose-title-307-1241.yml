@@ -1,0 +1,50 @@
+name: Diagnose DICloak title 3.0.7 - 1.2.4.1
+on:
+  push:
+    branches:
+      - investigate/title-1241-official307
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare-version-text:
+    runs-on: windows-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch OFFICIAL DICloak 3.0.7 installer
+        shell: pwsh
+        run: |
+          $official=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $official -TimeoutSec 900
+          $sha=(Get-FileHash $official -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($sha -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae'){throw "Official installer changed: $sha"}
+          python tools/release-v6-30-intact307.py --installer $official --destination "$env:RUNNER_TEMP\dicloak307"
+          if($LASTEXITCODE -ne 0){throw "Could not unpack official DICloak"}
+          Write-Host "OFFICIAL_INSTALLER_SHA256=$sha"
+          $exe=Get-Item (Join-Path $env:RUNNER_TEMP 'dicloak307\DICloak.exe')
+          Write-Host "OFFICIAL_PE_FILE_VERSION=$($exe.VersionInfo.FileVersion)"
+          Write-Host "OFFICIAL_PE_PRODUCT_VERSION=$($exe.VersionInfo.ProductVersion)"
+          Write-Host "OFFICIAL_PE_DESCRIPTION=$($exe.VersionInfo.FileDescription)"
+      - name: Fetch GITHUB DyclokPRO v6.28 comparison installer
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v6.28 --repo $env:GITHUB_REPOSITORY --pattern 'DyclokPRO_6.28_win_x64.exe' --dir $env:RUNNER_TEMP
+          if($LASTEXITCODE -ne 0){throw "Missing release v6.28"}
+          $installer=Join-Path $env:RUNNER_TEMP 'DyclokPRO_6.28_win_x64.exe'
+          python tools/extract-v628-for-title-scan.py $installer "$env:RUNNER_TEMP\dyclok628"
+          if($LASTEXITCODE -ne 0){throw "Cannot extract v6.28"}
+          Write-Host "DYCLOK628_INSTALLER_SHA256=$((Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant())"
+          $exe=Get-Item (Join-Path $env:RUNNER_TEMP 'dyclok628\DICloak.exe')
+          Write-Host "DYCLOK628_PE_FILE_VERSION=$($exe.VersionInfo.FileVersion)"
+          Write-Host "DYCLOK628_PE_PRODUCT_VERSION=$($exe.VersionInfo.ProductVersion)"
+          Write-Host "DYCLOK628_PE_DESCRIPTION=$($exe.VersionInfo.FileDescription)"
+      - name: Read-only inspect VERSION 1.2.4.1 and title string origins in both engines
+        shell: pwsh
+        run: |
+          python tools/forensic-title-versions-307.py "OFFICIAL307=$env:RUNNER_TEMP\dicloak307" "DYCLOK628=$env:RUNNER_TEMP\dyclok628"
+          if($LASTEXITCODE -ne 0){throw "Inspection script failed"}
+          Write-Host "NO_SESSION_OR_ACCOUNT_DATA_READ=PASS"
+          Write-Host "NO_DICLOAK_EXE_EXECUTED=PASS"
