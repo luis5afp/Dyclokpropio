@@ -139,6 +139,11 @@ internal static class Program {
                 }));
             Environment.ExitCode=(valid&&nativePrincipal&&secondaryIsolated)?0:5;return;
         }
+        if(args.Contains("--dyclok-engine-guard-test",StringComparer.OrdinalIgnoreCase)){
+            try{Engine307Guard.Validate(AppContext.BaseDirectory);Environment.ExitCode=0;}
+            catch(Exception){Environment.ExitCode=9;}
+            return;
+        }
         if(args.Contains("--dyclok-api-contract-test",StringComparer.OrdinalIgnoreCase)){
             try { OfficialApiContract.SelfTest();Environment.ExitCode=0; }
             catch(Exception ex){Console.Error.WriteLine(ex.GetType().Name);Environment.ExitCode=8;}
