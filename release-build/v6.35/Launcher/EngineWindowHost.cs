@@ -56,8 +56,12 @@ internal sealed class EngineWindowHost : Panel
     // inner 28px app header, keeping the actual engine unmodified.
     internal bool HideInnerTitle { get; set; } = true;
     private int originalX=100, originalY=90, originalWidth=1100, originalHeight=780;
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WinRect {
+        public int Left, Top, Right, Bottom;
+    }
     [DllImport("user32.dll")]
-    private static extern bool GetWindowRect(IntPtr hwnd,out Rectangle rect);
+    private static extern bool GetWindowRect(IntPtr hwnd,out WinRect rect);
     internal bool IsEmbedded => embeddedWindow != IntPtr.Zero && IsWindow(embeddedWindow);
     internal string? LastError { get; private set; }
 
@@ -90,7 +94,8 @@ internal sealed class EngineWindowHost : Panel
             formerStyle = GetWindowLongPtr(window, GWL_STYLE);
             if(GetWindowRect(window,out var original)){
                 originalX=original.Left;originalY=original.Top;
-                originalWidth=original.Width;originalHeight=original.Height;
+                originalWidth=original.Right-original.Left;
+                originalHeight=original.Bottom-original.Top;
             }
             long original = formerStyle.ToInt64();
             long style = (original &
