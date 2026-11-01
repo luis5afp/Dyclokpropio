@@ -82,6 +82,9 @@ def scan(label,root):
                         doc=json.loads(src.read(int(pkg["size"])))
                     print("ASAR_PACKAGE",label,json.dumps({k:doc.get(k) for k in ("name","productName","version","buildVersion")},ensure_ascii=False))
                     print("ASAR_ENTRIES",label,len(index))
+                    for key,val in doc.items():
+                        if isinstance(val,(str,int,float)) and "1.2.4.1" in str(val):
+                            print("FOUND_OFFICIAL_PACKAGE_VERSION_FIELD",label,json.dumps({key:val},ensure_ascii=False))
                 else:
                     print("ASAR_PACKAGE_MISSING",label)
             except Exception as ex:
@@ -95,6 +98,14 @@ def scan(label,root):
         except Exception as ex:
             print("READ_ERROR",rel,type(ex).__name__)
             continue
+        if rel=="resources/app.asar.unpacked/package.json":
+            try:
+                legacy=json.loads(b)
+                print("UNPACKED_PACKAGE",label,json.dumps({k:legacy.get(k) for k in ("name","version","productName","buildVersion")},ensure_ascii=False))
+                for key,val in legacy.items():
+                    if isinstance(val,(str,int,float)) and "1.2.4.1" in str(val):
+                        print("FOUND_UNPACKED_PACKAGE_VERSION_FIELD",label,json.dumps({key:val},ensure_ascii=False))
+            except Exception as ex:print("UNPACKED_PACKAGE_PARSE_ERROR",type(ex).__name__)
         if found:
             matches+=1
             for pat,hits in found.items():
@@ -105,6 +116,12 @@ def scan(label,root):
                         summarized.append([coding,member,relative])
                     else:summarized.append([coding,pos])
                 print("PATTERN",label,rel,repr(pat),"count_sample",len(hits),"hits",json.dumps(summarized))
+                if pat=="DICloak - V":
+                    for encoding,pos in hits[:2]:
+                        if encoding!="utf8":continue
+                        snippet=b[max(0,pos-155):min(len(b),pos+240)].decode("utf-8","replace")
+                        snippet=re.sub(r"[\x00-\x1f\x7f]"," ",snippet)
+                        print("WINDOW_TITLE_CONSTRUCTION",label,rel,repr(snippet[:395]))
         if p.name in ("DICloak.exe","app.asar"):
             print("HASH",label,rel,sha(p))
     print("FILE_SCAN_COMPLETE",label,"files_scanned",count,"files_with_patterns",matches)
