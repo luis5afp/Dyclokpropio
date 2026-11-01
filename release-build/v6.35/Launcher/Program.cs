@@ -109,9 +109,15 @@ internal static class AccountStore
 }
 internal static class Program {
     internal const string AsarSha="b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf";
-    internal const string MarketingVersion="6.39.0";
+    internal const string MarketingVersion="6.40.0";
     [STAThread]
     private static void Main(string[] args){
+        if(args.Contains("--dyclok-focus-child",StringComparer.OrdinalIgnoreCase)){
+            Environment.ExitCode=EngineFocusSmoke.Child();return;
+        }
+        if(args.Contains("--dyclok-focus-parent-smoke",StringComparer.OrdinalIgnoreCase)){
+            Environment.ExitCode=EngineFocusSmoke.Parent();return;
+        }
         if(args.Contains("--dyclok-self-test",StringComparer.OrdinalIgnoreCase)){
             string exe=Path.Combine(AppContext.BaseDirectory,"DICloak.exe");
             string path=Path.Combine(AppContext.BaseDirectory,"resources","app.asar");
@@ -131,7 +137,7 @@ internal static class Program {
             bool secondaryIsolated=
                 !string.Equals(separatedInfo.Environment["APPDATA"],officialInfo.Environment["APPDATA"],StringComparison.OrdinalIgnoreCase)
                 &&!string.Equals(separatedInfo.Environment["LOCALAPPDATA"],officialInfo.Environment["LOCALAPPDATA"],StringComparison.OrdinalIgnoreCase);
-            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v639-selftest.json"),
+            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v640-selftest.json"),
                 JsonSerializer.Serialize(new {
                     version=MarketingVersion,validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
                     sha256=digest,accounts=accounts.Select(x=>new {id=x.Id,name=x.Name}).ToArray(),
@@ -184,7 +190,7 @@ internal static class Program {
                     if(!sExited)sReady=secondary.MainWindowHandle!=IntPtr.Zero;
                     if((pReady&&sReady)||pExited||sExited)break;
                 }
-                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v639-multiwindow-smoke.json");
+                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v640-multiwindow-smoke.json");
                 File.WriteAllText(marker,JsonSerializer.Serialize(new {
                     tested="native_official_307_two_windows",
                     principalReady=pReady,secondaryReady=sReady,
@@ -213,7 +219,7 @@ internal static class Program {
             // ribbon is constructed. No intermediate manager screen.
             Process official=BrowserRibbon.StartNative("legacy");
             if(smoke){
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v639-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v640-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=official.Id>0,pid=official.Id,
                         largeManagerWindow=false,startedBeforeRibbon=true}));
             }
@@ -308,7 +314,7 @@ internal sealed class BrowserRibbon:Form{
             clock.Start();
             if(directSmoke){
                 int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v639-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v640-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=pid>0,pid,largeManagerWindow=false}));
                 var done=new System.Windows.Forms.Timer{Interval=1800};
                 done.Tick+=(_,_)=>{done.Stop();done.Dispose();Exit();};done.Start();
