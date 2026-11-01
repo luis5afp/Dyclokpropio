@@ -1,0 +1,69 @@
+name: DyclokPRO v6.36 - verify genuine 3.0.7 compatibility on v6.28 base
+on:
+  push:
+    branches: ['fix/v6.36-desde-v6.28-base']
+    paths:
+      - '.github/workflows/test-v6-36-compat-from-v628.yml'
+      - 'release-build/v6.36/**'
+      - 'tools/release-v6-36-from-v628-compat.py'
+      - 'tools/test-v6-36-compat307.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout original v6.28-based branch
+        uses: actions/checkout@v4
+      - name: Validate code syntax and 300003 fail-closed behavior
+        shell: pwsh
+        run: |
+          & node --check release-build/v6.36/compat307-backend.js
+          if($LASTEXITCODE -ne 0){throw 'IPC module syntax invalid'}
+          & node --check release-build/v6.36/compat307-ui.js
+          if($LASTEXITCODE -ne 0){throw 'UI module syntax invalid'}
+          & node tools/test-v6-36-compat307.cjs
+          if($LASTEXITCODE -ne 0){throw 'Open API compatibility contract failed'}
+          & python -m py_compile tools/release-v6-36-from-v628-compat.py
+          if($LASTEXITCODE -ne 0){throw 'Installer patch source invalid'}
+      - name: Download EXACT original v6.28 release installer
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $destination=Join-Path $env:RUNNER_TEMP 'dyclok-v628-input'
+          New-Item -Path $destination -ItemType Directory -Force|Out-Null
+          & gh release download v6.28 --repo $env:GITHUB_REPOSITORY --pattern 'DyclokPRO_6.28_win_x64.exe' --dir $destination
+          if($LASTEXITCODE -ne 0){throw 'Could not fetch original v6.28 EXE'}
+          $file=Join-Path $destination 'DyclokPRO_6.28_win_x64.exe'
+          $hash=(Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($hash -ne '954016364fe3e4c1a41b54d810388f8ca79d67a184d3ad25993b74c2d2b1c606'){
+            throw "BLOCKED: baseline installer not authentic ($hash)"
+          }
+          Write-Host 'EXACT_V628_BINARY_BASE=PASS'
+      - name: Verify patch preserves v6.28 account/session/profile original bundle
+        shell: pwsh
+        run: |
+          $file=Join-Path $env:RUNNER_TEMP 'dyclok-v628-input\DyclokPRO_6.28_win_x64.exe'
+          $out=Join-Path $env:RUNNER_TEMP 'dyclok-v636-patched'
+          & python tools/release-v6-36-from-v628-compat.py --installer $file --destination $out
+          if($LASTEXITCODE -ne 0){throw 'v6.28 original runtime preservation failed'}
+          $app=Join-Path $out 'DICloak.exe'
+          if(-not(Test-Path $app -PathType Leaf)){throw 'DICloak base executable not found'}
+          $ui=Join-Path $out 'resources\app.asar.unpacked\dist\dyclokpro-compat307.js'
+          if(-not(Test-Path $ui -PathType Leaf)){throw 'Optional compatibility side panel not bundled'}
+          $old=Join-Path $out 'resources\app.asar.unpacked\dist\dyclokpro-users-v66.js'
+          if(-not(Test-Path $old -PathType Leaf)){throw 'v6.28 user tabs were lost'}
+          Write-Host 'V628_ORIGINAL_ACCOUNTS_UI_ARCHIVE_CHROMIUM=RETAINED'
+          Write-Host 'V636_LOCAL_API_COMPAT_MODULE=ADDED'
+          Write-Host 'ACTUAL_OFFICIAL_307_ENGINE=NOT_BUNDLED'
+      - name: Smoke test baseline Electron with compatibility module
+        shell: pwsh
+        run: |
+          $app=Join-Path $env:RUNNER_TEMP 'dyclok-v636-patched\DICloak.exe'
+          $run=Start-Process -FilePath $app -ArgumentList '--dyclok-self-test' -PassThru -Wait
+          if($run.ExitCode -ne 0){throw "v6.28 Electron startup smoke failed: $($run.ExitCode)"}
+          Write-Host 'V628_ELECTRON_STARTUP=PASS'
+          Write-Host 'REMOTE_LOGIN_PROFILE_LOADING=NOT_TESTED'
