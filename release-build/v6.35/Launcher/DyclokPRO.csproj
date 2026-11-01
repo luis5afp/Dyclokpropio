@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>DyclokPRO</AssemblyName>
-    <Version>6.39.0</Version>
+    <Version>6.40.0</Version>
     <Product>DyclokPRO</Product>
     <Company>DyclokPRO</Company>
   </PropertyGroup>
