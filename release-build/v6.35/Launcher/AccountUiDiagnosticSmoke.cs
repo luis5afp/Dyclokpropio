@@ -38,7 +38,7 @@ internal static class AccountUiDiagnosticSmoke
             string result=AccountDiagnosticFolder.Prepare(id,alias);
             string index=Path.Combine(result,"LEER_PRIMERO.txt");
             if(!File.Exists(index)||File.ReadAllText(rawFile)!=original)return false;
-            if(!File.ReadAllText(index).Contains("NO") ||
+            if(!File.ReadAllText(index).Contains("No se promete copiar") ||
                !File.ReadAllText(index).Contains("ArchivoOriginal"))return false;
             AccountFriendlyName.Dismiss(id);
             if(!AccountFriendlyName.WasDismissed(id))return false;
