@@ -1,0 +1,41 @@
+name: Forensic v6.37 - Windows no-secrets runtime identity diagnostic
+on:
+  push:
+    branches: ['investigation/v6.37-black-screen-auth-root-cause']
+    paths:
+      - '.github/workflows/test-v637-diagnostic-script.yml'
+      - 'tools/Diagnostico_Motor_v637.ps1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static PowerShell diagnostic script validation
+        shell: pwsh
+        run: |
+          $path='tools/Diagnostico_Motor_v637.ps1'
+          $tokens=$null
+          $errors=$null
+          $null=[System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $path).Path,[ref]$tokens,[ref]$errors)
+          if($errors.Count -gt 0){$errors|ForEach-Object {Write-Host $_.Message};throw 'PowerShell syntax failed'}
+          $source=Get-Content $path -Raw
+          if($source -match 'Get-CimInstance|Win32_Process|CommandLine|Cookie\s*\('){
+            throw 'Blocked: diagnostic may not extract command-line tokens or cookies'
+          }
+          Write-Host 'POWERSHELL_DIAGNOSTIC_SYNTAX=PASS'
+      - name: Run only read-only local probe and verify no raw user data captured
+        shell: pwsh
+        run: |
+          $out=Join-Path $env:RUNNER_TEMP 'diagnostic-safe.txt'
+          & pwsh -NoProfile -File tools/Diagnostico_Motor_v637.ps1 -Output $out
+          if($LASTEXITCODE -ne 0 -or -not(Test-Path $out)){throw 'Diagnostic did not complete'}
+          $contents=Get-Content $out -Raw
+          if($contents -notmatch 'DYCLOKPRO_DIAGNOSTICO_MOTOR_V637'){throw 'Diagnostic output missing'}
+          if($contents -match 'password=|X-TOKEN|X-API-KEY|Authorization:\s*Bearer'){
+            throw 'Secret content leaked into diagnostic'
+          }
+          Write-Host 'READ_ONLY_NO_CREDENTIALS_WINDOWS_DIAGNOSTIC=PASS'
