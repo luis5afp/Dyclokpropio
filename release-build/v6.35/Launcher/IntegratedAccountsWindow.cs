@@ -115,11 +115,22 @@ internal sealed class IntegratedAccountsWindow : Form
         topActions.Controls.Add(more);
         topActions.Controls.Add(add);
         topActions.Controls.Add(file);
-        topActions.Width=226;
+        topActions.Width=248;
 
         accountTabs.BackColor=Ink;
         accountTabs.ForeColor=Color.White;
         accountTabs.DrawItem+=DrawTab;
+        accountTabs.Deselecting+=(_, e)=>{
+            if(e.TabPage is null)return;
+            foreach(var page in pages.Values)
+                if(ReferenceEquals(page.Page,e.TabPage)){
+                    page.Host.RememberKeyboardFocus();
+                    break;
+                }
+        };
+        // The tab itself receives focus on mouse selection. Restore the
+        // provider's HWND after WinForms finishes its tab-change message.
+        Activated+=(_,_)=>ScheduleAccountFocus();
         accountTabs.SelectedIndexChanged += (_, _) => {
             OnAccountSelected();
             accountTabs.Invalidate();
@@ -208,6 +219,7 @@ internal sealed class IntegratedAccountsWindow : Form
         menu.Items.Add("Archivos y exportaciones",null,(_,_)=>ShowFiles());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Mostrar título original de DICloak",null,(_,_)=>ToggleOriginalHeader());
+        menu.Items.Add("Activar escritura en esta cuenta",null,(_,_)=>ScheduleAccountFocus());
         menu.Items.Add("Abrir cuenta en ventana externa",null,(_,_)=>OpenExternal());
         menu.Show(topActions,new Point(4,topActions.Height));
     }
@@ -304,6 +316,28 @@ internal sealed class IntegratedAccountsWindow : Form
             return;
         }
         UpdateHost(entry);
+        ScheduleAccountFocus();
+    }
+
+    private void ScheduleAccountFocus(){
+        if(closing||starting||!IsHandleCreated||sidePanel.Visible||!Visible)return;
+        if(!pages.TryGetValue(ActiveId,out var entry)||!entry.Host.IsEmbedded)return;
+        string selectedId=entry.Id;
+        BeginInvoke(new Action(()=>{
+            if(closing||IsDisposed||!Visible||sidePanel.Visible)return;
+            if(ActiveId!=selectedId||!entry.Host.IsEmbedded)return;
+            // Only run on deliberate UI activation, never on the 600ms poll.
+            // Avoid capturing keyboard content; only transfer Win32 focus.
+            entry.Host.RestoreKeyboardFocus();
+        }));
+    }
+
+    protected override bool ProcessCmdKey(ref Message msg,Keys keyData){
+        if(keyData==(Keys.Control|Keys.Alt|Keys.F)){
+            ScheduleAccountFocus();
+            return true;
+        }
+        return base.ProcessCmdKey(ref msg,keyData);
     }
 
     private static bool HasExited(Process p)
@@ -446,6 +480,7 @@ internal sealed class IntegratedAccountsWindow : Form
             // footer/status bar; show the original content at full height.
             entry.Status.Visible=false;
             accountTabs.Invalidate();
+            ScheduleAccountFocus();
             return;
         }
         if(!entry.AttemptedExternalFallback &&
