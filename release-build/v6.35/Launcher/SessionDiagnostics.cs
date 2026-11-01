@@ -25,7 +25,7 @@ internal static class SessionDiagnostics
     internal static void Record(string kind, string id, int pid = 0, int? exitCode = null)
     {
         // Strongly bounded set of event names and data types.
-        if (kind is not ("START" or "EXIT" or "ALREADY_OPEN" or "START_FAILED" or "WINDOW_MISSING"))
+        if (kind is not ("START" or "EXIT" or "ALREADY_OPEN" or "START_FAILED" or "WINDOW_MISSING" or "CAPTURE_FAILED"))
             return;
         var entry = new DiagnosticEntry(DateTime.UtcNow, kind, KindOf(id), pid, exitCode);
         lock (Sync)
@@ -49,6 +49,13 @@ internal static class SessionDiagnostics
                     File.Move(file, backup, true);
                 }
                 File.AppendAllText(file, JsonSerializer.Serialize(entry) + Environment.NewLine);
+                // KAIZEN-inspired account isolation: a separate append-only
+                // journal beside each native NetLog, not a rewrite of traffic.
+                string alias=AccountStore.Get().FirstOrDefault(a=>a.Id==id)?.Name??"Cuenta";
+                string own=NativeNetLogCapture.DirectoryFor(id,alias);
+                Directory.CreateDirectory(own);
+                File.AppendAllText(Path.Combine(own,"eventos-proceso.jsonl"),
+                    JsonSerializer.Serialize(entry)+Environment.NewLine);
             }
         }
         catch (IOException) { }
