@@ -34,6 +34,7 @@ internal sealed class IntegratedAccountsWindow : Form
     private SessionDiagnosticsWindow? diagnostic;
     private readonly Process initial;
     private bool closing;
+    private bool starting;
     private int firstTick;
     private readonly Label overall = new() {
         Dock = DockStyle.Bottom, Height = 30, ForeColor = Color.Khaki,
@@ -109,11 +110,14 @@ internal sealed class IntegratedAccountsWindow : Form
 
     private void Start()
     {
+        starting=true;
         SessionDiagnostics.Observe(initial,"legacy");
-        RefreshAccounts();
-        pages["legacy"].Process = initial;
-        pages["legacy"].StartedUtc = DateTime.UtcNow;
-        pages["legacy"].Status.Text = "Iniciando cliente oficial de la cuenta principal…";
+        try{
+            RefreshAccounts();
+            pages["legacy"].Process = initial;
+            pages["legacy"].StartedUtc = DateTime.UtcNow;
+            pages["legacy"].Status.Text = "Iniciando cliente oficial de la cuenta principal…";
+        }finally{starting=false;}
         Select("legacy");
         poll.Start();
     }
@@ -159,7 +163,7 @@ internal sealed class IntegratedAccountsWindow : Form
 
     private void OnAccountSelected()
     {
-        if(closing || !IsHandleCreated || pages.Count==0) return;
+        if(closing || starting || !IsHandleCreated || pages.Count==0) return;
         string id=ActiveId;
         if(!pages.TryGetValue(id,out var entry))return;
         if(entry.Process is null || HasExited(entry.Process))
