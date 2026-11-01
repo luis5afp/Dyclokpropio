@@ -1,0 +1,45 @@
+name: Map official DICloak 3.0.7 source architecture
+on:
+  push:
+    branches:
+      - feature/map-reconstruct-engine307
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  analyze:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Obtain exact official 3.0.7 and unpack without execution
+        shell: pwsh
+        run: |
+          $exe=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $exe -TimeoutSec 900
+          if((Get-FileHash -Algorithm SHA256 $exe).Hash.ToLowerInvariant() -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae'){throw 'Unexpected official installer'}
+          python tools/release-v6-30-intact307.py --installer $exe --destination "$env:RUNNER_TEMP\official307"
+          if($LASTEXITCODE -ne 0){throw 'Official extraction failed'}
+      - name: Produce metadata-only source architecture map
+        shell: pwsh
+        run: |
+          python tools/map-official307-runtime.py --asar "$env:RUNNER_TEMP\official307\resources\app.asar" --out engine307-report
+          if($LASTEXITCODE -ne 0){throw 'Architecture map failed'}
+          $data=Get-Content engine307-report/engine307-map.json -Raw | ConvertFrom-Json
+          if($data.engine_version -ne '3.0.7' -or $data.patch_version -ne '1.2.4.1'){throw 'Unexpected official runtime metadata'}
+          if($data.files_total -lt 10000 -or $data.core.Count -lt 2){throw 'Incomplete engine coverage'}
+          if($data.source_code_exported -ne $false){throw 'Unexpected raw code export'}
+          Write-Host "ENGINE307_RECONSTRUCTION_MAP_VALID=PASS"
+          Write-Host "ENGINE307_STATIC_CORE_COUNT=$($data.core.Count)"
+          foreach($item in $data.core){
+            if($item.file -match '^dist-electron/' -or $item.file -match '^dist/assets/index-'){
+              Write-Host "ENGINE_MODULE=$($item.file); bytes=$($item.bytes); indicators=$($item.signals.PSObject.Properties.Name -join ',')"
+            }
+          }
+      - name: Upload architecture map without vendor source
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine307-architecture-map
+          path: engine307-report/
+          retention-days: 30
+          if-no-files-found: error
