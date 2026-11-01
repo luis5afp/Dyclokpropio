@@ -219,8 +219,12 @@ internal static class Program {
             }
             if(smoke || args.Contains("--dyclok-legacy-ribbon",StringComparer.OrdinalIgnoreCase))
                 Application.Run(new BrowserRibbon(official,smoke));
-            else
-                Application.Run(new IntegratedAccountsWindow(official));
+            else {
+                bool embedSmoke=args.Contains("--dyclok-integrated-window-smoke",StringComparer.OrdinalIgnoreCase);
+                using var integrated=new IntegratedAccountsWindow(official,embedSmoke);
+                Application.Run(integrated);
+                if(embedSmoke&&!integrated.SmokeSucceeded)Environment.ExitCode=16;
+            }
         }catch(Exception ex){
             MessageBox.Show(ex.Message,"No se pudo iniciar DyclokPRO",MessageBoxButtons.OK,MessageBoxIcon.Error);
             Environment.ExitCode=2;
