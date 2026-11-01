@@ -82,7 +82,7 @@ jobs:
           $panel=Get-Content release-build/v6.35/Launcher/SessionDiagnostics.cs -Raw
           if(-not $ui.Contains('AccountFriendlyName.Label') -or
              -not $ui.Contains('TopButton("Carpeta"') -or
-             -not $ui.Contains('TopButton("Diag"') -or
+             -not $ui.Contains('TopButton("Diagnóstico"') -or
              -not $ui.Contains('TopButton("Nombre"') -or
              -not $panel.Contains('Carpeta de esta cuenta')){
             throw 'User-visible account identity or one-click diagnostic folder buttons missing'
