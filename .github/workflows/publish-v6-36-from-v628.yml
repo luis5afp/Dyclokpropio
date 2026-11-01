@@ -4,10 +4,11 @@ on:
     branches:
       - 'fix/v6.36-desde-v6.28-base'
     paths:
-      - '.github/workflows/publish-v6-28-version-ab.yml'
+      - '.github/workflows/publish-v6-36-from-v628.yml'
       - 'release-build/v6.36/**'
-      - 'tools/release-v6-28-internal307-ab.py'
-      - 'tools/test-v6-28-internal307.cjs'
+      - 'tools/release-v6-36-from-v628-compat.py'
+      - 'tools/test-v6-36-compat307.cjs'
+      - 'tools/test-v6-36-archive-300003.cjs'
   workflow_dispatch:
 permissions:
   contents: write
