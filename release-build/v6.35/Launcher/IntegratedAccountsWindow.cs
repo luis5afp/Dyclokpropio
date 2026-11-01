@@ -319,7 +319,8 @@ internal sealed class IntegratedAccountsWindow : Form
         }else{
             foreach(var account in unopened){
                 string id=account.Id;
-                menu.Items.Add(account.Name,null,(_,_)=>ShowSavedAccount(id));
+                menu.Items.Add(AccountFriendlyName.Label(account.Id,account.Name),
+                    null,(_,_)=>ShowSavedAccount(id));
             }
         }
         menu.Items.Add(new ToolStripSeparator());
