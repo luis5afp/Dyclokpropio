@@ -109,7 +109,7 @@ internal static class AccountStore
 }
 internal static class Program {
     internal const string AsarSha="b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf";
-    internal const string MarketingVersion="6.37.0";
+    internal const string MarketingVersion="6.38.0";
     [STAThread]
     private static void Main(string[] args){
         if(args.Contains("--dyclok-self-test",StringComparer.OrdinalIgnoreCase)){
@@ -131,7 +131,7 @@ internal static class Program {
             bool secondaryIsolated=
                 !string.Equals(separatedInfo.Environment["APPDATA"],officialInfo.Environment["APPDATA"],StringComparison.OrdinalIgnoreCase)
                 &&!string.Equals(separatedInfo.Environment["LOCALAPPDATA"],officialInfo.Environment["LOCALAPPDATA"],StringComparison.OrdinalIgnoreCase);
-            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v637-selftest.json"),
+            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v638-selftest.json"),
                 JsonSerializer.Serialize(new {
                     version=MarketingVersion,validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
                     sha256=digest,accounts=accounts.Select(x=>new {id=x.Id,name=x.Name}).ToArray(),
@@ -150,6 +150,23 @@ internal static class Program {
             catch(Exception ex){Console.Error.WriteLine(ex.GetType().Name);Environment.ExitCode=8;}
             return;
         }
+        if(args.Contains("--dyclok-account-isolation-test",StringComparer.OrdinalIgnoreCase)){
+            try{
+                var first=BrowserRibbon.BuildNativeStartInfo("legacy");
+                var second=BrowserRibbon.BuildNativeStartInfo("0123456789abcdef0123456789abcdef");
+                var third=BrowserRibbon.BuildNativeStartInfo("abcdef0123456789abcdef0123456789");
+                string[] flags=second.ArgumentList.ToArray();
+                string[] flags2=third.ArgumentList.ToArray();
+                bool valid=first.ArgumentList.Count==0
+                    && flags.Length==1 && flags[0].StartsWith("--user-data-dir=",StringComparison.Ordinal)
+                    && flags2.Length==1 && flags2[0].StartsWith("--user-data-dir=",StringComparison.Ordinal)
+                    && flags[0]!=flags2[0]
+                    && second.Environment["APPDATA"]!=third.Environment["APPDATA"]
+                    && first.Environment["APPDATA"]==Environment.GetEnvironmentVariable("APPDATA");
+                Environment.ExitCode=valid?0:12;
+            }catch{Environment.ExitCode=12;}
+            return;
+        }
         ApplicationConfiguration.Initialize();
         bool smoke=args.Contains("--dyclok-direct-launch-smoke",StringComparer.OrdinalIgnoreCase);
         try{
@@ -157,11 +174,14 @@ internal static class Program {
             // ribbon is constructed. No intermediate manager screen.
             Process official=BrowserRibbon.StartNative("legacy");
             if(smoke){
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v637-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v638-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=official.Id>0,pid=official.Id,
                         largeManagerWindow=false,startedBeforeRibbon=true}));
             }
-            Application.Run(new BrowserRibbon(official,smoke));
+            if(smoke || args.Contains("--dyclok-legacy-ribbon",StringComparer.OrdinalIgnoreCase))
+                Application.Run(new BrowserRibbon(official,smoke));
+            else
+                Application.Run(new IntegratedAccountsWindow(official));
         }catch(Exception ex){
             MessageBox.Show(ex.Message,"No se pudo iniciar DyclokPRO",MessageBoxButtons.OK,MessageBoxIcon.Error);
             Environment.ExitCode=2;
@@ -183,7 +203,7 @@ internal sealed class BrowserRibbon:Form{
         WrapContents=false,AutoScroll=false,Padding=new Padding(4,2,0,0)
     };
     private readonly System.Windows.Forms.Timer clock=new(){Interval=750};
-    private readonly NotifyIcon tray=new(){Icon=SystemIcons.Application,Text="DyclokPRO v6.37 · Cuentas"};
+    private readonly NotifyIcon tray=new(){Icon=SystemIcons.Application,Text="DyclokPRO v6.38 · Cuentas"};
     private SessionDiagnosticsWindow? diagnostics;
     private string active="legacy";
     private readonly bool directSmoke;
@@ -197,7 +217,7 @@ internal sealed class BrowserRibbon:Form{
         AccountStore.NamesChanged+=()=>{if(IsHandleCreated)BeginInvoke((Action)RebuildTabs);};
         running["legacy"]=official;
         SessionDiagnostics.Observe(official,"legacy");
-        Text="DyclokPRO v6.37";
+        Text="DyclokPRO v6.38";
         FormBorderStyle=FormBorderStyle.None;
         StartPosition=FormStartPosition.Manual;
         ShowInTaskbar=false;
@@ -244,7 +264,7 @@ internal sealed class BrowserRibbon:Form{
             clock.Start();
             if(directSmoke){
                 int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v637-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v638-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=pid>0,pid,largeManagerWindow=false}));
                 var done=new System.Windows.Forms.Timer{Interval=1800};
                 done.Tick+=(_,_)=>{done.Stop();done.Dispose();Exit();};done.Start();
@@ -300,6 +320,12 @@ internal sealed class BrowserRibbon:Form{
         // Never alter APPDATA/LOCALAPPDATA/TEMP/TMP for "legacy".
         // The old v6.27 Electron directory is preserved, not silently migrated.
         if(id=="legacy")return info;
+        // Chromium user data must be explicitly isolated as well as Windows
+        // environment paths. Without this, Electron may reuse its first
+        // instance's singleton lock and never create another account window.
+        // No tokens or sessions are copied from principal to secondary.
+        string isolatedChromium=Path.Combine(AccountStore.DirectoryFor(id),"Engine307","ElectronUserData");
+        info.ArgumentList.Add("--user-data-dir="+isolatedChromium);
         // Existing secondary sessions from v6.30/v6.35 continue to use their
         // separate Engine307 trees. Isolation is provisional and requires
         // real sign-in/profile tests; don't claim that provider accepts them.
@@ -308,7 +334,7 @@ internal sealed class BrowserRibbon:Form{
         string local=Path.Combine(engine,"Local");
         string temp=Path.Combine(engine,"Temp");
         if(createDirectories){
-            foreach(string dir in new[]{roaming,local,temp})Directory.CreateDirectory(dir);
+            foreach(string dir in new[]{roaming,local,temp,isolatedChromium})Directory.CreateDirectory(dir);
         }
         info.Environment["APPDATA"]=roaming;
         info.Environment["LOCALAPPDATA"]=local;
