@@ -33,6 +33,9 @@ internal sealed class OfficialApiArchiveWindow:Form{
     private readonly List<OfficialProfile> profiles=new();
     private bool executing=false;
     private bool capabilityCookies=false,capabilityBookmarks=false,capabilityFingerprint=false;
+    // The documented Local API V1 is preferred. V2 is attempted only when V1
+    // reports that its endpoint is unavailable, never after an auth rejection.
+    private bool usingLocalV1=true;
     private int failures=0,autoCursor=0;
     private const int MaxResponse=8*1024*1024;
     private static readonly Regex ProfileId=new(@"^(?:[0-9]{1,25}|[a-f0-9]{32}|[a-f0-9\-]{36})$",RegexOptions.IgnoreCase);
@@ -45,7 +48,7 @@ internal sealed class OfficialApiArchiveWindow:Form{
         Font=new Font("Segoe UI",10);
         BackColor=Color.FromArgb(17,34,43);ForeColor=Color.White;
         var intro=new Label{
-            Text="API local V2 oficial de DICloak (GET, sin modificar perfiles). Abre DICloak e inicia sesión antes de conectar.",
+            Text="API local oficial de DICloak (V1 documentada, V2 si está disponible). Inicia sesión en DICloak antes de conectar.",
             Dock=DockStyle.Top,Height=38,ForeColor=Color.White
         };
         var line=new FlowLayoutPanel{Dock=DockStyle.Top,Height=46,WrapContents=false};
@@ -60,7 +63,7 @@ internal sealed class OfficialApiArchiveWindow:Form{
         help.Click+=(_,_)=>MessageBox.Show(this,
             "En DICloak oficial: Más ajustes → Open API (API abierta). "+
             "Copia el puerto del servicio local y tu clave API. La clave no se guarda en disco. "+
-            "Si tu cuenta no habilita Local API V2, el diagnóstico indicará que no está disponible.",
+            "Si tu cliente no habilita la API local, el diagnóstico mostrará el error sin modificar la sesión.",
             "Configuración de API local");
         line.Controls.Add(help);
 
@@ -195,34 +198,69 @@ internal sealed class OfficialApiArchiveWindow:Form{
         catch(Exception ex){
             // Never display raw response bytes, secrets or HTTP headers.
             notice.Text="Error: "+ex.Message+
-                "\nComprueba el puerto, la autorización y que la API V2 esté disponible.";
+                "\nComprueba el puerto, la autorización y que la API local esté disponible.";
         }finally{executing=false;}
     }
+    private static bool IsAbsentEndpoint(InvalidOperationException ex)=>
+        ex.Message.StartsWith("API HTTP 404.",StringComparison.Ordinal) ||
+        ex.Message.StartsWith("API HTTP 405.",StringComparison.Ordinal) ||
+        ex.Message.StartsWith("API HTTP 501.",StringComparison.Ordinal);
+
     private async Task LoadProfiles(HttpClient client){
-        using(var caps=(await Get(client,"/openapi/v2/capabilities")).Item2){
-            var data=caps.RootElement.GetProperty("data");
-            if(!data.TryGetProperty("profiles",out var cap)||cap.ValueKind!=JsonValueKind.True)
-                throw new InvalidOperationException("La API no declara disponibilidad de perfiles.");
-            capabilityCookies=data.TryGetProperty("cookies",out var c)&&c.ValueKind==JsonValueKind.True;
-            capabilityBookmarks=data.TryGetProperty("bookmarks",out var b)&&b.ValueKind==JsonValueKind.True;
-            capabilityFingerprint=data.TryGetProperty("fingerprints",out var f)&&f.ValueKind==JsonValueKind.True;
+        // Do not turn HTTP 401/403, code=300003 or other provider errors into
+        // permission fallbacks. Switching endpoints cannot repair authentication.
+        try{
+            await LoadProfilesV1(client);
+            usingLocalV1=true;
+        }catch(InvalidOperationException ex) when(IsAbsentEndpoint(ex)){
+            await LoadProfilesV2(client);
+            usingLocalV1=false;
         }
-        profiles.Clear();
+    }
+    private async Task LoadProfilesV1(HttpClient client){
+        var loaded=new List<OfficialProfile>();
         var seen=new HashSet<string>(StringComparer.Ordinal);
         for(int page=1;page<=OfficialApiContract.MaxPages;page++){
-            var response=await Get(client,"/openapi/v2/profiles?page="+page+
+            var response=await Get(client,"/openapi/v1/env/list?page_no="+page+
                 "&page_size="+OfficialApiContract.PageSize);
             using(response.Item2){
                 var current=OfficialApiContract.ParseProfilesPage(response.Item2.RootElement);
-                foreach(var p in current){
-                    if(seen.Add(p.Id))profiles.Add(p);
-                }
+                foreach(var p in current)if(seen.Add(p.Id))loaded.Add(p);
                 if(!OfficialApiContract.HasMorePages(response.Item2.RootElement,page,current.Count))break;
             }
-            // Keep the authorized Local API responsive and avoid over-querying.
             await Task.Delay(120);
         }
+        // Local V1 profile lists may contain sensitive fields. Only the small
+        // projected ID/name/status structures above are kept, never raw JSON.
+        profiles.Clear();profiles.AddRange(loaded);
+        capabilityCookies=false;capabilityBookmarks=false;capabilityFingerprint=false;
     }
+    private async Task LoadProfilesV2(HttpClient client){
+
+            using(var caps=(await Get(client,"/openapi/v2/capabilities")).Item2){
+                var data=caps.RootElement.GetProperty("data");
+                if(!data.TryGetProperty("profiles",out var cap)||cap.ValueKind!=JsonValueKind.True)
+                    throw new InvalidOperationException("La API no declara disponibilidad de perfiles.");
+                capabilityCookies=data.TryGetProperty("cookies",out var c)&&c.ValueKind==JsonValueKind.True;
+                capabilityBookmarks=data.TryGetProperty("bookmarks",out var b)&&b.ValueKind==JsonValueKind.True;
+                capabilityFingerprint=data.TryGetProperty("fingerprints",out var f)&&f.ValueKind==JsonValueKind.True;
+            }
+            profiles.Clear();
+            var seen=new HashSet<string>(StringComparer.Ordinal);
+            for(int page=1;page<=OfficialApiContract.MaxPages;page++){
+                var response=await Get(client,"/openapi/v2/profiles?page="+page+
+                    "&page_size="+OfficialApiContract.PageSize);
+                using(response.Item2){
+                    var current=OfficialApiContract.ParseProfilesPage(response.Item2.RootElement);
+                    foreach(var p in current){
+                        if(seen.Add(p.Id))profiles.Add(p);
+                    }
+                    if(!OfficialApiContract.HasMorePages(response.Item2.RootElement,page,current.Count))break;
+                }
+                // Keep the authorized Local API responsive and avoid over-querying.
+                await Task.Delay(120);
+            }
+        }
     private async Task Reload()=>await Busy(async()=>{
         using var client=Client();
         await LoadProfiles(client);
@@ -232,14 +270,24 @@ internal sealed class OfficialApiArchiveWindow:Form{
                 capabilityBookmarks?"API permite consultar":"No soportado",
                 capabilityCookies?"Requiere autorización":"No soportado");
         }
-        notice.Text=$"API autorizada · {profiles.Count} perfiles encontrados por paginación. "+
-            $"Huellas: {(capabilityFingerprint?"consulta admitida":"no soportada")}; "+
-            $"cookies y marcadores: capacidad declarada, contenidos NO verificados.\n"+Warning;
+        notice.Text=$"API local {(usingLocalV1?"V1":"V2")} autorizada · {profiles.Count} perfiles encontrados. "+
+            (usingLocalV1
+                ?"V1: solo lista segura de nombres, IDs y estado; archivado de detalles deshabilitado."
+                :$"Huellas: {(capabilityFingerprint?"consulta admitida":"no soportada")}; "+
+                 "cookies y marcadores: capacidad declarada, contenidos NO verificados.")+
+            "\n"+Warning;
     });
     private async Task InspectSelected()=>await Busy(async()=>{
         if(table.CurrentRow?.Cells[1].Value is not string id||
            !OfficialApiContract.ValidProfileId(id))
             throw new InvalidOperationException("Selecciona un perfil válido.");
+        if(usingLocalV1){
+            var p=profiles.FirstOrDefault(x=>x.Id==id)??throw new InvalidOperationException("Perfil no encontrado.");
+            MessageBox.Show(this,"Nombre: "+p.Name+"\nID: "+p.Id+"\nEstado: "+p.Status+
+                "\n\nDiagnóstico limitado a la lista oficial V1, sin consultar datos privados.",
+                "Diagnóstico de perfil — API V1",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            return;
+        }
         using var client=Client();
         var response=await Get(client,"/openapi/v2/profiles/"+id);
         using(response.Item2){
@@ -255,6 +303,7 @@ internal sealed class OfficialApiArchiveWindow:Form{
             throw new InvalidOperationException("Selecciona un perfil primero.");
         var selected=profiles.FirstOrDefault(x=>x.Id==id);
         if(selected is null)throw new InvalidOperationException("Perfil no encontrado.");
+        if(usingLocalV1)throw new InvalidOperationException("La API V1 documentada no ofrece aquí un endpoint seguro de archivado de detalles. Se conserva la lista solo en memoria.");
         using var client=Client();
         failures=0;
         int saved=await SaveProfile(client,selected);
@@ -264,6 +313,8 @@ internal sealed class OfficialApiArchiveWindow:Form{
         using var client=Client();
         if(profiles.Count==0)await LoadProfiles(client);
         if(profiles.Count==0)throw new InvalidOperationException("No hay perfiles válidos en la API.");
+        if(usingLocalV1){auto.Checked=false;timer.Stop();
+            throw new InvalidOperationException("La API local V1 se limita a consultar perfiles; el archivado V2 no está habilitado.");}
         failures=0;
         int written=0,selected=periodic?Math.Min(10,profiles.Count):profiles.Count;
         for(int i=0;i<selected;i++){
