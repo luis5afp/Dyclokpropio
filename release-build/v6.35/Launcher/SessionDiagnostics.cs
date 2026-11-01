@@ -116,23 +116,39 @@ internal sealed class SessionDiagnosticsWindow : Form
 
         var title = new Label {
             Dock = DockStyle.Top, Height = 44,
-            Text = "Motor 3.0.7 · Estado de cuentas y procesos",
-            Font = new Font("Segoe UI", 13, FontStyle.Bold)
+            Text = "Diagnóstico · estado y carpeta",
+            Font = new Font("Segoe UI", 12, FontStyle.Bold)
         };
         note.Dock = DockStyle.Bottom; note.Height = 85;
         note.ForeColor = Color.Khaki;
-        note.Text = "Estado de Windows: sin contraseñas, cookies ni tokens. " +
-                    "El botón Conexiones permite activar NetLog de Chromium en el siguiente inicio; " +
-                    "el modo completo puede guardar información privada sin cifrar.";
-        var actions = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 45 };
-        var openLogs = new Button { Text = "Abrir diagnóstico", AutoSize = true };
-        openLogs.Click += (_, _) =>
-        {
-            string folder = SessionDiagnostics.JournalFolder;
-            Directory.CreateDirectory(folder);
-            Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { folder }, UseShellExecute = true });
+        note.Text = "Carpeta: registros originales disponibles de esta cuenta. " +
+                    "NetLog es opcional y empieza al reiniciar; NO descarga automáticamente " +
+                    "todos los perfiles, solicitudes ni respuestas. " +
+                    "En modo completo puede contener cookies o claves sin cifrar.";
+        var actions = new FlowLayoutPanel {
+            Dock=DockStyle.Bottom,Height=83,Padding=new Padding(4),
+            WrapContents=true,AutoScroll=true
         };
-        var capture = new Button { Text = "Conexiones", AutoSize = true };
+        var openLogs = new Button { Text = "Carpeta de esta cuenta", AutoSize = true };
+        openLogs.Click += (_, _) => {
+            try {
+                if(selectedAccount is null)return;
+                var (id,alias)=selectedAccount();
+                AccountDiagnosticFolder.Open(id,alias);
+            }catch(Exception ex) when(ex is IOException or UnauthorizedAccessException or
+                System.ComponentModel.Win32Exception or ArgumentException){
+                MessageBox.Show(this,ex.Message,"Carpeta de diagnóstico");
+            }
+        };
+        var globalLogs = new Button { Text = "Eventos generales", AutoSize=true };
+        globalLogs.Click+=(_,_)=>{
+            string folder=SessionDiagnostics.JournalFolder;
+            Directory.CreateDirectory(folder);
+            Process.Start(new ProcessStartInfo("explorer.exe"){
+                ArgumentList={folder},UseShellExecute=true
+            });
+        };
+        var capture = new Button { Text = "Capturar red", AutoSize = true };
         capture.Click += (_,_) => {
             if(selectedAccount is not null) {
                 var (id,alias)=selectedAccount();
@@ -142,9 +158,10 @@ internal sealed class SessionDiagnosticsWindow : Form
         };
         var refresh = new Button { Text = "Actualizar", AutoSize = true };
         refresh.Click += (_, _) => Reload();
-        actions.Controls.Add(refresh);
         actions.Controls.Add(openLogs);
         if(selectedAccount is not null)actions.Controls.Add(capture);
+        actions.Controls.Add(refresh);
+        actions.Controls.Add(globalLogs);
 
         processes.Dock = DockStyle.Fill;
         processes.ReadOnly = true; processes.RowHeadersVisible = false;
