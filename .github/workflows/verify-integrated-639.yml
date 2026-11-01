@@ -88,3 +88,28 @@ jobs:
             throw 'Windows could not embed the original DICloak window; keep integrated UI experimental'
           }
           Write-Host 'OFFICIAL_307_WINDOW_EMBEDDED_WITHOUT_ASAR_PATCH=PASS'
+      - name: Test actual switching between two native account tabs
+        shell: pwsh
+        run: |
+          $folder=Join-Path $env:LOCALAPPDATA 'DyclokPRO\Cuentas'
+          New-Item -Path $folder -ItemType Directory -Force | Out-Null
+          @'
+          {"schema":1,"accounts":[{"id":"legacy","name":"Cuenta principal"},{"id":"0123456789abcdef0123456789abcdef","name":"Cuenta secundaria de prueba"}]}
+          '@ | Set-Content -Path (Join-Path $folder 'cuentas.json') -Encoding UTF8
+          $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
+          $test=Start-Process -FilePath $exe -ArgumentList '--dyclok-internal-two-tabs-smoke' -PassThru
+          if(-not $test.WaitForExit(65000)){
+            Stop-Process -Id $test.Id -Force -ErrorAction SilentlyContinue
+            throw 'Two-tab integration did not complete'
+          }
+          $marker=Join-Path $env:TEMP 'dyclokpro-v639-two-tabs.json'
+          if(-not(Test-Path $marker)){throw 'Two-tab report missing'}
+          $r=Get-Content $marker -Raw | ConvertFrom-Json
+          Write-Host "TWO_TABS=$($r.internalTabCount)"
+          Write-Host "PRIMARY_PROCESS=$($r.principalPid)"
+          Write-Host "SECONDARY_PROCESS=$($r.secondaryPid)"
+          Write-Host "TABS_SWITCHED_AND_RETURNED=$($r.verifiedTwoTabs)"
+          if($test.ExitCode -ne 0 -or -not $r.verifiedTwoTabs){
+            throw 'Cannot confirm switching between 2 separate official engine accounts'
+          }
+          Write-Host 'TWO_ACCOUNT_INTERNAL_TABS_SWITCH=PASS'
