@@ -221,9 +221,10 @@ internal static class Program {
                 Application.Run(new BrowserRibbon(official,smoke));
             else {
                 bool embedSmoke=args.Contains("--dyclok-integrated-window-smoke",StringComparer.OrdinalIgnoreCase);
-                using var integrated=new IntegratedAccountsWindow(official,embedSmoke);
+                bool multiTabSmoke=args.Contains("--dyclok-internal-two-tabs-smoke",StringComparer.OrdinalIgnoreCase);
+                using var integrated=new IntegratedAccountsWindow(official,embedSmoke || multiTabSmoke,multiTabSmoke);
                 Application.Run(integrated);
-                if(embedSmoke&&!integrated.SmokeSucceeded)Environment.ExitCode=16;
+                if((embedSmoke||multiTabSmoke)&&!integrated.SmokeSucceeded)Environment.ExitCode=16;
             }
         }catch(Exception ex){
             MessageBox.Show(ex.Message,"No se pudo iniciar DyclokPRO",MessageBoxButtons.OK,MessageBoxIcon.Error);
