@@ -63,7 +63,13 @@ jobs:
         shell: pwsh
         run: |
           $exe=Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe'
-          $probe=Start-Process -FilePath $exe -ArgumentList '--dyclok-integrated-window-smoke' -Wait -PassThru
+          # Start-Process -Wait also waits for descendants; the official
+          # DICloak.exe intentionally remains alive after the host closes.
+          $probe=Start-Process -FilePath $exe -ArgumentList '--dyclok-integrated-window-smoke' -PassThru
+          if(-not $probe.WaitForExit(40000)){
+            Stop-Process -Id $probe.Id -Force -ErrorAction SilentlyContinue
+            throw 'Integrated shell did not exit its smoke mode'
+          }
           $marker=Join-Path $env:TEMP 'dyclokpro-v638-embedded-window.json'
           if(-not(Test-Path $marker)){throw 'Integrated tab smoke report missing'}
           $result=Get-Content $marker -Raw | ConvertFrom-Json
