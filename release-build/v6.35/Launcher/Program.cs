@@ -117,6 +117,10 @@ internal static class Program {
             catch(Exception){Environment.ExitCode=21;}
             return;
         }
+        if(args.Contains("--dyclok-netlog-native-smoke",StringComparer.OrdinalIgnoreCase)){
+            Environment.ExitCode=NativeNetLogCapture.RunNativeSmoke();
+            return;
+        }
         if(args.Contains("--dyclok-focus-child",StringComparer.OrdinalIgnoreCase)){
             Environment.ExitCode=EngineFocusSmoke.Child();return;
         }
