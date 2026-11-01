@@ -51,6 +51,7 @@ internal sealed class EngineWindowHost : Panel
     private IntPtr embeddedWindow;
     private IntPtr formerParent;
     private IntPtr formerStyle;
+    private IntPtr rememberedInputHwnd;
     // DICloak paints its own title/status chrome inside Electron. Windows
     // WS_CAPTION removal alone is insufficient (v6.38 screenshot). Clip the
     // inner 28px app header, keeping the actual engine unmodified.
@@ -65,6 +66,21 @@ internal sealed class EngineWindowHost : Panel
     internal bool IsEmbedded => embeddedWindow != IntPtr.Zero && IsHandleCreated &&
         IsWindow(embeddedWindow) && GetParent(embeddedWindow) == Handle;
     internal string? LastError { get; private set; }
+    internal bool LastKeyboardFocusRestored { get; private set; }
+    internal IntPtr ProviderHwnd => IsEmbedded ? embeddedWindow : IntPtr.Zero;
+    internal void RememberKeyboardFocus(){
+        if(IsEmbedded){
+            IntPtr candidate=EngineInputFocus.Remember(embeddedWindow);
+            if(candidate!=IntPtr.Zero)rememberedInputHwnd=candidate;
+        }
+    }
+    internal bool RestoreKeyboardFocus(){
+        if(!IsEmbedded||FindForm() is not Form f||!f.IsHandleCreated)
+            return false;
+        LastKeyboardFocusRestored=EngineInputFocus.Restore(
+            embeddedWindow,f.Handle,rememberedInputHwnd);
+        return LastKeyboardFocusRestored;
+    }
 
     internal EngineWindowHost()
     {
@@ -112,6 +128,7 @@ internal sealed class EngineWindowHost : Panel
                 return false;
             }
             embeddedWindow = window;
+            rememberedInputHwnd=IntPtr.Zero;
             ResizeEmbedded();
             ShowWindow(embeddedWindow, 5);
             LastError = null;
@@ -141,6 +158,8 @@ internal sealed class EngineWindowHost : Panel
     {
         IntPtr child = embeddedWindow;
         embeddedWindow = IntPtr.Zero;
+        rememberedInputHwnd=IntPtr.Zero;
+        LastKeyboardFocusRestored=false;
         if (child == IntPtr.Zero || !IsWindow(child)) return;
         // The official process is not closed when the host is closed.
         // Restore normal styles before returning its HWND to the desktop.
