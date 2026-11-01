@@ -131,7 +131,7 @@ internal static class Program {
             bool secondaryIsolated=
                 !string.Equals(separatedInfo.Environment["APPDATA"],officialInfo.Environment["APPDATA"],StringComparison.OrdinalIgnoreCase)
                 &&!string.Equals(separatedInfo.Environment["LOCALAPPDATA"],officialInfo.Environment["LOCALAPPDATA"],StringComparison.OrdinalIgnoreCase);
-            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v635-selftest.json"),
+            File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v637-selftest.json"),
                 JsonSerializer.Serialize(new {
                     version=MarketingVersion,validOriginalEngine=valid, nativePrincipal,secondaryIsolated,
                     sha256=digest,accounts=accounts.Select(x=>new {id=x.Id,name=x.Name}).ToArray(),
@@ -157,7 +157,7 @@ internal static class Program {
             // ribbon is constructed. No intermediate manager screen.
             Process official=BrowserRibbon.StartNative("legacy");
             if(smoke){
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v635-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v637-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=official.Id>0,pid=official.Id,
                         largeManagerWindow=false,startedBeforeRibbon=true}));
             }
@@ -244,7 +244,7 @@ internal sealed class BrowserRibbon:Form{
             clock.Start();
             if(directSmoke){
                 int pid=running.TryGetValue("legacy",out var p)?p.Id:0;
-                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v635-direct-launch.json"),
+                File.WriteAllText(Path.Combine(Path.GetTempPath(),"dyclokpro-v637-direct-launch.json"),
                     JsonSerializer.Serialize(new{openedNative=pid>0,pid,largeManagerWindow=false}));
                 var done=new System.Windows.Forms.Timer{Interval=1800};
                 done.Tick+=(_,_)=>{done.Stop();done.Dispose();Exit();};done.Start();
