@@ -353,7 +353,7 @@ internal sealed class IntegratedAccountsWindow : Form
     {
         if(closing || starting || rebuildingTabs || !IsHandleCreated || pages.Count==0) return;
         string id=ActiveId;
-        if(!pages.TryGetValue(id,out var entry))return;
+        if(!pages.TryGetValue(id,out var entry)||entry.Closing)return;
         if(entry.Process is null || HasExited(entry.Process))
         {
             if(id=="legacy" && entry.Process is not null){
@@ -453,6 +453,84 @@ internal sealed class IntegratedAccountsWindow : Form
         }
     }
 
+    // Tabs represent RUNNING processes, not saved accounts. The provider
+    // receives a normal WM_CLOSE and controls its own shutdown/session state.
+    // Never delete account data or forcibly terminate without consent.
+    [DllImport("user32.dll",SetLastError=true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool PostMessage(IntPtr hwnd,uint msg,IntPtr wp,IntPtr lp);
+    private const uint WM_CLOSE=0x0010;
+
+    private void CloseAccount(string id){
+        if(!pages.TryGetValue(id,out var entry))return;
+        if(entry.Starting){
+            MessageBox.Show(this,"La cuenta sigue iniciándose. Intenta cerrarla cuando aparezca su ventana.",
+                "Cuenta iniciándose",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            return;
+        }
+        if(entry.Process is null || HasExited(entry.Process)){
+            RemoveOpenTab(id);
+            return;
+        }
+        if(entry.Closing){
+            var force=MessageBox.Show(this,
+                "La cuenta aún no finalizó. ¿Forzar el cierre del proceso?\n\n"+
+                "Esto puede perder datos de navegación no guardados. No borra la cuenta.",
+                "La cuenta sigue abierta",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
+            if(force==DialogResult.Yes){
+                try{entry.Process.Kill(entireProcessTree:true);}
+                catch(InvalidOperationException){}
+                catch(System.ComponentModel.Win32Exception){
+                    MessageBox.Show(this,"Windows no permitió finalizar esa cuenta.");
+                }
+            }
+            return;
+        }
+        if(MessageBox.Show(this,
+            "¿Cerrar esta cuenta? Su pestaña desaparecerá cuando DICloak termine.\n"+
+            "La cuenta y sus archivos seguirán disponibles desde el botón +.",
+            "Cerrar "+Name(id),MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)
+            return;
+        // A reparented HWND can be missing from Process.MainWindowHandle.
+        // Prefer posting to the verified provider window actually embedded.
+        bool posted=false;
+        if(entry.Host.ProviderHwnd!=IntPtr.Zero){
+            posted=PostMessage(entry.Host.ProviderHwnd,WM_CLOSE,IntPtr.Zero,IntPtr.Zero);
+        }
+        if(!posted){
+            try{posted=entry.Process.CloseMainWindow();}
+            catch(InvalidOperationException){}
+        }
+        if(!posted){
+            MessageBox.Show(this,
+                "No se pudo solicitar el cierre a DICloak. Abre la ventana externa y ciérrala desde allí.",
+                "Ventana no disponible",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+            return;
+        }
+        entry.Closing=true;
+        entry.CloseRequestedUtc=DateTime.UtcNow;
+        entry.Status.Visible=true;
+        entry.Status.Text="Cerrando cuenta…";
+    }
+
+    private void RemoveOpenTab(string id){
+        if(!pages.TryGetValue(id,out var entry))return;
+        bool old=rebuildingTabs;
+        rebuildingTabs=true;
+        try{
+            // Unparent first so disposing the host cannot destroy the native
+            // DICloak HWND; it should already have exited for normal closure.
+            entry.Host.Detach();
+            pages.Remove(id);
+            accountTabs.TabPages.Remove(entry.Page);
+            entry.Page.Dispose();
+            entry.Process?.Dispose();
+        }finally{rebuildingTabs=old;}
+        accountTabs.Invalidate();
+        if(pages.Count>0 && accountTabs.SelectedTab is not null)
+            OnAccountSelected();
+    }
+
     private void RenameActive()
     {
         string id=ActiveId;
@@ -473,18 +551,32 @@ internal sealed class IntegratedAccountsWindow : Form
     {
         if(closing)return;
         firstTick++;
+        // A native DICloak window can close itself, including from its own X.
+        // Keep open tabs synchronized with actual Windows process lifetime.
+        if(!embedSmoke){
+            foreach(var stale in pages.Values.ToArray()){
+                if(stale.Process is null || stale.Starting)continue;
+                if(HasExited(stale.Process)){
+                    RemoveOpenTab(stale.Id);
+                    continue;
+                }
+                if(stale.Closing && DateTime.UtcNow-stale.CloseRequestedUtc>TimeSpan.FromSeconds(8)){
+                    stale.Status.Visible=true;
+                    stale.Status.Text="DICloak sigue abierto. Pulsa × para confirmar un cierre forzado.";
+                }
+            }
+        }
         if(!pages.TryGetValue(ActiveId,out var entry))return;
-        UpdateHost(entry);
+        if(!entry.Closing)UpdateHost(entry);
         if(twoTabSmoke){
             // Proves actual visual tab switching, not merely two Process.Start
             // PIDs. The CI creates a disposable auxiliary account beforehand.
             if(smokePhase==0 && entry.Id=="legacy" && entry.Host.IsEmbedded){
                 smokePrincipalPid=entry.Process?.Id??0;
-                var auxiliary=pages.Values.FirstOrDefault(p=>p.Id!="legacy");
-                if(auxiliary is not null){
-                    smokeSecondaryId=auxiliary.Id;
+                if(smokeSecondaryId is not null){
+                    EnsureOpenAccount(smokeSecondaryId);
                     smokePhase=1;
-                    Select(auxiliary.Id);
+                    Select(smokeSecondaryId);
                     return;
                 }
             }
@@ -499,7 +591,17 @@ internal sealed class IntegratedAccountsWindow : Form
                 SmokeSucceeded=aux is not null && aux.Host.IsEmbedded
                     && smokePrincipalPid>0 && smokeSecondaryPid>0
                     && smokePrincipalPid!=smokeSecondaryPid
-                    && accountTabs.TabCount>=2;
+                    && initialTabCount==1 && accountTabs.TabCount==2;
+                if(SmokeSucceeded && aux?.Process is not null){
+                    // CI only: simulate closing a disposable account; assert
+                    // the opened tab disappears while its saved registry remains.
+                    try{
+                        if(!aux.Process.HasExited)aux.Process.Kill(entireProcessTree:true);
+                        aux.Process.WaitForExit(3000);
+                    }catch(InvalidOperationException){}
+                    catch(System.ComponentModel.Win32Exception){}
+                    RemoveOpenTab(aux.Id);
+                }
                 RecordSmokeResult(true);
                 Close();
                 return;
@@ -537,6 +639,10 @@ internal sealed class IntegratedAccountsWindow : Form
                     secondaryPid=smokeSecondaryPid,
                     activeAccountId=switched?ActiveId:"legacy",
                     internalTabCount=accountTabs.TabCount,
+                    initialTabCount,
+                    savedAccountsCount=AccountStore.Get().Count,
+                    closedAccountTabRemoved=switched && SmokeSucceeded &&
+                        pages.Count==1 && accountTabs.TabCount==1,
                     accountSessionDataCopied=false
                 }));
         }catch(IOException){}
