@@ -36,6 +36,23 @@ jobs:
               Write-Host "ENGINE_MODULE=$($item.file); bytes=$($item.bytes); indicators=$($item.signals.PSObject.Properties.Name -join ',')"
             }
           }
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compile independent DyclokPRO source and run offline engine tests
+        shell: pwsh
+        run: |
+          dotnet publish release-build/v6.35/Launcher/DyclokPRO.csproj -c Release -r win-x64 --self-contained false -o engine307-launcher
+          if($LASTEXITCODE -ne 0){throw 'DyclokPRO source compilation failed'}
+          $launcher=(Resolve-Path engine307-launcher/DyclokPRO.exe).Path
+          Copy-Item -LiteralPath $launcher -Destination "$env:RUNNER_TEMP\official307\DyclokPRO.exe" -Force
+          $binary=(Join-Path $env:RUNNER_TEMP 'official307\DyclokPRO.exe')
+          $test=Start-Process -FilePath $binary -ArgumentList '--dyclok-engine-guard-test' -Wait -PassThru
+          if($test.ExitCode -ne 0){throw 'Official engine checksum/PE version test failed'}
+          $contract=Start-Process -FilePath $launcher -ArgumentList '--dyclok-api-contract-test' -Wait -PassThru
+          if($contract.ExitCode -ne 0){throw 'Local API response contract failed'}
+          Write-Host 'ENGINE307_INTEGRITY_AND_OWN_LAUNCHER_SOURCE=PASS'
+          Write-Host 'LIVE_LOGIN_AND_REMOTE_PROFILE_LOAD=NOT_TESTED'
       - name: Upload architecture map without vendor source
         uses: actions/upload-artifact@v4
         with:
