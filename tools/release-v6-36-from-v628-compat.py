@@ -89,7 +89,18 @@ def patch(dest):
 
  ui=Path("release-build/v6.36/compat307-ui.js").read_bytes()
  backend=Path("release-build/v6.36/compat307-backend.js").read_bytes()
- for script in ("release-build/v6.36/compat307-ui.js","release-build/v6.36/compat307-backend.js"):
+ archive_target=unpacked/"dist/dyclokpro-archive.js"
+ archive_entry=meta(hdr,"dist/dyclokpro-archive.js")
+ legacy_archive=Path("release-build/v6.28/raw-archive-ui.js").read_bytes()
+ if archive_target.read_bytes()!=legacy_archive or not archive_entry.get("unpacked"):
+  raise RuntimeError("BLOCKED: original v6.28 archive UI differs")
+ fixed_archive=Path("release-build/v6.36/raw-archive-ui.js").read_bytes()
+ if b"obj.code!==0" not in fixed_archive:
+  raise RuntimeError("BLOCKED: code=300003 filter missing")
+ archive_target.write_bytes(fixed_archive)
+ archive_entry["size"]=len(fixed_archive)
+ archive_entry["integrity"]=integrity(fixed_archive,archive_entry["integrity"]["blockSize"])
+ for script in ("release-build/v6.36/compat307-ui.js","release-build/v6.36/compat307-backend.js","release-build/v6.36/raw-archive-ui.js"):
   subprocess.run(["node","--check",script],check=True)
 
  # Do not replace any existing UI. Add one small module script, OFF by default.
@@ -151,7 +162,7 @@ def patch(dest):
   raise RuntimeError("BLOCKED: compatibility bridge UI mismatch")
  print("BASE_INSTALLER=verified_v6.28")
  print("V628_ORIGINAL_AUTH_API_CHROMIUM=UNCHANGED")
- print("V628_USER_TABS_ARCHIVE_DIAGNOSTICS=RETAINED")
+ print("V628_USER_TABS_AND_ARCHIVE=RETAINED; 300003_ARCHIVE_FILTER=FIXED")
  print("INTERNAL_TECH_VERSION=3.0.7_EXPERIMENTAL_OLD_ENGINE")
  print("GENUINE_307_ENGINE=NOT_BUNDLED")
  print("OPTIONAL_VENDOR_LOCAL_OPEN_API=V1_AND_V2")
