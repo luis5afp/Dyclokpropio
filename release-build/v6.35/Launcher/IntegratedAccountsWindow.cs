@@ -731,7 +731,7 @@ internal sealed class IntegratedAccountsWindow : Form
             sidePanel.Visible=false;
             return;
         }
-        diagnostic=new SessionDiagnosticsWindow(DiagnosticSnapshot){
+        diagnostic=new SessionDiagnosticsWindow(DiagnosticSnapshot,()=> (ActiveId,Name(ActiveId))){
             TopLevel=false,FormBorderStyle=FormBorderStyle.None,
             ShowInTaskbar=false,Dock=DockStyle.Fill
         };
