@@ -1,0 +1,7 @@
+{
+  "name": "dyclokpro-desktop",
+  "version": "6.38.0",
+  "private": true,
+  "description": "External manager for the untouched official DICloak 3.0.7 engine",
+  "devDependencies": {"electron-builder": "^26.0.0"}
+}
