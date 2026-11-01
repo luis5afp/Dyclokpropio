@@ -167,6 +167,45 @@ internal static class Program {
             }catch{Environment.ExitCode=12;}
             return;
         }
+        if(args.Contains("--dyclok-multi-account-native-smoke",StringComparer.OrdinalIgnoreCase)){
+            // Offline Windows CI probe: original engine, two independent
+            // windows and separate userData. Never reads private session data.
+            Process? principal=null,secondary=null;
+            try{
+                principal=BrowserRibbon.StartNative("legacy");
+                System.Threading.Thread.Sleep(3500);
+                secondary=BrowserRibbon.StartNative("0123456789abcdef0123456789abcdef");
+                bool pReady=false,sReady=false,pExited=false,sExited=false;
+                for(int tick=0;tick<40;tick++){
+                    System.Threading.Thread.Sleep(500);
+                    principal.Refresh();secondary.Refresh();
+                    pExited=principal.HasExited;sExited=secondary.HasExited;
+                    if(!pExited)pReady=principal.MainWindowHandle!=IntPtr.Zero;
+                    if(!sExited)sReady=secondary.MainWindowHandle!=IntPtr.Zero;
+                    if((pReady&&sReady)||pExited||sExited)break;
+                }
+                string marker=Path.Combine(Path.GetTempPath(),"dyclokpro-v638-multiwindow-smoke.json");
+                File.WriteAllText(marker,JsonSerializer.Serialize(new {
+                    tested="native_official_307_two_windows",
+                    principalReady=pReady,secondaryReady=sReady,
+                    principalExited=pExited,secondaryExited=sExited,
+                    independentProcessIds=principal.Id!=secondary.Id,
+                    testedRemoteLogin=false
+                }));
+                Environment.ExitCode=(pReady&&sReady&&!pExited&&!sExited&&principal.Id!=secondary.Id)?0:13;
+            }catch(Exception ex){
+                Console.Error.WriteLine(ex.GetType().Name);
+                Environment.ExitCode=13;
+            }finally{
+                foreach(var p in new[]{secondary,principal}){
+                    if(p is null)continue;
+                    try{if(!p.HasExited)p.Kill(entireProcessTree:true);}catch(InvalidOperationException){}
+                    catch(System.ComponentModel.Win32Exception){}
+                    p.Dispose();
+                }
+            }
+            return;
+        }
         ApplicationConfiguration.Initialize();
         bool smoke=args.Contains("--dyclok-direct-launch-smoke",StringComparer.OrdinalIgnoreCase);
         try{
