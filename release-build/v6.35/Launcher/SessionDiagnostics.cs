@@ -60,6 +60,8 @@ internal static class SessionDiagnostics
         }
         catch (IOException) { }
         catch (UnauthorizedAccessException) { }
+        catch (JsonException) { }
+        catch (InvalidDataException) { }
     }
 
     internal static void Observe(Process process, string id)
@@ -94,14 +96,17 @@ internal static class SessionDiagnostics
 internal sealed class SessionDiagnosticsWindow : Form
 {
     private readonly Func<IReadOnlyList<(string Account, int Pid, string State)>> snapshot;
+    private readonly Func<(string Id,string Alias)>? selectedAccount;
     private readonly DataGridView processes = new();
     private readonly DataGridView events = new();
     private readonly Label note = new();
     private readonly System.Windows.Forms.Timer timer = new() { Interval = 1700 };
 
-    internal SessionDiagnosticsWindow(Func<IReadOnlyList<(string Account, int Pid, string State)>> snapshot)
+    internal SessionDiagnosticsWindow(Func<IReadOnlyList<(string Account, int Pid, string State)>> snapshot,
+        Func<(string Id,string Alias)>? selectedAccount=null)
     {
         this.snapshot = snapshot;
+        this.selectedAccount = selectedAccount;
         Text = "DyclokPRO · Diagnóstico de sesión 3.0.7";
         Width = 635; Height = 580; MinimumSize = new Size(480, 420);
         StartPosition = FormStartPosition.Manual;
@@ -116,9 +121,9 @@ internal sealed class SessionDiagnosticsWindow : Form
         };
         note.Dock = DockStyle.Bottom; note.Height = 85;
         note.ForeColor = Color.Khaki;
-        note.Text = "El diagnóstico no puede afirmar si el servidor acepta tu sesión. " +
-                    "Solo muestra apertura, cierre y estado de los procesos de Windows. " +
-                    "No registra claves, cookies ni tokens.";
+        note.Text = "Estado de Windows: sin contraseñas, cookies ni tokens. " +
+                    "El botón Conexiones permite activar NetLog de Chromium en el siguiente inicio; " +
+                    "el modo completo puede guardar información privada sin cifrar.";
         var actions = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 45 };
         var openLogs = new Button { Text = "Abrir diagnóstico", AutoSize = true };
         openLogs.Click += (_, _) =>
@@ -127,10 +132,19 @@ internal sealed class SessionDiagnosticsWindow : Form
             Directory.CreateDirectory(folder);
             Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { folder }, UseShellExecute = true });
         };
+        var capture = new Button { Text = "Conexiones", AutoSize = true };
+        capture.Click += (_,_) => {
+            if(selectedAccount is not null) {
+                var (id,alias)=selectedAccount();
+                using var window=new NativeNetLogCaptureWindow(id,alias);
+                window.ShowDialog(this);
+            }
+        };
         var refresh = new Button { Text = "Actualizar", AutoSize = true };
         refresh.Click += (_, _) => Reload();
         actions.Controls.Add(refresh);
         actions.Controls.Add(openLogs);
+        if(selectedAccount is not null)actions.Controls.Add(capture);
 
         processes.Dock = DockStyle.Fill;
         processes.ReadOnly = true; processes.RowHeadersVisible = false;
