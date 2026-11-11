@@ -92,6 +92,8 @@ async function main() {
           return require('../src/main/diagnostic-console.js');
         case './cache-ipc-compatibility.js':
           return require('../src/main/cache-ipc-compatibility.js');
+        case './startup-health.js':
+          return require('../src/main/startup-health.js');
         case './bundled-extension-launch.js':
         case './bundled-extension-pin.js':
           throw new Error('Cookies Pro integration must not be loaded while disabled');
@@ -125,6 +127,11 @@ async function main() {
     }, { filename: bootstrapPath, timeout: 2000 });
 
     assert.equal(mainLoaded, true, 'Original Electron runtime was not loaded');
+    const startup = JSON.parse(fs.readFileSync(path.join(fixture,'dyclok-startup-health.json'),'utf8'));
+    assert.equal(startup.originalEntrypointLoaded,true);
+    assert.equal(startup.originalCacheHandlerRegistered,true);
+    assert.equal(startup.originalCacheHandlerRegistrations,1);
+    assert.equal(startup.mainEntrypointErrorClass,'none');
     assert.equal(fakeChildProcess.spawn, originalSpawn, 'Cookies Pro modified child process spawn');
     assert.equal(fakeChildProcess.execFile, originalExecFile, 'Cookies Pro modified child process execFile');
     assert.equal(out.exports, originalMain, 'Bootstrapped app changed unexpectedly');

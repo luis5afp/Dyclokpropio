@@ -17,6 +17,13 @@ const { createExtensionDiagnosticWriter } = require('./extension-download-diagno
 const { registerOpenStageDiagnostics } = require('./open-stage-diagnostics.js');
 const { createDiagnosticConsole } = require('./diagnostic-console.js');
 const { installCacheIpcCompatibility } = require('./cache-ipc-compatibility.js');
+const { createStartupHealth } = require('./startup-health.js');
+
+// Record sanitized startup milestones even when the renderer cannot open.
+// Instrumentation is observer-only and never alters native cache deletion.
+let startupHealth = null;
+try { startupHealth = createStartupHealth(require('electron').app); }
+catch { /* Startup must not depend on diagnostics. */ }
 
 // Keep the original DICloak extension repository and integrity verification.
 // Retry a failed HTTPS download once, without turning false into success.
@@ -29,7 +36,10 @@ try {
 // if the runtime registers it with the older ipcMain.on() mechanism.
 // Never skip cleanup or fabricate a positive cache-clear result.
 try {
-  installCacheIpcCompatibility(ipcMain);
+  installCacheIpcCompatibility(ipcMain, {
+    onOriginalRegistered: () => startupHealth?.originalRegistered(),
+    onOriginalRemoved: () => startupHealth?.originalRemoved()
+  });
 } catch (error) {
   console.warn('[Dyclokpropio] Compatibilidad IPC de caché no disponible:', error.message);
 }
@@ -102,4 +112,10 @@ if (ENABLE_BUNDLED_COOKIES_PRO) {
 }
 
 // No modification to the original obfuscated Electron runtime.
-module.exports = require('../../dist-electron/main.js');
+try {
+  module.exports = require('../../dist-electron/main.js');
+  startupHealth?.originalEntrypointLoaded();
+} catch (error) {
+  startupHealth?.originalEntrypointFailed(error);
+  throw error; // Never convert an original startup exception into success.
+}

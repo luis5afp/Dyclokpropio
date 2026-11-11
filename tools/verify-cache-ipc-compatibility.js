@@ -25,7 +25,9 @@ async function main(){
   const ipc=fakeElectron();
   assert.equal(typeof ipc.hasHandler,'undefined',
     'Test fixture must match Electron 31: no hasHandler() method');
-  const feature=installCacheIpcCompatibility(ipc,{waitMs:0});
+  let onNative=0,onRemove=0;
+  const feature=installCacheIpcCompatibility(ipc,{waitMs:0,
+    onOriginalRegistered:()=>onNative++,onOriginalRemoved:()=>onRemove++});
   assert.equal(feature.status().hasHandler,true,
     'IPC transport must be registered BEFORE recovered main initialization');
   assert.equal(feature.status().originalRegistered,false,
@@ -45,6 +47,7 @@ async function main(){
   };
   ipc.handle(CHANNEL,native); // Actual recovered main calls ipcMain.handle.
   assert.equal(feature.status().originalRegistered,true);
+  assert.equal(onNative,1);
   assert.equal(feature.status().originalRegistrations,1);
   assert.deepEqual(await ipc._handlers.get(CHANNEL)(event,fakePayload),
     {msg:'ORIGINAL_CACHE_RESULT',data:{reason:'ORIGINAL_POLICY'}});
@@ -64,6 +67,7 @@ async function main(){
   assert.equal(calls.length,2,'No remote callback must reach original cleaner');
 
   ipc.removeHandler(CHANNEL);
+  assert.equal(onRemove,1);
   assert.equal(feature.status().originalRegistered,false);
   assert.equal(feature.status().hasHandler,true,
     'Keep stable transport present and require native callback to return');
