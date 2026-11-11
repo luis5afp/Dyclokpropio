@@ -1,0 +1,56 @@
+name: Verify rc4 native browser audit is read-only and PowerShell-compatible
+
+on:
+  push:
+    branches:
+      - diagnostics/rc4-native-browser-process-audit-20261026
+    paths:
+      - 'tools/Dyclok_Auditoria_Navegador_rc4.bat'
+      - 'tools/Dyclok_Auditoria_Navegador_rc4_v2.bat'
+      - 'tools/Dyclok_Auditoria_Navegador_rc4_v3.bat'
+      - '.github/workflows/verify-browser-audit-bat.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check embedded PowerShell syntax and no modification operations
+        shell: pwsh
+        run: |
+          foreach($file in @('tools/Dyclok_Auditoria_Navegador_rc4.bat','tools/Dyclok_Auditoria_Navegador_rc4_v2.bat','tools/Dyclok_Auditoria_Navegador_rc4_v3.bat')) {
+          $raw = Get-Content -LiteralPath $file -Raw
+          $marker=':__DYCLOK_AUDIT_PS__'
+          $i=$raw.LastIndexOf($marker)
+          if($i -lt 80){throw 'Embedded BAT marker missing'}
+          $script=$raw.Substring($i+$marker.Length)
+          $tokens=$null; $errs=$null
+          [void][System.Management.Automation.Language.Parser]::ParseInput($script,[ref]$tokens,[ref]$errs)
+          if(@($errs).Count -ne 0){
+            foreach($e in $errs){Write-Host ($e.ErrorId+' '+$e.Message)}
+            throw 'Embedded diagnostic PowerShell has syntax errors'
+          }
+          foreach($forbidden in @('Copy-Item','Move-Item','Remove-Item','Set-Content','Invoke-WebRequest','Invoke-RestMethod','Stop-Process','Start-Process','Set-Item','robocopy','Clear-Content')){
+            if($script -match ('(?i)\\b'+[regex]::Escape($forbidden)+'\\b')){
+              throw ('Read-only auditing contract violated: '+$forbidden)
+            }
+          }
+          if($script -notmatch 'Get-Process' -or $script -notmatch 'ginsbrowser\.exe' -or $script -notmatch 'WriteAllLines'){
+            throw 'Expected process, kernel-presence, privacy-preserving TXT report behavior missing'
+          }
+          if($file -match '_v2'){
+            foreach($token in @('Get-CimInstance','ParentProcessId','DESCENDIENTES_DE_DYCLOK','ORIGEN_')){
+              if(-not $script.Contains($token)){throw ('V2 native correlation feature missing: '+$token)}
+            }
+          }
+          if($file -match '_v3'){
+            foreach($token in @('dyclok-user-cache','ParentFamily','CHROME_NUEVO_PADRE_TIPO_','CACHE_USUARIO_DICLOAK_EXISTE')){
+              if(-not $script.Contains($token)){throw ('V3 cached-kernel correlation missing: '+$token)}
+            }
+          }
+          Write-Host ('PASS: browser audit is syntactically valid, self-contained and read-only: '+$file)
+          }
