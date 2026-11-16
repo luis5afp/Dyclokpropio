@@ -72,6 +72,14 @@ function visit(node, member) {
     }));
     const optionalPrompt = require('../../tools/suppress-native-download-confirmation.js');
     const combined = optionalPrompt.preview(transformed);
+    const { spawnSync } = require('node:child_process');
+    const syntax = spawnSync(process.execPath, ['--check', '--input-type=module'], {
+      input: combined, encoding: 'utf8', maxBuffer: 1024 * 1024
+    });
+    if (syntax.status !== 0) {
+      throw new Error('Modified renderer has invalid JavaScript syntax: ' + syntax.stderr);
+    }
+    console.log('NATIVE_UPDATE_COMBINED_SYNTAX=PASS');
     console.log('NATIVE_OPTIONAL_INSTALL_DIALOG_PREVIEW=' + JSON.stringify({
       exactRenderer: member,
       optionalDownloadDialogSuppressed: true,
