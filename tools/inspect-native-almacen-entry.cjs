@@ -33,7 +33,24 @@ if(mainFile && mainFile.endsWith('.js')){
  const content=get(mainFile);
  console.log('ALMACEN_NATIVE_MAIN_CODE='+JSON.stringify({length:content.length,start:content.slice(0,1400),end:content.slice(-1700),hasCommonJS:content.includes('require('),hasElectron:content.includes('electron')}));
 }
+
+const field=get('dist/assets/TableFieldDialog-V53UVTu7.js');
+const table=get('dist/assets/index-DYRLQ_ke.js');
+const preload=get('dist-electron/preload/index.js');
+console.log('ALMACEN_FIELD_DIALOG='+JSON.stringify({length:field.length,
+  start:field.slice(0,3800),headOrder:field.slice(0,2700),end:field.slice(-330)}));
+const tokens=['const A=','return[...','EnvironmentStatus','Operation','customFixedData','Be.value=[...n]','headerRender','render(l)'];
+for(const [name,content] of [['field',field],['table',table],['preload',preload]]){
+ for(const token of tokens){
+  const idx=content.indexOf(token);
+  if(idx>=0)console.log('ALMACEN_FIELD_DIAGNOSTIC='+JSON.stringify({name,token,at:idx,
+   context:content.slice(Math.max(0,idx-550),Math.min(content.length,idx+1800))}));
+ }
+}
 const env=get('dist/assets/envList-CYDbiryu.js');
+const pos=env.indexOf('customFixedData:Fo.value');
+console.log('ALMACEN_NATIVE_FIELD_PROP='+JSON.stringify({at:pos,
+  context:pos>=0?env.slice(pos-320,pos+700):''}));
 for (const needle of ['prop:"operation"', 'rowKey:"id"', 'label:oa("env.env.environmentStatus"', 'const ts=', 'ts=b(']) {
  const idx=env.indexOf(needle);
  console.log('ALMACEN_RENDER_ANCHOR='+JSON.stringify({needle,index:idx,context:idx<0?'':env.slice(Math.max(0,idx-320),idx+950)}));
