@@ -13,9 +13,16 @@ const download=require('./suppress-native-download-confirmation.js');
 const ASAR_SHA='b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf';
 const PE_SHA='e00064c5195235a4eb492194cd0136cc7d81c7be8eab9acb75ffdb6e26e0c29f';
 const COLUMN_ANCHOR='zo.isSelectTable?{}:{prop:"operation"';
-const ADD_COLUMN='zo.isSelectTable?{}:{prop:"almacen_lab",label:"Almacén",fixed:"right",width:110,render:({row:e})=>se(Ae,{type:"primary",plain:!0,title:"Datos ficticios: laboratorio local",onClick:t=>{t.stopPropagation();const r=window.ipcRenderer;r&&r.invoke&&r.invoke("almacen-lab:open",e.id).catch(()=>{})}},{default:()=>"Abrir"})},';
+const ADD_COLUMN='zo.isSelectTable?{}:{prop:"almacen_lab",label:"Almacén",fixed:"right",width:115,render:({row:e})=>se(Ae,{type:"primary",plain:!0,title:"Almacén de pruebas (datos ficticios)",onClick:t=>{t.stopPropagation();const r=window.dicloakAlmacenLab;r&&typeof r.open==="function"?r.open(String(e.id??"")).then(e=>{e.ok||console.warn("[Almacén Lab]",e.reason)}).catch(console.warn):console.warn("[Almacén Lab] Puente no disponible") }},{default:()=>"Abrir"})},';
+const FIELD_CONFIG='customFixedData:[...(Array.isArray(Fo.value)?Fo.value:[]).filter(e=>e.key!=="almacen_lab"),{id:99999,key:"almacen_lab",label:"Almacén",checked:!0,disabled:!0,freeze:!1}]';
+const FIELD_CONFIG_OLD='customFixedData:Fo.value';
+const FIELD_DIALOG_MEMBER='dist/assets/TableFieldDialog-V53UVTu7.js';
+const PRELOAD_MEMBER='dist-electron/preload/index.js';
+const FIELD_SORT_OLD='i=new Set([e.Selection,e.Operation,...j]);return[...t?[t]:[],...l.filter(e=>!i.has(e.key)),...o?[o]:[],...s?[s]:[],...n?[n]:[]]';
+const FIELD_SORT_NEW='i=new Set([e.Selection,e.Operation,...j,"almacen_lab"]),alm=l.find(e=>e.key==="almacen_lab");return[...t?[t]:[],...l.filter(e=>!i.has(e.key)),...o?[o]:[],...s?[s]:[],...alm?[alm]:[],...n?[n]:[]]';
+const PRELOAD_ADDITION='\n;try{const {contextBridge,ipcRenderer}=require("electron");contextBridge.exposeInMainWorld("dicloakAlmacenLab",Object.freeze({open:id=>ipcRenderer.invoke("almacen-lab:open",String(id))}))}catch(e){console.warn("[Almacén Lab] No se pudo inicializar el puente:",e.message)}\n';
 const APP_MAIN_ADDITION='\n;try{require("./almacen-lab/almacen-native-lab-main.cjs").install()}catch(e){console.warn("[Almacén lab]",e.message)}\n';
-const TARGETS=['dist-electron/main.js','dist/assets/envList-CYDbiryu.js','dist/assets/index-bGjMkmkL.js'];
+const TARGETS=['dist-electron/main.js','dist-electron/preload/index.js','dist/assets/envList-CYDbiryu.js','dist/assets/TableFieldDialog-V53UVTu7.js','dist/assets/index-bGjMkmkL.js'];
 const LAB_MODULES=[
   'almacen-native-lab-main.cjs','almacen-lab-bridge.js','almacen-perfil-readonly.js',
   'almacen-respuesta-http-pruebas.js','almacen-original-files.js'
@@ -33,8 +40,11 @@ function patchUI(text) {
   check(text.split(COLUMN_ANCHOR).length===2,'expected one original operation column');
   check(text.includes('rowKey:"id"'),'native table no longer uses internal id');
   check(!text.includes('prop:"almacen_lab"'),'already patched native column');
-  const result=text.replace(COLUMN_ANCHOR,ADD_COLUMN+COLUMN_ANCHOR);
+  let result=text.replace(COLUMN_ANCHOR,ADD_COLUMN+COLUMN_ANCHOR);
+  check(result.split(FIELD_CONFIG_OLD).length===2,'vendor custom field config changed');
+  result=result.replace(FIELD_CONFIG_OLD,FIELD_CONFIG);
   check(result.includes('label:oa("env.env.environmentStatus"'),'Estado missing');
+  check(result.includes(FIELD_CONFIG),'Almacén not checked in saved column preferences');
   check(result.split('prop:"almacen_lab"').length===2,'Almacén not unique');
   parseJS(result,true);
   return result;
@@ -44,6 +54,21 @@ function patchMain(text) {
   const next=text+APP_MAIN_ADDITION;
   parseJS(next,false);
   return next;
+}
+function patchFieldDialog(text) {
+  check(text.split(FIELD_SORT_OLD).length===2,'Vendor field ordering logic changed');
+  const result=text.replace(FIELD_SORT_OLD,FIELD_SORT_NEW);
+  check(result.includes('...s?[s]:[],...alm?[alm]:[],...n?[n]:[]'),
+    'Almacén must be after Estado and before Operación');
+  parseJS(result,true);
+  return result;
+}
+function patchPreload(text) {
+  check(text.includes("getSystemVersion") && !text.includes("dicloakAlmacenLab"),
+    'Unknown preload API version');
+  const result=text+PRELOAD_ADDITION;
+  parseJS(result,false);
+  return result;
 }
 function patchUpdateUI(text) {
   const result=download.preview(popup.preview(text));
@@ -95,7 +120,9 @@ async function build(folder) {
     const read=n=>fs.readFileSync(path.join(extract,...n.split('/')),'utf8');
     const update={
       'dist-electron/main.js':patchMain(read('dist-electron/main.js')),
+      'dist-electron/preload/index.js':patchPreload(read('dist-electron/preload/index.js')),
       'dist/assets/envList-CYDbiryu.js':patchUI(read('dist/assets/envList-CYDbiryu.js')),
+      'dist/assets/TableFieldDialog-V53UVTu7.js':patchFieldDialog(read('dist/assets/TableFieldDialog-V53UVTu7.js')),
       'dist/assets/index-bGjMkmkL.js':patchUpdateUI(read('dist/assets/index-bGjMkmkL.js'))
     };
     for(const [name,source]of Object.entries(update)){
@@ -135,7 +162,7 @@ async function build(folder) {
     catch(error){fs.renameSync(backup,archive);throw error;}
     fs.unlinkSync(backup);
     const manifest={
-      deliveryVersion:'0.3.0',originalEngine:'DICloak 3.0.7',
+      deliveryVersion:'0.3.1',originalEngine:'DICloak 3.0.7',
       executableSha256:PE_SHA,originalExecutableSha256:PE_SHA,
       officialAsarSha256:ASAR_SHA,modifiedAsarSha256:sha(fs.readFileSync(archive)),
       changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostOnly:true,capturesRealBrowsing:false,
@@ -154,4 +181,4 @@ if(require.main===module){
   check(folder,'Usage: node build-dicloak-native-almacen-030.js <verified-official-app>');
   build(path.resolve(folder)).catch(error=>{console.error(error);process.exitCode=1});
 }
-module.exports={patchUI,patchMain,patchUpdateUI,listEntries,assertSameMembers};
+module.exports={patchUI,patchMain,patchPreload,patchFieldDialog,patchUpdateUI,listEntries,assertSameMembers};
