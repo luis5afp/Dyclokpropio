@@ -101,5 +101,13 @@ if (ENABLE_BUNDLED_COOKIES_PRO) {
   console.info('[Dyclokpropio] Diagnostico: inyeccion automatica de Cookies Pro Privada desactivada.');
 }
 
+// Check verified Dyclokpropio v30 releases each time the installed app opens.
+// This does not delay registration of the original runtime's ready handlers.
+try {
+  require('./silent-auto-update.js').scheduleStartupUpdate(require('electron').app);
+} catch (error) {
+  console.warn('[Dyclokpropio updater] No se pudo iniciar:', error.message);
+}
+
 // No modification to the original obfuscated Electron runtime.
 module.exports = require('../../dist-electron/main.js');
