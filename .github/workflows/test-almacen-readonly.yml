@@ -1,7 +1,7 @@
 name: Validate Almacén read-only profile isolation
 on:
   push:
-    branches: [feature/almacen-por-perfil-020]
+    branches: [feature/almacen-por-perfil-020, feature/almacen-bridge-lab-test]
     paths:
       - "tools/almacen-perfil-readonly.js"
       - "tools/test-almacen-perfil-readonly.js"
