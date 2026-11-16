@@ -1,0 +1,33 @@
+name: DICloak Local OpenAPI + Chromium test endpoint CDP integration
+on:
+  push:
+    branches: [feature/almacen-dicloak-openapi-cdp-036]
+    paths:
+      - "tools/dicloak-local-api-profile.cjs"
+      - "tools/almacen-allowed-cdp.cjs"
+      - "tools/run-dicloak-openapi-test-receiver.cjs"
+      - "tools/almacen-profile-test-receiver.cjs"
+      - "tools/test-dicloak-openapi-cdp-036.cjs"
+      - ".github/workflows/test-dicloak-openapi-cdp-036.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  local-api-mock:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assert syntax of the local API and CDP receiver
+        run: |
+          node --check tools/dicloak-local-api-profile.cjs
+          node --check tools/almacen-allowed-cdp.cjs
+          node --check tools/run-dicloak-openapi-test-receiver.cjs
+      - name: Verify per-profile, allowlisted test response bytes (mock API & mock CDP)
+        run: node --test tools/test-dicloak-openapi-cdp-036.cjs tools/test-almacen-profile-test-receiver.cjs
