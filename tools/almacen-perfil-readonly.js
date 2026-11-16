@@ -20,6 +20,12 @@ function isAbsoluteLocalFolder(folder) {
   if (/^\\\\/.test(folder) || /^\/\//.test(folder)) return false; // no network paths
   return path.isAbsolute(folder) || /^[a-zA-Z]:[\\/]/.test(folder);
 }
+function normalizedLocationKey(folder) {
+  if (typeof folder !== 'string') return '';
+  return /^[a-zA-Z]:[\\/]/.test(folder) ?
+    path.win32.normalize(folder).replace(/[\\/]+$/, '').toLowerCase() :
+    path.posix.normalize(folder).replace(/\/+$/, '');
+}
 function validateProfileId(value) {
   if (typeof value !== 'string' || !/^[a-zA-Z0-9_-]{1,128}$/.test(value)) {
     throw new Error('Invalid internal profile identifier');
@@ -34,9 +40,9 @@ function resolveExistingAlmacen({ profileId, knownFolders, fsApi = fs }) {
   }
   const folder = knownFolders[profileId];
   if (!isAbsoluteLocalFolder(folder)) return { ok: false, reason: 'INVALID_DOWNLOAD_LOCATION' };
+  const selectedKey = normalizedLocationKey(folder);
   const paths = Object.entries(knownFolders).filter(([id, dir]) =>
-    id !== profileId && typeof dir === 'string' && dir.replace(/[\\/]+$/, '').toLowerCase() ===
-      folder.replace(/[\\/]+$/, '').toLowerCase());
+    id !== profileId && normalizedLocationKey(dir) === selectedKey);
   if (paths.length) return { ok: false, reason: 'SHARED_FOLDER_CANNOT_ATTRIBUTE_TO_PROFILE' };
   let stat;
   try { stat = fsApi.lstatSync(folder); }
@@ -58,4 +64,4 @@ async function openAlmacen({ profileId, knownFolders, shellApi, fsApi = fs }) {
     { ok: true, opened: true } :
     { ok: false, reason: 'EXPLORER_COULD_NOT_OPEN_DIRECTORY' };
 }
-module.exports = { validateProfileId, isAbsoluteLocalFolder, resolveExistingAlmacen, openAlmacen };
+module.exports = { validateProfileId, isAbsoluteLocalFolder, normalizedLocationKey, resolveExistingAlmacen, openAlmacen };
