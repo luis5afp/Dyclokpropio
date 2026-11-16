@@ -5,7 +5,7 @@ const http=require('node:http');
 const fs=require('node:fs/promises');
 const os=require('node:os');
 const path=require('node:path');
-const {startTestProfile,validateLocalBrowserWebSocket,findBrowserWebSocket}=require('./dicloak-local-api-profile.cjs');
+const {startTestProfile,getRunningTestProfile,waitForRunningTestProfile,validateLocalBrowserWebSocket,findBrowserWebSocket}=require('./dicloak-local-api-profile.cjs');
 const {createAllowedCdpRecorder,decodeCdpBody}=require('./almacen-allowed-cdp.cjs');
 const {configFromEnv}=require('./run-dicloak-openapi-test-receiver.cjs');
 
@@ -125,4 +125,42 @@ test('CDP decoded text vs server wire bytes is not claimed identical; credential
  assert.equal(config.seconds,5);
  assert.equal(config.testEndpointPrefix,'https://lab.example.test/approved/');
  assert.throws(()=>configFromEnv({DICLOAK_TEST_PROFILE_ID:'abc'}),/CONFIG_MISSING/);
+});
+
+
+test('V2 runtime API attaches to the profile opened through Operación Abrir without issuing start or stop',async()=>{
+  const received=[];let calls=0;
+  const api=await server((req,res)=>{
+    received.push({method:req.method,url:req.url});
+    calls++;
+    const live=calls>=2;
+    const data={
+      status:live?'running':'stopped',profile_id:'profile_524',
+      debug_port:live?19123:null,
+      web_socket_url:live?'ws://127.0.0.1:19123/devtools/browser/verified':null
+    };
+    res.setHeader('content-type','application/json');
+    res.end(JSON.stringify({code:0,data}));
+  });
+  try{
+    const status=await getRunningTestProfile({apiPort:api.port,apiKey:'LOCAL_DEMO_KEY_ONLY',profileId:'profile_524'});
+    assert.equal(status,null);
+    const attached=await waitForRunningTestProfile({apiPort:api.port,
+      apiKey:'LOCAL_DEMO_KEY_ONLY',profileId:'profile_524',waitSeconds:2,pollMs:200});
+    assert.equal(attached.profileId,'profile_524');
+    assert.equal(attached.sessionIdentityVerifiedByOpenAPI,true);
+    assert.equal(attached.profileStartedByOpenAPI,false);
+    assert.equal(attached.debugPort,19123);
+    assert.ok(received.every(v=>v.method==='GET'&&
+      v.url==='/openapi/v2/profiles/profile_524/session'));
+  }finally{await api.close();}
+});
+test('V2 runtime API refuses wrong profile identity in status response',async()=>{
+  const api=await server((req,res)=>{
+    res.end(JSON.stringify({code:0,data:{profile_id:'another_profile',status:'running',debug_port:19123}}));
+  });
+  try{
+    await assert.rejects(getRunningTestProfile({apiPort:api.port,
+      apiKey:'LOCAL_DEMO_KEY_ONLY',profileId:'profile_524'}),/DICLOAK_RUNTIME_PROFILE_MISMATCH/);
+  }finally{await api.close();}
 });
