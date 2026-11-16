@@ -8,6 +8,9 @@ on:
       - "dist/**"
       - "dist-electron/**"
       - "package.json"
+      - "resources/auto-update-version.json"
+      - "src/main/silent-auto-update.js"
+      - "tools/test-silent-auto-update.js"
       - "electron-builder.yml"
       - "bundled-extensions/**"
       - "src/main/bundled-extension-*.js"
@@ -71,11 +74,14 @@ jobs:
           "version=$release" >> $env:GITHUB_OUTPUT
           Write-Host "Release to publish: v$release"
           Write-Host 'Internal compatibility version remains 3.0.0'
-      - name: Verify uploaded-base compatibility
+      - name: Verify uploaded-base compatibility and updater tests
         shell: pwsh
         run: |
           Set-Location source
           node tools/verify-safe-base.js
+          if ($LASTEXITCODE -ne 0) { throw 'Recovered runtime verification failed' }
+          node tools/test-silent-auto-update.js
+          if ($LASTEXITCODE -ne 0) { throw 'Automatic updater tests failed' }
       - name: Install dependencies
         shell: pwsh
         run: |
@@ -146,6 +152,121 @@ jobs:
           Set-Location source
           node tools/install-diagnostic-panel.js --apply
           if ($LASTEXITCODE -ne 0) { throw 'Failed to include diagnostic button; refusing release' }
+      - name: Embed current delivery version in installed update metadata
+        shell: pwsh
+        run: |
+          Set-Location source
+          $deliveryVersion = '${{ steps.version.outputs.version }}'
+          if ($deliveryVersion -notmatch '^30\.0\.\d+        shell: pwsh
+        run: |
+          Set-Location source
+          npm run build:win -- --publish never
+      - name: Smoke-launch built executable
+        shell: pwsh
+        run: |
+          Set-Location source
+          $exe = Join-Path (Get-Location) "release\win-unpacked\Dyclokpropio.exe"
+          if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
+          $extensionManifest = "release\win-unpacked\resources\plugins\.cookies-pro-privada\manifest.json"
+          if (-not (Test-Path $extensionManifest)) { throw "Bundled Cookies Pro extension missing from build: $extensionManifest" }
+          $env:DYCLOKPROP_AUTO_UPDATE_DISABLED = "1"
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) { throw "Executable exited with code $($proc.ExitCode)" }
+          if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
+      - name: Prepare versioned delivery
+        shell: pwsh
+        run: |
+          Set-Location source
+          $release = "${{ steps.version.outputs.version }}"
+          $src = Get-ChildItem "release\Dyclokpropio_3.0.0_win_x64.exe" | Select-Object -First 1
+          if (-not $src) { throw "Installer not generated." }
+          New-Item -ItemType Directory -Force "release-delivery" | Out-Null
+          $fileName = "Dyclokpropio_" + $release + "_win_x64.exe"
+          $dst = Join-Path "release-delivery" $fileName
+          Copy-Item $src.FullName $dst
+          $hash = (Get-FileHash $dst -Algorithm SHA256).Hash.ToLower()
+          ($hash + "  " + $fileName) | Set-Content "release-delivery\SHA256SUMS.txt" -Encoding ASCII
+          @(
+            "deliveryVersion=" + $release,
+            "internalCompatibilityVersion=3.0.0",
+            "baseInstallerSha256=e29f761cce9a744d00dd1ccf82a29209a2f42c07b32c5567054419d08651dfde",
+            "rendererCompatibilitySha256=0859bd51a5703b4c01c19c38878642315215341733d5080770faee9a85bb5925"
+          ) | Set-Content "release-delivery\VERSION.txt" -Encoding ASCII
+          Get-Content "release-delivery\SHA256SUMS.txt"
+          Get-Content "release-delivery\VERSION.txt"
+      - name: Upload versioned delivery
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyclokpropio-${{ steps.version.outputs.version }}-safe-base
+          path: |
+            source/release-delivery/*.exe
+            source/release-delivery/SHA256SUMS.txt
+            source/release-delivery/VERSION.txt
+          if-no-files-found: error
+      - name: Publish installer on GitHub Releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Only publish after the checksum was generated and the Windows
+          # smoke test and all validation steps completed successfully.
+          $release = '${{ steps.version.outputs.version }}'
+          $tag = 'v' + $release
+          $delivery = 'source/release-delivery'
+          $installer = Join-Path $delivery ("Dyclokpropio_" + $release + "_win_x64.exe")
+          $checksumFile = Join-Path $delivery 'SHA256SUMS.txt'
+          $versionFile = Join-Path $delivery 'VERSION.txt'
+          foreach ($file in @($installer, $checksumFile, $versionFile)) {
+            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
+              throw "Release file missing: $file"
+            }
+          }
+          $digest = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          $hashLine = (Get-Content -LiteralPath $checksumFile -Raw).Trim()
+          $expectedLine = $digest + '  ' + [IO.Path]::GetFileName($installer)
+          if ($hashLine -ne $expectedLine) {
+            throw 'SHA256SUMS.txt does not match the compiled installer'
+          }
+          gh release view $tag --repo "$env:GITHUB_REPOSITORY" --json tagName 2>$null | Out-Null
+          if ($LASTEXITCODE -eq 0) {
+            throw "Release $tag already exists. Refusing to overwrite a published installer."
+          }
+          $builtCommit = (git -C source rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or -not $builtCommit) { throw 'Cannot identify source commit' }
+          $notes = @(
+            "Instalador Windows x64 Dyclokpropio $release.",
+            '',
+            'Incluye las correcciones y recursos integrados en main hasta este commit.',
+            'El instalador conserva la version interna 3.0.0 del runtime recuperado.',
+            'COMPATIBILIDAD 2.8.17: EXPAND_CHECK distingue extension obligatoria faltante del error de descarga, y envia hashes reales al verificador de seguridad.',
+            'La integridad SHA256 y la validacion remota permanecen activas; si los hashes fallan, se sigue bloqueando el perfil.',
+            'La inyeccion automatica de Cookies Pro Privada continua desactivada para aislar esta incidencia.',
+            'DIAGNOSTICO: el instalador anota unicamente etapa, resultado y codigo filtrado del error al abrir un perfil en dyclok-open-stage.jsonl.',
+            'CORRECCION v30.0.10: si generate-sha256-hash-for-plugins devuelve null, no se invoca .slice sobre null. El hash ausente real sigue enviandose a la verificacion remota obligatoria, que puede rechazarlo.'
+            'NOVEDAD: boton flotante Diagnostico para iniciar/detener captura de metadatos de apertura, HTTP de interfaz e IPC cuando disponible; exportar TXT desde la aplicacion.',
+            'v30.0.11: añade puntos de control de paramsMerge y categoriza errores IPC. NO se declara corregido el fallo de apertura sin validacion en el PC afectado.',
+            'v30.0.12: adaptador IPC para clear-dev-cache; diagnostico posterior detecto que no se instalaba en Electron 31.'
+            'v30.0.13: se elimina la dependencia de ipcMain.hasHandler (API inexistente en Electron 31) y se prueban los manejadores con simulacion fiel. La limpieza original sigue siendo obligatoria. Requiere validar apertura real del perfil 244.'
+            'Ejecutar resources/tools/show-open-stage-diagnostics.ps1 tras reproducir el fallo y adjuntar Dyclok-Diagnostico-Etapas.txt.',
+            'La extension continua empaquetada para permitir revertir esta prueba; no se ejecuta por el cargador de Dyclokpropio.',
+            'La compilacion y el arranque basico superaron las verificaciones automatizadas.',
+            'IMPORTANTE: realizar copia de seguridad de los perfiles antes de instalar; las funciones del navegador deben probarse en Windows.',
+            '',
+            "Commit de origen: $builtCommit"
+          ) -join "`n"
+          gh release create $tag $installer $checksumFile $versionFile --repo "$env:GITHUB_REPOSITORY" --target $builtCommit --title "Dyclokpropio $tag" --notes $notes
+          if ($LASTEXITCODE -ne 0) { throw "Could not publish release $tag" }
+          Write-Host "Public Release: https://github.com/$env:GITHUB_REPOSITORY/releases/tag/$tag"
+
+) {
+            throw 'Refusing to build with invalid Dyclokpropio release version'
+          }
+          @{ family = 'Dyclokpropio'; deliveryVersion = $deliveryVersion } |
+            ConvertTo-Json -Compress |
+            Set-Content -LiteralPath 'resources/auto-update-version.json' -Encoding utf8
+
       - name: Build Windows installer from original runtime
         shell: pwsh
         run: |
