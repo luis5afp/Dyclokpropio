@@ -1,0 +1,40 @@
+name: Validate Almacén read-only profile isolation
+on:
+  push:
+    branches: [feature/almacen-por-perfil-020]
+    paths:
+      - "tools/almacen-perfil-readonly.js"
+      - "tools/test-almacen-perfil-readonly.js"
+      - ".github/workflows/test-almacen-readonly.yml"
+  pull_request:
+    paths:
+      - "tools/almacen-perfil-readonly.js"
+      - "tools/test-almacen-perfil-readonly.js"
+      - ".github/workflows/test-almacen-readonly.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tools/test-almacen-perfil-readonly.js
+      - name: Confirm module does not perform file writes
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          const content = fs.readFileSync('tools/almacen-perfil-readonly.js','utf8');
+          for(const call of ['writeFile','mkdir','rename','unlink','copyFile','rmSync','createWriteStream','rmdir']) {
+            assert.ok(!content.includes('fsApi.'+call) && !content.includes('fs.'+call),
+              'Unexpected mutating filesystem call: '+call);
+          }
+          assert.ok(content.includes('shellApi.openPath'));
+          console.log('ALMACEN_READ_ONLY_FILESYSTEM_CONTRACT=PASS');
+          NODE
