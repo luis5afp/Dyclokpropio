@@ -5,10 +5,14 @@ on:
     branches: [feature/hide-native-update-center]
     paths:
       - "release-build/native-only-307/inspect-update-center.cjs"
+      - "tools/suppress-native-update-autopopup.js"
+      - "tools/test-suppress-native-update-autopopup.js"
       - ".github/workflows/inspect-native-update-center.yml"
   pull_request:
     paths:
       - "release-build/native-only-307/inspect-update-center.cjs"
+      - "tools/suppress-native-update-autopopup.js"
+      - "tools/test-suppress-native-update-autopopup.js"
       - ".github/workflows/inspect-native-update-center.yml"
   workflow_dispatch:
 
@@ -21,6 +25,12 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
+      - name: Verify UI-only update panel suppression contract
+        shell: pwsh
+        run: |
+          node --test tools/test-suppress-native-update-autopopup.js
+          if ($LASTEXITCODE -ne 0) { throw 'Pure UI patch unit tests failed' }
+
       - name: Download verified official 3.0.7 installer
         shell: pwsh
         run: |
