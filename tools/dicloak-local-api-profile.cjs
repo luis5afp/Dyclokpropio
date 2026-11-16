@@ -32,13 +32,15 @@ function validateLocalBrowserWebSocket(value,expectedPort) {
     throw new Error('BROWSER_DEBUG_URL_NOT_LOCAL');
   return value;
 }
-function requestJson({apiPort,apiKey,method,path,body}) {
+function requestJson({apiPort,apiKey,method,path,body,onDiagnostic=()=>{}}) {
   const base=apiBase(apiPort);
   if(typeof apiKey!=='string'||apiKey.length<12||apiKey.includes('\r')||apiKey.includes('\n'))
     return Promise.reject(new Error('LOCAL_API_KEY_MISSING'));
   if(!['GET','PATCH','POST'].includes(method)||!/^\/openapi\/v[12]\/[A-Za-z0-9/_-]+$/.test(path))
     return Promise.reject(new Error('LOCAL_API_ENDPOINT_INVALID'));
   const bytes=body===undefined?null:Buffer.from(JSON.stringify(body));
+  const emit=(event,extra={})=>{try{onDiagnostic({source:'programa',event,...extra})}catch{/* audit cannot interrupt API */}};
+  emit('api_request');
   return new Promise((resolve,reject)=>{
     let settled=false;
     const fail=e=>{if(!settled){settled=true;reject(e)}};
@@ -50,6 +52,7 @@ function requestJson({apiPort,apiKey,method,path,body}) {
         ...(bytes?{'Content-Type':'application/json','Content-Length':String(bytes.length)}:{})
       }
     },resp=>{
+      emit('api_response',{status:resp.statusCode});
       if(resp.statusCode!==200){resp.resume();return fail(new Error('DICLOAK_LOCAL_API_HTTP_'+resp.statusCode))}
       const chunks=[];let size=0;
       resp.on('data',x=>{size+=x.length;if(size>LIMIT){fail(new Error('DICLOAK_LOCAL_API_RESPONSE_TOO_LARGE'));req.destroy()}else chunks.push(x)});
@@ -69,7 +72,7 @@ function requestJson({apiPort,apiKey,method,path,body}) {
     req.end(bytes);
   });
 }
-async function startTestProfile({apiPort,apiKey,profileId,version='v1'}) {
+async function startTestProfile({apiPort,apiKey,profileId,version='v1',onDiagnostic=()=>{}}) {
   validateProfileId(profileId);
   if(!['v1','v2'].includes(version))throw Error('DICLOAK_LOCAL_API_VERSION_INVALID');
   const method=version==='v2'?'POST':'PATCH';
@@ -77,7 +80,7 @@ async function startTestProfile({apiPort,apiKey,profileId,version='v1'}) {
     '/openapi/v1/env/'+profileId+'/open';
   // Do not bypass vendor proxy checks, sync settings, cookies or extension sync.
   const body=version==='v2'?{headless:false}:undefined;
-  const data=await requestJson({apiPort,apiKey,method,path:resource,body});
+  const data=await requestJson({apiPort,apiKey,method,path:resource,body,onDiagnostic});
   if(data.id!==undefined&&String(data.id)!==profileId)
     throw Error('LOCAL_API_PROFILE_ID_MISMATCH');
   const debugPort=validDebugPort(data.debug_port);
@@ -90,13 +93,13 @@ async function startTestProfile({apiPort,apiKey,profileId,version='v1'}) {
     profileStartedByOpenAPI:true
   });
 }
-async function getRunningTestProfile({apiPort,apiKey,profileId}) {
+async function getRunningTestProfile({apiPort,apiKey,profileId,onDiagnostic=()=>{}}) {
   validateProfileId(profileId);
   // V2 runtime endpoint returns the exact profile_id and its live debug port.
   // Unlike 'start', this request DOES NOT launch, close or alter the browser.
   const data=await requestJson({
     apiPort,apiKey,method:'GET',
-    path:'/openapi/v2/profiles/'+profileId+'/session'
+    path:'/openapi/v2/profiles/'+profileId+'/session',onDiagnostic
   });
   if(String(data.profile_id)!==profileId)throw Error('DICLOAK_RUNTIME_PROFILE_MISMATCH');
   if(data.status!=='running')return null;
@@ -109,14 +112,14 @@ async function getRunningTestProfile({apiPort,apiKey,profileId}) {
   });
 }
 async function waitForRunningTestProfile({
-  apiPort,apiKey,profileId,waitSeconds=75,pollMs=1500
+  apiPort,apiKey,profileId,waitSeconds=75,pollMs=1500,onDiagnostic=()=>{}
 }) {
   if(!Number.isInteger(waitSeconds)||waitSeconds<1||waitSeconds>300 ||
      !Number.isInteger(pollMs)||pollMs<200||pollMs>15000)
     throw Error('DICLOAK_SESSION_POLL_CONFIG_INVALID');
   const attempts=Math.max(1,Math.ceil(waitSeconds*1000/pollMs));
   for(let i=0;i<attempts;i++){
-    const result=await getRunningTestProfile({apiPort,apiKey,profileId});
+    const result=await getRunningTestProfile({apiPort,apiKey,profileId,onDiagnostic});
     if(result)return result;
     if(i<attempts-1)await new Promise(resolve=>setTimeout(resolve,pollMs));
   }

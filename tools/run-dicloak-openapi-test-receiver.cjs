@@ -30,7 +30,9 @@ function configFromEnv(env){
     throw Error('INVALID_TEST_DURATION_SECONDS');
   return {apiPort,apiKey,profileId,testEndpointPrefix,version,seconds,mode};
 }
-async function runLab(env=process.env){
+async function runLab(env=process.env,{onDiagnostic=()=>{}}={}){
+ if(typeof onDiagnostic!=='function')throw Error('DIAGNOSTIC_CALLBACK_INVALID');
+ const emit=(source,event)=>{try{onDiagnostic({source,event})}catch{/* diagnostics best effort */}};
  const config=configFromEnv(env);
  const rootFolder=path.join(env.LOCALAPPDATA||path.join(os.homedir(),'AppData','Local'),
    'DICloak-Test-Server-Reception-036');
@@ -42,28 +44,35 @@ async function runLab(env=process.env){
  let reportStats=null;
  try {
    diagnostic.mark('waiting_for_profile');
+   emit('programa','profile_wait');
    process.stdout.write(config.mode==='attach'?
      'ESPERANDO_OPERACION_ABRIR=TRUE\n':'INICIANDO_PERFIL_DE_PRUEBA_POR_API=TRUE\n');
    const started=config.mode==='attach'?
-     await waitForRunningTestProfile(config):
-     await startTestProfile(config);
+     await waitForRunningTestProfile({...config,onDiagnostic}):
+     await startTestProfile({...config,onDiagnostic});
    diagnostic.mark('profile_running');
+   emit('programa','api_connected');
+   emit('programa','profile_running');
    const wsUrl=started.webSocketUrl||
      await findBrowserWebSocket(started.debugPort);
    await fs.mkdir(rootFolder,{recursive:true,mode:0o700});
    recorder=createAllowedCdpRecorder({
      profileId:started.profileId,debugPort:started.debugPort,
      wsUrl,rootFolder,
-     testEndpointPrefix:config.testEndpointPrefix
+     testEndpointPrefix:config.testEndpointPrefix,
+     onDiagnostic
    });
    await recorder.start();
    diagnostic.mark('debugger_connected');
    diagnostic.mark('test_receiver_ready');
+   emit('programa','receiver_ready');
    process.stdout.write('DICLOAK_OPENAPI_SESSION_BOUND=PASS\n');
    process.stdout.write('AUTHORIZED_TEST_ENDPOINT_MONITOR=ACTIVE\n');
    await new Promise(resolve=>setTimeout(resolve,config.seconds*1000));
    reportStats=await recorder.stop();
    recorder=null;
+   emit('programa','capture_completed');
+   if(reportStats.saved===0)emit('almacen','no_documents');
    diagnostic.mark('test_capture_finished',
      reportStats.failed>0?'CAPTURE_ERRORS':
      reportStats.saved>0?'DOCUMENTS_SAVED':'NO_AUTHORIZED_DOCUMENTS');
@@ -78,6 +87,8 @@ async function runLab(env=process.env){
      msg.includes('CDP')||msg.includes('DEBUG')?'DEBUGGER_UNAVAILABLE':
      'UNKNOWN_ERROR';
    diagnostic.mark('monitor_error',reason);
+   emit('programa', reason==='API_UNAVAILABLE'?'api_failed':
+     reason==='DEBUGGER_UNAVAILABLE'?'debugger_failed':'connection_failed');
    throw error;
  }finally{
    if(recorder)reportStats=await recorder.stop().catch(()=>null);
