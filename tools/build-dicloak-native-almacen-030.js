@@ -7,13 +7,13 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
 const {createRequire}=require('node:module');
-const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.3/package.json'))('@electron/asar');
+const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.4/package.json'))('@electron/asar');
 const popup=require('./suppress-native-update-autopopup.js');
 const download=require('./suppress-native-download-confirmation.js');
 const ASAR_SHA='b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf';
 const PE_SHA='e00064c5195235a4eb492194cd0136cc7d81c7be8eab9acb75ffdb6e26e0c29f';
 const COLUMN_ANCHOR='zo.isSelectTable?{}:{prop:"operation"';
-const ADD_COLUMN='zo.isSelectTable?{}:{prop:"almacen_lab",label:"Almacén",fixed:"right",width:170,align:"center",resizable:!1,render:({row:e})=>se(Ae,{type:"primary",plain:!0,style:{width:"135px",minWidth:"135px",height:"48px",padding:"0",margin:"0"},title:"Almacén de pruebas (datos ficticios)",onClick:async t=>{t.stopPropagation();try{const b=window.dicloakAlmacenLab;const p=window.ipcRenderer;const abrir=b&&typeof b.open==="function"?b.open.bind(b):p&&typeof p.invoke==="function"?id=>p.invoke("almacen-lab:open",id):null;if(!abrir){window.alert("Almacén: conexión con Electron no disponible");return}const x=await abrir(String(e.id??""));if(!x||!x.ok){window.alert("Almacén: "+String(x&&x.reason||"No se pudo abrir la carpeta"))}}catch(x){window.alert("Almacén: "+String(x&&x.message||x))}}},{default:()=>"Abrir"})},';
+const ADD_COLUMN='zo.isSelectTable?{}:{prop:"almacen_lab",label:"Almacén",fixed:"right",width:170,align:"center",resizable:!1,render:({row:e})=>se(Ae,{type:"primary",plain:!0,style:{width:"135px",minWidth:"135px",height:"48px",padding:"0",margin:"0"},title:"Auditar almacenamiento nativo Chromium (perfil cerrado)",onClick:async t=>{t.stopPropagation();try{const b=window.dicloakAlmacenLab;const p=window.ipcRenderer;const abrir=b&&typeof b.open==="function"?b.open.bind(b):p&&typeof p.invoke==="function"?id=>p.invoke("almacen-lab:open",id):null;if(!abrir){window.alert("Almacén: conexión con Electron no disponible");return}const x=await abrir(String(e.id??""));if(!x||!x.ok){window.alert("Almacén: "+String(x&&x.reason||"No se pudo abrir la carpeta"))}}catch(x){window.alert("Almacén: "+String(x&&x.message||x))}}},{default:()=>"Abrir"})},';
 const FIELD_CONFIG='customFixedData:[...(Array.isArray(Fo.value)?Fo.value:[]).filter(e=>e.key!=="almacen_lab"),{id:99999,key:"almacen_lab",label:"Almacén",checked:!0,disabled:!0,freeze:!1}]';
 const FIELD_CONFIG_OLD='customFixedData:Fo.value';
 const FIELD_DIALOG_MEMBER='dist/assets/TableFieldDialog-V53UVTu7.js';
@@ -21,12 +21,12 @@ const PRELOAD_MEMBER='dist-electron/preload/index.js';
 const FIELD_SORT_OLD='i=new Set([e.Selection,e.Operation,...j]);return[...t?[t]:[],...l.filter(e=>!i.has(e.key)),...o?[o]:[],...s?[s]:[],...n?[n]:[]]';
 const FIELD_SORT_NEW='i=new Set([e.Selection,e.Operation,...j,"almacen_lab"]),alm=l.find(e=>e.key==="almacen_lab");return[...t?[t]:[],...l.filter(e=>!i.has(e.key)),...o?[o]:[],...s?[s]:[],...alm?[alm]:[],...n?[n]:[]]';
 const PRELOAD_ADDITION='\n;try{const {contextBridge,ipcRenderer}=require("electron");const api=Object.freeze({open:id=>ipcRenderer.invoke("almacen-lab:open",String(id))});if(process.contextIsolated){contextBridge.exposeInMainWorld("dicloakAlmacenLab",api)}else{window.dicloakAlmacenLab=api}}catch(e){console.warn("[Almacén Lab] No se pudo inicializar el puente:",e.message)}\n';
-const APP_MAIN_ADDITION='\n;try{require("./almacen-lab/almacen-native-lab-main.cjs").install()}catch(e){console.warn("[Almacén lab]",e.message)}\n';
+const APP_MAIN_ADDITION='\n;try{require("./almacen-lab/almacen-native-chromium-audit.cjs").install()}catch(e){console.warn("[Almacén audit]",e.message)}\n';
 const TARGETS=['dist-electron/main.js','dist-electron/preload/index.js','dist/assets/envList-CYDbiryu.js','dist/assets/TableFieldDialog-V53UVTu7.js','dist/assets/index-bGjMkmkL.js'];
 const LAB_MODULES=[
-  'almacen-native-lab-main.cjs','almacen-lab-bridge.js','almacen-perfil-readonly.js',
-  'almacen-respuesta-http-pruebas.js','almacen-original-files.js',
-  'almacen-fixtures-valid.js'
+  'almacen-native-chromium-audit.cjs',
+  'audit-chromium-native-storage.cjs',
+  'almacen-perfil-readonly.js'
 ];
 const LAB_DEST='dist-electron/almacen-lab/';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -163,10 +163,10 @@ async function build(folder) {
     catch(error){fs.renameSync(backup,archive);throw error;}
     fs.unlinkSync(backup);
     const manifest={
-      deliveryVersion:'0.3.3',originalEngine:'DICloak 3.0.7',
+      deliveryVersion:'0.3.4',originalEngine:'DICloak 3.0.7',
       executableSha256:PE_SHA,originalExecutableSha256:PE_SHA,
       officialAsarSha256:ASAR_SHA,modifiedAsarSha256:sha(fs.readFileSync(archive)),
-      changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostOnly:true,capturesRealBrowsing:false,
+      changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostFixtureDisabled:true,capturesRealBrowsing:false,nativeIntegrityAuditReadOnly:true,
       mandatoryUpdateCheckPreserved:true
     };
     fs.writeFileSync(path.join(folder,'resources','dyclok-native-update-ui-manifest.json'),

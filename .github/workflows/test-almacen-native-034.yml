@@ -1,0 +1,27 @@
+name: Almacén native Chromium binding (read-only integration tests)
+on:
+  push:
+    branches: [feature/almacen-chromium-native-034]
+    paths:
+      - "tools/almacen-native-chromium-audit.cjs"
+      - "tools/test-almacen-native-chromium-audit.cjs"
+      - "tools/audit-chromium-native-storage.cjs"
+      - "tools/almacen-perfil-readonly.js"
+      - ".github/workflows/test-almacen-native-034.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-binding:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test manually bound synthetic Chromium native profile (no secrets)
+        run: node --test tools/test-almacen-native-chromium-audit.cjs tools/test-audit-chromium-native-storage.cjs
