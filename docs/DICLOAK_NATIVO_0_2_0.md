@@ -23,15 +23,32 @@ Este instalador no trae todavía un actualizador automático propio.
 - Se exige el SHA-256 exacto de `resources/app.asar` y del renderer original.
 - La transformación afecta un único archivo compilado de interfaz,
   `dist/assets/index-bGjMkmkL.js`, y recalcula su integridad interna ASAR.
-- El PE original `DICloak.exe` se mantiene idéntico, y el flujo de
-  autenticación, firmas y comunicaciones no se modifica.
+- El ejecutable original se conserva inicialmente como referencia de hash.
+  Para conservar la verificación ASAR de Electron al cargar el paquete modificado,
+  la compilación experimental reconstruye el recurso PE `INTEGRITY/ELECTRONASAR`
+  con el nuevo hash de cabecera. Los fuses de Electron se verifican para garantizar
+  que **no se desactiva la comprobación ASAR**. No se modifica la lógica de
+  autenticación ni el código de red.
 - La transformación conserva el tamaño del renderer y la tabla de offsets ASAR.
 - El instalador rechaza las compilaciones con fallos de sintaxis, hash o
-  comprobación del arranque de Windows.
+  comprobación del arranque de Windows. La modificación del recurso PE
+  **elimina/invalida la firma Authenticode original**; no se puede distribuir
+  con la identidad del proveedor y requerirá permiso de distribución
+  y una firma propia del proyecto antes de publicarse como versión estable.
 - No empaqueta `DyclokPRO.exe`, ni datos privados de `SourceData` ni
   `Chromium/User Data`.
 - Se instala en `%LOCALAPPDATA%\Programs\DICloak-Nativo-Lab` para evitar
   sobrescribir el programa oficial y otras líneas del proyecto.
+
+## Firma y distribución
+
+**0.2.0 sigue siendo un laboratorio, no una versión oficial de DICloak.**
+No se afirma que el archivo modificado esté firmado por el proveedor.
+No desactivar la validación ASAR, ni alterar avisos obligatorios, ni
+instalar esta build sobre una instalación existente. Para publicar hay que
+confirmar permisos/licencia sobre los componentes redistribuidos y firmar
+`DICloak.exe` con el certificado del distribuidor; después, repetir pruebas
+de perfil, sesión y navegación en Windows.
 
 ## Compilación
 
