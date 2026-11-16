@@ -1,0 +1,124 @@
+name: DICloak 3.0.7 - EXE nativo sin DyclokPRO (experimental)
+
+on:
+  push:
+    branches:
+      - feature/dicloak-native-only-307
+    paths:
+      - "tools/prepare-dicloak-native-307.py"
+      - "tools/verify-dicloak-native-only.py"
+      - "release-build/native-only-307/**"
+      - ".github/workflows/build-dicloak-native-only-307.yml"
+  pull_request:
+    paths:
+      - "tools/prepare-dicloak-native-307.py"
+      - "tools/verify-dicloak-native-only.py"
+      - "release-build/native-only-307/**"
+      - ".github/workflows/build-dicloak-native-only-307.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-only-windows:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate controlled native-only packaging
+        shell: pwsh
+        run: |
+          python -m py_compile tools/prepare-dicloak-native-307.py tools/verify-dicloak-native-only.py
+          if ($LASTEXITCODE -ne 0) { throw 'Python source validation failed' }
+          python tools/verify-dicloak-native-only.py
+          if ($LASTEXITCODE -ne 0) { throw 'Native-only packaging contract failed' }
+
+      - name: Download EXACT official DICloak 3.0.7 installer
+        shell: pwsh
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'official-dicloak-307.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $source -TimeoutSec 900
+          if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { throw 'Official installer not downloaded' }
+          $digest = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($digest -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae') {
+            throw 'Vendor installer differs from pinned official SHA-256'
+          }
+
+      - name: Extract original runtime without external DyclokPRO.exe
+        shell: pwsh
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'official-dicloak-307.exe'
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-307-native-only'
+          python tools/prepare-dicloak-native-307.py --installer $source --destination $target
+          if ($LASTEXITCODE -ne 0) { throw 'Original runtime extraction or integrity failed' }
+          $exe = Join-Path $target 'DICloak.exe'
+          $env:OFFICIAL_PE_SHA256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          $env:OFFICIAL_PE_SHA256 | Set-Content (Join-Path $env:RUNNER_TEMP 'dicloak-original-hash.txt')
+          if (Test-Path (Join-Path $target 'DyclokPRO.exe')) { throw 'External launcher appeared unexpectedly' }
+
+      - name: Build separate test installer using original DICloak.exe
+        shell: pwsh
+        working-directory: release-build/native-only-307
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          npm install --no-audit --no-fund --ignore-scripts
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging dependencies failed' }
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-307-native-only'
+          npx electron-builder --win nsis --x64 --prepackaged $target --publish never --config electron-builder.json
+          if ($LASTEXITCODE -ne 0) { throw 'Native-only installer build failed' }
+          $installer = 'out/DICloak_Nativo_0.1.0_win_x64.exe'
+          if (-not (Test-Path $installer -PathType Leaf)) { throw 'Native-only installer missing' }
+          if ((Get-Item $installer).Length -lt 140000000) { throw 'Installer payload unexpectedly small' }
+          $digest = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$digest  DICloak_Nativo_0.1.0_win_x64.exe" | Set-Content 'out/SHA256SUMS.txt' -Encoding ascii
+
+      - name: Install in isolated folder and check executable integrity
+        shell: pwsh
+        run: |
+          $installer = (Resolve-Path 'release-build/native-only-307/out/DICloak_Nativo_0.1.0_win_x64.exe').Path
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Lab'
+          if (Test-Path $folder) { throw 'Isolated target folder already exists' }
+          $process = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+          $exe = Join-Path $folder 'DICloak.exe'
+          $asar = Join-Path $folder 'resources/app.asar'
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw 'Original DICloak.exe absent' }
+          if (Test-Path (Join-Path $folder 'DyclokPRO.exe')) { throw 'External launcher was accidentally packaged' }
+          if (-not (Test-Path -LiteralPath $asar -PathType Leaf)) { throw 'Original engine ASAR absent' }
+          $sourceHash = (Get-Content (Join-Path $env:RUNNER_TEMP 'dicloak-original-hash.txt') -Raw).Trim()
+          $installedHash = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($sourceHash -ne $installedHash) { throw 'DICloak.exe was modified during packaging' }
+          $asarHash = (Get-FileHash -LiteralPath $asar -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($asarHash -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf') {
+            throw 'Vendor app.asar was modified during packaging'
+          }
+          Write-Host 'SINGLE_USER_LAUNCHER_DICLOAK_EXE=PASS'
+          Write-Host 'DYCLOKPRO_EXE_ABSENT=PASS'
+          Write-Host 'ORIGINAL_PE_AND_ASAR_BYTE_IDENTICAL=PASS'
+
+      - name: Native DICloak.exe smoke launch
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Lab/DICloak.exe'
+          $process = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $process.Refresh()
+          if ($process.HasExited -and $process.ExitCode -ne 0) {
+            throw "Official browser exited with error $($process.ExitCode)"
+          }
+          if (-not $process.HasExited) {
+            Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+          }
+          Write-Host 'ORIGINAL_BROWSER_STARTUP_SMOKE=PASS'
+
+      - name: Upload experimental installer, do NOT publish a release
+        uses: actions/upload-artifact@v4
+        with:
+          name: DICloak-Nativo-307-Experimental-${{ github.run_number }}
+          path: |
+            release-build/native-only-307/out/DICloak_Nativo_0.1.0_win_x64.exe
+            release-build/native-only-307/out/SHA256SUMS.txt
+          if-no-files-found: error
