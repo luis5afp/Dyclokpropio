@@ -92,3 +92,40 @@ test('dashboard reports configuration missing without claiming a network respons
   assert.equal(state.events.at(-1).event,'configuration_missing');
  }finally{await panel.stop();}
 });
+
+
+test('real loopback API request + response appear in panel without API key or response data',async()=>{
+ const {getRunningTestProfile}=require('./dicloak-local-api-profile.cjs');
+ const received=[];
+ const key='TEST_API_KEY_DO_NOT_PRINT';
+ const server=http.createServer((req,res)=>{
+   received.push({method:req.method,url:req.url});
+   res.setHeader('content-type','application/json');
+   res.end(JSON.stringify({code:0,data:{
+      status:'running',profile_id:'test_only_82',debug_port:19222,
+      name:'SECRET_PROFILE_LABEL_IGNORED',cookie:'SECRET_COOKIE_IGNORED'
+   }}));
+ });
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const panel=await startDiagnosticPanel();
+ try{
+   const result=await getRunningTestProfile({
+     apiPort:server.address().port,apiKey:key,profileId:'test_only_82',
+     onDiagnostic:panel.emit
+   });
+   assert.equal(result.debugPort,19222);
+   const snapshot=panel.getState();
+   assert.equal(snapshot.events.filter(x=>x.event==='api_request').length,1);
+   assert.equal(snapshot.events.filter(x=>x.event==='api_response').length,1);
+   assert.equal(snapshot.events.find(x=>x.event==='api_response').status,200);
+   const raw=JSON.stringify(snapshot);
+   for(const value of [key,'SECRET_PROFILE_LABEL_IGNORED','SECRET_COOKIE_IGNORED',
+     '/openapi/v2/profiles/test_only_82/session'])
+       assert.equal(raw.includes(value),false);
+   assert.deepEqual(received,[{method:'GET',
+     url:'/openapi/v2/profiles/test_only_82/session'}]);
+ }finally{
+   await panel.stop();
+   await new Promise(resolve=>server.close(resolve));
+ }
+});
