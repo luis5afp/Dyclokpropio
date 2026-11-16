@@ -51,7 +51,7 @@ La interfaz recuperada tiene deshabilitada la comprobación **automática** de a
 
 ## Actualización silenciosa de Dyclokpropio en Windows
 
-Los instaladores **nuevos** de la familia `v30.0.N` incluyen un comprobador de actualizaciones al abrir Dyclokpropio. Cuando GitHub publica una versión **estable** posterior, se descarga el instalador firmado con el SHA-256 publicado en `SHA256SUMS.txt`, se comprueba el hash, se cierra la aplicación de forma normal, se ejecuta la actualización NSIS silenciosa en la misma carpeta y se abre la aplicación instalada.
+Los instaladores **nuevos** de la familia `v30.0.N` incluyen un comprobador de actualizaciones al abrir Dyclokpropio. Cuando GitHub publica una versión **estable** posterior, se descarga el instalador, se comprueba su SHA-256 contra el valor publicado en `SHA256SUMS.txt`, se cierra la aplicación de forma normal, se ejecuta la actualización NSIS silenciosa en la misma carpeta y se abre la aplicación instalada.
 
 - **No se instalan** automáticamente versiones preliminares, builds de Actions ni archivos `DyclokPRO_6.*` (otro programa dentro del repositorio).
 - Si no hay Internet, hay un fallo o el hash no coincide, **se mantiene abierta la versión existente**. No se ejecutan instaladores no verificados.
