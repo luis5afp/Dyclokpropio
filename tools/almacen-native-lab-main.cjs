@@ -17,6 +17,7 @@ const net = require('node:net');
 const os = require('node:os');
 const { createAlmacenLabBridge } = require('./almacen-lab-bridge.js');
 const { validateProfileId } = require('./almacen-perfil-readonly.js');
+const { makeServerFixtures } = require('./almacen-fixtures-valid.js');
 
 const HANDLER = 'almacen-lab:open';
 const bridges = new Map();
@@ -31,11 +32,11 @@ function serveFixture(headers, body) {
     server.listen(0, '127.0.0.1', () => resolve({ server, port: server.address().port }));
   });
 }
-function downloadFixture(port) {
+function downloadFixture(port, requestPath) {
   return new Promise((resolve, reject) => {
     const socket = net.createConnection({ host: '127.0.0.1', port });
     const chunks = [];
-    socket.once('connect', () => socket.write('GET /dicloak-lab HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n'));
+    socket.once('connect', () => socket.write('GET ' + requestPath + ' HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n'));
     socket.on('data', part => chunks.push(part));
     socket.once('error', reject);
     socket.once('end', () => {
@@ -50,39 +51,36 @@ function downloadFixture(port) {
   });
 }
 async function addFixture(profileId, bridge, sessionHandle) {
-  const body = Buffer.from(JSON.stringify({
-    origen: 'SERVIDOR_LOCAL_DE_PRUEBAS',
-    perfil: profileId,
-    credencial: 'FAKE_CREDENTIAL_DEMO',
-    proxy: '127.0.0.1:9000',
-    aviso: 'ESTOS DATOS SON SIMULADOS; NO SE CAPTURA TRAFICO REAL'
-  }, null, 2));
-  const header = Buffer.from([
-    'HTTP/1.1 200 OK',
-    'Content-Type: application/json; charset=utf-8',
-    'Set-Cookie: dicloak_lab=FAKE_COOKIE_DEMO; HttpOnly; Path=/',
-    'Content-Length: ' + body.length,
-    'Connection: close',
-    '', ''
-  ].join('\r\n'));
-  const { server, port } = await serveFixture(header, body);
-  try {
-    const response = await downloadFixture(port);
-    await bridge.recordResponse({
-      sessionHandle,
-      responseUrl: 'http://127.0.0.1:' + port + '/dicloak-lab',
-      ...response
-    });
-    await bridge.recordDownloadedFile({
-      sessionHandle, originalName: 'ejemplo-lab.txt',
-      payload: Buffer.from('Archivo original de prueba. No procede de un perfil real.\r\n', 'utf8')
-    });
-    await bridge.recordDownloadedFile({
-      sessionHandle, originalName: 'ejemplo-lab.zip',
-      payload: Buffer.from([0x50, 0x4b, 0x03, 0x04, 0, 0xff, 0x80, 0])
-    });
-  } finally {
-    await new Promise(resolve => server.close(resolve));
+  // A real localhost TCP exchange for each *complete* fixture. The file is
+  // archived from the raw bytes received, never from a fabricated extension.
+  for (const item of makeServerFixtures(profileId)) {
+    const headers = Buffer.from([
+      'HTTP/1.1 200 OK',
+      'Content-Type: ' + item.contentType,
+      ...item.extraHeaders,
+      'Content-Length: ' + item.bodyBytes.length,
+      'Connection: close',
+      '', ''
+    ].join('\r\n'), 'utf8');
+    const { server, port } = await serveFixture(headers, item.bodyBytes);
+    try {
+      const response = await downloadFixture(port, item.path);
+      if (!response.rawHeaderBytes.equals(headers) ||
+          !response.bodyBytes.equals(item.bodyBytes)) {
+        throw new Error('Incomplete or modified mock response; not archiving');
+      }
+      await bridge.recordResponse({
+        sessionHandle,
+        responseUrl: 'http://127.0.0.1:' + port + item.path,
+        ...response
+      });
+      await bridge.recordDownloadedFile({
+        sessionHandle, originalName: item.originalName,
+        payload: response.bodyBytes // exact bytes sent by local fixture server
+      });
+    } finally {
+      await new Promise(resolve => server.close(resolve));
+    }
   }
 }
 async function labOpen({ profileId, rootFolder, shellApi }) {
@@ -127,7 +125,7 @@ function install() {
   const { app, ipcMain, BrowserWindow, shell } = require('electron');
   if (!app.isPackaged || ipcMain.listenerCount(HANDLER) > 0) return;
   const rootFolder = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'),
-    'DICloak-Nativo-Almacen-Lab-030');
+    'DICloak-Nativo-Almacen-Lab-033');
   ipcMain.handle(HANDLER, async (event, profileId) => {
     if (!senderIsNativeApp(event, BrowserWindow)) {
       return { ok: false, reason: 'UNTRUSTED_RENDERER' };
