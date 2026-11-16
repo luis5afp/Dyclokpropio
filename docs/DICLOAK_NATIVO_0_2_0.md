@@ -68,3 +68,36 @@ que a su vez depende del PR #37 (motor DICloak sin launcher).
 Antes de instalar en tu computadora, respalda tus perfiles y sesiones, y
 comprueba que el motor original y los datos de tus cuentas funcionan. No borres
 la instalación previa hasta haber validado la nueva.
+
+---
+
+## Validación de Windows para el candidato 0.2.0
+
+**Resultado del workflow de laboratorio:** aprobado el 16 de noviembre de 2026.
+
+- Reconstrucción de las dos modificaciones opcionales de interfaz: **PASS**
+- Actualización coherente de `INTEGRITY/ELECTRONASAR`: **PASS**
+- Fuses de seguridad de Electron sin cambios: **PASS**
+- Generación del instalador NSIS: **PASS**
+- Instalación en `DICloak-Nativo-Lab` y hashes: **PASS**
+- Prueba de arranque de `DICloak.exe` modificado en Windows: **PASS**
+- Publicación de artefacto **experimental** en Actions: **PASS**
+
+**Workflow:** https://github.com/luis5afp/Dyclokpropio/actions/runs/43822581233
+
+**Artefacto:** `DICloak-Nativo-0.2.0-Windows-Experimental`
+(descargar desde la sección *Artifacts* de ese workflow).
+
+El artefacto contiene `DICloak_Nativo_0.2.0_win_x64.exe` y
+`SHA256SUMS.txt`.
+
+**No es una publicación estable:** la transformación del recurso de integridad
+del PE invalida la firma original del proveedor. La nueva compilación necesita
+permiso de redistribución y firma Authenticode propia antes de usarla como
+distribución estable. No se ha comprobado aún el funcionamiento completo con
+login remoto, perfiles reales ni sesiones existentes; no sustituir una
+instalación en uso.
+
+**Importante:** no se incorpora todavía un actualizador silencioso de la nueva
+línea nativa; ocultar los avisos opcionales no significa aplicar automáticamente
+las actualizaciones.
