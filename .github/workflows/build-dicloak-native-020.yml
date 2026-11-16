@@ -6,6 +6,7 @@ on:
     paths:
       - "tools/build-dicloak-native-asar-307.js"
       - "tools/inspect-dicloak-pe-asar-integrity.js"
+      - "tools/repair-dicloak-pe-integrity.js"
       - "tools/suppress-native-update-autopopup.js"
       - "tools/suppress-native-download-confirmation.js"
       - "release-build/native-0.2.0/**"
@@ -14,6 +15,7 @@ on:
     paths:
       - "tools/build-dicloak-native-asar-307.js"
       - "tools/inspect-dicloak-pe-asar-integrity.js"
+      - "tools/repair-dicloak-pe-integrity.js"
       - "tools/suppress-native-update-autopopup.js"
       - "tools/suppress-native-download-confirmation.js"
       - "release-build/native-0.2.0/**"
@@ -80,6 +82,12 @@ jobs:
           if ($hash -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf') {
             throw 'Diagnostic backup is not original official ASAR'
           }
+          $sourceExe = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-020/DICloak.exe'
+          $backupExe = Join-Path $env:RUNNER_TEMP 'vendor-original-307.exe'
+          Copy-Item -LiteralPath $sourceExe -Destination $backupExe
+          if ((Get-FileHash -LiteralPath $backupExe -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'e00064c5195235a4eb492194cd0136cc7d81c7be8eab9acb75ffdb6e26e0c29f') {
+            throw 'Diagnostic backup is not the original vendor executable'
+          }
 
       - name: Patch exactly two optional UI prompts and rebuild ASAR integrity
         shell: pwsh
@@ -117,6 +125,22 @@ jobs:
           Write-Host "VENDOR_AUTHENTICODE_STATUS=$($sig.Status)"
           Write-Host "VENDOR_SIGNER_SUBJECT=$($sig.SignerCertificate.Subject)"
 
+      - name: Re-embed correct app.asar header hash in Windows executable
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-020'
+          $official = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          node tools/repair-dicloak-pe-integrity.js $target $official
+          if ($LASTEXITCODE -ne 0) { throw 'Could not preserve embedded ASAR integrity in modified PE' }
+          $report = Get-Content (Join-Path $target 'resources/dyclok-native-update-ui-manifest.json') -Raw | ConvertFrom-Json
+          $rebuilt = (Get-FileHash -LiteralPath (Join-Path $target 'DICloak.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($rebuilt -ne $report.rebuiltExecutableSha256 -or -not $report.electronFuseWireUnchanged) {
+            throw 'Repackaged executable integrity validation failed'
+          }
+          Write-Host 'ELECTRON_ASAR_HASH_REEMBEDDED=PASS'
+          Write-Host 'FUSE_WIRE_UNCHANGED=PASS'
+          Write-Host 'PE_REQUIRES_INDEPENDENT_CODE_SIGNING=TRUE'
+
       - name: Build versioned NSIS installer for DICloak.exe only
         shell: pwsh
         working-directory: release-build/native-0.2.0
@@ -149,7 +173,7 @@ jobs:
           if (Test-Path (Join-Path $folder 'DyclokPRO.exe')) { throw 'Old launcher unexpectedly installed' }
           $metadata = Get-Content $manifest -Raw | ConvertFrom-Json
           if ($metadata.deliveryVersion -ne '0.2.0') { throw 'Incorrect release delivery version' }
-          if ((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant() -ne $metadata.executableSha256) {
+          if ((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant() -ne $metadata.rebuiltExecutableSha256) {
             throw 'Installed vendor EXE differs from official source'
           }
           if ((Get-FileHash -LiteralPath $asar -Algorithm SHA256).Hash.ToLowerInvariant() -ne $metadata.modifiedAsarSha256) {
@@ -185,6 +209,9 @@ jobs:
           if ((Test-Path $exe) -and (Test-Path $backup)) {
             Get-Process -Name DICloak -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
             Copy-Item -LiteralPath $backup -Destination $asar -Force
+            $officialExe = Join-Path $env:RUNNER_TEMP 'vendor-original-307.exe'
+            if (-not (Test-Path $officialExe -PathType Leaf)) { throw 'Missing original PE for recovery comparison' }
+            Copy-Item -LiteralPath $officialExe -Destination $exe -Force
             $original = Start-Process -FilePath $exe -PassThru
             Start-Sleep -Seconds 12
             $original.Refresh()
