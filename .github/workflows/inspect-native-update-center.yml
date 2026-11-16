@@ -6,6 +6,10 @@ on:
     paths:
       - "release-build/native-only-307/inspect-update-center.cjs"
       - ".github/workflows/inspect-native-update-center.yml"
+  pull_request:
+    paths:
+      - "release-build/native-only-307/inspect-update-center.cjs"
+      - ".github/workflows/inspect-native-update-center.yml"
   workflow_dispatch:
 
 permissions:
