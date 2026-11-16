@@ -11,7 +11,7 @@ const path=require('node:path');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
- 'panel_ready','configuration_missing','profile_wait','profile_running',
+ 'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
  'api_failed','api_connected','debugger_connected','debugger_failed',
  'target_connected','receiver_ready','response_approved','response_failed',
  'document_saved','document_failed','capture_completed','monitor_stopped',
