@@ -5,6 +5,7 @@ on:
     branches: [feature/dicloak-native-0-2-installer]
     paths:
       - "tools/build-dicloak-native-asar-307.js"
+      - "tools/inspect-dicloak-pe-asar-integrity.js"
       - "tools/suppress-native-update-autopopup.js"
       - "tools/suppress-native-download-confirmation.js"
       - "release-build/native-0.2.0/**"
@@ -12,6 +13,7 @@ on:
   pull_request:
     paths:
       - "tools/build-dicloak-native-asar-307.js"
+      - "tools/inspect-dicloak-pe-asar-integrity.js"
       - "tools/suppress-native-update-autopopup.js"
       - "tools/suppress-native-download-confirmation.js"
       - "release-build/native-0.2.0/**"
@@ -101,6 +103,19 @@ jobs:
           Write-Host 'TWO_OPTIONAL_UI_PROMPTS_DISABLED=PASS'
           Write-Host 'VENDOR_PE_SHA256_UNCHANGED=PASS'
           Write-Host 'REBUILT_ASAR_INTEGRITY_VALID=PASS'
+
+      - name: Diagnose original executable embedded integrity against changed ASAR
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-020'
+          $original = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          $edited = Join-Path $target 'resources/app.asar'
+          $exe = Join-Path $target 'DICloak.exe'
+          node tools/inspect-dicloak-pe-asar-integrity.js $exe $original $edited
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to verify embedded integrity root cause' }
+          $sig = Get-AuthenticodeSignature -LiteralPath $exe
+          Write-Host "VENDOR_AUTHENTICODE_STATUS=$($sig.Status)"
+          Write-Host "VENDOR_SIGNER_SUBJECT=$($sig.SignerCertificate.Subject)"
 
       - name: Build versioned NSIS installer for DICloak.exe only
         shell: pwsh
