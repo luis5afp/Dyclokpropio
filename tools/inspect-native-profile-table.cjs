@@ -31,4 +31,13 @@ const needles=['EnvTable','envTable','env-list-table','envListTable','rowKey','r
 for(const n of needles){
  const pos=env.indexOf(n);if(pos>=0)console.log('ALMACEN_ENVLIST_MATCH='+JSON.stringify({name:n,at:pos,sample:env.slice(Math.max(0,pos-260),pos+650)}));
 }
+for(const token of [
+  'prop:"operation"','label:oa("base.operation")','label:oa("env.env.environmentStatus"',
+  'rowKey:"id"','columns:','env.env.btnOpen','defaultHiddenFieldKeys','fieldList'
+]){
+ const i=env.indexOf(token);
+ if(i>=0)console.log('ALMACEN_TABLE_COLUMN='+JSON.stringify({
+  token,offset:i,context:env.slice(Math.max(0,i-420),Math.min(env.length,i+1300))
+ }));
+}
 fs.closeSync(fd);
