@@ -1,0 +1,10 @@
+{
+  "name": "dicloak-native-ui-020",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Windows test installer using vendor DICloak 3.0.7 with only two optional UI prompts disabled",
+  "devDependencies": {
+    "@electron/asar": "3.2.18",
+    "electron-builder": "^26.0.0"
+  }
+}
