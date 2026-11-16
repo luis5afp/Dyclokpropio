@@ -1,7 +1,7 @@
 name: Inspect Native Almacén Integration Anchors
 on:
   push:
-    branches: [feature/almacen-bridge-lab-test, feature/almacen-native-030-test]
+    branches: [feature/almacen-bridge-lab-test, feature/almacen-native-030-test, feature/almacen-visible-031]
     paths:
       - "tools/inspect-native-almacen-entry.cjs"
       - ".github/workflows/inspect-native-almacen-entry.yml"
