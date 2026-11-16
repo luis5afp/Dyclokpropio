@@ -6,11 +6,22 @@
  */
 const path=require('node:path');
 const fs=require('node:fs');
+const os=require('node:os');
 const {createRequire}=require('node:module');
 const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.4/package.json'))('@electron/asar');
 const archive=process.argv[2];
 if(!archive||!fs.existsSync(archive))throw Error('Official pinned ASAR path required');
-const js=asar.extractFile(archive,'dist/assets/envList-CYDbiryu.js').toString('utf8');
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'dicloak-open-inspect-'));
+let js;
+try {
+  asar.extractAll(archive,dir);
+  const p=path.join(dir,'dist','assets','envList-CYDbiryu.js');
+  if(!fs.existsSync(p)) {
+    const found=fs.readdirSync(path.join(dir,'dist','assets')).filter(x=>x.startsWith('envList-')&&x.endsWith('.js'));
+    throw Error('Expected pinned official envList module not found. Available: '+found.join(','));
+  }
+  js=fs.readFileSync(p,'utf8');
+} finally {fs.rmSync(dir,{recursive:true,force:true});}
 const needles=[
   {name:'operation-column',needle:'prop:"operation"',before:70,after:550},
   {name:'operation-slot',needle:'operation:u(e=>',before:140,after:1500},
