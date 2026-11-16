@@ -7,6 +7,8 @@ on:
       - "tools/test-almacen-perfil-readonly.js"
       - "tools/almacen-original-files.js"
       - "tools/test-almacen-original-files.js"
+      - "tools/almacen-respuesta-http-pruebas.js"
+      - "tools/test-almacen-respuesta-http-pruebas.js"
       - ".github/workflows/test-almacen-readonly.yml"
   pull_request:
     paths:
@@ -14,6 +16,8 @@ on:
       - "tools/test-almacen-perfil-readonly.js"
       - "tools/almacen-original-files.js"
       - "tools/test-almacen-original-files.js"
+      - "tools/almacen-respuesta-http-pruebas.js"
+      - "tools/test-almacen-respuesta-http-pruebas.js"
       - ".github/workflows/test-almacen-readonly.yml"
 
 permissions:
@@ -31,7 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tools/test-almacen-perfil-readonly.js tools/test-almacen-original-files.js
+      - run: node --test tools/test-almacen-perfil-readonly.js tools/test-almacen-original-files.js tools/test-almacen-respuesta-http-pruebas.js
       - name: Confirm module does not perform file writes
         shell: bash
         run: |
