@@ -48,8 +48,8 @@ async function runLab(env=process.env,{onDiagnostic=()=>{}}={}){
    process.stdout.write(config.mode==='attach'?
      'ESPERANDO_OPERACION_ABRIR=TRUE\n':'INICIANDO_PERFIL_DE_PRUEBA_POR_API=TRUE\n');
    const started=config.mode==='attach'?
-     await waitForRunningTestProfile(config):
-     await startTestProfile(config);
+     await waitForRunningTestProfile({...config,onDiagnostic}):
+     await startTestProfile({...config,onDiagnostic});
    diagnostic.mark('profile_running');
    emit('programa','api_connected');
    emit('programa','profile_running');
