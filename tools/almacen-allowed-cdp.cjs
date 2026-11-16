@@ -49,7 +49,9 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
   const pending=new Map();
   const requests=new Map();
   const pendingWrites=new Set();
-  const stats={saved:0,failed:0,ignored:0,received:0};
+  const attachedTargetIds=new Set();
+  const enabledSessions=new Set();
+  const stats={saved:0,failed:0,ignored:0,received:0,approved:0,attachedTargets:0,enabledTargets:0};
   let socket=null,nextId=0;
 
   function send(method,params={},sessionId){
@@ -60,6 +62,22 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
       pending.set(id,{resolve:x=>{clearTimeout(timer);resolve(x)},reject:e=>{clearTimeout(timer);reject(e)}});
       socket.send(JSON.stringify({id,method,params,...(sessionId?{sessionId}:{})}));
     });
+  }
+  async function initializeTarget(sessionId,targetInfo){
+    if(!sessionId || !['page','iframe'].includes(targetInfo?.type))return;
+    if(targetInfo.targetId)attachedTargetIds.add(targetInfo.targetId);
+    if(enabledSessions.has(sessionId))return;
+    enabledSessions.add(sessionId);
+    stats.attachedTargets++;
+    try{
+      await send('Network.enable',{maxTotalBufferSize:64*1024*1024},sessionId);
+      stats.enabledTargets++;
+      // Observe nested iframes of explicitly attached targets too; no
+      // request headers, cookie stores, or cross-origin bodies are read.
+      await send('Target.setAutoAttach',{
+        autoAttach:true,waitForDebuggerOnStart:false,flatten:true
+      },sessionId).catch(()=>{});
+    }catch{stats.failed++}
   }
   async function recordResponse(message){
     const key=message.sessionId+':'+message.params.requestId;
@@ -86,10 +104,11 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
     }
     if(!msg.method||!msg.params)return;
     if(msg.method==='Target.attachedToTarget'){
-      const {sessionId,targetInfo}=msg.params;
-      if(!sessionId || !['page','iframe'].includes(targetInfo?.type))return;
-      try{await send('Network.enable',{maxTotalBufferSize:64*1024*1024},sessionId)}
-      catch{stats.failed++}
+      await initializeTarget(msg.params.sessionId,msg.params.targetInfo);
+      return;
+    }
+    if(msg.method==='Target.detachedFromTarget'){
+      if(msg.params.sessionId)enabledSessions.delete(msg.params.sessionId);
       return;
     }
     if(msg.method==='Network.responseReceived'){
@@ -103,6 +122,7 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
       const mime=String(response.mimeType||'').toLowerCase();
       // No HTML or javascript, which may contain session-related secrets.
       if(/(?:html|javascript)/.test(mime)){stats.ignored++;return}
+      stats.approved++;
       requests.set(msg.sessionId+':'+msg.params.requestId,{filename,url:response.url});
       return;
     }
@@ -134,13 +154,29 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
     await send('Target.setAutoAttach',{
       autoAttach:true,waitForDebuggerOnStart:false,flatten:true
     });
-    return {ok:true,attachedToLocalBrowser:true,testScope:accepted.origin+accepted.prefix};
+    // Existing profile windows often predate the CDP WebSocket connection:
+    // discover those pages explicitly rather than waiting for future tabs.
+    const targets=await send('Target.getTargets');
+    for(const target of targets?.targetInfos||[]){
+      if(target.type!=='page'||!target.targetId ||
+         attachedTargetIds.has(target.targetId))continue;
+      try{
+        const attached=await send('Target.attachToTarget',{
+          targetId:target.targetId,flatten:true
+        });
+        await initializeTarget(attached?.sessionId,target);
+      }catch{stats.failed++}
+    }
+    return {ok:true,attachedToLocalBrowser:true,testScope:accepted.origin+accepted.prefix,
+      monitoredTargets:stats.enabledTargets};
   }
   async function stop(){
-    if(socket && socket.readyState===1)socket.close();
+    // Give accepted response bodies time to finish writing before severing
+    // the debugger connection; never alter or close the browser itself.
     await Promise.allSettled([...pendingWrites]);
+    if(socket && socket.readyState===1)socket.close();
     for(const op of pending.values())op.reject(Error('CDP_DISCONNECTED'));
-    pending.clear();requests.clear();
+    pending.clear();requests.clear();attachedTargetIds.clear();enabledSessions.clear();
     receiver.unbindNativeSession(nativeSession);
     return Object.freeze({...stats,changedNativeChromiumStorage:false,
       note:'Only allowlisted test document bodies; CDP may return decompressed bytes'});
