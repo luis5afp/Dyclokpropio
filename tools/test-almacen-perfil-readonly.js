@@ -42,6 +42,15 @@ test('rejects shared, network, missing, symlinked, or non-directory locations', 
   }).reason, 'NOT_A_PLAIN_DIRECTORY');
 });
 
+test('detects different Windows spellings for the same shared download folder', () => {
+  const result = resolveExistingAlmacen({
+    profileId: 'profile01',
+    knownFolders: { profile01: 'C:/Users/Example/Downloads', profile02: 'c:\\Users\\Example\\Downloads\\' },
+    fsApi
+  });
+  assert.equal(result.reason, 'SHARED_FOLDER_CANNOT_ATTRIBUTE_TO_PROFILE');
+});
+
 test('opens only the exact trusted existing profile folder and never writes', async () => {
   const opened=[];
   const result=await openAlmacen({
