@@ -7,12 +7,16 @@ on:
       - "release-build/native-only-307/inspect-update-center.cjs"
       - "tools/suppress-native-update-autopopup.js"
       - "tools/test-suppress-native-update-autopopup.js"
+      - "tools/suppress-native-download-confirmation.js"
+      - "tools/test-suppress-native-download-confirmation.js"
       - ".github/workflows/inspect-native-update-center.yml"
   pull_request:
     paths:
       - "release-build/native-only-307/inspect-update-center.cjs"
       - "tools/suppress-native-update-autopopup.js"
       - "tools/test-suppress-native-update-autopopup.js"
+      - "tools/suppress-native-download-confirmation.js"
+      - "tools/test-suppress-native-download-confirmation.js"
       - ".github/workflows/inspect-native-update-center.yml"
   workflow_dispatch:
 
@@ -30,6 +34,8 @@ jobs:
         run: |
           node --test tools/test-suppress-native-update-autopopup.js
           if ($LASTEXITCODE -ne 0) { throw 'Pure UI patch unit tests failed' }
+          node --test tools/test-suppress-native-download-confirmation.js
+          if ($LASTEXITCODE -ne 0) { throw 'Downloaded-update prompt regression tests failed' }
 
       - name: Download verified official 3.0.7 installer
         shell: pwsh
