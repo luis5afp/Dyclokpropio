@@ -13,7 +13,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { createRequire } = require('node:module');
-const fromBuild = createRequire(path.join(__dirname, '../release-build/native-0.2.0/package.json'));
+const fromBuild = createRequire(path.join(__dirname, '../release-build/native-0.3.0/package.json'));
 const { NtExecutable, NtExecutableResource } = fromBuild('resedit');
 const { headerHash } = require('./inspect-dicloak-pe-asar-integrity.js');
 
