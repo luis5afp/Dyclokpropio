@@ -1,5 +1,12 @@
 # Investigación técnica — Almacén por perfil en DICloak Nativo 0.2.0
 
+> **Cambio de alcance confirmado:** el usuario indicó que **Almacén** debe conservar
+> todo tipo de material que el servidor entregue al perfil (TXT, ZIP,
+> cookies y otros formatos), no únicamente descargas. La especificación
+> actualizada está en [ALMACEN_DATOS_ORIGINALES.md](ALMACEN_DATOS_ORIGINALES.md).
+> Las secciones siguientes documentan los hallazgos de la investigación
+> inicial y **no representan todavía una captura completa de tráfico**.
+
 ## Solicitud visual
 
 Incorporar la columna **Almacén** exactamente entre las columnas **Estado**
