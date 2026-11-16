@@ -5,11 +5,15 @@ on:
     paths:
       - "tools/almacen-perfil-readonly.js"
       - "tools/test-almacen-perfil-readonly.js"
+      - "tools/almacen-original-files.js"
+      - "tools/test-almacen-original-files.js"
       - ".github/workflows/test-almacen-readonly.yml"
   pull_request:
     paths:
       - "tools/almacen-perfil-readonly.js"
       - "tools/test-almacen-perfil-readonly.js"
+      - "tools/almacen-original-files.js"
+      - "tools/test-almacen-original-files.js"
       - ".github/workflows/test-almacen-readonly.yml"
 
 permissions:
@@ -23,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tools/test-almacen-perfil-readonly.js
+      - run: node --test tools/test-almacen-perfil-readonly.js tools/test-almacen-original-files.js
       - name: Confirm module does not perform file writes
         shell: bash
         run: |
