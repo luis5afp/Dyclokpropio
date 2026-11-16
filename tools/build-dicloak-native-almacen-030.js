@@ -109,7 +109,7 @@ async function build(folder) {
       fs.copyFileSync(original,path.join(nativeDir,moduleFile));
     }
     await asar.createPackageWithOptions(extract,candidate,{
-      unpack:'{**/*.node,dist-electron/worker/downloadWorker.cjs,node_modules/get-windows/main}'
+      unpack:'{**/*.node,**/downloadWorker.cjs,**/main}'
     });
     const rebuilt=listEntries(candidate);
     assertSameMembers(original,rebuilt);
