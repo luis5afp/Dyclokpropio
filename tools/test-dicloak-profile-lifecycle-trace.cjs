@@ -18,7 +18,7 @@ test('records only sanitized profile opening lifecycle, not cookies or API secre
       new Date('2026-11-16T13:00:02Z'),
       new Date('2026-11-16T13:00:03Z')
     ];
-    const trace=createProfileLifecycleTrace({profileId:'test_profile_014',rootFolder,
+    const trace=createProfileLifecycleTrace({profileId:'test_profile_014',rootFolder:root,
       clock:()=>ts.shift()||new Date('2026-11-16T13:00:04Z')});
     trace.mark('monitor_created');
     trace.mark('waiting_for_profile');
