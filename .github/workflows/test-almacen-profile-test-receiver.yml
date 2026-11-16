@@ -1,0 +1,27 @@
+name: Verify Almacén browser-session authorized test receiver
+on:
+  push:
+    branches: [feature/almacen-profile-open-trace-035]
+    paths:
+      - "tools/almacen-profile-test-receiver.cjs"
+      - "tools/test-almacen-profile-test-receiver.cjs"
+      - "tools/almacen-original-files.js"
+      - "tools/almacen-perfil-readonly.js"
+      - ".github/workflows/test-almacen-profile-test-receiver.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-test-receiver:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify exact-byte retention and strict per-profile separation on synthetic browser sessions
+        run: node --test tools/test-almacen-profile-test-receiver.cjs
