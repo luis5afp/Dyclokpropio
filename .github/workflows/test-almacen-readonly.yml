@@ -1,7 +1,7 @@
 name: Validate Almacén read-only profile isolation
 on:
   push:
-    branches: [feature/almacen-por-perfil-020, feature/almacen-bridge-lab-test, feature/almacen-native-030-test]
+    branches: [feature/almacen-por-perfil-020, feature/almacen-bridge-lab-test, feature/almacen-native-030-test, feature/almacen-authorized-endpoint]
     paths:
       - "tools/almacen-perfil-readonly.js"
       - "tools/test-almacen-perfil-readonly.js"
@@ -13,6 +13,8 @@ on:
       - "tools/test-almacen-lab-bridge.js"
       - "tools/almacen-native-lab-main.cjs"
       - "tools/test-almacen-native-lab-main.js"
+      - "tools/almacen-servidor-autorizado.js"
+      - "tools/test-almacen-servidor-autorizado.js"
       - ".github/workflows/test-almacen-readonly.yml"
   pull_request:
     paths:
@@ -26,6 +28,8 @@ on:
       - "tools/test-almacen-lab-bridge.js"
       - "tools/almacen-native-lab-main.cjs"
       - "tools/test-almacen-native-lab-main.js"
+      - "tools/almacen-servidor-autorizado.js"
+      - "tools/test-almacen-servidor-autorizado.js"
       - ".github/workflows/test-almacen-readonly.yml"
 
 permissions:
@@ -43,7 +47,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tools/test-almacen-perfil-readonly.js tools/test-almacen-original-files.js tools/test-almacen-respuesta-http-pruebas.js tools/test-almacen-lab-bridge.js tools/test-almacen-native-lab-main.js
+      - run: node --test tools/test-almacen-perfil-readonly.js tools/test-almacen-original-files.js tools/test-almacen-respuesta-http-pruebas.js tools/test-almacen-lab-bridge.js tools/test-almacen-native-lab-main.js tools/test-almacen-servidor-autorizado.js
       - name: Confirm module does not perform file writes
         shell: bash
         run: |
