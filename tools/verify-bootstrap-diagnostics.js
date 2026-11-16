@@ -76,6 +76,7 @@ async function main() {
     const originalMain = { loaded: true };
     let mainLoaded = false;
     let attempts = 0;
+    let scheduledUpdates = 0;
     const fakeRequire = (name) => {
       switch (name) {
         case 'node:fs': return fakeFs;
@@ -92,6 +93,13 @@ async function main() {
           return require('../src/main/diagnostic-console.js');
         case './cache-ipc-compatibility.js':
           return require('../src/main/cache-ipc-compatibility.js');
+        case './silent-auto-update.js':
+          return {
+            scheduleStartupUpdate(currentApp) {
+              assert.equal(currentApp, app, 'Updater must use the same Electron app');
+              scheduledUpdates++;
+            }
+          };
         case './bundled-extension-launch.js':
         case './bundled-extension-pin.js':
           throw new Error('Cookies Pro integration must not be loaded while disabled');
@@ -125,6 +133,7 @@ async function main() {
     }, { filename: bootstrapPath, timeout: 2000 });
 
     assert.equal(mainLoaded, true, 'Original Electron runtime was not loaded');
+    assert.equal(scheduledUpdates, 1, 'Updater must be scheduled exactly once at bootstrap');
     assert.equal(fakeChildProcess.spawn, originalSpawn, 'Cookies Pro modified child process spawn');
     assert.equal(fakeChildProcess.execFile, originalExecFile, 'Cookies Pro modified child process execFile');
     assert.equal(out.exports, originalMain, 'Bootstrapped app changed unexpectedly');

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "v*"
+      - "v30.0.*"
 
 permissions:
   contents: write
@@ -33,11 +33,26 @@ jobs:
         shell: pwsh
         run: |
           Set-Location source
-          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -notmatch '^v\d+\.\d+\.\d+$') {
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -notmatch '^v30\.0\.\d+$') {
             throw 'Use a tag vX.Y.Z, for example v30.0.1'
           }
           node tools/verify-safe-base.js
           if ($LASTEXITCODE -ne 0) { throw 'Protected runtime differs from the uploaded installer baseline' }
+          node tools/test-silent-auto-update.js
+          if ($LASTEXITCODE -ne 0) { throw 'Silent auto-update unit tests failed' }
+
+      - name: Embed delivery version for startup updates
+        shell: pwsh
+        run: |
+          Set-Location source
+          $deliveryVersion = if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            $env:GITHUB_REF_NAME.Substring(1)
+          } else {
+            '0.0.0'
+          }
+          @{ family = 'Dyclokpropio'; deliveryVersion = $deliveryVersion } |
+            ConvertTo-Json -Compress |
+            Set-Content -LiteralPath 'resources/auto-update-version.json' -Encoding utf8
 
       - name: Install dependencies
         shell: pwsh
@@ -77,6 +92,7 @@ jobs:
           if (-not (Test-Path $exe)) { throw "Unpacked executable missing: $exe" }
           $bundledManifest = 'source/release/win-unpacked/resources/plugins/.cookies-pro-privada/manifest.json'
           if (-not (Test-Path $bundledManifest)) { throw "Bundled extension missing from installer: $bundledManifest" }
+          $env:DYCLOKPROP_AUTO_UPDATE_DISABLED = "1"
           $proc = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 12
           $proc.Refresh()

@@ -1,0 +1,45 @@
+name: Validate Silent Windows Updater
+
+on:
+  pull_request:
+    paths:
+      - "src/main/silent-auto-update.js"
+      - "src/main/bundled-extension-bootstrap.js"
+      - "resources/auto-update-version.json"
+      - "electron-builder.yml"
+      - "tools/test-silent-auto-update.js"
+      - ".github/workflows/release-safe-base.yml"
+      - ".github/workflows/release-windows.yml"
+      - ".github/workflows/validate-silent-auto-update.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test version selection, checksum and trusted URLs
+        run: node --test tools/test-silent-auto-update.js
+      - name: Check Windows packaging integration
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          const bootstrap = fs.readFileSync('src/main/bundled-extension-bootstrap.js', 'utf8');
+          const builder = fs.readFileSync('electron-builder.yml', 'utf8');
+          const release = fs.readFileSync('.github/workflows/release-safe-base.yml', 'utf8');
+          assert.ok(bootstrap.includes("require('./silent-auto-update.js').scheduleStartupUpdate"));
+          assert.ok(builder.includes('- src/main/silent-auto-update.js'));
+          assert.ok(builder.includes('- from: resources/auto-update-version.json'));
+          assert.ok(release.includes('Embed current delivery version in installed update metadata'));
+          assert.ok(release.includes('node tools/test-silent-auto-update.js'));
+          assert.ok(release.includes('DYCLOKPROP_AUTO_UPDATE_DISABLED'));
+          console.log('PASS: silent updater installed into the packaged bootstrap and release workflow');
+          NODE

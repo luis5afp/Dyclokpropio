@@ -4,31 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "dist/**"
-      - "dist-electron/**"
-      - "package.json"
-      - "electron-builder.yml"
-      - "bundled-extensions/**"
-      - "src/main/bundled-extension-*.js"
-      - "tools/unpack-bundled-extension.js"
-      - "tools/verify-bundled-extension.js"
-      - "tools/verify-safe-base.js"
-      - "tools/apply-legacy-expand-check.js"
-      - "tools/instrument-open-stages.js"
-      - "tools/verify-open-stage-diagnostics.js"
-      - "src/main/open-stage-diagnostics.js"
-      - "src/main/diagnostic-console.js"
-      - "src/main/cache-ipc-compatibility.js"
-      - "tools/verify-cache-ipc-compatibility.js"
-      - "tools/verify-original-cache-ipc-registration.js"
-      - "src/renderer/diagnostic-panel.js"
-      - "tools/install-diagnostic-panel.js"
-      - "tools/verify-diagnostic-console.js"
-      - "tools/instrument-params-merge.js"
-      - "tools/verify-params-merge-build-contract.js"
-      - "tools/show-open-stage-diagnostics.ps1"
-      - ".github/workflows/release-safe-base.yml"
   workflow_dispatch:
 
 concurrency:
@@ -71,11 +46,14 @@ jobs:
           "version=$release" >> $env:GITHUB_OUTPUT
           Write-Host "Release to publish: v$release"
           Write-Host 'Internal compatibility version remains 3.0.0'
-      - name: Verify uploaded-base compatibility
+      - name: Verify uploaded-base compatibility and updater tests
         shell: pwsh
         run: |
           Set-Location source
           node tools/verify-safe-base.js
+          if ($LASTEXITCODE -ne 0) { throw 'Recovered runtime verification failed' }
+          node tools/test-silent-auto-update.js
+          if ($LASTEXITCODE -ne 0) { throw 'Automatic updater tests failed' }
       - name: Install dependencies
         shell: pwsh
         run: |
@@ -146,6 +124,18 @@ jobs:
           Set-Location source
           node tools/install-diagnostic-panel.js --apply
           if ($LASTEXITCODE -ne 0) { throw 'Failed to include diagnostic button; refusing release' }
+      - name: Embed current delivery version in installed update metadata
+        shell: pwsh
+        run: |
+          Set-Location source
+          $deliveryVersion = '${{ steps.version.outputs.version }}'
+          if ($deliveryVersion -notmatch '^30\.0\.\d+$') {
+            throw 'Refusing to build with invalid Dyclokpropio release version'
+          }
+          @{ family = 'Dyclokpropio'; deliveryVersion = $deliveryVersion } |
+            ConvertTo-Json -Compress |
+            Set-Content -LiteralPath 'resources/auto-update-version.json' -Encoding utf8
+
       - name: Build Windows installer from original runtime
         shell: pwsh
         run: |
@@ -159,6 +149,7 @@ jobs:
           if (-not (Test-Path $exe)) { throw "Executable not found: $exe" }
           $extensionManifest = "release\win-unpacked\resources\plugins\.cookies-pro-privada\manifest.json"
           if (-not (Test-Path $extensionManifest)) { throw "Bundled Cookies Pro extension missing from build: $extensionManifest" }
+          $env:DYCLOKPROP_AUTO_UPDATE_DISABLED = "1"
           $proc = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 12
           $proc.Refresh()
