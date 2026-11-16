@@ -7,7 +7,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
 const {createRequire}=require('node:module');
-const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.0/package.json'))('@electron/asar');
+const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.1/package.json'))('@electron/asar');
 const popup=require('./suppress-native-update-autopopup.js');
 const download=require('./suppress-native-download-confirmation.js');
 const ASAR_SHA='b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf';
