@@ -62,6 +62,52 @@ No se simulará captura ni se ocultarán pérdidas de eventos.
 - Si se pierde un evento, se agota el espacio o una captura no es técnicamente
   posible, mostrar un error; **no afirmar que se guardó todo**.
 
+## Modo laboratorio confirmado: servidores y datos exclusivamente ficticios
+
+El usuario confirmó que las páginas, servidores, cookies, contraseñas,
+credenciales y proxies se usarán **solo como datos de prueba**. En ese ámbito
+podemos guardar también **las cabeceras HTTP de respuesta sin redactar**
+(`Set-Cookie`, `WWW-Authenticate`, etc.) y cuerpos con valores ficticios
+de credenciales o proxies, además de TXT, ZIP, JSON y cualquier otro formato.
+
+Para no confundir este laboratorio con una recolección indiscriminada de
+información de cuentas reales, el receptor inicial acepta **únicamente
+respuestas de un servidor de pruebas HTTP en localhost/127.0.0.1/[::1]**.
+No captura datos de terceros ni inspecciona el almacén de sesiones del
+navegador. El uso futuro con otros servidores propios requerirá una lista
+explícita de orígenes autorizados y una configuración visible.
+
+### Prueba implementada: respuestas HTTP de servidor simulado
+
+`tools/almacen-respuesta-http-pruebas.js` recibe un evento de respuesta ya
+obtenido por un arnés de pruebas confiable con:
+`profileId`, `eventId`, `responseUrl`, `rawHeaderBytes` y `bodyBytes`.
+Crea para ese evento:
+`Almacen/<profileId>/respuestas-pruebas/<eventId>/headers.raw` y
+`body.raw`. Ambos son **bytes originales recibidos por el arnés**,
+sin filtrar, editar, ofuscar, decodificar texto ni transformar formatos.
+Una respuesta puede contener cookies **falsas** en `Set-Cookie`,
+credenciales ficticias, direcciones de proxy de ensayo y datos binarios.
+
+La captura del arnés es el origen del dato: esto **no** demuestra que
+una futura integración de Electron pueda obtener todos los bytes
+exactamente como viajaron por HTTP/TLS o recolectar tráfico de WebSocket,
+eventos de service workers y cookies creadas mediante JavaScript. El
+navegador puede descomprimir contenido antes de entregar una respuesta.
+La captura de prueba tampoco cambia la cookie jar ni el proxy del perfil.
+
+Los valores `Cookie` / `Authorization` **enviados por el cliente** no son
+información que el servidor «manda»: se tratarían como solicitudes,
+un alcance distinto. Las cookies persistidas o creadas por JavaScript
+permanecen en el almacén nativo del navegador; no se vuelcan ni descifran
+automáticamente. Un valor ficticio que el **servidor simulado envía**
+en una cabecera o respuesta sí se conserva tal cual en este ensayo.
+
+Pruebas: `node --test tools/test-almacen-respuesta-http-pruebas.js`
+en Windows y Linux. Los directorios de almacenamiento de producción
+requerirán autorización de origen, cuotas y verificación de ACL NTFS
+antes de operar con perfiles reales.
+
 ## Situación del repositorio
 
 Se verificó que `dist/assets/envList-CYDbiryu.js` compone la tabla de
