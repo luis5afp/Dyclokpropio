@@ -12,6 +12,7 @@ const {startTestProfile,waitForRunningTestProfile,findBrowserWebSocket}=
   require('./dicloak-local-api-profile.cjs');
 const {createAllowedCdpRecorder}=require('./almacen-allowed-cdp.cjs');
 const {parseTestScope}=require('./almacen-profile-test-receiver.cjs');
+const {createProfileLifecycleTrace}=require('./dicloak-profile-lifecycle-trace.cjs');
 
 function configFromEnv(env){
   const apiPort=Number(env.DICLOAK_LOCAL_API_PORT||'52100');
@@ -31,33 +32,56 @@ function configFromEnv(env){
 }
 async function runLab(env=process.env){
  const config=configFromEnv(env);
- // Do not print or serialize API keys or debugging WebSocket URLs.
- process.stdout.write(config.mode==='attach'?
-   'ESPERANDO_OPERACION_ABRIR=TRUE\n':'INICIANDO_PERFIL_DE_PRUEBA_POR_API=TRUE\n');
- const started=config.mode==='attach'?
-   await waitForRunningTestProfile(config):
-   await startTestProfile(config);
- const wsUrl=started.webSocketUrl||
-    await findBrowserWebSocket(started.debugPort);
  const rootFolder=path.join(env.LOCALAPPDATA||path.join(os.homedir(),'AppData','Local'),
    'DICloak-Test-Server-Reception-036');
- await fs.mkdir(rootFolder,{recursive:true,mode:0o700});
- const recorder=createAllowedCdpRecorder({
-   profileId:started.profileId,debugPort:started.debugPort,
-   wsUrl,rootFolder,
-   testEndpointPrefix:config.testEndpointPrefix
+ const diagnostic=createProfileLifecycleTrace({
+   profileId:config.profileId,rootFolder
  });
- await recorder.start();
- process.stdout.write('DICLOAK_OPENAPI_SESSION_BOUND=PASS\n');
- process.stdout.write('AUTHORIZED_TEST_ENDPOINT_MONITOR=ACTIVE\n');
+ diagnostic.mark('monitor_created');
+ let recorder=null;
+ let reportStats=null;
  try {
+   diagnostic.mark('waiting_for_profile');
+   process.stdout.write(config.mode==='attach'?
+     'ESPERANDO_OPERACION_ABRIR=TRUE\n':'INICIANDO_PERFIL_DE_PRUEBA_POR_API=TRUE\n');
+   const started=config.mode==='attach'?
+     await waitForRunningTestProfile(config):
+     await startTestProfile(config);
+   diagnostic.mark('profile_running');
+   const wsUrl=started.webSocketUrl||
+     await findBrowserWebSocket(started.debugPort);
+   await fs.mkdir(rootFolder,{recursive:true,mode:0o700});
+   recorder=createAllowedCdpRecorder({
+     profileId:started.profileId,debugPort:started.debugPort,
+     wsUrl,rootFolder,
+     testEndpointPrefix:config.testEndpointPrefix
+   });
+   await recorder.start();
+   diagnostic.mark('debugger_connected');
+   diagnostic.mark('test_receiver_ready');
+   process.stdout.write('DICLOAK_OPENAPI_SESSION_BOUND=PASS\n');
+   process.stdout.write('AUTHORIZED_TEST_ENDPOINT_MONITOR=ACTIVE\n');
    await new Promise(resolve=>setTimeout(resolve,config.seconds*1000));
- }finally{
-   const outcome=await recorder.stop();
-   process.stdout.write('AUTHORIZED_TEST_DOCUMENTS_SAVED='+outcome.saved+'\n');
-   process.stdout.write('AUTHORIZED_TEST_RECORDING_ERRORS='+outcome.failed+'\n');
+   reportStats=await recorder.stop();
+   recorder=null;
+   diagnostic.mark('test_capture_finished',
+     reportStats.failed>0?'CAPTURE_ERRORS':
+     reportStats.saved>0?'DOCUMENTS_SAVED':'NO_AUTHORIZED_DOCUMENTS');
+   process.stdout.write('AUTHORIZED_TEST_DOCUMENTS_SAVED='+reportStats.saved+'\n');
+   process.stdout.write('AUTHORIZED_TEST_RECORDING_ERRORS='+reportStats.failed+'\n');
    process.stdout.write('BROWSER_PROFILE_REMAINS_OPEN=TRUE\n');
    process.stdout.write('NATIVE_COOKIE_OR_PASSWORD_EXPORT=FALSE\n');
+ }catch(error){
+   const msg=String(error?.message||'');
+   const reason=msg.includes('PROFILE')?'SESSION_NOT_RUNNING':
+     msg.includes('API')?'API_UNAVAILABLE':
+     msg.includes('CDP')||msg.includes('DEBUG')?'DEBUGGER_UNAVAILABLE':
+     'UNKNOWN_ERROR';
+   diagnostic.mark('monitor_error',reason);
+   throw error;
+ }finally{
+   if(recorder)reportStats=await recorder.stop().catch(()=>null);
+   await diagnostic.finish({recording:reportStats});
  }
 }
 if(require.main===module){
