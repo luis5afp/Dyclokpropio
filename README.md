@@ -49,6 +49,19 @@ El instalador aparece en `release/`. El flujo de GitHub Actions aplica estas ver
 
 La interfaz recuperada tiene deshabilitada la comprobación **automática** de actualizaciones al iniciar y cada diez minutos. El mecanismo de avisos/actualización sigue incluido; esto es una modificación deliberada respecto del instalador original y está documentada en [docs/UPLOADED_BASE_3.0.0.md](docs/UPLOADED_BASE_3.0.0.md).
 
+## Actualización silenciosa de Dyclokpropio en Windows
+
+Los instaladores **nuevos** de la familia `v30.0.N` incluyen un comprobador de actualizaciones al abrir Dyclokpropio. Cuando GitHub publica una versión **estable** posterior, se descarga el instalador firmado con el SHA-256 publicado en `SHA256SUMS.txt`, se comprueba el hash, se cierra la aplicación de forma normal, se ejecuta la actualización NSIS silenciosa en la misma carpeta y se abre la aplicación instalada.
+
+- **No se instalan** automáticamente versiones preliminares, builds de Actions ni archivos `DyclokPRO_6.*` (otro programa dentro del repositorio).
+- Si no hay Internet, hay un fallo o el hash no coincide, **se mantiene abierta la versión existente**. No se ejecutan instaladores no verificados.
+- Windows todavía puede pedir elevación UAC si la instalación necesita permisos de administrador; los permisos del sistema no se omiten.
+- La primera versión con actualizador debe instalarse una vez de forma habitual. Un EXE antiguo no puede adquirir el actualizador de forma retroactiva.
+- Las carpetas de perfiles y sesiones no se borran durante la descarga ni durante el cambio de versión. Antes de la primera instalación, es aconsejable respaldarlas.
+- Los instaladores `v30.0.N` contienen su versión de entrega en `resources/auto-update-version.json`. La versión interna del motor (`3.0.0`) permanece sin cambios.
+
+Pruebas del selector y la integridad: `node tools/test-silent-auto-update.js`. Para distribución y procedimiento, consulta [docs/RELEASES.md](docs/RELEASES.md).
+
 ## Cookies Pro Privada en todos los perfiles
 
 Puedes instalar la extensión Cookies Pro Privada 16.9.10 con la función nativa **Gestión de extensiones → Subir ZIP → Grupo de extensiones** y después asignar ese grupo a todos los perfiles actuales y futuros. Hay una herramienta opcional que aplica grupos en lote mediante la API local (simulación por defecto, sin almacenar la clave API).
