@@ -4,6 +4,7 @@ on:
     branches: [feature/almacen-por-perfil-020]
     paths:
       - "tools/inspect-native-profile-storage.cjs"
+      - "tools/inspect-native-almacen-targets.cjs"
       - ".github/workflows/inspect-native-profile-storage.yml"
   workflow_dispatch:
 
@@ -34,4 +35,5 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Inspection dependency not available' }
           $asar = Join-Path $env:RUNNER_TEMP 'native-original/resources/app.asar'
           node ../../tools/inspect-native-profile-storage.cjs $asar
+          node ../../tools/inspect-native-almacen-targets.cjs $asar
           if ($LASTEXITCODE -ne 0) { throw 'Read-only inspection failed' }
