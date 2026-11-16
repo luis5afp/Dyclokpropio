@@ -10,6 +10,8 @@ on:
       - "tools/test-dicloak-existing-profile-cdp-037.cjs"
       - "tools/verify-almacen-test-manifest.cjs"
       - "tools/test-verify-almacen-test-manifest.cjs"
+      - "tools/check-dicloak-open-profile.cjs"
+      - "tools/test-check-dicloak-open-profile.cjs"
       - ".github/workflows/test-almacen-opening-observability-037.yml"
   workflow_dispatch:
 permissions:
@@ -32,4 +34,4 @@ jobs:
           node --check tools/almacen-allowed-cdp.cjs
           node --check tools/run-dicloak-openapi-test-receiver.cjs
       - name: Inspect synthetic profile opening, preexisting pages, permitted files and privacy boundaries
-        run: node --test tools/test-dicloak-profile-lifecycle-trace.cjs tools/test-dicloak-existing-profile-cdp-037.cjs tools/test-verify-almacen-test-manifest.cjs tools/test-dicloak-openapi-cdp-036.cjs tools/test-almacen-profile-test-receiver.cjs
+        run: node --test tools/test-dicloak-profile-lifecycle-trace.cjs tools/test-dicloak-existing-profile-cdp-037.cjs tools/test-verify-almacen-test-manifest.cjs tools/test-check-dicloak-open-profile.cjs tools/test-dicloak-openapi-cdp-036.cjs tools/test-almacen-profile-test-receiver.cjs
