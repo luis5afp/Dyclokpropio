@@ -5,6 +5,7 @@ on:
     paths:
       - "tools/inspect-native-profile-storage.cjs"
       - "tools/inspect-native-almacen-targets.cjs"
+      - "tools/inspect-native-profile-table.cjs"
       - ".github/workflows/inspect-native-profile-storage.yml"
   workflow_dispatch:
 
@@ -36,4 +37,5 @@ jobs:
           $asar = Join-Path $env:RUNNER_TEMP 'native-original/resources/app.asar'
           node ../../tools/inspect-native-profile-storage.cjs $asar
           node ../../tools/inspect-native-almacen-targets.cjs $asar
+          node ../../tools/inspect-native-profile-table.cjs $asar
           if ($LASTEXITCODE -ne 0) { throw 'Read-only inspection failed' }
