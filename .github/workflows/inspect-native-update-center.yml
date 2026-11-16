@@ -38,8 +38,10 @@ jobs:
           python tools/prepare-dicloak-native-307.py --installer $file --destination $dest
           if ($LASTEXITCODE -ne 0) { throw 'Could not recover original runtime' }
           $asar = Join-Path $dest 'resources/app.asar'
-          if ((Get-FileHash $asar -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d1dcf') {
-            throw 'Original ASAR is different'
+          $digest = (Get-FileHash -LiteralPath $asar -Algorithm SHA256).Hash.ToLowerInvariant()
+          Write-Host "Original ASAR SHA-256: $digest"
+          if ($digest -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d1dcf') {
+            throw "Original ASAR is different: $digest"
           }
       - name: Inspect only bundled UI update code
         shell: pwsh
