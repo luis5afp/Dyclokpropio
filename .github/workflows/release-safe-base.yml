@@ -4,34 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "dist/**"
-      - "dist-electron/**"
-      - "package.json"
-      - "resources/auto-update-version.json"
-      - "src/main/silent-auto-update.js"
-      - "tools/test-silent-auto-update.js"
-      - "electron-builder.yml"
-      - "bundled-extensions/**"
-      - "src/main/bundled-extension-*.js"
-      - "tools/unpack-bundled-extension.js"
-      - "tools/verify-bundled-extension.js"
-      - "tools/verify-safe-base.js"
-      - "tools/apply-legacy-expand-check.js"
-      - "tools/instrument-open-stages.js"
-      - "tools/verify-open-stage-diagnostics.js"
-      - "src/main/open-stage-diagnostics.js"
-      - "src/main/diagnostic-console.js"
-      - "src/main/cache-ipc-compatibility.js"
-      - "tools/verify-cache-ipc-compatibility.js"
-      - "tools/verify-original-cache-ipc-registration.js"
-      - "src/renderer/diagnostic-panel.js"
-      - "tools/install-diagnostic-panel.js"
-      - "tools/verify-diagnostic-console.js"
-      - "tools/instrument-params-merge.js"
-      - "tools/verify-params-merge-build-contract.js"
-      - "tools/show-open-stage-diagnostics.ps1"
-      - ".github/workflows/release-safe-base.yml"
   workflow_dispatch:
 
 concurrency:
