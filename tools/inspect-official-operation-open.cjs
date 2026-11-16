@@ -19,7 +19,21 @@ const names=Object.keys(assetFiles).filter(x=>x.startsWith('envList-')&&x.endsWi
 process.stdout.write('ENV_LIST_ASAR_FILES='+JSON.stringify(names)+'\n');
 if(!assetFiles['envList-CYDbiryu.js'])
   throw Error('Pinned vendor 3.0.7 table module missing from this archive');
-const js=asar.extractFile(archive,target).toString('utf8');
+const entry=assetFiles['envList-CYDbiryu.js'];
+if(entry.unpacked||entry.link||!Number.isSafeInteger(entry.size)||
+   entry.size<1000||entry.size>2000000||
+   !/^[0-9]+$/.test(String(entry.offset)))throw Error('Expected a regular packed envList bundle');
+const base=8+headerRaw.headerSize;
+const offset=base+Number(entry.offset);
+const fd=fs.openSync(archive,'r');
+const bytes=Buffer.alloc(entry.size);
+try{
+  const got=fs.readSync(fd,bytes,0,bytes.length,offset);
+  if(got!==bytes.length)throw Error('Incomplete native envList source read');
+}finally{fs.closeSync(fd);}
+const js=bytes.toString('utf8');
+if(!js.includes('prop:"operation"'))throw Error('Unexpected official envList content or ASAR offset');
+
 const needles=[
   {name:'operation-column',needle:'prop:"operation"',before:70,after:550},
   {name:'operation-slot',needle:'operation:u(e=>',before:140,after:1500},
