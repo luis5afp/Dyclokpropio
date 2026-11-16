@@ -32,8 +32,10 @@ function assert(condition, message) {
 }
 function readEntryHeader(archive) {
   const raw = asar.getRawHeader(archive);
-  const headerText = raw.header;
-  const headBytes = raw.headerSize;
+  const headerText = typeof raw.header === 'string' ? raw.header :
+    typeof raw.headerString === 'string' ? raw.headerString :
+    raw.header && typeof raw.header === 'object' ? JSON.stringify(raw.header) : null;
+  const headBytes = raw.headerSize ?? raw.size;
   assert(typeof headerText === 'string' && Number.isInteger(headBytes), 'unrecognized ASAR header');
   const index = JSON.parse(headerText);
   const target = index.files?.dist?.files?.assets?.files?.['index-bGjMkmkL.js'];
