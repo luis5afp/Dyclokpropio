@@ -45,6 +45,18 @@ npx electron-builder install-app-deps
 npm run build:win
 ```
 
+## Actualización automática al abrir el instalador
+
+Los nuevos instaladores de **Dyclokpropio** `v30.0.N` comprueban GitHub Releases en cada arranque. Si hay una versión estable superior con `Dyclokpropio_30.0.N_win_x64.exe` y `SHA256SUMS.txt`, descargan el instalador en el directorio temporal del usuario, validan SHA-256, cierran la aplicación, ejecutan NSIS con `/S` y vuelven a iniciar el EXE instalado. No aparece una confirmación propia del actualizador.
+
+**Atención:** los Releases de este repositorio también contienen `DyclokPRO v6.*` (otro programa). El actualizador de Dyclokpropio ignora esos paquetes y todas las versiones preliminares. No utiliza la ruta `/releases/latest` porque puede corresponder a otra familia de instaladores.
+
+Los paquetes incluyen `auto-update-version.json` en la carpeta `resources` de Electron, con la versión de distribución real. Los builds no etiquetados tienen `0.0.0` y no buscan actualizaciones. `package.json` conserva `3.0.0` por compatibilidad.
+
+Un instalador antiguo sin este código necesitará instalar **una sola vez** la primera versión que lo incorpore. A partir de entonces se actualizará al abrir el programa si hay nuevas versiones compatibles.
+
+La actualización **no** desactiva el control de cuentas de Windows (UAC). Una instalación que requiera elevación puede mostrar el cuadro de seguridad del sistema. Si la descarga o instalación falla, se conserva o intenta volver a abrir la versión existente; no se elimina información del perfil. Conviene respaldar datos importantes antes de estrenar el mecanismo.
+
 ## Protección de los perfiles
 
 Las comprobaciones automáticas y el arranque básico de Electron **no demuestran** que todas las funciones de perfiles, autenticación o extensión funcionen en el equipo del usuario. Antes de instalar una nueva versión, guarda una copia de seguridad de los perfiles y sus datos. Nunca subas `SourceData/` ni datos de sesión a un repositorio público.
