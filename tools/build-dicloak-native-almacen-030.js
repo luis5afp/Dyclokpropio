@@ -7,7 +7,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
 const {createRequire}=require('node:module');
-const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.2/package.json'))('@electron/asar');
+const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.3/package.json'))('@electron/asar');
 const popup=require('./suppress-native-update-autopopup.js');
 const download=require('./suppress-native-download-confirmation.js');
 const ASAR_SHA='b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf';
@@ -25,7 +25,8 @@ const APP_MAIN_ADDITION='\n;try{require("./almacen-lab/almacen-native-lab-main.c
 const TARGETS=['dist-electron/main.js','dist-electron/preload/index.js','dist/assets/envList-CYDbiryu.js','dist/assets/TableFieldDialog-V53UVTu7.js','dist/assets/index-bGjMkmkL.js'];
 const LAB_MODULES=[
   'almacen-native-lab-main.cjs','almacen-lab-bridge.js','almacen-perfil-readonly.js',
-  'almacen-respuesta-http-pruebas.js','almacen-original-files.js'
+  'almacen-respuesta-http-pruebas.js','almacen-original-files.js',
+  'almacen-fixtures-valid.js'
 ];
 const LAB_DEST='dist-electron/almacen-lab/';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -162,7 +163,7 @@ async function build(folder) {
     catch(error){fs.renameSync(backup,archive);throw error;}
     fs.unlinkSync(backup);
     const manifest={
-      deliveryVersion:'0.3.2',originalEngine:'DICloak 3.0.7',
+      deliveryVersion:'0.3.3',originalEngine:'DICloak 3.0.7',
       executableSha256:PE_SHA,originalExecutableSha256:PE_SHA,
       officialAsarSha256:ASAR_SHA,modifiedAsarSha256:sha(fs.readFileSync(archive)),
       changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostOnly:true,capturesRealBrowsing:false,
