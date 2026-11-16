@@ -31,7 +31,6 @@ jobs:
           $asar = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Audit-034/resources/app.asar'
           if (!(Test-Path -LiteralPath $asar -PathType Leaf)) { throw 'Installed app.asar absent' }
           Write-Host ('APP_ASAR_BYTES='+(Get-Item -LiteralPath $asar).Length)
-          Copy-Item -LiteralPath $asar -Destination (Join-Path $env:RUNNER_TEMP 'installed-034.asar')
       - name: Install inspector ASAR dependencies
         shell: pwsh
         working-directory: release-build/native-0.3.4
@@ -39,6 +38,6 @@ jobs:
       - name: Inspect native 3.0.7 operation hooks without profile data
         shell: pwsh
         run: |
-          $asar = Join-Path $env:RUNNER_TEMP 'installed-034.asar'
+          $asar = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Audit-034/resources/app.asar'
           node tools/inspect-official-operation-open.cjs $asar
           if ($LASTEXITCODE -ne 0) { throw 'ASAR inspection failure' }
