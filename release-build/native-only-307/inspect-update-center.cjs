@@ -61,6 +61,15 @@ function visit(node, member) {
   inspected++;
   const source = data.toString('utf8');
   if (member === 'dist/assets/index-bGjMkmkL.js') {
+    const { preview, hash } = require('../../tools/suppress-native-update-autopopup.js');
+    const transformed = preview(source);
+    console.log('UPDATE_CENTER_PATCH_PREVIEW=' + JSON.stringify({
+      exactRenderer: member,
+      originalSha256: hash(source),
+      candidateSha256: hash(transformed),
+      onlyAutoPopupCallChanged: true,
+      originalASARUnmodified: true
+    }));
     const i = source.indexOf('Tt=M(()=>');
     const j = source.indexOf('P(()=>Tt.value', i);
     console.log('NATIVE_UPDATE_AUTO_OPEN_CONTEXT=' + JSON.stringify({
