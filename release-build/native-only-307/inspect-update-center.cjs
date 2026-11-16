@@ -23,7 +23,10 @@ const paths = asar.listPackage(root).filter(file =>
 );
 const results = [];
 for (const filename of paths) {
-  const data = asar.extractFile(root, filename);
+  const normalized = filename.replace(/\\/g, '/').replace(/^\/+/, '');
+  let data;
+  try { data = asar.extractFile(root, normalized); }
+  catch (error) { console.warn('Skip unavailable ASAR member:', normalized, error.message); continue; }
   if (!Buffer.isBuffer(data) || data.length > 80 * 1024 * 1024) continue;
   const content = data.toString('utf8');
   const found = [];
