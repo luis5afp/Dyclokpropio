@@ -1,0 +1,48 @@
+name: Inspect official DICloak native update panel (read only)
+
+on:
+  push:
+    branches: [feature/hide-native-update-center]
+    paths:
+      - "release-build/native-only-307/inspect-update-center.cjs"
+      - ".github/workflows/inspect-native-update-center.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-panel:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download verified official 3.0.7 installer
+        shell: pwsh
+        run: |
+          $file = Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $file -TimeoutSec 900
+          $hash = (Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae') {
+            throw 'Original official installer hash mismatch'
+          }
+      - name: Extract official runtime and confirm original ASAR SHA-256
+        shell: pwsh
+        run: |
+          $file = Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          $dest = Join-Path $env:RUNNER_TEMP 'dyclok-original-inspection'
+          python tools/prepare-dicloak-native-307.py --installer $file --destination $dest
+          if ($LASTEXITCODE -ne 0) { throw 'Could not recover original runtime' }
+          $asar = Join-Path $dest 'resources/app.asar'
+          if ((Get-FileHash $asar -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d1dcf') {
+            throw 'Original ASAR is different'
+          }
+      - name: Inspect only bundled UI update code
+        shell: pwsh
+        working-directory: release-build/native-only-307
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund --no-save @electron/asar@3.2.18
+          if ($LASTEXITCODE -ne 0) { throw 'Inspector dependency could not be installed' }
+          $asar = Join-Path $env:RUNNER_TEMP 'dyclok-original-inspection/resources/app.asar'
+          node inspect-update-center.cjs $asar
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to identify exact update panel code' }
