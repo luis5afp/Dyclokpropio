@@ -15,6 +15,7 @@ files:
   - dist/**/*
   - dist-electron/**/*
   - src/main/bundled-extension-bootstrap.js
+  - src/main/silent-auto-update.js
   - src/main/bundled-extension-launch.js
   - src/main/bundled-extension-pin.js
   - src/main/bundled-extension-download-retry.js
@@ -26,6 +27,8 @@ files:
   - package.json
   - node_modules/**/*
 extraResources:
+  - from: resources/auto-update-version.json
+    to: auto-update-version.json
   - from: plugins
     to: plugins
   - from: vendor
