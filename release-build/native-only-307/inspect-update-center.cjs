@@ -51,6 +51,13 @@ function visit(node, member) {
   }
   inspected++;
   const source = data.toString('utf8');
+  if (member === 'dist/assets/index-bGjMkmkL.js') {
+    const i = source.indexOf('Tt=M(()=>');
+    const j = source.indexOf('P(()=>Tt.value', i);
+    console.log('NATIVE_UPDATE_AUTO_OPEN_CONTEXT=' + JSON.stringify({
+      file: member, computedAt: i, watchAt: j, context: source.slice(i, i + 1450)
+    }));
+  }
   const found = [];
   for (const pattern of patterns) {
     pattern.lastIndex = 0;
