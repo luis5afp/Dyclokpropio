@@ -18,6 +18,15 @@ if (!header?.files || !Number.isInteger(headerSize)) {
   throw new Error('Unsupported ASAR header format');
 }
 const dataStart = 8 + headerSize;
+const target = header.files?.dist?.files?.assets?.files?.['index-bGjMkmkL.js'];
+if (!target) throw new Error('Expected update renderer not listed in original ASAR');
+console.log('UPDATE_RENDERER_INTEGRITY=' + JSON.stringify({
+  file: 'dist/assets/index-bGjMkmkL.js',
+  size: target.size,
+  offset: target.offset,
+  sha256Blocks: Array.isArray(target.integrity?.blocks) ? target.integrity.blocks.length : 0,
+  hasIntegrity: !!target.integrity
+}));
 const patterns = [
   /update\.updateCenter/g, /update\.versionUpdate/g,
   /update\.softUpdate/g, /updateCenter/g,
