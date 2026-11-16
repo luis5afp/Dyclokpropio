@@ -39,12 +39,14 @@ function decodeCdpBody(result){
   if(bytes.length>MAX_RESPONSE_BYTES)throw Error('CDP_RESPONSE_TOO_LARGE');
   return bytes;
 }
-function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndpointPrefix,WebSocketImpl=globalThis.WebSocket}){
+function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndpointPrefix,onDiagnostic=()=>{},WebSocketImpl=globalThis.WebSocket}){
   validateLocalBrowserWebSocket(wsUrl,debugPort);
   if(typeof WebSocketImpl!=='function')throw Error('NODE_22_WEBSOCKET_REQUIRED');
   const receiver=createProfileTestReceiver({rootFolder,testEndpointPrefix});
   const nativeSession=Object.freeze({kind:'local-openapi-vetted-chromium-session'});
   receiver.bindNativeSession(nativeSession,profileId);
+  if(typeof onDiagnostic!=='function')throw Error('DIAGNOSTIC_CALLBACK_INVALID');
+  const emit=(source,event,extra={})=>{try{onDiagnostic({source,event,...extra})}catch{/* diagnostics must not stop browser */}};
   const accepted=receiver.scope;
   const pending=new Map();
   const requests=new Map();
@@ -72,6 +74,7 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
     try{
       await send('Network.enable',{maxTotalBufferSize:64*1024*1024},sessionId);
       stats.enabledTargets++;
+      emit('chromium','target_connected');
       // Observe nested iframes of explicitly attached targets too; no
       // request headers, cookie stores, or cross-origin bodies are read.
       await send('Target.setAutoAttach',{
@@ -88,12 +91,13 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
       const result=await send('Network.getResponseBody',{requestId:message.params.requestId},message.sessionId);
       const bytes=decodeCdpBody(result);
       // Only allowed test documents reach the persistence API.
-      await receiver.recordDocument({
+      const stored=await receiver.recordDocument({
         nativeSession,responseUrl:item.url,
         originalName:item.filename,bodyBytes:bytes
       });
       stats.saved++;
-    }catch {stats.failed++}
+      emit('almacen','document_saved',{bytes:stored.byteLength,sha256:stored.sha256});
+    }catch {stats.failed++;emit('almacen','document_failed')}
   }
   async function receive(raw){
     let msg;try{msg=JSON.parse(String(raw))}catch{return}
@@ -123,6 +127,7 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
       // No HTML or javascript, which may contain session-related secrets.
       if(/(?:html|javascript)/.test(mime)){stats.ignored++;return}
       stats.approved++;
+      emit('servidor_pruebas','response_approved',{status:response.status});
       requests.set(msg.sessionId+':'+msg.params.requestId,{filename,url:response.url});
       return;
     }
@@ -134,7 +139,9 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
       return;
     }
     if(msg.method==='Network.loadingFailed'&&msg.sessionId){
-      requests.delete(msg.sessionId+':'+msg.params.requestId);
+      const key=msg.sessionId+':'+msg.params.requestId;
+      if(requests.has(key))emit('servidor_pruebas','response_failed');
+      requests.delete(key);
     }
   }
   function isApproved(url,scope){
@@ -167,6 +174,7 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
         await initializeTarget(attached?.sessionId,target);
       }catch{stats.failed++}
     }
+    emit('chromium','debugger_connected');
     return {ok:true,attachedToLocalBrowser:true,testScope:accepted.origin+accepted.prefix,
       monitoredTargets:stats.enabledTargets};
   }
@@ -178,6 +186,7 @@ function createAllowedCdpRecorder({profileId,debugPort,wsUrl,rootFolder,testEndp
     for(const op of pending.values())op.reject(Error('CDP_DISCONNECTED'));
     pending.clear();requests.clear();attachedTargetIds.clear();enabledSessions.clear();
     receiver.unbindNativeSession(nativeSession);
+    emit('programa','monitor_stopped');
     return Object.freeze({...stats,changedNativeChromiumStorage:false,
       note:'Only allowlisted test document bodies; CDP may return decompressed bytes'});
   }
