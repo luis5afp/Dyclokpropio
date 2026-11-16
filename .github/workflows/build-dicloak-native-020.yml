@@ -68,6 +68,17 @@ jobs:
             throw 'Official PE hash unexpectedly changed'
           }
 
+      - name: Preserve verified original ASAR outside installer to diagnose startup
+        shell: pwsh
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-020/resources/app.asar'
+          $backup = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          Copy-Item -LiteralPath $source -Destination $backup
+          $hash = (Get-FileHash -LiteralPath $backup -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf') {
+            throw 'Diagnostic backup is not original official ASAR'
+          }
+
       - name: Patch exactly two optional UI prompts and rebuild ASAR integrity
         shell: pwsh
         run: |
@@ -147,6 +158,34 @@ jobs:
           }
           Write-Host 'PATCHED_ENGINE_307_STARTUP_SMOKE=PASS'
           Write-Host 'REAL_REMOTE_LOGIN_AND_PROFILE_OPEN=NOT_TESTED'
+
+      - name: Diagnose failed startup with restored official ASAR (CI only)
+        if: failure()
+        shell: pwsh
+        run: |
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Lab'
+          $exe = Join-Path $folder 'DICloak.exe'
+          $asar = Join-Path $folder 'resources/app.asar'
+          $backup = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          if ((Test-Path $exe) -and (Test-Path $backup)) {
+            Get-Process -Name DICloak -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+            Copy-Item -LiteralPath $backup -Destination $asar -Force
+            $original = Start-Process -FilePath $exe -PassThru
+            Start-Sleep -Seconds 12
+            $original.Refresh()
+            if ($original.HasExited) {
+              Write-Host "OFFICIAL_ASAR_BASELINE_EXIT_CODE=$($original.ExitCode)"
+            } else {
+              Write-Host 'OFFICIAL_ASAR_BASELINE_STILL_RUNNING=TRUE'
+              Stop-Process -Id $original.Id -Force -ErrorAction SilentlyContinue
+            }
+          }
+          try {
+            Get-WinEvent -FilterHashtable @{ LogName='Application'; StartTime=(Get-Date).AddMinutes(-15) } -MaxEvents 30 -ErrorAction Stop |
+              Where-Object { $_.Message -match 'DICloak.exe|app.asar|electron' } |
+              Select-Object -First 6 TimeCreated,ProviderName,Id,Message |
+              Format-List
+          } catch { Write-Host 'No matching Windows application crash details' }
 
       - name: Upload version 0.2.0 installer as experimental artifact
         uses: actions/upload-artifact@v4
