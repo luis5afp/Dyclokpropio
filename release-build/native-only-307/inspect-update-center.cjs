@@ -70,6 +70,13 @@ function visit(node, member) {
       onlyAutoPopupCallChanged: true,
       originalASARUnmodified: true
     }));
+    const downloadIndex = source.indexOf('update.downloadCompleted');
+    const installNowIndex = source.indexOf('update.installNow', downloadIndex);
+    console.log('NATIVE_INSTALL_CONFIRM_CONTEXT=' + JSON.stringify({
+      file: member,
+      downloadIndex, installNowIndex,
+      context: downloadIndex < 0 ? 'not found' : source.slice(downloadIndex-420, downloadIndex+1600)
+    }));
     const i = source.indexOf('Tt=M(()=>');
     const j = source.indexOf('P(()=>Tt.value', i);
     console.log('NATIVE_UPDATE_AUTO_OPEN_CONTEXT=' + JSON.stringify({
