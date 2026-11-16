@@ -90,6 +90,39 @@ async function startTestProfile({apiPort,apiKey,profileId,version='v1'}) {
     profileStartedByOpenAPI:true
   });
 }
+async function getRunningTestProfile({apiPort,apiKey,profileId}) {
+  validateProfileId(profileId);
+  // V2 runtime endpoint returns the exact profile_id and its live debug port.
+  // Unlike 'start', this request DOES NOT launch, close or alter the browser.
+  const data=await requestJson({
+    apiPort,apiKey,method:'GET',
+    path:'/openapi/v2/profiles/'+profileId+'/session'
+  });
+  if(String(data.profile_id)!==profileId)throw Error('DICLOAK_RUNTIME_PROFILE_MISMATCH');
+  if(data.status!=='running')return null;
+  const debugPort=validDebugPort(data.debug_port);
+  if(data.web_socket_url)validateLocalBrowserWebSocket(data.web_socket_url,debugPort);
+  return Object.freeze({
+    profileId,debugPort,webSocketUrl:data.web_socket_url||null,
+    profileStartedByOpenAPI:false,
+    sessionIdentityVerifiedByOpenAPI:true
+  });
+}
+async function waitForRunningTestProfile({
+  apiPort,apiKey,profileId,waitSeconds=75,pollMs=1500
+}) {
+  if(!Number.isInteger(waitSeconds)||waitSeconds<1||waitSeconds>300 ||
+     !Number.isInteger(pollMs)||pollMs<200||pollMs>15000)
+    throw Error('DICLOAK_SESSION_POLL_CONFIG_INVALID');
+  const attempts=Math.max(1,Math.ceil(waitSeconds*1000/pollMs));
+  for(let i=0;i<attempts;i++){
+    const result=await getRunningTestProfile({apiPort,apiKey,profileId});
+    if(result)return result;
+    if(i<attempts-1)await new Promise(resolve=>setTimeout(resolve,pollMs));
+  }
+  throw Error('DICLOAK_PROFILE_DID_NOT_START');
+}
+
 async function findBrowserWebSocket(debugPort) {
   validDebugPort(debugPort);
   const data=await new Promise((resolve,reject)=>{
@@ -108,4 +141,4 @@ async function findBrowserWebSocket(debugPort) {
   const ws=data.webSocketDebuggerUrl;
   return validateLocalBrowserWebSocket(ws,debugPort);
 }
-module.exports={apiBase,validDebugPort,requestJson,startTestProfile,validateLocalBrowserWebSocket,findBrowserWebSocket};
+module.exports={apiBase,validDebugPort,requestJson,startTestProfile,getRunningTestProfile,waitForRunningTestProfile,validateLocalBrowserWebSocket,findBrowserWebSocket};
