@@ -11,17 +11,15 @@ const {createRequire}=require('node:module');
 const asar=createRequire(path.join(__dirname,'../release-build/native-0.3.4/package.json'))('@electron/asar');
 const archive=process.argv[2];
 if(!archive||!fs.existsSync(archive))throw Error('Official pinned ASAR path required');
-const dir=fs.mkdtempSync(path.join(os.tmpdir(),'dicloak-open-inspect-'));
-let js;
-try {
-  asar.extractAll(archive,dir);
-  const p=path.join(dir,'dist','assets','envList-CYDbiryu.js');
-  if(!fs.existsSync(p)) {
-    const found=fs.readdirSync(path.join(dir,'dist','assets')).filter(x=>x.startsWith('envList-')&&x.endsWith('.js'));
-    throw Error('Expected pinned official envList module not found. Available: '+found.join(','));
-  }
-  js=fs.readFileSync(p,'utf8');
-} finally {fs.rmSync(dir,{recursive:true,force:true});}
+const target='dist/assets/envList-CYDbiryu.js';
+const headerRaw=asar.getRawHeader(archive);
+const header=typeof headerRaw.header==='string'?JSON.parse(headerRaw.header):headerRaw.header;
+const assetFiles=header?.files?.dist?.files?.assets?.files||{};
+const names=Object.keys(assetFiles).filter(x=>x.startsWith('envList-')&&x.endsWith('.js'));
+process.stdout.write('ENV_LIST_ASAR_FILES='+JSON.stringify(names)+'\n');
+if(!assetFiles['envList-CYDbiryu.js'])
+  throw Error('Pinned vendor 3.0.7 table module missing from this archive');
+const js=asar.extractFile(archive,target).toString('utf8');
 const needles=[
   {name:'operation-column',needle:'prop:"operation"',before:70,after:550},
   {name:'operation-slot',needle:'operation:u(e=>',before:140,after:1500},
