@@ -17,6 +17,15 @@ function get(name){
  finally{fs.closeSync(fd)}
  return buf.toString('utf8');
 }
+const unpacked=[];
+function visit(node,name){
+  if(node.files){for(const [k,n] of Object.entries(node.files))visit(n,name?name+'/'+k:k);}
+  else if(node.unpacked)unpacked.push(name);
+}
+visit(header,'');
+console.log('ALMACEN_NATIVE_UNPACKED='+JSON.stringify({
+  count:unpacked.length,files:unpacked.slice(0,120)
+}));
 const pkg=JSON.parse(get('package.json'));
 const mainFile=pkg.main?.replace(/^\.\//,'');
 console.log('ALMACEN_NATIVE_MAIN='+JSON.stringify({main:mainFile,type:pkg.type,keys:Object.keys(pkg).slice(0,22)}));

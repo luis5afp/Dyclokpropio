@@ -1,0 +1,11 @@
+{
+  "name": "dicloak-native-almacen-030",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Experimental DICloak 3.0.7 Almacén localhost-only integration",
+  "devDependencies": {
+    "@electron/asar": "3.2.18",
+    "electron-builder": "^26.0.0",
+    "resedit": "2.0.3"
+  }
+}
