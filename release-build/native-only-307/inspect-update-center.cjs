@@ -70,6 +70,15 @@ function visit(node, member) {
       onlyAutoPopupCallChanged: true,
       originalASARUnmodified: true
     }));
+    const optionalPrompt = require('../../tools/suppress-native-download-confirmation.js');
+    const combined = optionalPrompt.preview(transformed);
+    console.log('NATIVE_OPTIONAL_INSTALL_DIALOG_PREVIEW=' + JSON.stringify({
+      exactRenderer: member,
+      optionalDownloadDialogSuppressed: true,
+      mandatoryUpdateDialogPreserved: true,
+      vendorASARStillUnmodified: true,
+      finalCandidateSha256: hash(combined)
+    }));
     const downloadIndex = source.indexOf('update.downloadCompleted');
     const installNowIndex = source.indexOf('update.installNow', downloadIndex);
     console.log('NATIVE_INSTALL_CONFIRM_CONTEXT=' + JSON.stringify({
