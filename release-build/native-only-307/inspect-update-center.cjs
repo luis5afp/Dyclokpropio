@@ -1,49 +1,75 @@
 'use strict';
 /**
- * Read-only inspection of the recovered official DICloak app.asar.
- * Never emit credentials, cookies or private profile contents.
+ * Read-only search of the official app.asar filesystem index and payload.
+ * Using the raw header avoids Windows separator differences in older asar APIs.
+ * Nothing is modified or saved from the vendor renderer.
  */
 const fs = require('node:fs');
 const path = require('node:path');
 const asar = require('@electron/asar');
 
-const root = process.argv[2];
-if (!root) throw new Error('Usage: node inspect-update-center.cjs <official-app.asar>');
+const archive = process.argv[2];
+if (!archive) throw new Error('Usage: node inspect-update-center.cjs <app.asar>');
+const raw = asar.getRawHeader(archive);
+const header = typeof raw.header === 'string' ? JSON.parse(raw.header) :
+  raw.header || JSON.parse(raw.headerString);
+const headerSize = raw.headerSize ?? raw.size;
+if (!header?.files || !Number.isInteger(headerSize)) {
+  throw new Error('Unsupported ASAR header format');
+}
+const dataStart = 8 + headerSize;
 const patterns = [
-  /update\.updateCenter/g,
-  /update\.versionUpdate/g,
-  /update\.softUpdate/g,
-  /updateCenter/g,
-  /Centro de actualizaciones/g,
-  /setInterval\([^)]{0,120}6e5/g,
-  /update-app/g,
+  /update\.updateCenter/g, /update\.versionUpdate/g,
+  /update\.softUpdate/g, /updateCenter/g,
+  /Centro de actualizaciones/g, /actualización versión/g,
+  /update-app/g, /openOrCloseTip/g,
 ];
-const paths = asar.listPackage(root).filter(file =>
-  /\.(?:js|html)$/i.test(file) && !/node_modules/i.test(file)
-);
-const results = [];
-for (const filename of paths) {
-  const normalized = filename.replace(/\\/g, '/').replace(/^\/+/, '');
+const matches = [];
+let inspected = 0;
+const fd = fs.openSync(archive, 'r');
+function visit(node, member) {
+  if (node.files) {
+    for (const [name, child] of Object.entries(node.files)) {
+      visit(child, member ? member + '/' + name : name);
+    }
+    return;
+  }
+  if (!/\.(?:js|html)$/i.test(member) || /node_modules\//.test(member) ||
+      node.size > 65 * 1024 * 1024 || !Number.isInteger(node.size)) return;
   let data;
-  try { data = asar.extractFile(root, normalized); }
-  catch (error) { console.warn('Skip unavailable ASAR member:', normalized, error.message); continue; }
-  if (!Buffer.isBuffer(data) || data.length > 80 * 1024 * 1024) continue;
-  const content = data.toString('utf8');
+  if (node.unpacked) {
+    const candidate = path.join(archive + '.unpacked', ...member.split('/'));
+    if (!fs.existsSync(candidate)) return;
+    data = fs.readFileSync(candidate);
+  } else if (node.link) {
+    return;
+  } else {
+    if (!/^\d+$/.test(String(node.offset))) return;
+    data = Buffer.alloc(node.size);
+    const read = fs.readSync(fd, data, 0, node.size, dataStart + Number(node.offset));
+    if (read !== node.size) throw new Error('Short read of ASAR member ' + member);
+  }
+  inspected++;
+  const source = data.toString('utf8');
   const found = [];
   for (const pattern of patterns) {
     pattern.lastIndex = 0;
-    let match;
-    while ((match = pattern.exec(content)) !== null && found.length < 20) {
+    let hit;
+    while ((hit = pattern.exec(source)) !== null && found.length < 15) {
       found.push({
-        match: pattern.source,
-        index: match.index,
-        sample: content.slice(Math.max(0, match.index - 100), match.index + 240).replace(/[\r\n]/g, ' ')
+        pattern: pattern.source, at: hit.index,
+        snippet: source.slice(Math.max(0, hit.index - 320), hit.index + 560).replace(/[\r\n]/g, ' ')
       });
     }
   }
-  if (found.length) results.push({filename, bytes: data.length, matches: found});
+  if (found.length) matches.push({file: member, bytes: data.length, hits: found});
 }
-console.log(JSON.stringify({filesExamined: paths.length, matches: results}, null, 2));
-if (!results.some(row => row.matches.some(v => v.match.includes('updateCenter')))) {
-  throw new Error('No exact update-center render component found: do not patch blindly');
+try {
+  visit(header, '');
+} finally {
+  fs.closeSync(fd);
+}
+console.log(JSON.stringify({inspected, matches}, null, 2));
+if (!matches.some(entry => entry.hits.some(h => h.pattern === 'update\\.updateCenter' || h.pattern === 'updateCenter'))) {
+  throw new Error('No update center component found; fail closed');
 }
