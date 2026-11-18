@@ -1,0 +1,32 @@
+name: DICloak 0.3.9 embedded diagnostics and native profile opening
+on:
+  push:
+    branches: [feature/almacen-integrated-diagnostics-039]
+    paths:
+      - "tools/almacen-native-integrated-diagnostic.cjs"
+      - "tools/almacen-diagnostic-panel.cjs"
+      - "tools/almacen-diagnostic-panel.html"
+      - "tools/build-dicloak-native-diagnostic-039.js"
+      - "tools/test-almacen-integrated-diagnostic-039.cjs"
+      - ".github/workflows/test-almacen-integrated-diagnostic-039.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  embedded-diagnostics:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax, lifecycle IPC and window sandbox
+        run: |
+          node --check tools/build-dicloak-native-diagnostic-039.js
+          node --check tools/almacen-native-integrated-diagnostic.cjs
+          node --check tools/almacen-diagnostic-panel.cjs
+          node --test tools/test-almacen-integrated-diagnostic-039.cjs tools/test-almacen-diagnostic-panel.cjs tools/test-dicloak-auth-prompt-regression.cjs

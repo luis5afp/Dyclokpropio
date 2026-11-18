@@ -1,0 +1,36 @@
+name: Almacén live diagnostic panel - privacy & profile event tests
+on:
+  push:
+    branches: [feature/almacen-diagnostic-panel-038, feature/almacen-auth-prompt-regression-039]
+    paths:
+      - "tools/almacen-diagnostic-panel.cjs"
+      - "tools/almacen-diagnostic-panel.html"
+      - "tools/run-dicloak-diagnostic-panel.cjs"
+      - "tools/run-dicloak-openapi-test-receiver.cjs"
+      - "tools/almacen-allowed-cdp.cjs"
+      - "tools/test-almacen-diagnostic-panel.cjs"
+      - "tools/test-dicloak-auth-prompt-regression.cjs"
+      - ".github/workflows/test-almacen-diagnostic-panel-038.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dashboard-and-observer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate UI and observer syntax
+        run: |
+          node --check tools/almacen-diagnostic-panel.cjs
+          node --check tools/run-dicloak-diagnostic-panel.cjs
+          node --check tools/run-dicloak-openapi-test-receiver.cjs
+          node --check tools/almacen-allowed-cdp.cjs
+      - name: Validate UI, privacy boundary, local API profile association and approved test document receipt
+        run: node --test tools/test-dicloak-auth-prompt-regression.cjs tools/test-almacen-diagnostic-panel.cjs tools/test-dicloak-existing-profile-cdp-037.cjs tools/test-dicloak-profile-lifecycle-trace.cjs tools/test-verify-almacen-test-manifest.cjs tools/test-dicloak-openapi-cdp-036.cjs

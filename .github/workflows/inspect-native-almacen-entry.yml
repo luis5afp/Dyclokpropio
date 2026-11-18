@@ -1,0 +1,35 @@
+name: Inspect Native Almacén Integration Anchors
+on:
+  push:
+    branches: [feature/almacen-bridge-lab-test, feature/almacen-native-030-test, feature/almacen-visible-031]
+    paths:
+      - "tools/inspect-native-almacen-entry.cjs"
+      - ".github/workflows/inspect-native-almacen-entry.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify the exact official DICloak 3.0.7 installer
+        shell: pwsh
+        run: |
+          $file = Join-Path $env:RUNNER_TEMP 'official-dicloak.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $file -TimeoutSec 900
+          if ((Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant() -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae') {
+            throw 'Unexpected vendor installer checksum'
+          }
+          python tools/prepare-dicloak-native-307.py --installer $file --destination (Join-Path $env:RUNNER_TEMP 'official')
+          if ($LASTEXITCODE -ne 0) { throw 'Original extraction failed' }
+      - name: Read only module signatures and exact profile table anchors
+        shell: pwsh
+        working-directory: release-build/native-0.2.0
+        run: |
+          npm install --no-audit --no-fund --ignore-scripts
+          if ($LASTEXITCODE -ne 0) { throw 'Test inspector dependencies missing' }
+          $asar = Join-Path $env:RUNNER_TEMP 'official/resources/app.asar'
+          node ../../tools/inspect-native-almacen-entry.cjs $asar
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to inspect official UI and app entry' }

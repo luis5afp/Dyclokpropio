@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>diloakPRO — Diagnóstico de comunicación</title>
+<style nonce="PANEL_CSP_NONCE">
+:root{color-scheme:dark;font-family:system-ui,"Segoe UI",sans-serif;
+  background:#111923;color:#eef4fb}
+*{box-sizing:border-box}
+html,body{min-height:100%;background:#111923;color:#eef4fb}
+body{max-width:1150px;margin:0 auto;padding:24px 18px;line-height:1.45}
+h1{font-size:24px;margin:0 0 10px;color:#f8fafc}
+h2{font-size:17px;margin:24px 0 12px;color:#f8fafc}
+p,small{color:#c6d5e6}.flex{display:flex;gap:12px;flex-wrap:wrap}
+#conn{margin:14px 0;color:#67e8d0;font-weight:600}
+.stat{border:1px solid #4b5f75;border-radius:9px;background:#1c2938;
+  padding:12px 16px;min-width:132px;flex:1;color:#e5eef7}
+.stat span{color:#cad9ea}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.check{padding:10px;border:1px solid #40566c;border-radius:7px;background:#1c2938;font-size:13px}
+.check strong{display:block;color:#d6e5f1}
+.check span{color:#67e8d0}.stat b{display:block;font-size:26px;margin-top:5px;color:#fff}
+table{border-collapse:collapse;width:100%;background:#162331;color:#e8f1fa}
+th,td{border-bottom:1px solid #3b4c61;padding:10px;text-align:left;font-size:14px;
+  color:#e8f1fa}
+th{position:sticky;top:0;background:#25364b;color:#fff;z-index:1}
+td:first-child{white-space:nowrap}
+tbody tr:nth-child(even){background:#1c2a39}
+.wrap{max-height:480px;overflow:auto;border:1px solid #46596d;border-radius:9px}
+button#save-json{background:#1d695e;border:1px solid #5eead4;color:white;padding:10px 15px;border-radius:8px;font-weight:650;cursor:pointer}
+button#save-json:disabled{opacity:.5;cursor:progress}
+#save-json-status{margin-left:12px;color:#c6d5e6;font-size:13px}
+.note{padding:12px;border-left:3px solid #2dd4bf;background:#1a2a36;
+  color:#d6e5f1;margin:14px 0}
+</style></head><body>
+<h1>diloakPRO · Diagnóstico de comunicación</h1>
+<p>Operación → Abrir · Perfil de pruebas · Almacén</p>
+<div class="note">Eventos de apertura observados en la interfaz DICloak y, si se configura aparte, documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra cookies, contraseñas, tokens, cabeceras o cuerpos privados. El diagnóstico de apertura funciona sin clave Open API.</div>
+<div id="conn" role="status">Conectando con el diagnóstico local…</div>
+<div class="flex" id="stats" aria-live="polite"></div>
+<h2>Estado de configuración y comunicación (verificación parcial)</h2>
+<div class="note">El diagnóstico registra <strong>si una etapa se ejecutó</strong>, no si se restauraron las contraseñas, cookies o credenciales de proxy. Nunca registra estos valores.</div>
+<div class="checks" id="profile-checks" aria-live="polite"></div>
+<h2>Comunicación observada</h2>
+<p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes</th><th>Conexión</th><th>PID</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
+<script nonce="PANEL_CSP_NONCE">
+"use strict";
+const sources={programa:"Programa / API local",servidor_pruebas:"Servidor de pruebas",chromium:"Chromium",almacen:"Almacén"};
+const kinds={
+ panel_ready:"Panel iniciado",configuration_missing:"Falta configuración",profile_wait:"Esperando Operación → Abrir",
+ embedded_ui_only:"Eventos de interfaz; sesión Chromium todavía no verificada",
+ operation_open_requested:"Operación → Abrir: solicitud de apertura",
+ operation_step_completed:"Etapa de apertura completada",operation_step_failed:"Etapa de apertura fallida",
+ stage_pre_data_inject:"Inicializando perfil",
+ stage_pre_check:"Verificación previa",stage_choose_kernel:"Seleccionando motor",
+ stage_pre_proxy_check:"Verificación previa de proxy",stage_catch_error:"Controlando fallo",
+ stage_polyfill_row_data:"Preparando datos de fila",stage_rpa_pre_inject:"Preparando RPA",
+ stage_lock_env_rpa:"Reservando perfil RPA",stage_merge_env_params_rpa:"Combinando parámetros RPA",
+ stage_fetch_env_info:"Obteniendo configuración del perfil",
+ stage_proxy_check:"Comprobando configuración de proxy",
+ stage_proxy_check_result:"Validando resultado de proxy",
+ stage_expand_check:"Comprobando extensiones",
+ stage_params_merge:"Combinando parámetros de huella",
+ stage_lock_env:"Reservando el perfil",
+ stage_open_env:"Solicitando apertura del navegador",
+ stage_cookie_encrypt_plan:"Comprobando plan de cifrado (sin extraer cookies)",
+ stage_timeout:"Límite de espera",
+ stage_backend_data_fetch:"Preparando datos del navegador",
+ stage_data_sync_start:"Iniciando sincronización",
+ stage_localstorage_download:"Descarga de Local Storage",
+ stage_localstorage_extract:"Extracción de Local Storage",
+ stage_localstorage_sync:"Sincronizando Local Storage",
+ stage_indexeddb_download:"Descarga de IndexedDB",
+ stage_indexeddb_extract:"Extracción de IndexedDB",
+ stage_indexeddb_sync:"Sincronizando IndexedDB",
+ stage_extension_extract:"Preparando extensión",
+ stage_extension_download:"Descargando extensión",
+ stage_browser_start:"Iniciando navegador",
+ stage_unknown:"Etapa de apertura no identificada",
+ api_request:"Programa solicita estado de sesión",api_response:"Servidor API responde",
+ native_http_request:"Solicitud Node HTTP(S)",native_http_response:"Respuesta Node HTTP(S)",
+ native_http_error:"Error Node HTTP(S)",native_process_seen:"Proceso descendiente observado",
+ native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
+ native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
+ profile_running:"Perfil abierto",api_failed:"API local no disponible",api_connected:"API local conectada",
+ debugger_connected:"Depurador conectado",debugger_failed:"Depurador no disponible",
+ target_connected:"Pestaña supervisada",receiver_ready:"Receptor de pruebas activo",
+ response_approved:"Respuesta autorizada",response_failed:"Error de respuesta",
+ document_saved:"Documento guardado",document_failed:"No se pudo guardar",
+ capture_completed:"Captura de pruebas finalizada",monitor_stopped:"Observador detenido",
+ no_documents:"No se recibieron documentos autorizados",connection_failed:"Error de conexión"
+};
+const counters={total:"Eventos",approved:"Respuestas autorizadas",saved:"Documentos guardados",failed:"Errores"};
+document.getElementById("save-json").addEventListener("click",async()=>{
+  const button=document.getElementById("save-json");
+  const notice=document.getElementById("save-json-status");
+  button.disabled=true;notice.textContent="Guardando...";
+  try{
+    // Saved by Electron's main process. No popups or browser downloads needed.
+    const response=await fetch("save-json",{method:"POST",cache:"no-store",
+      headers:{"Accept":"application/json"}});
+    const result=await response.json();
+    if(!response.ok||!result.ok)throw Error("SAVE_FAILED");
+    notice.textContent="Guardado en Descargas: "+result.fileName+
+      " ("+String(result.eventCount)+" eventos)";
+  }catch{
+    notice.textContent="No se pudo guardar en Descargas. Comprueba permisos y espacio libre.";
+  }finally{button.disabled=false;}
+});
+async function update(){
+  try{
+    const response=await fetch("state",{cache:"no-store"});
+    if(!response.ok)throw Error("unavailable");
+    const state=await response.json();
+    document.getElementById("conn").textContent="Panel local conectado · "+state.events.length+" eventos visibles";
+    const checks=document.getElementById("profile-checks");checks.replaceChildren();
+    const summary=state.checks||{};
+    const labels=[
+      ["profileOpenStageCompleted","Etapa de apertura","Etapa completada","No registrada"],
+      ["browserProcessObserved","Proceso Chromium","Proceso observado","No observado"],
+      ["proxyCheckStageCompleted","Comprobación del proxy","Etapa completada","No registrada"],
+      ["cookiePlanStageCompleted","Plan de cookies","Plan comprobado","No registrado"],
+      ["extensionsCheckStageCompleted","Extensiones","Etapa completada","No registrada"],
+      ["fingerprintParamsStageCompleted","Huella digital","Parámetros combinados","No registrado"],
+      ["cookiesRestored","Cookies restauradas","Verificadas","No verificadas"],
+      ["credentialsRestored","Credenciales restauradas","Verificadas","No verificadas"],
+      ["proxyExitAndAuthentication","Autenticación y salida del proxy","Verificadas","No verificadas"],
+      ["browserSessionLinkedToRow","Sesión vinculada al perfil","Verificada","No verificada"]
+    ];
+    for(const [key,title,success,missing] of labels){
+      const div=document.createElement("div");div.className="check";
+      const name=document.createElement("strong");name.textContent=title;
+      const result=document.createElement("span");
+      result.textContent=summary[key]===true?success:missing;
+      div.append(name,result);checks.append(div);
+    }
+    const network=summary.networkMetadata||{};
+    const networkDiv=document.createElement("div");networkDiv.className="check";
+    const networkName=document.createElement("strong");networkName.textContent="Solicitudes Node HTTP(S) detectadas";
+    const networkValue=document.createElement("span");
+    networkValue.textContent=String(network.nodeRequests||0)+" enviadas, "+
+      String(network.nodeResponses||0)+" respuestas, "+
+      String(network.uploadRouteRequests||0)+" rutas upload (contenido no observado)";
+    networkDiv.append(networkName,networkValue);checks.append(networkDiv);
+    const sizes=document.createElement("div");sizes.className="check";
+    const sizesName=document.createElement("strong");sizesName.textContent="Tamaño de envío declarado";
+    const sizesValue=document.createElement("span");
+    sizesValue.textContent=network.requestsWithKnownSize
+      ?String(network.declaredOutboundBytes)+" bytes declarados en "+String(network.requestsWithKnownSize)+" solicitudes"
+      :"No disponible: no se recibieron tamaños declarados";
+    sizes.append(sizesName,sizesValue);checks.append(sizes);
+    const stats=document.getElementById("stats");stats.replaceChildren();
+    for(const [key,label] of Object.entries(counters)){
+      const card=document.createElement("div");card.className="stat";
+      const text=document.createElement("span");text.textContent=label;
+      const number=document.createElement("b");number.textContent=String(state.counters[key]||0);
+      card.append(text,number);stats.append(card);
+    }
+    const tbody=document.getElementById("events");tbody.replaceChildren();
+    for(const ev of state.events.slice(-200).sort((a,b)=>
+      Date.parse(b.at)-Date.parse(a.at))){
+      const tr=document.createElement("tr");
+      const phaseCode=(Number.isInteger(ev.phaseCode)&&ev.phaseCode>=0&&ev.phaseCode<=255)?
+        " (código de etapa "+String(ev.phaseCode)+")":"";
+      const cells=[
+        new Date(ev.at).toLocaleTimeString("es-PE"),
+        sources[ev.source]||"",((kinds[ev.event]||"")+(ev.stage&&kinds[ev.stage]?" — "+kinds[ev.stage]:""))+phaseCode,
+        ev.method===undefined?"—":String(ev.method),
+        ev.routeTemplate===undefined?"—":String(ev.routeTemplate),
+        ev.status===undefined?"—":String(ev.status),
+        ev.durationMs===undefined&&ev.elapsedMs===undefined?"—":String(ev.durationMs??ev.elapsedMs),
+        ev.bytes===undefined?"—":String(ev.bytes),
+        ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—",
+        ev.pid===undefined?"—":String(ev.pid),
+        ev.sha256===undefined?"—":ev.sha256.slice(0,16)+"…"
+      ];
+      for(const value of cells){
+        const td=document.createElement("td");td.textContent=value;tr.append(td);
+      }
+      tbody.append(tr);
+    }
+  }catch{
+    document.getElementById("conn").textContent="Panel desconectado del proceso local";
+  }
+}
+update();
+setInterval(update,1000);
+</script></body></html>

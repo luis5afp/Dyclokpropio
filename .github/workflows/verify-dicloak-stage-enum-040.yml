@@ -1,0 +1,55 @@
+name: Diagnose vendor stage codes and validate diagnostic fix
+on:
+  push:
+    branches: [fix/almacen-diagnostic-stage-identification-040]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-callback-mapping:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run revised in-app diagnostics tests without network intercept
+        run: |
+          node --check tools/build-dicloak-native-diagnostic-039.js
+          node --check tools/almacen-native-integrated-diagnostic.cjs
+          node --test tools/test-almacen-integrated-diagnostic-039.cjs tools/test-almacen-diagnostic-panel.cjs tools/test-dicloak-auth-prompt-regression.cjs
+  inspect-actual-vendor-enum:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: DICloak-Nativo-0.3.9-Integrated-Diagnostics-Experimental
+          run-id: 44234488002
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: downloaded
+      - name: Install known-good experimental build to inspect exact vendor modules
+        shell: pwsh
+        run: |
+          $installer=Join-Path $PWD 'downloaded/DICloak_Nativo_0.3.9_AlmacenDiagnostico_win_x64.exe'
+          if (!(Test-Path -LiteralPath $installer -PathType Leaf)) { throw 'Known-good artifact unavailable' }
+          $proc=Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw 'Could not extract pinned build' }
+          $asar=Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Diagnostico-039/resources/app.asar'
+          if (!(Test-Path -LiteralPath $asar -PathType Leaf)) { throw 'Pinned app.asar not present' }
+          Write-Host 'OFFICIAL_ASAR_FOUND=PASS'
+      - name: Install read-only inspection dependency
+        working-directory: release-build/native-0.3.9
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Identify stage enum data types in pinned DICloak 3.0.7
+        shell: pwsh
+        run: |
+          $asar=Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Diagnostico-039/resources/app.asar'
+          node tools/inspect-dicloak-stage-enum-040.cjs $asar
+          if ($LASTEXITCODE -ne 0) { throw 'Could not inspect official vendor stage enum' }
