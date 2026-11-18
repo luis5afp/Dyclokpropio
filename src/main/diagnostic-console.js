@@ -210,6 +210,8 @@ function createDiagnosticConsole(ipcMain, app, {fileSystem = fs} = {}) {
   });
   ipcMain.handle(EVENT, async(event, payload) => {
     if (!isTrusted(event)) return false;
+    // Process/network/file telemetry is accepted only from the main-process observer.
+    if (!payload || !['stage','ipc','http'].includes(payload.kind)) return false;
     return record(payload);
   });
   return {
