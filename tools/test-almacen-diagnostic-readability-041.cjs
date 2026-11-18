@@ -52,4 +52,22 @@ test('embedded panel uses explicit high contrast colors and safe text-only rende
  assert.ok(!html.includes('color-scheme:light dark'));
  assert.ok(!html.includes('innerHTML'));
  assert.ok(html.includes('td.textContent=value'));
+ assert.ok(html.includes('Date.parse(b.at)-Date.parse(a.at)'));
+});
+
+
+test('failed native profile-opening stage increments visible error count',async()=>{
+ const {startDiagnosticPanel}=require('./almacen-diagnostic-panel.cjs');
+ const panel=await startDiagnosticPanel();
+ try{
+  panel.emit({...safeEvent('step_failed','PROXY_CHECK')});
+  panel.emit({...safeEvent('step_complete','OPEN_ENV')});
+  const status=panel.getState();
+  assert.equal(status.counters.total,3);
+  assert.equal(status.counters.failed,1);
+  assert.equal(status.counters.approved,0);
+  assert.equal(status.counters.saved,0);
+ }finally{
+  await panel.stop();
+ }
 });
