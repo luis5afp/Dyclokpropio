@@ -26,6 +26,11 @@ test('safe opening stages use only fixed names, never proxy or cookie values',()
   assert.equal(safeEvent('open_requested').event,'operation_open_requested');
   assert.equal(safeEvent('step_failed','FAIL').event,'operation_step_failed');
   assert.equal(safeEvent('step_complete','FETCH_ENV_INFO').event,'operation_step_completed');
+  assert.equal(safeEvent('step_complete','FETCH_ENV_INFO').stage,'stage_fetch_env_info');
+  assert.equal(safeEvent('step_failed','LOCK_ENV').stage,'stage_lock_env');
+  assert.equal(safeEvent('step_failed','Cookie: secret').stage,'stage_unknown');
+  const event=JSON.stringify(safeEvent('step_failed','Authorization: private'));
+  assert.ok(!event.includes('Authorization'));
   assert.throws(()=>safeEvent('get_session_cookies',''),/DIAG_INVALID_SIGNAL/);
 });
 
@@ -122,6 +127,18 @@ for(const isolated of [true,false]){
     assert.equal(typeof bridge.send,'undefined');
   });
 }
+
+test('builder resolves vendor numeric enum stepType before sending only symbolic stage name',()=>{
+  // The vendor engine has enum object M: numeric codes are not useful
+  // to native safeStage() until reverse-mapped to canonical enum keys.
+  assert.ok(builder.includes('Object.keys(M).find(k=>'));
+  assert.ok(builder.includes('M[k]===t.stepType'));
+  const M={FETCH_ENV_INFO:2,LOCK_ENV:5,OPEN_ENV:6};
+  const t={stepType:2};
+  const resolved=Object.keys(M).find(k=>/^[A-Z][A-Z0-9_]*$/.test(k)&&M[k]===t.stepType);
+  assert.equal(safeStage(resolved),'stage_fetch_env_info');
+  assert.equal(safeStage('123456'),'stage_unknown');
+});
 
 test('0.3.9 UI has Almacén and Diagnóstico side by side; vendor authentication is unchanged',()=>{
   const diag=buildConst('ADD_DIAG_COLUMN','FIELD_CONFIG');
