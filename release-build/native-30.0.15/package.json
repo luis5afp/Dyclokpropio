@@ -1,6 +1,6 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.16",
+  "version": "30.0.17",
   "private": true,
   "description": "diloakPRO 30.0.16 Motor DICloak 3.0.7 with opt-in diagnostic and legacy upgrade",
   "devDependencies": {
