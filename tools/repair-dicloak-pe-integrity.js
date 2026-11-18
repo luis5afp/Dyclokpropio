@@ -13,7 +13,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { createRequire } = require('node:module');
-const fromBuild = createRequire(path.join(__dirname, '../release-build/native-0.3.4/package.json'));
+const fromBuild = createRequire(path.join(__dirname, '../release-build/native-0.3.9/package.json'));
 const { NtExecutable, NtExecutableResource } = fromBuild('resedit');
 const { headerHash } = require('./inspect-dicloak-pe-asar-integrity.js');
 
@@ -54,7 +54,7 @@ function repair(folder,originalAsarPath){
     'baseline original ASAR differs from pinned official source');
   assert(fs.existsSync(manifestPath),'missing patch manifest');
   const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
-  assert(['0.2.0','0.3.0','0.3.1','0.3.2','0.3.3','0.3.4'].includes(manifest.deliveryVersion) &&
+  assert(['0.2.0','0.3.0','0.3.1','0.3.2','0.3.3','0.3.4','0.3.9'].includes(manifest.deliveryVersion) &&
     manifest.modifiedAsarSha256===sha(fs.readFileSync(asarPath)),
     'ASAR patch manifest differs from staged build');
   const oldDigest=headerHash(originalAsarPath);
