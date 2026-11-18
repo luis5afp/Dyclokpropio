@@ -28,7 +28,7 @@ function validateDiagnostic(input){
  if(!input||typeof input!=='object'||!SOURCES.has(input.source)||
     !EVENTS.has(input.event))throw Error('INVALID_DIAGNOSTIC_EVENT');
  const at=input.at===undefined?new Date().toISOString():input.at;
- if(typeof at!=='string'||!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/.test(at)||
+ if(typeof at!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(at)||
     Number.isNaN(Date.parse(at)))throw Error('INVALID_DIAGNOSTIC_TIME');
  const out={at,source:input.source,event:input.event};
  if(input.status!==undefined){
