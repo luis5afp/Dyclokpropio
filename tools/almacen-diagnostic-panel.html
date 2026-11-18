@@ -21,6 +21,9 @@ th{position:sticky;top:0;background:#25364b;color:#fff;z-index:1}
 td:first-child{white-space:nowrap}
 tbody tr:nth-child(even){background:#1c2a39}
 .wrap{max-height:480px;overflow:auto;border:1px solid #46596d;border-radius:9px}
+button#save-json{background:#1d695e;border:1px solid #5eead4;color:white;padding:10px 15px;border-radius:8px;font-weight:650;cursor:pointer}
+button#save-json:disabled{opacity:.5;cursor:progress}
+#save-json-status{margin-left:12px;color:#c6d5e6;font-size:13px}
 .note{padding:12px;border-left:3px solid #2dd4bf;background:#1a2a36;
   color:#d6e5f1;margin:14px 0}
 </style></head><body>
@@ -30,7 +33,7 @@ tbody tr:nth-child(even){background:#1c2a39}
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
-<p><a href="export" target="_blank" rel="noopener" style="color:#67e8d0">Exportar JSON del diagnóstico</a></p>
+<p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
 <div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes</th><th>Conexión</th><th>PID</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
@@ -81,6 +84,22 @@ const kinds={
  no_documents:"No se recibieron documentos autorizados",connection_failed:"Error de conexión"
 };
 const counters={total:"Eventos",approved:"Respuestas autorizadas",saved:"Documentos guardados",failed:"Errores"};
+document.getElementById("save-json").addEventListener("click",async()=>{
+  const button=document.getElementById("save-json");
+  const notice=document.getElementById("save-json-status");
+  button.disabled=true;notice.textContent="Guardando...";
+  try{
+    // Saved by Electron's main process. No popups or browser downloads needed.
+    const response=await fetch("save-json",{method:"POST",cache:"no-store",
+      headers:{"Accept":"application/json"}});
+    const result=await response.json();
+    if(!response.ok||!result.ok)throw Error("SAVE_FAILED");
+    notice.textContent="Guardado en Descargas: "+result.fileName+
+      " ("+String(result.eventCount)+" eventos)";
+  }catch{
+    notice.textContent="No se pudo guardar en Descargas. Comprueba permisos y espacio libre.";
+  }finally{button.disabled=false;}
+});
 async function update(){
   try{
     const response=await fetch("state",{cache:"no-store"});
