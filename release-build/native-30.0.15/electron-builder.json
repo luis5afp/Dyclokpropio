@@ -1,7 +1,7 @@
 {
   "appId": "com.dyclokpropio.native307.diagnostic3015",
   "productName": "Dyclokpropio Motor 0.4.2 Diagnóstico 30.0.15",
-  "artifactName": "Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe",
+  "artifactName": "Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe",
   "electronVersion": "31.7.7",
   "directories": {
     "output": "out"
