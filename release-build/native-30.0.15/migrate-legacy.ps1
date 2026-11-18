@@ -90,6 +90,9 @@ try{
  [pscustomobject]@{schema=1;removedCount=@($summary | Where-Object {$_.result -eq 'old-program-uninstalled'}).Count;
    issues=$problems;actions=@($summary);userDataPreserved=$true} |
    ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $outDir 'install-migration.json') -Encoding UTF8
-}catch{}
+}catch{
+  [Console]::Error.WriteLine('MIGRATION_REPORT_WRITE_ERROR='+$_.Exception.GetType().Name+':'+$_.Exception.Message)
+  exit 4
+}
 if($problems -gt 0){exit 2}
 exit 0
