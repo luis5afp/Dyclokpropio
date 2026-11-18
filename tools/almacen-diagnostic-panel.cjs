@@ -137,22 +137,56 @@ function mapNativeEvent(row){
  if(row.kind==='session'&&row.phase==='error')return {...base,event:'native_monitor_error'};
  return null;
 }
-async function startDiagnosticPanel(){
+async function startDiagnosticPanel({exportDirectory}={}){
  const token=crypto.randomBytes(24).toString('hex');
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
  const counters={total:0,approved:0,saved:0,failed:0};
  let boundPort=null,stopObserver=null;
+ function reportJSON(){
+   // Whitelisted events are already sanitized at emit() time.
+   return JSON.stringify({schema:1,engine:'DICloak 3.0.7',
+     diagnostic:'0.4.2',delivery:'v30.0.15-motor042-rc2',
+     coverage:'partial',events,counters},null,2);
+ }
+ function saveReport(){
+   let directory=exportDirectory;
+   if(directory===undefined){
+     try {directory=require('electron').app.getPath('downloads');}
+     catch {return {ok:false,error:'DOWNLOAD_DIRECTORY_UNAVAILABLE'};}
+   }
+   if(typeof directory!=='string'||!path.isAbsolute(directory))
+     return {ok:false,error:'DOWNLOAD_DIRECTORY_UNAVAILABLE'};
+   // No user-controlled names or paths. Do not touch browser profile storage.
+   const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\..*$/,'').replace('T','-');
+   const fileName='Dyclok-Diagnostico-Motor042-'+stamp+'-'+crypto.randomBytes(4).toString('hex')+'.json';
+   try{
+     fs.mkdirSync(directory,{recursive:true});
+     fs.writeFileSync(path.join(directory,fileName),reportJSON(),{
+       encoding:'utf8',flag:'wx',mode:0o600
+     });
+     return {ok:true,fileName,eventCount:events.length};
+   }catch{return {ok:false,error:'WRITE_ERROR'};}
+ }
  const server=http.createServer((req,res)=>{
    const host='127.0.0.1:'+boundPort;
+   const prefix='/diagnostico/'+token+'/';
    const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
      'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
      'Cross-Origin-Resource-Policy':'same-origin'};
-   if(req.headers.host!==host||req.method!=='GET'||
-      (req.headers.origin && req.headers.origin!=='http://'+host)){
+   const canSave=req.method==='POST'&&req.url===prefix+'save-json';
+   if(req.headers.host!==host||
+      !(req.method==='GET'||canSave)||
+      (req.headers.origin && req.headers.origin!=='http://'+host)||
+      (canSave && req.headers.origin!=='http://'+host)){
      res.writeHead(403,headers);res.end();return;
    }
-   const prefix='/diagnostico/'+token+'/';
+   if(canSave){
+     const result=saveReport();
+     const status=result.ok?200:503;
+     res.writeHead(status,{...headers,'Content-Type':'application/json; charset=utf-8'});
+     res.end(JSON.stringify(result));return;
+   }
    if(req.url===prefix){
      const html=fs.readFileSync(path.join(__dirname,'almacen-diagnostic-panel.html'),'utf8');
      const csp="default-src 'none'; script-src 'nonce-"+nonce+"'; style-src 'nonce-"+nonce+"'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
@@ -161,8 +195,7 @@ async function startDiagnosticPanel(){
      res.end(html.replaceAll('PANEL_CSP_NONCE',nonce));return;
    }
    if(req.url===prefix+'export'){
-     const json=JSON.stringify({schema:1,engine:'DICloak 3.0.7',diagnostic:'0.4.2',delivery:'v30.0.15-lab',
-       coverage:'partial',events,counters},null,2);
+     const json=reportJSON();
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8',
        'Content-Disposition':'attachment; filename="Dyclok-Diagnostico-Motor-042.json"'});
      res.end(json);return;
