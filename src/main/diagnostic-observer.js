@@ -29,7 +29,8 @@ function startNodeHttpTrace(emit) {
     const original=mod.request;
     function traced(...args) {
       const req=original.apply(this,args);
-      const meta=requestMetadata(args,proto);
+      let meta;
+      try{meta=requestMetadata(args,proto);}catch{return req;}
       if(!meta)return req;
       const requestId=crypto.randomUUID(),started=performance.now();
       const base={kind:'http',transport:'node',phase:'request',
@@ -96,7 +97,7 @@ function startWindowsSampler(emit,pid=process.pid){
   let live=true,busy=false,errors=0;const seen=new Set();
   const script=PS.replace('__PID__',String(pid));
   function poll(){
-    if(!live||busy)return;busy=true;
+    if(!live||busy||seen.size>=1500)return;busy=true;
     execFile('powershell.exe',['-NoProfile','-NonInteractive','-Command',script],
       {windowsHide:true,timeout:15000,maxBuffer:1500000},(err,stdout)=>{
         busy=false;if(!live)return;
