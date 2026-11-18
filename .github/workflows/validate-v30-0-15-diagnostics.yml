@@ -1,0 +1,40 @@
+name: Validar diagnóstico ampliado 30.0.15
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/main/diagnostic-console.js'
+      - 'src/main/diagnostic-observer.js'
+      - 'src/renderer/diagnostic-panel.js'
+      - 'tools/verify-diagnostic-observer.js'
+      - 'electron-builder.yml'
+      - '.github/workflows/validate-v30-0-15-diagnostics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    name: Diagnóstico y privacidad (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JS and privacy contracts
+        shell: pwsh
+        run: |
+          node --check src/main/diagnostic-observer.js
+          if ($LASTEXITCODE -ne 0) { throw 'Syntax error: observer' }
+          node --check src/main/diagnostic-console.js
+          if ($LASTEXITCODE -ne 0) { throw 'Syntax error: console' }
+          node --check src/renderer/diagnostic-panel.js
+          if ($LASTEXITCODE -ne 0) { throw 'Syntax error: renderer panel' }
+          node tools/verify-diagnostic-observer.js
+          if ($LASTEXITCODE -ne 0) { throw 'Extended diagnostic tests failed' }
+          node tools/verify-diagnostic-console.js
+          if ($LASTEXITCODE -ne 0) { throw 'Existing diagnostic regression tests failed' }
+          node tools/verify-open-stage-diagnostics.js
+          if ($LASTEXITCODE -ne 0) { throw 'Opening stage regression tests failed' }
+          node tools/test-silent-auto-update.js
+          if ($LASTEXITCODE -ne 0) { throw 'Silent updater regression tests failed' }
