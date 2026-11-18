@@ -22,6 +22,8 @@ const MAX_PROFILES=48;
 const STAGES=new Map([
   ['PRE_DATA_INJECT','stage_pre_data_inject'],
   ['FETCH_ENV_INFO','stage_fetch_env_info'],
+  ['PROXY_CHECK','stage_proxy_check'],
+  ['PROXY_CHECK_RESULT','stage_proxy_check_result'],
   ['EXPAND_CHECK','stage_expand_check'],
   ['PARAMS_MERGE','stage_params_merge'],
   ['LOCK_ENV','stage_lock_env'],
