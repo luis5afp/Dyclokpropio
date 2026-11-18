@@ -1,0 +1,109 @@
+name: Publicar diloakPRO 30.0.16 Motor 0.4.2 RC3 (pruebas)
+
+on:
+  push:
+    branches: [feature/diloakpro-3016-diagnostic-upgrade]
+    paths:
+      - '.github/workflows/publish-diloakpro-3016-rc3.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: diloakpro-native-3016-rc3-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Verify pinned NSIS build including real legacy RC2 migration
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_RUN: "44382727199"
+          SOURCE_SHA: "fe0897b65372161abdac174fea1cb58a4ecf7809"
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            record=$(gh run view "$SOURCE_RUN" --repo "$GH_REPO" --json status,conclusion,headSha)
+            status=$(jq -r '.status' <<<"$record")
+            if [[ "$status" == completed ]]; then break; fi
+            sleep 15
+          done
+          test "$status" == completed || { echo "BLOCKED: CI build did not finish"; exit 1; }
+          test "$(jq -r '.conclusion' <<<"$record")" == success || { echo "BLOCKED: Windows installation/upgrade failed"; exit 1; }
+          test "$(jq -r '.headSha' <<<"$record")" == "$SOURCE_SHA" || { echo "BLOCKED: tested commit mismatch"; exit 1; }
+      - name: Download and verify exact Windows installer artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_RUN: "44382727199"
+        run: |
+          set -euo pipefail
+          mkdir -p deliver
+          gh run download "$SOURCE_RUN" --repo "$GH_REPO" \
+            --name "diloakPRO-30.0.16-Motor042-RC3-NSIS-PRUEBA" --dir deliver
+          test -s "deliver/diloakPRO_30.0.16_Motor042_RC3_win_x64.exe"
+          test -s "deliver/SHA256SUMS.txt"
+          (cd deliver && sha256sum --check SHA256SUMS.txt)
+      - name: Publish isolated prerelease with clear coverage and migration warnings
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: v30.0.16-diloakpro-rc3
+          SOURCE_SHA: "fe0897b65372161abdac174fea1cb58a4ecf7809"
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo "BLOCKED: Release exists; cannot overwrite installed assets"
+            exit 1
+          fi
+          cat > RELEASE_NOTES.md <<'NOTES'
+          ## diloakPRO 30.0.16 · Motor DICloak 3.0.7 · Diagnóstico 0.4.2 (RC3)
+
+          Nuevo identificador estable de instalación: com.diloakpro.desktop.
+          Carpeta: %LOCALAPPDATA%\Programs\diloakPRO.
+          Se crea un solo acceso directo: diloakPRO.
+
+          - Diagnóstico: etapas de proxy, plan de cookies, extensiones y huella;
+            resumen de solicitudes HTTP Node (método, ruta anonimizada, HTTP, tiempo
+            y Content-Length declarado cuando está disponible).
+          - Indica por separado credenciales/cookies/identidad Chromium NO verificadas.
+          - No captura contraseñas, cookies, tokens, cuerpos HTTP, cabeceras privadas
+            ni descifra HTTPS, ni prueba transferencia de archivos.
+          - Se excluyen los procesos auxiliares PowerShell del monitor.
+          - Exportación JSON directa a Descargas.
+          - Migración de ediciones anteriores: solo permite desinstalar versiones
+            de laboratorio cuya entrada HKCU y cuyo desinstalador coinciden con
+            listas estrictas. Si no se verifican, no elimina nada y muestra aviso.
+          - No desinstala DICloak oficial, no toca el estable Dyclokpropio de la
+            otra línea y NO elimina perfiles, contraseñas ni cookies del usuario.
+          - Reporte de migración:
+            %LOCALAPPDATA%\diloakPRO\install-migration.json
+
+          Comprobado con Windows CI: motor/ASAR verificado, integridad PE, NSIS,
+          prueba de exportación y proceso/sockets, instalación de RC2 antigua,
+          actualización a diloakPRO, retirada de RC2 y arranque básico.
+
+          LIMITACIONES: ejecutable de terceros modificado sin firma digital
+          propia. La distribución requiere autorización de los componentes
+          originales. No probado con credenciales/cookies reales ni apertura
+          de perfiles Chromium del usuario. Probar en Windows con cuenta
+          de pruebas y sin perfiles importantes.
+
+          Pre-release separada, sin reemplazar la estable ni activar su
+          actualizador silencioso.
+          NOTES
+          gh release create "$TAG" \
+            "deliver/diloakPRO_30.0.16_Motor042_RC3_win_x64.exe" \
+            "deliver/SHA256SUMS.txt" \
+            --repo "$GH_REPO" --target "$SOURCE_SHA" \
+            --title "diloakPRO 30.0.16 (Motor 0.4.2 RC3) — Instalación única" \
+            --notes-file RELEASE_NOTES.md --prerelease --latest=false
+          gh release view "$TAG" --repo "$GH_REPO" --json url,assets,isPrerelease
