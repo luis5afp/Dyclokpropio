@@ -189,7 +189,7 @@ async function build(folder) {
     fs.unlinkSync(backup);
     const manifest={
       nativeDiagnostic:'0.4.2',
-      deliveryVersion:'30.0.15',originalEngine:'DICloak 3.0.7',
+      deliveryVersion:'30.0.16',originalEngine:'DICloak 3.0.7',
       executableSha256:PE_SHA,originalExecutableSha256:PE_SHA,
       officialAsarSha256:ASAR_SHA,modifiedAsarSha256:sha(fs.readFileSync(archive)),
       changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostFixtureDisabled:true,capturesRealBrowsing:false,nativeIntegrityAuditReadOnly:true,integratedDiagnosticUI:true,observeRendererOpenPhases:true,realHttpBodiesCaptured:false,profileSessionVerifiedNatively:false,
