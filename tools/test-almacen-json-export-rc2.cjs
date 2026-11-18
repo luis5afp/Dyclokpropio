@@ -15,7 +15,7 @@ function request(target,method='GET',{origin,host}={}){
     });req.once('error',reject);req.end();
   });
 }
-test('RC2: save JSON on disk from the embedded panel, without popup/download and without secrets',async()=>{
+test('RC3: save JSON on disk from the embedded panel, without popup/download and without secrets',async()=>{
   const downloads=fs.mkdtempSync(path.join(os.tmpdir(),'dyclok-json-export-'));
   const panel=await startDiagnosticPanel({exportDirectory:downloads});
   try{
@@ -44,14 +44,14 @@ test('RC2: save JSON on disk from the embedded panel, without popup/download and
     const saved=JSON.parse(result.body);
     assert.equal(saved.ok,true);
     assert.equal(saved.eventCount,3);
-    assert.match(saved.fileName,/^Dyclok-Diagnostico-Motor042-[a-zA-Z0-9-]+\.json$/);
+    assert.match(saved.fileName,/^diloakPRO-Diagnostico-[a-zA-Z0-9-]+\.json$/);
     const file=path.join(downloads,saved.fileName);
     assert.ok(fs.existsSync(file),'JSON must be physically saved');
     const raw=fs.readFileSync(file,'utf8');
     const parsed=JSON.parse(raw);
     assert.equal(parsed.events.length,3);
     assert.equal(parsed.coverage,'partial');
-    assert.equal(parsed.delivery,'v30.0.15-motor042-rc2');
+    assert.equal(parsed.delivery,'v30.0.16-diloakpro-rc3');
     for(const secret of ['DO-NOT-EXPORT','SECRET-EXAMPLE','PRIVATE','SENSITIVE_TOKEN']){
       assert.equal(raw.includes(secret),false,'Private value leaked: '+secret);
     }
@@ -65,7 +65,7 @@ test('RC2: save JSON on disk from the embedded panel, without popup/download and
     fs.rmSync(downloads,{recursive:true,force:true});
   }
 });
-test('RC2: invalid download directory fails closed with useful error',async()=>{
+test('RC3: invalid download directory fails closed with useful error',async()=>{
   const panel=await startDiagnosticPanel({exportDirectory:'relative/invalid/path'});
   try{
     const result=await request(panel.url+'save-json','POST',{origin:new URL(panel.url).origin});
