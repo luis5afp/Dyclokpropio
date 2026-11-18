@@ -13,11 +13,13 @@
 const {validateProfileId}=require('./almacen-perfil-readonly.js');
 const {senderIsApp}=require('./almacen-native-chromium-audit.cjs');
 const {startDiagnosticPanel}=require('./almacen-diagnostic-panel.cjs');
+const {startCapture}=require('./almacen-observador-integrado.cjs');
+const {createOpeningCaptureCoordinator}=require('./almacen-captura-temprana.cjs');
 const SHOW_CHANNEL='almacen-diag:show';
 const EVENT_CHANNEL='almacen-diag:event';
 const SIGNALS=new Set(['open_requested','step_start','step_complete','step_failed']);
-const MAX_PER_PROFILE=150;
-const MAX_PROFILES=48;
+const MAX_PER_PROFILE=350;
+const MAX_PROFILES=32;
 
 const STAGES=new Map([
   ['PRE_DATA_INJECT','stage_pre_data_inject'],
@@ -82,15 +84,39 @@ function safeEvent(signal,phase) {
   });
 }
 function createNativeDiagnosticController({
-  startPanel=startDiagnosticPanel, createWindow
+  startPanel=startDiagnosticPanel,createWindow,
+  // Tests inject a no-op; the packaged app explicitly injects startCapture.
+  startObserver=()=>()=>{},getLabRoot=()=>undefined,
+  graceMs=15000,maxMs=120000
 }={}) {
   if(typeof startPanel!=='function'||typeof createWindow!=='function')
     throw Error('DIAG_MISSING_WINDOW_FACTORY');
   const history=new Map();
   const windows=new Map();
   const stageStarts=new Map();
+  function record(profileId,item){
+    if(!history.has(profileId)){
+      if(history.size>=MAX_PROFILES)history.delete(history.keys().next().value);
+      history.set(profileId,[]);
+    }
+    const list=history.get(profileId);
+    list.push(item);
+    if(list.length>MAX_PER_PROFILE)list.shift();
+    const current=windows.get(profileId);
+    if(current)current.panel.emit(item);
+  }
+  const coordinator=createOpeningCaptureCoordinator({
+    emitToProfile:record,startObserver,getLabRoot,graceMs,maxMs
+  });
   function note(profileId,signal,phase=''){
     validateProfileId(profileId);
+    let capture=null;
+    if(signal==='open_requested'){
+      // Bounded per-opening memory; no profile ID is serialized into the JSON.
+      history.delete(profileId);
+      // Synchronous IPC arms the Node observer before the vendor's open().
+      capture=coordinator.arm(profileId);
+    }
     const base=safeEvent(signal,phase);
     const stage=safeStage(phase),key=profileId+'|'+stage;
     let durationMs;
@@ -101,16 +127,11 @@ function createNativeDiagnosticController({
       stageStarts.delete(key);
     }
     const item=Object.freeze({...base,...(durationMs===undefined?{}:{durationMs})});
-    if(!history.has(profileId)){
-      if(history.size>=MAX_PROFILES)history.delete(history.keys().next().value);
-      history.set(profileId,[]);
-    }
-    const list=history.get(profileId);
-    list.push(item);
-    if(list.length>MAX_PER_PROFILE)list.shift();
-    const current=windows.get(profileId);
-    if(current)current.panel.emit(item);
-    return {ok:true,recorded:true,nativeChromiumSessionVerified:false};
+    record(profileId,item);
+    if(signal==='step_complete'||signal==='step_failed')
+      coordinator.stage(profileId,signal,stage);
+    return {ok:true,recorded:true,nativeChromiumSessionVerified:false,
+      ...(capture?{captureStarted:capture.captureStarted}: {})};
   }
   async function show(profileId,parentWindow){
     validateProfileId(profileId);
@@ -122,7 +143,8 @@ function createNativeDiagnosticController({
     }
     let panel=null,window=null;
     try{
-      panel=await startPanel();
+      // Do not start a second observer when a user opens this panel later.
+      panel=await startPanel({observeOnOpen:false});
       // Events from the Vue table are informational; they have NOT been
       // verified against a native browser identity or vendor server.
       panel.emit({source:'programa',event:'embedded_ui_only'});
@@ -145,7 +167,7 @@ function createNativeDiagnosticController({
     }
   }
   return Object.freeze({
-    note,show,
+    note,show,shutdown:coordinator.shutdown,
     snapshot:profileId=>{
       validateProfileId(profileId);
       return [...(history.get(profileId)||[])];
@@ -172,8 +194,11 @@ function install(){
   const {app,ipcMain,BrowserWindow}=require('electron');
   if(!app.isPackaged||ipcMain.listenerCount(EVENT_CHANNEL)>0)return;
   const controller=createNativeDiagnosticController({
-    createWindow:args=>createDiagnosticWindow({...args,BrowserWindow})
+    createWindow:args=>createDiagnosticWindow({...args,BrowserWindow}),
+    startObserver:startCapture,
+    getLabRoot:()=>app.getPath('userData')
   });
+  app.once('before-quit',()=>controller.shutdown());
   ipcMain.handle(SHOW_CHANNEL,async(event,profileId)=>{
     if(!senderIsApp(event,BrowserWindow))return {ok:false,reason:'VENTANA_NO_AUTORIZADA'};
     try{
@@ -181,8 +206,18 @@ function install(){
     }catch{return {ok:false,reason:'ID_PERFIL_INVALIDO'}}
   });
   ipcMain.on(EVENT_CHANNEL,(event,profileId,signal,phase)=>{
-    if(!senderIsApp(event,BrowserWindow))return;
-    try{controller.note(profileId,signal,phase);}catch{/* no raw error logs */}
+    // open_requested is a synchronous IPC. Always return to avoid deadlocks,
+    // even when the sender is untrusted or the row identifier is invalid.
+    if(!senderIsApp(event,BrowserWindow)){
+      if(signal==='open_requested')event.returnValue={ok:false,captureStarted:false};
+      return;
+    }
+    try{
+      const result=controller.note(profileId,signal,phase);
+      if(signal==='open_requested')event.returnValue=result;
+    }catch{
+      if(signal==='open_requested')event.returnValue={ok:false,captureStarted:false};
+    }
   });
 }
 module.exports={
