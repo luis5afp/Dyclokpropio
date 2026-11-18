@@ -186,10 +186,10 @@ async function startDiagnosticPanel(){
  emit({source:'programa',event:'panel_ready'});
  try {
    const app=require('electron').app;
-   stopObserver=startCapture({pid:process.pid,
+   if(app && typeof app.getPath==='function')stopObserver=startCapture({pid:process.pid,
      labRoot:app?.getPath?.('userData'),
      emit:raw=>{const safe=mapNativeEvent(raw);if(safe)try{emit(safe);}catch{}}});
- }catch{try{emit({source:'programa',event:'native_monitor_error'});}catch{}}
+ }catch{/* unavailable outside packaged Electron; do not fabricate native events */}
  return Object.freeze({
    url:'http://127.0.0.1:'+boundPort+'/diagnostico/'+token+'/',
    emit,
