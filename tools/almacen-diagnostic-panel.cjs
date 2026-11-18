@@ -13,7 +13,7 @@ const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
  'embedded_ui_only','operation_open_requested','operation_step_completed','operation_step_failed',
- 'stage_pre_data_inject','stage_fetch_env_info','stage_expand_check','stage_params_merge',
+ 'stage_pre_data_inject','stage_fetch_env_info','stage_proxy_check','stage_proxy_check_result','stage_expand_check','stage_params_merge',
  'stage_lock_env','stage_open_env','stage_cookie_encrypt_plan','stage_timeout',
  'stage_backend_data_fetch','stage_data_sync_start','stage_localstorage_download',
  'stage_localstorage_extract','stage_localstorage_sync','stage_indexeddb_download',
