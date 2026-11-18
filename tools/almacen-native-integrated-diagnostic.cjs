@@ -58,9 +58,19 @@ function safeEvent(signal,phase) {
   // "completed" event. It is a fixed whitelist label, not raw vendor text.
   const stage=signal==='step_failed'||signal==='step_complete'?
     safeStage(phase):undefined;
+  // Vendor stepType values may not be present in this renderer's enum.
+  // Keep only a bounded integer code for unknown stages so we can map
+  // it later without logging sensitive native values or message contents.
+  const isUnknown=signal==='step_start'&&event==='stage_unknown'||
+    (signal==='step_complete'||signal==='step_failed')&&stage==='stage_unknown';
+  const codeString=typeof phase==='number'?String(phase):phase;
+  const phaseCode=isUnknown&&typeof codeString==='string'&&
+    /^(?:0|[1-9][0-9]{0,2})$/.test(codeString)&&Number(codeString)<=255?
+    Number(codeString):undefined;
   return Object.freeze({
     source:'programa',event,at:new Date().toISOString(),
-    ...(stage?{stage}:{})
+    ...(stage?{stage}:{}),
+    ...(phaseCode!==undefined?{phaseCode}:{})
   });
 }
 function createNativeDiagnosticController({
