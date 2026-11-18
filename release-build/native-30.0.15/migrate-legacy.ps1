@@ -1,4 +1,4 @@
-# diloakPRO migration. User-scope only; no profile-data deletion.
+﻿# diloakPRO migration. User-scope only; no profile-data deletion.
 # Runs after new app is installed, but before the new desktop shortcuts are set.
 [CmdletBinding()]
 param([string]$CurrentInstall="",[switch]$InventoryOnly)
