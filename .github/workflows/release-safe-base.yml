@@ -89,6 +89,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Open-stage diagnostic and privacy test failed' }
           node tools/verify-diagnostic-console.js
           if ($LASTEXITCODE -ne 0) { throw 'Diagnostic console and redaction tests failed' }
+          node tools/verify-diagnostic-observer.js
+          if ($LASTEXITCODE -ne 0) { throw 'Extended observer redaction and lifecycle tests failed' }
           node tools/install-diagnostic-panel.js
           if ($LASTEXITCODE -ne 0) { throw 'Diagnostic button preflight failed' }
           node tools/instrument-params-merge.js
