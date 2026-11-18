@@ -1,0 +1,276 @@
+name: diloakPRO 30.0.16 - Motor 0.4.2 RC3 (diagnóstico y actualización)
+on:
+  push:
+    branches: [feature/diloakpro-3016-diagnostic-upgrade]
+    paths:
+      - '.github/workflows/build-diloakpro-3016-rc3.yml'
+      - 'tools/test-diloakpro-diagnostic-3016.cjs'
+      - 'release-build/native-30.0.15/migrate-legacy.ps1'
+      - 'tools/almacen-diagnostic-panel.*'
+      - 'tools/test-almacen-json-export-rc2.cjs'
+      - 'release-build/native-30.0.15/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/almacen-*'
+      - 'tools/build-dicloak-native-diagnostic-3015.js'
+      - 'tools/test-almacen-integrated-diagnostic-3015.cjs'
+      - 'release-build/native-30.0.15/**'
+      - '.github/workflows/build-v30-0-15-motor-042.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guarded-windows-installer:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Preserve original LF bytes
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+
+      - name: Test exact version-specific UI changes
+        shell: pwsh
+        run: |
+          node --check tools/build-dicloak-native-diagnostic-3015.js
+          if ($LASTEXITCODE -ne 0) { throw 'ASAR builder JS syntax failed' }
+          node --test tools/test-almacen-diagnostic-readability-041.cjs tools/test-suppress-native-update-autopopup.js tools/test-suppress-native-download-confirmation.js tools/test-almacen-native-chromium-audit.cjs tools/test-audit-chromium-native-storage.cjs tools/test-almacen-integrated-diagnostic-3015.cjs tools/test-almacen-diagnostic-panel.cjs tools/test-almacen-json-export-rc2.cjs tools/test-diloakpro-diagnostic-3016.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'UI-only regression tests failed' }
+          python -m py_compile tools/prepare-dicloak-native-307.py
+          if ($LASTEXITCODE -ne 0) { throw 'Native extraction Python syntax failed' }
+
+      - name: Validate legacy migration allowlist without touching installed apps
+        shell: pwsh
+        run: |
+          $items = @(& .\release-build\native-30.0.15\migrate-legacy.ps1 -InventoryOnly)
+          if ($LASTEXITCODE -ne 0 -or $items.Count -ne 9) { throw 'Expected nine allowlisted lab editions' }
+          if ($items -match 'DICloak Nativo|Dyclokpropio v30.0.15') { throw 'Official or stable app must not be removed' }
+          if (-not ((Get-Content release-build/native-30.0.15/electron-builder.json -Raw | ConvertFrom-Json).appId -eq 'com.diloakpro.desktop')) {
+            throw 'Stable appId not configured'
+          }
+      - name: Install Windows packaging dependencies
+        shell: pwsh
+        working-directory: release-build/native-30.0.15
+        run: |
+          npm install --no-audit --no-fund --ignore-scripts
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging dependencies not installed' }
+
+      - name: Download exact official DICloak 3.0.7
+        shell: pwsh
+        run: |
+          $download = Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          $downloaded = $false
+          foreach ($attempt in 1..3) {
+            try {
+              Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $download -TimeoutSec 900 -ErrorAction Stop
+              $downloaded = $true
+              break
+            } catch {
+              Write-Host "Official CDN request failed on attempt $attempt; retrying only the pinned vendor binary"
+              if (Test-Path $download) { Remove-Item -LiteralPath $download -Force }
+              if ($attempt -lt 3) { Start-Sleep -Seconds 5 }
+            }
+          }
+          if (-not $downloaded) { throw 'Pinned official 3.0.7 download unavailable after 3 attempts' }
+          if (-not (Test-Path $download -PathType Leaf)) { throw 'Official installer missing' }
+          $hash = (Get-FileHash -LiteralPath $download -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae') {
+            throw 'Official 3.0.7 source installer hash mismatch'
+          }
+
+      - name: Restore official engine and hash original DICloak.exe
+        shell: pwsh
+        run: |
+          $download = Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
+          python tools/prepare-dicloak-native-307.py --installer $download --destination $target
+          if ($LASTEXITCODE -ne 0) { throw 'Original engine integrity failed' }
+          $original = (Get-FileHash -LiteralPath (Join-Path $target 'DICloak.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($original -ne 'e00064c5195235a4eb492194cd0136cc7d81c7be8eab9acb75ffdb6e26e0c29f') {
+            throw 'Official PE hash unexpectedly changed'
+          }
+
+      - name: Preserve verified original ASAR outside installer to diagnose startup
+        shell: pwsh
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041/resources/app.asar'
+          $backup = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          Copy-Item -LiteralPath $source -Destination $backup
+          $hash = (Get-FileHash -LiteralPath $backup -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne 'b8ca8e2f36753149b23a6d339042bcf91c650e242d84c0d3af98e8141c0d1dcf') {
+            throw 'Diagnostic backup is not original official ASAR'
+          }
+          $sourceExe = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041/DICloak.exe'
+          $backupExe = Join-Path $env:RUNNER_TEMP 'vendor-original-307.exe'
+          Copy-Item -LiteralPath $sourceExe -Destination $backupExe
+          if ((Get-FileHash -LiteralPath $backupExe -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'e00064c5195235a4eb492194cd0136cc7d81c7be8eab9acb75ffdb6e26e0c29f') {
+            throw 'Diagnostic backup is not the original vendor executable'
+          }
+
+      - name: Verify v30.0.15 0.4.2 observer is part of build configuration
+        shell: pwsh
+        run: |
+          node --check tools/almacen-observador-integrado.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'Observer syntax invalid' }
+          node --check tools/almacen-diagnostic-panel.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'Panel syntax invalid' }
+          node --test tools/test-almacen-integrated-diagnostic-3015.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'v30.0.15 native observer regression failed' }
+
+      - name: Repack ASAR with native audit and in-app diagnostic UI
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
+          node tools/build-dicloak-native-diagnostic-3015.js $target
+          if ($LASTEXITCODE -ne 0) { throw 'Almacén ASAR repackage blocked due to vendor member mismatch or invalid JS' }
+          $manifest = Join-Path $target 'resources/dyclok-native-update-ui-manifest.json'
+          if (-not (Test-Path $manifest -PathType Leaf)) { throw 'No verified patch manifest' }
+          $report = Get-Content $manifest -Raw | ConvertFrom-Json
+          $exeHash = (Get-FileHash -LiteralPath (Join-Path $target 'DICloak.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
+          $asarHash = (Get-FileHash -LiteralPath (Join-Path $target 'resources/app.asar') -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($exeHash -ne $report.executableSha256 -or $asarHash -ne $report.modifiedAsarSha256) {
+            throw 'Modified ASAR or official EXE failed verification'
+          }
+          if ($report.officialAsarSha256 -eq $asarHash -or -not $report.mandatoryUpdateCheckPreserved -or -not $report.integratedDiagnosticUI -or $report.realHttpBodiesCaptured) {
+            throw 'Patch not applied or mandatory security UI missing'
+          }
+          if (Test-Path (Join-Path $target 'DyclokPRO.exe')) { throw 'External launcher must not be included' }
+          if (Test-Path (Join-Path $target 'SourceData')) { throw 'Private profiles must not be packaged' }
+          Write-Host 'ALMACEN_INTEGRATED_DIAGNOSTICS_AND_AUDIT=PASS'
+          Write-Host 'VENDOR_PE_UNMODIFIED_BEFORE_ASAR_HASH_REPAIR=PASS'
+          Write-Host 'ALMACEN_CHROMIUM_AUDIT_AND_NATIVE_DIAG_EMBEDDED=PASS'
+
+      - name: Diagnose original executable embedded integrity against changed ASAR
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
+          $original = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          $edited = Join-Path $target 'resources/app.asar'
+          $exe = Join-Path $target 'DICloak.exe'
+          node tools/inspect-dicloak-pe-asar-integrity-3015.js $exe $original $edited
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to verify embedded integrity root cause' }
+          $sig = Get-AuthenticodeSignature -LiteralPath $exe
+          Write-Host "VENDOR_AUTHENTICODE_STATUS=$($sig.Status)"
+          Write-Host "VENDOR_SIGNER_SUBJECT=$($sig.SignerCertificate.Subject)"
+
+      - name: Re-embed correct app.asar header hash in Windows executable
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
+          $official = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          node tools/repair-dicloak-pe-integrity-3015.js $target $official
+          if ($LASTEXITCODE -ne 0) { throw 'Could not preserve embedded ASAR integrity in modified PE' }
+          $report = Get-Content (Join-Path $target 'resources/dyclok-native-update-ui-manifest.json') -Raw | ConvertFrom-Json
+          $rebuilt = (Get-FileHash -LiteralPath (Join-Path $target 'DICloak.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($rebuilt -ne $report.rebuiltExecutableSha256 -or -not $report.electronFuseWireUnchanged) {
+            throw 'Repackaged executable integrity validation failed'
+          }
+          Write-Host 'ELECTRON_ASAR_HASH_REEMBEDDED=PASS'
+          Write-Host 'FUSE_WIRE_UNCHANGED=PASS'
+          Write-Host 'PE_REQUIRES_INDEPENDENT_CODE_SIGNING=TRUE'
+
+      - name: Build versioned NSIS installer for DICloak.exe only
+        shell: pwsh
+        working-directory: release-build/native-30.0.15
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
+          npx electron-builder --win nsis --x64 --prepackaged $target --publish never --config electron-builder.json
+          if ($LASTEXITCODE -ne 0) { throw 'Windows NSIS packaging failed' }
+          $installer = 'out/diloakPRO_30.0.16_Motor042_RC3_win_x64.exe'
+          if (-not (Test-Path $installer -PathType Leaf)) { throw 'New installer not found' }
+          if ((Get-Item $installer).Length -lt 140000000) { throw 'Installer truncated or incomplete' }
+          $sha = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  diloakPRO_30.0.16_Motor042_RC3_win_x64.exe" | Set-Content 'out/SHA256SUMS.txt' -Encoding ascii
+
+      - name: Install update silently into isolated lab directory
+        shell: pwsh
+        run: |
+          $installer = (Resolve-Path 'release-build/native-30.0.15/out/diloakPRO_30.0.16_Motor042_RC3_win_x64.exe').Path
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs/diloakPRO'
+          if (Test-Path $folder) { throw 'Unexpected prior installation on fresh runner' }
+          $proc = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw "NSIS install failure: $($proc.ExitCode)" }
+          $migrationReport=Join-Path $env:LOCALAPPDATA 'diloakPRO/install-migration.json'
+          if (-not (Test-Path $migrationReport -PathType Leaf)) { throw 'Migration report missing: NSIS hook did not run' }
+          $report=Get-Content -LiteralPath $migrationReport -Raw | ConvertFrom-Json
+          if ($report.issues -ne 0) { throw 'Unexpected legacy migration failure' }
+          $exe = Join-Path $folder 'DICloak.exe'
+          $asar = Join-Path $folder 'resources/app.asar'
+          $manifest = Join-Path $folder 'resources/dyclok-native-update-ui-manifest.json'
+          foreach ($file in @($exe, $asar, $manifest)) {
+            if (-not (Test-Path $file -PathType Leaf)) { throw "Required installed file missing: $file" }
+          }
+          if (Test-Path (Join-Path $folder 'DyclokPRO.exe')) { throw 'Old launcher unexpectedly installed' }
+          $metadata = Get-Content $manifest -Raw | ConvertFrom-Json
+          if ($metadata.deliveryVersion -ne '30.0.16') { throw 'Incorrect release delivery version' }
+          if ((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant() -ne $metadata.rebuiltExecutableSha256) {
+            throw 'Installed vendor EXE differs from official source'
+          }
+          if ((Get-FileHash -LiteralPath $asar -Algorithm SHA256).Hash.ToLowerInvariant() -ne $metadata.modifiedAsarSha256) {
+            throw 'Installed patched ASAR differs from verified build'
+          }
+          Write-Host 'DYCLOK_NATIVO_3015_INSTALLED=PASS'
+          Write-Host 'INSTALLED_3015_HASH_VERIFIED=PASS'
+
+      - name: Smoke launch patched official DICloak.exe on Windows
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs/diloakPRO/DICloak.exe'
+          $proc = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 16
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) {
+            throw "Patched official engine crashed on startup with exit code $($proc.ExitCode)"
+          }
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          }
+          Write-Host 'DYCLOK_NATIVO_3015_ENGINE_STARTUP_SMOKE=PASS'
+          Write-Host 'REAL_REMOTE_LOGIN_AND_PROFILE_OPEN=NOT_TESTED'
+
+      - name: Diagnose failed startup with restored official ASAR (CI only)
+        if: failure()
+        shell: pwsh
+        run: |
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs/diloakPRO'
+          $exe = Join-Path $folder 'DICloak.exe'
+          $asar = Join-Path $folder 'resources/app.asar'
+          $backup = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
+          if ((Test-Path $exe) -and (Test-Path $backup)) {
+            Get-Process -Name DICloak -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+            Copy-Item -LiteralPath $backup -Destination $asar -Force
+            $officialExe = Join-Path $env:RUNNER_TEMP 'vendor-original-307.exe'
+            if (-not (Test-Path $officialExe -PathType Leaf)) { throw 'Missing original PE for recovery comparison' }
+            Copy-Item -LiteralPath $officialExe -Destination $exe -Force
+            $original = Start-Process -FilePath $exe -PassThru
+            Start-Sleep -Seconds 12
+            $original.Refresh()
+            if ($original.HasExited) {
+              Write-Host "OFFICIAL_ASAR_BASELINE_EXIT_CODE=$($original.ExitCode)"
+            } else {
+              Write-Host 'OFFICIAL_ASAR_BASELINE_STILL_RUNNING=TRUE'
+              Stop-Process -Id $original.Id -Force -ErrorAction SilentlyContinue
+            }
+          }
+          try {
+            Get-WinEvent -FilterHashtable @{ LogName='Application'; StartTime=(Get-Date).AddMinutes(-15) } -MaxEvents 30 -ErrorAction Stop |
+              Where-Object { $_.Message -match 'DICloak.exe|app.asar|electron' } |
+              Select-Object -First 6 TimeCreated,ProviderName,Id,Message |
+              Format-List
+          } catch { Write-Host 'No matching Windows application crash details' }
+
+      - name: Upload version 30.0.15 installer as experimental artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: diloakPRO-30.0.16-Motor042-RC3-NSIS-PRUEBA
+          path: |
+            release-build/native-30.0.15/out/diloakPRO_30.0.16_Motor042_RC3_win_x64.exe
+            release-build/native-30.0.15/out/SHA256SUMS.txt
+          if-no-files-found: error
