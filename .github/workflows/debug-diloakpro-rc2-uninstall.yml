@@ -5,6 +5,7 @@ on:
     branches: [feature/diloakpro-3016-diagnostic-upgrade]
     paths:
       - '.github/workflows/debug-diloakpro-rc2-uninstall.yml'
+      - 'release-build/native-30.0.15/migrate-legacy.ps1'
   workflow_dispatch:
 
 permissions:
