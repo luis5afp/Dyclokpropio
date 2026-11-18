@@ -189,6 +189,22 @@ jobs:
           $sha = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
           "$sha  diloakPRO_30.0.16_Motor042_RC3_win_x64.exe" | Set-Content 'out/SHA256SUMS.txt' -Encoding ascii
 
+      - name: Install pinned older RC2 to verify real in-place migration
+        shell: pwsh
+        run: |
+          $old = Join-Path $env:RUNNER_TEMP 'Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://github.com/luis5afp/Dyclokpropio/releases/download/v30.0.15-motor042-rc2/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe' -OutFile $old -TimeoutSec 900
+          if (-not (Test-Path $old -PathType Leaf)) { throw 'Legacy RC2 installer unavailable' }
+          $digest=(Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($digest -ne 'fff0d14a756852ae2d2e24e9d253d6d869ffb77e7f459c945b10c2ab17ef0ef0') {
+            throw 'Previous published RC2 hash mismatch'
+          }
+          $proc=Start-Process -FilePath $old -ArgumentList '/S' -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw "Legacy RC2 NSIS installer failed: $($proc.ExitCode)" }
+          $legacy=Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015/DICloak.exe'
+          if (-not (Test-Path $legacy -PathType Leaf)) { throw 'Previous RC2 was not installed' }
+          Write-Host 'OLDER_RC2_INSTALLED=PASS'
+
       - name: Install update silently into isolated lab directory
         shell: pwsh
         run: |
@@ -201,6 +217,10 @@ jobs:
           if (-not (Test-Path $migrationReport -PathType Leaf)) { throw 'Migration report missing: NSIS hook did not run' }
           $report=Get-Content -LiteralPath $migrationReport -Raw | ConvertFrom-Json
           if ($report.issues -ne 0) { throw 'Unexpected legacy migration failure' }
+          if ($report.removedCount -lt 1) { throw 'Older RC2 installation was not removed' }
+          $oldExe=Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015/DICloak.exe'
+          if (Test-Path $oldExe -PathType Leaf) { throw 'Old RC2 executable remains after upgrade' }
+          Write-Host 'DILOAKPRO_RC2_UPGRADE_CLEAN=PASS'
           $exe = Join-Path $folder 'DICloak.exe'
           $asar = Join-Path $folder 'resources/app.asar'
           $manifest = Join-Path $folder 'resources/dyclok-native-update-ui-manifest.json'
