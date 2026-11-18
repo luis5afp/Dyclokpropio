@@ -1,7 +1,7 @@
 {
   "appId": "com.diloakpro.desktop",
   "productName": "diloakPRO",
-  "artifactName": "diloakPRO_30.0.16_Motor042_RC3_win_x64.exe",
+  "artifactName": "diloakPRO_30.0.17_CapturaTemprana_RC4_win_x64.exe",
   "electronVersion": "31.7.7",
   "directories": {
     "output": "out"

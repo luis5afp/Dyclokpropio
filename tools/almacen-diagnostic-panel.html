@@ -33,7 +33,7 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 </style></head><body>
 <h1>diloakPRO · Diagnóstico de comunicación</h1>
 <p>Operación → Abrir · Perfil de pruebas · Almacén</p>
-<div class="note">Eventos de apertura observados en la interfaz DICloak y, si se configura aparte, documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra cookies, contraseñas, tokens, cabeceras o cuerpos privados. El diagnóstico de apertura funciona sin clave Open API.</div>
+<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra cookies, contraseñas, tokens, cabeceras o cuerpos privados. El diagnóstico de apertura funciona sin clave Open API.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Estado de configuración y comunicación (verificación parcial)</h2>
@@ -41,7 +41,7 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <div class="checks" id="profile-checks" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
-<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes</th><th>Conexión</th><th>PID</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes</th><th>Conexión</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
@@ -82,6 +82,8 @@ const kinds={
  native_http_error:"Error Node HTTP(S)",native_process_seen:"Proceso descendiente observado",
  native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
  native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
+ capture_started:"Observador iniciado antes de abrir",capture_finished:"Observador detenido tras apertura",
+ capture_unavailable:"No se pudo iniciar observador",
  profile_running:"Perfil abierto",api_failed:"API local no disponible",api_connected:"API local conectada",
  debugger_connected:"Depurador conectado",debugger_failed:"Depurador no disponible",
  target_connected:"Pestaña supervisada",receiver_ready:"Receptor de pruebas activo",
@@ -134,6 +136,24 @@ async function update(){
       result.textContent=summary[key]===true?success:missing;
       div.append(name,result);checks.append(div);
     }
+    const capture=summary.capture||{};
+    const temporal=document.createElement("div");temporal.className="check";
+    const temporalTitle=document.createElement("strong");temporalTitle.textContent="Captura automática desde Abrir";
+    const temporalStatus=document.createElement("span");
+    const stateLabel={active:"Capturando",finished:"Finalizada",unavailable:"No disponible",
+      not_started:"Aún no iniciada"};
+    temporalStatus.textContent=(stateLabel[capture.status]||"No registrada")+
+      (capture.startedBeforeOpen?" · iniciada antes del navegador":
+      " · inicio temprano no confirmado");
+    temporal.append(temporalTitle,temporalStatus);checks.prepend(temporal);
+    const scoped=document.createElement("div");scoped.className="check";
+    const scopedTitle=document.createElement("strong");scopedTitle.textContent="Solicitudes anteriores al cierre de apertura";
+    const scopedValue=document.createElement("span");
+    scopedValue.textContent=String(capture.requestsBeforeOpenStageCompleted||0)+
+      " solicitudes Node (asociación temporal; no identidad Chromium)";
+    if(capture.ambiguousEvents)
+      scopedValue.textContent+=" · "+String(capture.ambiguousEvents)+" eventos con perfiles simultáneos";
+    scoped.append(scopedTitle,scopedValue);checks.prepend(scoped);
     const network=summary.networkMetadata||{};
     const networkDiv=document.createElement("div");networkDiv.className="check";
     const networkName=document.createElement("strong");networkName.textContent="Solicitudes Node HTTP(S) detectadas";
@@ -172,6 +192,8 @@ async function update(){
         ev.bytes===undefined?"—":String(ev.bytes),
         ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—",
         ev.pid===undefined?"—":String(ev.pid),
+        ev.captureRelation==="ambiguous"?"Ambigua (varios perfiles)":
+          ev.captureRelation==="temporal"?"Temporal (no verificada)":"—",
         ev.sha256===undefined?"—":ev.sha256.slice(0,16)+"…"
       ];
       for(const value of cells){

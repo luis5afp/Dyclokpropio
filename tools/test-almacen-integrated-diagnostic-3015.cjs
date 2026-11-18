@@ -49,7 +49,7 @@ test('embedded diagnostics serve only 1 profile row and preserve ordering/ISO ti
   c.note('profile_7','step_start','secret_password_123');
   c.note('profile_8','step_failed','proxy_secret=abc');
   assert.deepEqual(c.snapshot('profile_7').map(e=>e.event),[
-    'operation_open_requested','stage_fetch_env_info','stage_unknown'
+    'capture_started','operation_open_requested','stage_fetch_env_info','stage_unknown'
   ]);
   const shown=await c.show('profile_7',null);
   assert.equal(shown.ok,true);
@@ -63,7 +63,7 @@ test('embedded diagnostics serve only 1 profile row and preserve ordering/ISO ti
   c.note('profile_7','step_failed','proxy_check');
   assert.equal(c.snapshot('profile_7').at(-1).event,'operation_step_failed');
   assert.equal(c.snapshot('profile_8')[0].event,'operation_step_failed');
-  assert.equal(c.snapshot('profile_7').length,4);
+  assert.equal(c.snapshot('profile_7').length,5);
   assert.ok(!JSON.stringify(c.snapshot('profile_7')).includes('secret_password_123'));
   created[0].window.close();
   await new Promise(resolve=>setTimeout(resolve,40));
@@ -97,10 +97,11 @@ test('test native BrowserWindow opens an isolated sandboxed diagnostics tab only
 for(const isolated of [true,false]){
   test('preload diagnostics IPC is restricted to named operations, isolated='+isolated,async()=>{
     const src=buildConst('PRELOAD_ADDITION','APP_MAIN_ADDITION');
-    const calls=[],sent=[],surface={},window={};
+    const calls=[],sent=[],sync=[],surface={},window={};
     const api={
       invoke:async(...x)=>{calls.push(x);return {ok:true}},
-      send:(...x)=>{sent.push(x)}
+      send:(...x)=>{sent.push(x)},
+      sendSync:(...x)=>{sync.push(x);return {ok:true,captureStarted:true}}
     };
     vm.runInNewContext(src,{
       process:{contextIsolated:isolated},window,console,
@@ -120,9 +121,11 @@ for(const isolated of [true,false]){
     assert.equal(calls[0][0],'almacen-diag:show');
     assert.equal(calls[1][0],'almacen-lab:open');
     assert.deepEqual(sent.map(x=>x[0]),[
-      'almacen-diag:event','almacen-diag:event',
-      'almacen-diag:event','almacen-diag:event'
+      'almacen-diag:event','almacen-diag:event','almacen-diag:event'
     ]);
+    assert.equal(sync.length,1);
+    assert.equal(sync[0][2],'open_requested');
+    assert.ok(builder.includes('noteOpen:id=>ipcRenderer.sendSync('));
     assert.equal(typeof bridge.invoke,'undefined');
     assert.equal(typeof bridge.send,'undefined');
   });
@@ -140,7 +143,7 @@ test('builder resolves vendor numeric enum stepType before sending only symbolic
   assert.equal(safeStage('123456'),'stage_unknown');
 });
 
-test('30.0.16 UI has Almacén and Diagnóstico side by side; vendor authentication is unchanged',()=>{
+test('30.0.17 UI has Almacén and Diagnóstico side by side; vendor authentication is unchanged',()=>{
   const diag=buildConst('ADD_DIAG_COLUMN','FIELD_CONFIG');
   assert.ok(diag.includes('label:"Diagnóstico"'));
   assert.ok(diag.includes('width:162,align:"center"'));
@@ -152,7 +155,7 @@ test('30.0.16 UI has Almacén and Diagnóstico side by side; vendor authenticati
   assert.ok(builder.includes('nativeIntegrityAuditReadOnly:true'));
   assert.ok(builder.includes('integratedDiagnosticUI:true'));
   assert.ok(builder.includes('realHttpBodiesCaptured:false'));
-  assert.ok(builder.includes("deliveryVersion:'30.0.16'"));
+  assert.ok(builder.includes("deliveryVersion:'30.0.17'"));
   assert.ok(!builder.includes("sessionExpired=false"));
   assert.ok(!builder.includes("disableWebSecurity"));
 });

@@ -15,6 +15,7 @@ const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
+ 'capture_started','capture_finished','capture_unavailable',
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
  'embedded_ui_only','operation_open_requested','operation_step_completed','operation_step_failed',
  'stage_pre_data_inject','stage_pre_check','stage_choose_kernel','stage_pre_proxy_check','stage_catch_error',
@@ -118,6 +119,21 @@ function validateDiagnostic(input){
    if(!['txt','json','csv','zip','bin','pdf','other'].includes(input.fileExt))throw Error('INVALID_DIAGNOSTIC_EXTENSION');
    out.fileExt=input.fileExt;
  }
+ if(input.captureId!==undefined){
+   if(typeof input.captureId!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(input.captureId))
+     throw Error('INVALID_CAPTURE_ID');
+   out.captureId=input.captureId;
+ }
+ if(input.captureRelation!==undefined){
+   if(!['temporal','ambiguous'].includes(input.captureRelation))
+     throw Error('INVALID_CAPTURE_RELATION');
+   out.captureRelation=input.captureRelation;
+ }
+ if(input.finishReason!==undefined){
+   if(!['completed','failed','timeout','restarted','capacity','shutdown'].includes(input.finishReason))
+     throw Error('INVALID_CAPTURE_FINISH_REASON');
+   out.finishReason=input.finishReason;
+ }
  if(input.sha256!==undefined){
    if(typeof input.sha256!=='string'||!/^[a-f0-9]{64}$/.test(input.sha256))
      throw Error('INVALID_DIAGNOSTIC_SHA256');
@@ -143,12 +159,16 @@ function mapNativeEvent(row){
  if(row.kind==='session'&&row.phase==='error')return {...base,event:'native_monitor_error'};
  return null;
 }
-async function startDiagnosticPanel({exportDirectory}={}){
+async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  const token=crypto.randomBytes(24).toString('hex');
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
  const counters={total:0,approved:0,saved:0,failed:0};
  const completedStages=new Set();
+ const capture={status:'not_started',startedBeforeOpen:false,
+   openStageCompleted:false,requestCountDuringOpening:0,
+   ambiguousEventCount:0,finishReason:null,relation:'not_verified',
+   captureId:null};
  const telemetry={browserProcessObserved:false,nodeRequests:0,
    nodeResponses:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0};
@@ -166,6 +186,15 @@ async function startDiagnosticPanel({exportDirectory}={}){
      cookiesRestored:'not_verified',
      proxyExitAndAuthentication:'not_verified',
      browserSessionLinkedToRow:'not_verified',
+     capture:{
+       status:capture.status,
+       startedBeforeOpen:capture.startedBeforeOpen,
+       openStageCompleted:capture.openStageCompleted,
+       requestsBeforeOpenStageCompleted:capture.requestCountDuringOpening,
+       ambiguousEvents:capture.ambiguousEventCount,
+       finishReason:capture.finishReason,
+       trafficAttribution:'temporal_only_not_chromium_verified'
+     },
      networkMetadata:{
        nodeRequests:telemetry.nodeRequests,
        nodeResponses:telemetry.nodeResponses,
@@ -179,7 +208,7 @@ async function startDiagnosticPanel({exportDirectory}={}){
  function reportJSON(){
    // Whitelisted events are already sanitized at emit() time.
    return JSON.stringify({schema:1,engine:'DICloak 3.0.7',
-     diagnostic:'0.4.2',delivery:'v30.0.16-diloakpro-rc3',
+     diagnostic:'0.4.2',delivery:'v30.0.17-diloakpro-rc4',
      coverage:'partial',events,counters,checks:checks()},null,2);
  }
  function saveReport(){
@@ -246,8 +275,33 @@ async function startDiagnosticPanel({exportDirectory}={}){
  boundPort=server.address().port;
  function emit(entry){
    const event=validateDiagnostic(entry);
-   if(event.event==='operation_step_completed'&&event.stage)
+   if(event.event==='capture_started'){
+     capture.status='active';
+     capture.startedBeforeOpen=false;
+     capture.openStageCompleted=false;
+     capture.requestCountDuringOpening=0;
+     capture.ambiguousEventCount=0;
+     capture.captureId=event.captureId||null;
+     capture.finishReason=null;
+     capture.relation=event.captureRelation||'not_verified';
+     completedStages.clear();
+   }
+   if(event.event==='operation_open_requested'&&capture.status==='active')
+     capture.startedBeforeOpen=true;
+   if(event.event==='operation_step_completed'&&event.stage){
      completedStages.add(event.stage);
+     if(event.stage==='stage_open_env')capture.openStageCompleted=true;
+   }
+   if(event.captureId&&event.captureId===capture.captureId){
+     if(event.captureRelation==='ambiguous')capture.ambiguousEventCount++;
+     if(event.event==='native_http_request'&&!capture.openStageCompleted)
+       capture.requestCountDuringOpening++;
+   }
+   if(event.event==='capture_finished'&&event.captureId===capture.captureId){
+     capture.status='finished';
+     capture.finishReason=event.finishReason||'completed';
+   }
+   if(event.event==='capture_unavailable')capture.status='unavailable';
    if(event.event==='native_process_seen'&&event.processClass==='browser')
      telemetry.browserProcessObserved=true;
    if(event.event==='native_http_request'){
@@ -270,7 +324,7 @@ async function startDiagnosticPanel({exportDirectory}={}){
  emit({source:'programa',event:'panel_ready'});
  try {
    const app=require('electron').app;
-   if(app && typeof app.getPath==='function')stopObserver=startCapture({pid:process.pid,
+   if(observeOnOpen && app && typeof app.getPath==='function')stopObserver=startCapture({pid:process.pid,
      labRoot:app?.getPath?.('userData'),
      emit:raw=>{const safe=mapNativeEvent(raw);if(safe)try{emit(safe);}catch{}}});
  }catch{/* unavailable outside packaged Electron; do not fabricate native events */}
