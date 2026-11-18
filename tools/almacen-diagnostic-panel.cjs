@@ -37,6 +37,12 @@ function validateDiagnostic(input){
      throw Error('INVALID_DIAGNOSTIC_STAGE');
    out.stage=input.stage;
  }
+ if(input.phaseCode!==undefined){
+   if(!Number.isInteger(input.phaseCode)||input.phaseCode<0||input.phaseCode>255||
+      !(input.event==='stage_unknown'||input.stage==='stage_unknown'))
+     throw Error('INVALID_DIAGNOSTIC_PHASE_CODE');
+   out.phaseCode=input.phaseCode;
+ }
  if(input.status!==undefined){
    if(!Number.isSafeInteger(input.status)||input.status<100||input.status>599)
      throw Error('INVALID_DIAGNOSTIC_STATUS');
@@ -95,7 +101,7 @@ async function startDiagnosticPanel(){
    counters.total++;
    if(event.event==='response_approved')counters.approved++;
    if(event.event==='document_saved')counters.saved++;
-   if(['api_failed','debugger_failed','response_failed','document_failed','connection_failed'].includes(event.event))
+   if(['operation_step_failed','api_failed','debugger_failed','response_failed','document_failed','connection_failed'].includes(event.event))
      counters.failed++;
  }
  emit({source:'programa',event:'panel_ready'});
