@@ -30,7 +30,8 @@ tbody tr:nth-child(even){background:#1c2a39}
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
-<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>HTTP</th><th>Bytes</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<p><a href="export" target="_blank" rel="noopener" style="color:#67e8d0">Exportar JSON del diagnóstico</a></p>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes</th><th>Conexión</th><th>PID</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
@@ -41,6 +42,10 @@ const kinds={
  operation_open_requested:"Operación → Abrir: solicitud de apertura",
  operation_step_completed:"Etapa de apertura completada",operation_step_failed:"Etapa de apertura fallida",
  stage_pre_data_inject:"Inicializando perfil",
+ stage_pre_check:"Verificación previa",stage_choose_kernel:"Seleccionando motor",
+ stage_pre_proxy_check:"Verificación previa de proxy",stage_catch_error:"Controlando fallo",
+ stage_polyfill_row_data:"Preparando datos de fila",stage_rpa_pre_inject:"Preparando RPA",
+ stage_lock_env_rpa:"Reservando perfil RPA",stage_merge_env_params_rpa:"Combinando parámetros RPA",
  stage_fetch_env_info:"Obteniendo configuración del perfil",
  stage_proxy_check:"Comprobando configuración de proxy",
  stage_proxy_check_result:"Validando resultado de proxy",
@@ -63,6 +68,10 @@ const kinds={
  stage_browser_start:"Iniciando navegador",
  stage_unknown:"Etapa de apertura no identificada",
  api_request:"Programa solicita estado de sesión",api_response:"Servidor API responde",
+ native_http_request:"Solicitud Node HTTP(S)",native_http_response:"Respuesta Node HTTP(S)",
+ native_http_error:"Error Node HTTP(S)",native_process_seen:"Proceso descendiente observado",
+ native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
+ native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
  profile_running:"Perfil abierto",api_failed:"API local no disponible",api_connected:"API local conectada",
  debugger_connected:"Depurador conectado",debugger_failed:"Depurador no disponible",
  target_connected:"Pestaña supervisada",receiver_ready:"Receptor de pruebas activo",
@@ -94,8 +103,13 @@ async function update(){
       const cells=[
         new Date(ev.at).toLocaleTimeString("es-PE"),
         sources[ev.source]||"",((kinds[ev.event]||"")+(ev.stage&&kinds[ev.stage]?" — "+kinds[ev.stage]:""))+phaseCode,
+        ev.method===undefined?"—":String(ev.method),
+        ev.routeTemplate===undefined?"—":String(ev.routeTemplate),
         ev.status===undefined?"—":String(ev.status),
+        ev.durationMs===undefined&&ev.elapsedMs===undefined?"—":String(ev.durationMs??ev.elapsedMs),
         ev.bytes===undefined?"—":String(ev.bytes),
+        ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—",
+        ev.pid===undefined?"—":String(ev.pid),
         ev.sha256===undefined?"—":ev.sha256.slice(0,16)+"…"
       ];
       for(const value of cells){
