@@ -1,3 +1,5 @@
+!define DILOAKPRO_MIGRATE_SOURCE "${__FILEDIR__}\migrate-legacy.ps1"
+
 !macro preInit
   ; Stable per-user installation identity for future diloakPRO upgrades.
   SetRegView 64
@@ -10,7 +12,7 @@
   ; Only remove exact allowlisted legacy lab installs through verified uninstallers.
   ; Never delete DICloak official app or any Chromium profile data.
   InitPluginsDir
-  File "/oname=$PLUGINSDIR\diloakpro-migrate.ps1" "${__FILEDIR__}\migrate-legacy.ps1"
+  File "/oname=$PLUGINSDIR\diloakpro-migrate.ps1" "${DILOAKPRO_MIGRATE_SOURCE}"
   nsExec::ExecToLog '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\diloakpro-migrate.ps1" -CurrentInstall "$INSTDIR"'
   Pop $R9
   StrCmp $R9 "0" migrated
