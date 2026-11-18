@@ -31,6 +31,12 @@ function validateDiagnostic(input){
  if(typeof at!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(at)||
     Number.isNaN(Date.parse(at)))throw Error('INVALID_DIAGNOSTIC_TIME');
  const out={at,source:input.source,event:input.event};
+ if(input.stage!==undefined){
+   if(typeof input.stage!=='string'||
+      !input.stage.startsWith('stage_')||!EVENTS.has(input.stage))
+     throw Error('INVALID_DIAGNOSTIC_STAGE');
+   out.stage=input.stage;
+ }
  if(input.status!==undefined){
    if(!Number.isSafeInteger(input.status)||input.status<100||input.status>599)
      throw Error('INVALID_DIAGNOSTIC_STATUS');
