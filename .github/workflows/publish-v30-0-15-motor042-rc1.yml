@@ -1,0 +1,82 @@
+name: Publicar motor 0.4.2 - v30.0.15 RC1 (pre-release)
+
+on:
+  push:
+    branches:
+      - feature/v30.0.15-motor-042-nativo
+    paths:
+      - .github/workflows/publish-v30-0-15-motor042-rc1.yml
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: native-motor042-rc1-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Check tested artifact and publish prerelease
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate source build, run identity and artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_RUN: "44357383103"
+          SOURCE_SHA: "bc973b7b188de0a778adb928052bc2dd6a7eb45e"
+          TAG: "v30.0.15-motor042-rc1"
+        run: |
+          set -euo pipefail
+          metadata=$(gh run view "$SOURCE_RUN" --repo "$GH_REPO" --json conclusion,headSha)
+          status=$(jq -r '.conclusion' <<< "$metadata")
+          commit=$(jq -r '.headSha' <<< "$metadata")
+          test "$status" = success || { echo "BLOCKED: Windows NSIS tests did not pass"; exit 1; }
+          test "$commit" = "$SOURCE_SHA" || { echo "BLOCKED: source commit mismatch"; exit 1; }
+          if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo "BLOCKED: release already exists; no overwrite"
+            exit 1
+          fi
+          mkdir -p delivery
+          gh run download "$SOURCE_RUN" --repo "$GH_REPO" --name "Dyclokpropio-30.0.15-Motor042-NSIS-PRUEBA" --dir delivery
+          exe="delivery/Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe"
+          sum="delivery/SHA256SUMS.txt"
+          test -s "$exe" && test -s "$sum" || { echo "BLOCKED: missing binary or checksum"; exit 1; }
+          (cd delivery && sha256sum --check SHA256SUMS.txt)
+          echo "Verified NSIS binary and SHA256"
+      - name: Publish isolated pre-release (stable auto-update stays untouched)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_SHA: "bc973b7b188de0a778adb928052bc2dd6a7eb45e"
+          TAG: "v30.0.15-motor042-rc1"
+        run: |
+          set -euo pipefail
+          cat > release-notes.md <<'NOTES'
+          EXPERIMENTAL / PRUEBA - Dyclokpropio v30.0.15 Motor Nativo 0.4.2 (RC1)
+
+          - Basado en el runtime original DICloak 3.0.7, comprobado por SHA-256.
+          - Añade las mejoras del diagnóstico 0.4.2: etapas y duraciones, HTTP(S) Node, PID,
+            conexiones TCP/UDP observadas y archivos de una carpeta de laboratorio.
+          - Panel de diagnósticos de solo lectura, acceso local y exportación JSON.
+          - No registra cookies, contraseñas, tokens, cuerpos HTTP ni contenidos de perfiles.
+          - Las conexiones no constituyen evidencia de que un archivo se transfirió.
+
+          Verificado por Windows CI: scripts Node, hashes originales, ASAR reempaquetado,
+          integridad PE actualizada, instalación NSIS en carpeta separada y arranque básico.
+          NO VERIFICADO: inicio de sesión real, apertura de Chromium con un perfil,
+          tráfico completo, funcionamiento de perfiles personales.
+
+          PRECAUCIÓN: Ejecutable experimental MODIFICADO y sin nueva firma Authenticode.
+          Instalar exclusivamente en una cuenta Windows de pruebas, con perfiles vacíos.
+          El motor pertenece a terceros; se requiere permiso para redistribuir estos componentes.
+
+          Se publica con una etiqueta de prueba independiente; NO se reemplaza v30.0.15 estable
+          ni se activa su actualización silenciosa.
+          NOTES
+          gh release create "$TAG"             "delivery/Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe"             "delivery/SHA256SUMS.txt"             --repo "$GH_REPO"             --target "$SOURCE_SHA"             --title "Dyclokpropio 30.0.15 - Motor 0.4.2 (RC1 / PRUEBA)"             --notes-file release-notes.md --prerelease --latest=false
+          gh release view "$TAG" --repo "$GH_REPO" --json url,assets,tagName,isPrerelease
