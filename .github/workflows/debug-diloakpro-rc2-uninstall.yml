@@ -1,0 +1,45 @@
+name: Probar desinstalación segura RC2 previa (Windows)
+
+on:
+  push:
+    branches: [feature/diloakpro-3016-diagnostic-upgrade]
+    paths:
+      - '.github/workflows/debug-diloakpro-rc2-uninstall.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  migrate-old:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned prior RC2
+        shell: pwsh
+        run: |
+          $old=Join-Path $env:RUNNER_TEMP 'rc2.exe'
+          Invoke-WebRequest -Uri 'https://github.com/luis5afp/Dyclokpropio/releases/download/v30.0.15-motor042-rc2/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe' -OutFile $old
+          $hash=(Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne 'fff0d14a756852ae2d2e24e9d253d6d869ffb77e7f459c945b10c2ab17ef0ef0') { throw 'RC2 signature mismatch' }
+          $process=Start-Process $old -ArgumentList '/S' -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw 'Cannot install pinned RC2' }
+          $oldExe=Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015/DICloak.exe'
+          if(-not(Test-Path $oldExe)) { throw 'RC2 missing after setup' }
+          Write-Host 'LEGACY_RC2_INSTALLED=PASS'
+      - name: Run the same migration script with a future diloakPRO target
+        shell: pwsh
+        run: |
+          $script='.\release-build\native-30.0.15\migrate-legacy.ps1'
+          & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $script -CurrentInstall (Join-Path $env:LOCALAPPDATA 'Programs/diloakPRO')
+          $exit=$LASTEXITCODE
+          Write-Host "MIGRATION_EXIT=$exit"
+          $out=Join-Path $env:LOCALAPPDATA 'diloakPRO/install-migration.json'
+          if (-not(Test-Path $out)) { throw 'MIGRATION_REPORT_MISSING' }
+          $report=Get-Content -LiteralPath $out -Raw | ConvertFrom-Json
+          Write-Host "ISSUES=$($report.issues) REMOVED=$($report.removedCount)"
+          $report.actions | ForEach-Object { Write-Host "RESULT=$($_.product)=$($_.result):$($_.reason)" }
+          $oldExe=Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015/DICloak.exe'
+          if ($exit -ne 0 -or $report.issues -ne 0 -or $report.removedCount -lt 1 -or (Test-Path $oldExe)) {
+            throw 'OLD_RC2_NOT_UNINSTALLED'
+          }
