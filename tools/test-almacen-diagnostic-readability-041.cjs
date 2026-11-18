@@ -21,8 +21,12 @@ test('unknown vendor phase numbers are retained as bounded nonsecret codes only'
  ]){
    const event=safeEvent('step_complete',value);
    assert.equal(event.phaseCode,undefined);
-   assert.ok(!JSON.stringify(event).includes(value));
+   assert.equal(event.stage,'stage_unknown');
+   assert.equal(event.event,'operation_step_completed');
+   assert.deepEqual(Object.keys(event).sort(),['at','event','source','stage']);
  }
+ const secret=safeEvent('step_complete','Proxy-Authorization: SECRET_TEST_TOKEN');
+ assert.ok(!JSON.stringify(secret).includes('SECRET_TEST_TOKEN'));
  assert.equal(safeEvent('step_complete','LOCK_ENV').phaseCode,undefined);
  assert.equal(safeEvent('step_complete','LOCK_ENV').stage,'stage_lock_env');
 });
