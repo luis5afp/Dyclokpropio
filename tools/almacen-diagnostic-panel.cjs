@@ -58,6 +58,12 @@ function validateDiagnostic(input){
      throw Error('INVALID_DIAGNOSTIC_SIZE');
    out.bytes=input.bytes;
  }
+ if(input.requestBytesDeclared!==undefined){
+   if(!Number.isSafeInteger(input.requestBytesDeclared)||
+      input.requestBytesDeclared<0||input.requestBytesDeclared>32*1024*1024)
+     throw Error('INVALID_DIAGNOSTIC_SIZE');
+   out.requestBytesDeclared=input.requestBytesDeclared;
+ }
  if(input.durationMs!==undefined){
    if(!Number.isSafeInteger(input.durationMs)||input.durationMs<0||input.durationMs>3600000)throw Error('INVALID_DIAGNOSTIC_DURATION');
    out.durationMs=input.durationMs;
@@ -126,7 +132,7 @@ function mapNativeEvent(row){
    const event={request:'native_http_request',response:'native_http_response',error:'native_http_error'}[row.phase];
    if(!event)return null;
    const out={...base,event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
-   for(const key of ['status','elapsedMs','bytes'])if(row[key]!=null)out[key]=row[key];
+   for(const key of ['status','elapsedMs','bytes','requestBytesDeclared'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
@@ -142,12 +148,39 @@ async function startDiagnosticPanel({exportDirectory}={}){
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
  const counters={total:0,approved:0,saved:0,failed:0};
+ const completedStages=new Set();
+ const telemetry={browserProcessObserved:false,nodeRequests:0,
+   nodeResponses:0,uploadRouteRequests:0,declaredOutboundBytes:0,
+   requestsWithKnownSize:0};
+ function checks(){
+   const has=stage=>completedStages.has(stage);
+   return {
+     // Stage completion is not proof that stored secrets were restored.
+     profileOpenStageCompleted:has('stage_open_env'),
+     browserProcessObserved:telemetry.browserProcessObserved,
+     proxyCheckStageCompleted:has('stage_proxy_check_result'),
+     cookiePlanStageCompleted:has('stage_cookie_encrypt_plan'),
+     extensionsCheckStageCompleted:has('stage_expand_check'),
+     fingerprintParamsStageCompleted:has('stage_params_merge'),
+     credentialsRestored:'not_verified',
+     cookiesRestored:'not_verified',
+     proxyExitAndAuthentication:'not_verified',
+     browserSessionLinkedToRow:'not_verified',
+     networkMetadata:{
+       nodeRequests:telemetry.nodeRequests,
+       nodeResponses:telemetry.nodeResponses,
+       uploadRouteRequests:telemetry.uploadRouteRequests,
+       requestsWithKnownSize:telemetry.requestsWithKnownSize,
+       declaredOutboundBytes:telemetry.declaredOutboundBytes
+     }
+   };
+ }
  let boundPort=null,stopObserver=null;
  function reportJSON(){
    // Whitelisted events are already sanitized at emit() time.
    return JSON.stringify({schema:1,engine:'DICloak 3.0.7',
-     diagnostic:'0.4.2',delivery:'v30.0.15-motor042-rc2',
-     coverage:'partial',events,counters},null,2);
+     diagnostic:'0.4.2',delivery:'v30.0.16-diloakpro-rc3',
+     coverage:'partial',events,counters,checks:checks()},null,2);
  }
  function saveReport(){
    let directory=exportDirectory;
@@ -159,7 +192,7 @@ async function startDiagnosticPanel({exportDirectory}={}){
      return {ok:false,error:'DOWNLOAD_DIRECTORY_UNAVAILABLE'};
    // No user-controlled names or paths. Do not touch browser profile storage.
    const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\..*$/,'').replace('T','-');
-   const fileName='Dyclok-Diagnostico-Motor042-'+stamp+'-'+crypto.randomBytes(4).toString('hex')+'.json';
+   const fileName='diloakPRO-Diagnostico-'+stamp+'-'+crypto.randomBytes(4).toString('hex')+'.json';
    try{
      fs.mkdirSync(directory,{recursive:true});
      fs.writeFileSync(path.join(directory,fileName),reportJSON(),{
@@ -202,7 +235,7 @@ async function startDiagnosticPanel({exportDirectory}={}){
    }
    if(req.url===prefix+'state'){
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8'});
-     res.end(JSON.stringify({events,counters}));return;
+     res.end(JSON.stringify({events,counters,checks:checks()}));return;
    }
    res.writeHead(404,headers);res.end();
  });
@@ -213,6 +246,19 @@ async function startDiagnosticPanel({exportDirectory}={}){
  boundPort=server.address().port;
  function emit(entry){
    const event=validateDiagnostic(entry);
+   if(event.event==='operation_step_completed'&&event.stage)
+     completedStages.add(event.stage);
+   if(event.event==='native_process_seen'&&event.processClass==='browser')
+     telemetry.browserProcessObserved=true;
+   if(event.event==='native_http_request'){
+     telemetry.nodeRequests++;
+     if(event.routeTemplate?.endsWith('/upload'))telemetry.uploadRouteRequests++;
+     if(event.requestBytesDeclared!==undefined){
+       telemetry.requestsWithKnownSize++;
+       telemetry.declaredOutboundBytes+=event.requestBytesDeclared;
+     }
+   }
+   if(event.event==='native_http_response')telemetry.nodeResponses++;
    events.push(event);
    if(events.length>400)events.shift();
    counters.total++;
@@ -231,7 +277,7 @@ async function startDiagnosticPanel({exportDirectory}={}){
  return Object.freeze({
    url:'http://127.0.0.1:'+boundPort+'/diagnostico/'+token+'/',
    emit,
-   getState:()=>JSON.parse(JSON.stringify({events,counters})),
+   getState:()=>JSON.parse(JSON.stringify({events,counters,checks:checks()})),
    stop:()=>{
      if(stopObserver){try{stopObserver();}catch{}stopObserver=null;}
      return new Promise((resolve,reject)=>server.close(err=>err?reject(err):resolve()));
