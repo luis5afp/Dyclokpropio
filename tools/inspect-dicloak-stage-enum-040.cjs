@@ -34,6 +34,9 @@ for(const [name,source] of [['env',env],['index',main]]){
  }
 }
 const section=env.slice(0,5500);
+detail.env.stageEnumMemberNames=[...new Set(
+ [...env.matchAll(/\bM\.([A-Z][A-Z0-9_]+)\b/g)].map(m=>m[1])
+)].sort();
 detail.env.importAliasM=section.match(/.{0,100} as M.{0,100}/)?.[0]||null;
 detail.env.importHead=section.slice(0,1250);
 process.stdout.write('OFFICIAL_307_STAGE_ENUM='+JSON.stringify(detail)+'\n');
