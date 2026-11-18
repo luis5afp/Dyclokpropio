@@ -15,17 +15,40 @@ th{position:sticky;top:0;background:Canvas}td:first-child{white-space:nowrap}
 </style></head><body>
 <h1>Diagnóstico de comunicación</h1>
 <p>Operación → Abrir · Perfil de pruebas · Almacén</p>
-<div class="note">Panel de eventos del observador local y documentos recibidos desde un servidor de pruebas autorizado. No muestra tráfico global de DICloak, contraseñas, cookies, tokens, cabeceras ni cuerpos de respuestas. Sin Open API configurada no puede conectarse al perfil Chromium.</div>
+<div class="note">Eventos de apertura observados en la interfaz DICloak y, si se configura aparte, documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra cookies, contraseñas, tokens, cabeceras o cuerpos privados. El diagnóstico de apertura funciona sin clave Open API.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>HTTP</th><th>Bytes</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
-<small>Los documentos autorizados se archivan en la carpeta Almacén del perfil. Los hashes no demuestran por sí solos la procedencia de una respuesta. Cerrar esta pestaña no cierra Chromium.</small>
+<small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
 const sources={programa:"Programa / API local",servidor_pruebas:"Servidor de pruebas",chromium:"Chromium",almacen:"Almacén"};
 const kinds={
  panel_ready:"Panel iniciado",configuration_missing:"Falta configuración",profile_wait:"Esperando Operación → Abrir",
+ embedded_ui_only:"Eventos de interfaz; sesión Chromium todavía no verificada",
+ operation_open_requested:"Operación → Abrir: solicitud de apertura",
+ operation_step_completed:"Etapa de apertura completada",operation_step_failed:"Etapa de apertura fallida",
+ stage_pre_data_inject:"Inicializando perfil",
+ stage_fetch_env_info:"Obteniendo configuración del perfil",
+ stage_expand_check:"Comprobando extensiones",
+ stage_params_merge:"Combinando parámetros de huella",
+ stage_lock_env:"Reservando el perfil",
+ stage_open_env:"Solicitando apertura del navegador",
+ stage_cookie_encrypt_plan:"Comprobando plan de cifrado (sin extraer cookies)",
+ stage_timeout:"Límite de espera",
+ stage_backend_data_fetch:"Preparando datos del navegador",
+ stage_data_sync_start:"Iniciando sincronización",
+ stage_localstorage_download:"Descarga de Local Storage",
+ stage_localstorage_extract:"Extracción de Local Storage",
+ stage_localstorage_sync:"Sincronizando Local Storage",
+ stage_indexeddb_download:"Descarga de IndexedDB",
+ stage_indexeddb_extract:"Extracción de IndexedDB",
+ stage_indexeddb_sync:"Sincronizando IndexedDB",
+ stage_extension_extract:"Preparando extensión",
+ stage_extension_download:"Descargando extensión",
+ stage_browser_start:"Iniciando navegador",
+ stage_unknown:"Etapa de apertura no identificada",
  api_request:"Programa solicita estado de sesión",api_response:"Servidor API responde",
  profile_running:"Perfil abierto",api_failed:"API local no disponible",api_connected:"API local conectada",
  debugger_connected:"Depurador conectado",debugger_failed:"Depurador no disponible",

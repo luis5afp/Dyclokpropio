@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { createRequire } = require('node:module');
-const fromBuild = createRequire(path.join(__dirname, '../release-build/native-0.3.4/package.json'));
+const fromBuild = createRequire(path.join(__dirname, '../release-build/native-0.3.9/package.json'));
 const { NtExecutable, NtExecutableResource } = fromBuild('resedit');
 const asar = fromBuild('@electron/asar');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
