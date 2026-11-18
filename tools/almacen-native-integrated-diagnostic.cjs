@@ -22,6 +22,8 @@ const MAX_PROFILES=48;
 const STAGES=new Map([
   ['PRE_DATA_INJECT','stage_pre_data_inject'],
   ['FETCH_ENV_INFO','stage_fetch_env_info'],
+  ['PROXY_CHECK','stage_proxy_check'],
+  ['PROXY_CHECK_RESULT','stage_proxy_check_result'],
   ['EXPAND_CHECK','stage_expand_check'],
   ['PARAMS_MERGE','stage_params_merge'],
   ['LOCK_ENV','stage_lock_env'],
@@ -52,7 +54,14 @@ function safeEvent(signal,phase) {
   else if(signal==='step_failed')event='operation_step_failed';
   else if(signal==='step_complete')event='operation_step_completed';
   else event=safeStage(phase);
-  return Object.freeze({source:'programa',event,at:new Date().toISOString()});
+  // Keep the stage of a completed/failed operation, not only a generic
+  // "completed" event. It is a fixed whitelist label, not raw vendor text.
+  const stage=signal==='step_failed'||signal==='step_complete'?
+    safeStage(phase):undefined;
+  return Object.freeze({
+    source:'programa',event,at:new Date().toISOString(),
+    ...(stage?{stage}:{})
+  });
 }
 function createNativeDiagnosticController({
   startPanel=startDiagnosticPanel, createWindow

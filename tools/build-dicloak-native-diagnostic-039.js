@@ -54,6 +54,9 @@ function patchUI(text) {
   check(result.split('prop:"almacen_lab"').length===2,'Almacén not unique');
   check(result.split('prop:"almacen_diagnostico"').length===2,'Diagnóstico not unique');
   const OPERATION_OPEN_ANCHOR='onClick:t=>oi(e.row)';
+  // The vendor's stepType is an enum value, often numeric. Translate it
+  // back to its public symbolic key in the ORIGINAL Vue module, then
+  // whitelist again in the native IPC handler. Never pass user values.
   const START_ANCHOR='No.onStepStart((e,t)=>{var a;';
   const FAIL_ANCHOR='No.onStepFail(async(e,t)=>{';
   const COMPLETE_ANCHOR='No.onStepComplete((e,t)=>{';
@@ -63,11 +66,11 @@ function patchUI(text) {
   result=result.replace(OPERATION_OPEN_ANCHOR,
     'onClick:t=>{try{window.dicloakAlmacenLab?.noteOpen?.(String(e.row.id??""))}catch(_){}return oi(e.row)}');
   result=result.replace(START_ANCHOR,
-    'No.onStepStart((e,t)=>{try{window.dicloakAlmacenLab?.noteStep?.(String(e.envId??""),String(t.stepType??""))}catch(_){}var a;');
+    'No.onStepStart((e,t)=>{try{window.dicloakAlmacenLab?.noteStep?.(String(e.envId??""),String(Object.keys(M).find(k=>/^[A-Z][A-Z0-9_]*$/.test(k)&&M[k]===t.stepType)??t.stepType??""))}catch(_){}var a;');
   result=result.replace(FAIL_ANCHOR,
-    'No.onStepFail(async(e,t)=>{try{window.dicloakAlmacenLab?.noteFailure?.(String(e.envId??""),String(t.stepType??""))}catch(_){}');
+    'No.onStepFail(async(e,t)=>{try{window.dicloakAlmacenLab?.noteFailure?.(String(e.envId??""),String(Object.keys(M).find(k=>/^[A-Z][A-Z0-9_]*$/.test(k)&&M[k]===t.stepType)??t.stepType??""))}catch(_){}');
   result=result.replace(COMPLETE_ANCHOR,
-    'No.onStepComplete((e,t)=>{try{window.dicloakAlmacenLab?.noteComplete?.(String(e.envId??""),String(t.stepType??""))}catch(_){}');
+    'No.onStepComplete((e,t)=>{try{window.dicloakAlmacenLab?.noteComplete?.(String(e.envId??""),String(Object.keys(M).find(k=>/^[A-Z][A-Z0-9_]*$/.test(k)&&M[k]===t.stepType)??t.stepType??""))}catch(_){}');
   parseJS(result,true);
   return result;
 }
