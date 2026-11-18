@@ -1,5 +1,5 @@
 'use strict';
-// v30.0.15: opt-in diagnostics; no HTTP bodies/headers, URLs with queries,
+// diloakPRO 30.0.16: opt-in diagnostics; no HTTP bodies/headers, URLs with queries,
 // credentials, browser profile contents or arbitrary private file paths.
 const http=require('node:http'), https=require('node:https');
 const net=require('node:net'), path=require('node:path'), fs=require('node:fs');
@@ -33,8 +33,19 @@ function startNodeHttpTrace(emit) {
       try{meta=requestMetadata(args,proto);}catch{return req;}
       if(!meta)return req;
       const requestId=crypto.randomUUID(),started=performance.now();
+      // Content-Length is a declared size, not proof of actual bytes transmitted.
+      // Never read request body, cookies, authorization or any other headers.
+      let requestBytesDeclared=null;
+      try{
+        const length=req.getHeader('content-length');
+        if(typeof length==='string' && /^\d{1,8}$/.test(length)){
+          const parsed=Number(length);
+          if(parsed<=33554432)requestBytesDeclared=parsed;
+        }
+      }catch{}
       const base={kind:'http',transport:'node',phase:'request',
-        action:meta.action,scope:meta.scope,routeTemplate:meta.routeTemplate,requestId};
+        action:meta.action,scope:meta.scope,routeTemplate:meta.routeTemplate,requestId,
+        ...(requestBytesDeclared===null?{}:{requestBytesDeclared})};
       try{emit(base);}catch{}
       let done=false;
       function finish(phase,res){
@@ -72,9 +83,19 @@ function processClass(name){
   if(/^gost\.exe$/i.test(name))return 'proxy';
   return 'child';
 }
-function parseWindowsSample(snapshot,emit,seen=new Set()){
+function parseWindowsSample(snapshot,emit,seen=new Set(),excludedPids=new Set()){
   if(!snapshot||typeof snapshot!=='object')return;
-  for(const p of Array.isArray(snapshot.processes)?snapshot.processes:[]){
+  // The PowerShell sampler itself is a temporary child process. Exclude its
+  // entire subtree rather than repeatedly reporting the monitor as app work.
+  const ignored=new Set(excludedPids);
+  const processes=Array.isArray(snapshot.processes)?snapshot.processes:[];
+  for(let i=0;i<8;i++){
+    for(const p of processes){
+      if(ignored.has(Number(p.ParentProcessId)))ignored.add(Number(p.ProcessId));
+    }
+  }
+  for(const p of processes){
+    if(ignored.has(Number(p.ProcessId)))continue;
     const pid=Number(p.ProcessId),ppid=Number(p.ParentProcessId);
     if(!Number.isSafeInteger(pid)||pid<1||!Number.isSafeInteger(ppid)||ppid<0)continue;
     const key='p:'+pid+':'+ppid;
@@ -84,6 +105,7 @@ function parseWindowsSample(snapshot,emit,seen=new Set()){
   for(const [protocol,items] of [['TCP',snapshot.tcp],['UDP',snapshot.udp]]){
     for(const c of Array.isArray(items)?items:[]){
       const pid=Number(c.OwningProcess),port=Number(protocol==='TCP'?c.RemotePort:c.LocalPort);
+      if(ignored.has(pid))continue;
       if(!Number.isSafeInteger(pid)||pid<1||!Number.isInteger(port)||port<0||port>65535)continue;
       const remoteIp=protocol==='TCP'&&net.isIP(c.RemoteAddress)?c.RemoteAddress:null;
       const key='c:'+pid+':'+protocol+':'+(remoteIp||'')+':'+port;
@@ -98,11 +120,11 @@ function startWindowsSampler(emit,pid=process.pid){
   const script=PS.replace('__PID__',String(pid));
   function poll(){
     if(!live||busy||seen.size>=1500)return;busy=true;
-    execFile('powershell.exe',['-NoProfile','-NonInteractive','-Command',script],
+    const child=execFile('powershell.exe',['-NoProfile','-NonInteractive','-Command',script],
       {windowsHide:true,timeout:15000,maxBuffer:1500000},(err,stdout)=>{
         busy=false;if(!live)return;
         if(err){if(errors++<2)emit({kind:'session',phase:'error',code:'MONITOR_ERROR'});return;}
-        try{parseWindowsSample(JSON.parse(stdout),emit,seen);}
+        try{parseWindowsSample(JSON.parse(stdout),emit,seen,new Set([child.pid]));}
         catch{if(errors++<2)emit({kind:'session',phase:'error',code:'MONITOR_ERROR'});}
       });
   }
