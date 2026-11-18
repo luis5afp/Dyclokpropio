@@ -86,7 +86,8 @@ async function update(){
       card.append(text,number);stats.append(card);
     }
     const tbody=document.getElementById("events");tbody.replaceChildren();
-    for(const ev of state.events.slice(-200).reverse()){
+    for(const ev of state.events.slice(-200).sort((a,b)=>
+      Date.parse(b.at)-Date.parse(a.at))){
       const tr=document.createElement("tr");
       const phaseCode=(Number.isInteger(ev.phaseCode)&&ev.phaseCode>=0&&ev.phaseCode<=255)?
         " (código de etapa "+String(ev.phaseCode)+")":"";
