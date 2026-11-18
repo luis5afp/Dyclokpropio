@@ -10,7 +10,7 @@
   let capturing = false;
   let opened = false;
   let ipcHooked = false;
-  let root, panel, statusText, lines, startButton, stopButton, exportButton, modeText;
+  let root, panel, statusText, lines, startButton, stopButton, exportButton, exportJsonButton, modeText;
   const pending = new WeakMap();
 
   function send(payload) {
@@ -162,8 +162,9 @@
     startButton.disabled = capturing;
     stopButton.disabled = !capturing;
     exportButton.disabled = !state.hasCapture;
-    modeText.textContent = 'Etapas de apertura + HTTP de interfaz' +
-      (ipcHooked ? ' + IPC' : ' · IPC no interceptable; etapas disponibles');
+    exportJsonButton.disabled = !state.hasCapture;
+    modeText.textContent = 'Etapas + HTTP renderer/Node + conexiones y procesos Windows + archivos de laboratorio' +
+      (ipcHooked ? ' + IPC' : ' · IPC no interceptable');
     lines.textContent = '';
     const tail = Array.isArray(state.tail) ? state.tail.slice(-24) : [];
     if (!tail.length) {
@@ -174,7 +175,13 @@
         row.status === null ? '' : 'HTTP '+row.status,
         row.code === 'UNCLASSIFIED' ? '' : row.code,
         row.checkpoint && row.checkpoint !== 'none' ? row.checkpoint : '',
-        row.elapsedMs === null ? '' : row.elapsedMs+'ms'].filter(Boolean).join(' · ');
+        row.elapsedMs === null ? '' : row.elapsedMs+'ms',
+        row.pid ? 'PID '+row.pid : '',
+        row.processClass || '',
+        row.protocol ? row.protocol+' '+(row.remoteIp || 'puerto local')+':'+row.remotePort : '',
+        row.routeTemplate || '',
+        row.fileExt ? 'archivo .'+row.fileExt : '',
+        row.bytes != null ? row.bytes+' bytes' : ''].filter(Boolean).join(' · ');
       el('div',textValue,lines);
     }
   }
@@ -208,8 +215,10 @@
     startButton = el('button','Iniciar',buttons);
     stopButton = el('button','Detener',buttons);
     exportButton = el('button','Exportar TXT',buttons);
+    exportJsonButton = el('button','Exportar JSON',buttons);
     lines = el('div',undefined,panel); lines.id='events';
-    el('p','El informe se guarda en Descargas. No captura procesos Chromium externos.',panel);
+    el('p','Informes en Descargas. Observa procesos descendientes y conexiones por muestreo; no descifra HTTPS ni demuestra envíos de archivos.',panel);
+    el('p','Archivos: solo la carpeta dyclok-diagnostic-lab dentro de los datos de la aplicación. Nunca contenidos de perfiles.',panel);
     const notice = el('p','',panel);
     toggle.addEventListener('click',function () {
       opened = !opened;
@@ -228,6 +237,12 @@
       notice.textContent = result && result.fileName
         ? 'Informe guardado en Descargas: ' + result.fileName
         : 'No se pudo exportar: ' + (result && result.error || 'UNKNOWN');
+    });
+    exportJsonButton.addEventListener('click',async function () {
+      const result=await command('export-json');
+      notice.textContent=result && result.fileName
+        ? 'JSON guardado en Descargas: '+result.fileName
+        : 'No se pudo exportar JSON: '+(result && result.error || 'UNKNOWN');
     });
     void command('status').then(render);
     setInterval(function () { if (opened) void refresh(); },2000);
