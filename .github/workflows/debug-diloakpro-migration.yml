@@ -1,0 +1,30 @@
+name: Diagnóstico rápido del migrador diloakPRO (Windows)
+
+on:
+  push:
+    branches: [feature/diloakpro-3016-diagnostic-upgrade]
+    paths:
+      - '.github/workflows/debug-diloakpro-migration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  migration-script:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute safe dry migration with no old installed app
+        shell: pwsh
+        run: |
+          $out=Join-Path $env:LOCALAPPDATA 'diloakPRO/install-migration.json'
+          if (Test-Path $out) { throw 'Unexpected report already present' }
+          & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\release-build\native-30.0.15\migrate-legacy.ps1 -CurrentInstall (Join-Path $env:LOCALAPPDATA 'Programs/diloakPRO')
+          Write-Host "EXITCODE=$LASTEXITCODE"
+          if (Test-Path $out) {
+            Get-Content -LiteralPath $out
+          } else {
+            throw 'MIGRATION_SCRIPT_NO_REPORT'
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'Unexpected migration exit' }
