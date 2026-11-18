@@ -21,6 +21,14 @@ const MAX_PROFILES=48;
 
 const STAGES=new Map([
   ['PRE_DATA_INJECT','stage_pre_data_inject'],
+  ['PRE_CHECK','stage_pre_check'],
+  ['CHOOSE_KERNEL','stage_choose_kernel'],
+  ['PRE_PROXY_CHECK','stage_pre_proxy_check'],
+  ['CATCH_ERROR','stage_catch_error'],
+  ['POLYFILL_ROW_DATA','stage_polyfill_row_data'],
+  ['RPA_PRE_INJECT','stage_rpa_pre_inject'],
+  ['LOCK_ENV_RPA','stage_lock_env_rpa'],
+  ['MERGE_ENV_PARAMS_RPA','stage_merge_env_params_rpa'],
   ['FETCH_ENV_INFO','stage_fetch_env_info'],
   ['PROXY_CHECK','stage_proxy_check'],
   ['PROXY_CHECK_RESULT','stage_proxy_check_result'],
@@ -80,9 +88,19 @@ function createNativeDiagnosticController({
     throw Error('DIAG_MISSING_WINDOW_FACTORY');
   const history=new Map();
   const windows=new Map();
+  const stageStarts=new Map();
   function note(profileId,signal,phase=''){
     validateProfileId(profileId);
-    const item=safeEvent(signal,phase);
+    const base=safeEvent(signal,phase);
+    const stage=safeStage(phase),key=profileId+'|'+stage;
+    let durationMs;
+    if(signal==='step_start')stageStarts.set(key,Date.now());
+    if(signal==='step_complete'||signal==='step_failed'){
+      const from=stageStarts.get(key);
+      if(from!==undefined)durationMs=Math.min(3600000,Math.max(0,Date.now()-from));
+      stageStarts.delete(key);
+    }
+    const item=Object.freeze({...base,...(durationMs===undefined?{}:{durationMs})});
     if(!history.has(profileId)){
       if(history.size>=MAX_PROFILES)history.delete(history.keys().next().value);
       history.set(profileId,[]);
