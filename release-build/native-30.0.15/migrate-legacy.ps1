@@ -27,7 +27,7 @@ $regRoot='HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall'
 $installed=@(Get-ItemProperty -Path "$regRoot\*" -ErrorAction SilentlyContinue)
 $desktop=[Environment]::GetFolderPath('Desktop')
 $startPrograms=[Environment]::GetFolderPath('Programs')
-$summary=New-Object 'System.Collections.Generic.List[object]'
+$summary=@()
 $problems=0
 function Remove-VerifiedShortcut([string]$link,[string]$target){
  if(-not(Test-Path -LiteralPath $link -PathType Leaf)){return}
@@ -51,12 +51,12 @@ foreach($entry in $legacy){
    ($_.DisplayName -is [string] -and $_.DisplayName.StartsWith($entry.Name+' ',[StringComparison]::OrdinalIgnoreCase))
  })
  if($regEntries.Count -ne 1){
-   $summary.Add(@{product=$entry.Name;result='manual-uninstall-required';reason='registry-entry-not-unique'})
+   $summary += @{product=$entry.Name;result='manual-uninstall-required';reason='registry-entry-not-unique'}
    $problems++;continue
  }
  $uninstallers=@(Get-ChildItem -LiteralPath $folder -Filter 'Uninstall*.exe' -File -ErrorAction SilentlyContinue)
  if($uninstallers.Count -ne 1){
-   $summary.Add(@{product=$entry.Name;result='manual-uninstall-required';reason='uninstaller-not-unique'})
+   $summary += @{product=$entry.Name;result='manual-uninstall-required';reason='uninstaller-not-unique'}
    $problems++;continue
  }
  $uninstall=$uninstallers[0].FullName
@@ -64,7 +64,7 @@ foreach($entry in $legacy){
  $matches=$registered.StartsWith('"'+$uninstall+'"',[StringComparison]::OrdinalIgnoreCase) -or
    $registered.StartsWith($uninstall+' ',[StringComparison]::OrdinalIgnoreCase)
  if(-not$matches -or -not(Test-Path -LiteralPath (Join-Path $folder 'DICloak.exe') -PathType Leaf)){
-   $summary.Add(@{product=$entry.Name;result='manual-uninstall-required';reason='uninstaller-verification-failed'})
+   $summary += @{product=$entry.Name;result='manual-uninstall-required';reason='uninstaller-verification-failed'}
    $problems++;continue
  }
  try{
@@ -72,24 +72,32 @@ foreach($entry in $legacy){
    # It is never an arbitrary supplied script or executable.
    $proc=Start-Process -FilePath $uninstall -ArgumentList @('/S','/currentuser') -Wait -PassThru -WindowStyle Hidden
    if($proc.ExitCode -ne 0 -or (Test-Path -LiteralPath (Join-Path $folder 'DICloak.exe') -PathType Leaf)){
-     $summary.Add(@{product=$entry.Name;result='manual-uninstall-required';reason='uninstall-failed'})
+     $summary += @{product=$entry.Name;result='manual-uninstall-required';reason='uninstall-failed'}
      $problems++;continue
    }
    $oldTarget=Join-Path $folder 'DICloak.exe'
    Remove-VerifiedShortcut (Join-Path $desktop ($entry.Shortcut+'.lnk')) $oldTarget
    Remove-VerifiedShortcut (Join-Path $startPrograms ($entry.Shortcut+'\'+$entry.Shortcut+'.lnk')) $oldTarget
-   $summary.Add(@{product=$entry.Name;result='old-program-uninstalled'})
+   $summary += @{product=$entry.Name;result='old-program-uninstalled'}
  }catch{
-   $summary.Add(@{product=$entry.Name;result='manual-uninstall-required';reason='uninstall-error'})
+   $summary += @{product=$entry.Name;result='manual-uninstall-required';reason='uninstall-error'}
    $problems++
  }
 }
 try{
  $outDir=Join-Path $env:LOCALAPPDATA 'diloakPRO'
  New-Item -ItemType Directory -Path $outDir -Force|Out-Null
- [pscustomobject]@{schema=1;removedCount=@($summary | Where-Object {$_.result -eq 'old-program-uninstalled'}).Count;
-   issues=$problems;actions=@($summary);userDataPreserved=$true} |
-   ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $outDir 'install-migration.json') -Encoding UTF8
+ $removedCount=@($summary | Where-Object {$_.result -eq 'old-program-uninstalled'}).Count
+ $report=[ordered]@{
+   schema=1
+   removedCount=$removedCount
+   issues=$problems
+   actions=@($summary)
+   userDataPreserved=$true
+ }
+ $json=ConvertTo-Json -InputObject $report -Depth 5
+ $outFile=Join-Path $outDir 'install-migration.json'
+ [IO.File]::WriteAllText($outFile,$json,[Text.UTF8Encoding]::new($false))
 }catch{
   [Console]::Error.WriteLine('MIGRATION_REPORT_WRITE_ERROR='+$_.Exception.GetType().Name+':'+$_.Exception.Message)
   exit 4
