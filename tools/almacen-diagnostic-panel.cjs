@@ -37,6 +37,12 @@ function validateDiagnostic(input){
      throw Error('INVALID_DIAGNOSTIC_STAGE');
    out.stage=input.stage;
  }
+ if(input.phaseCode!==undefined){
+   if(!Number.isInteger(input.phaseCode)||input.phaseCode<0||input.phaseCode>255||
+      !(input.event==='stage_unknown'||input.stage==='stage_unknown'))
+     throw Error('INVALID_DIAGNOSTIC_PHASE_CODE');
+   out.phaseCode=input.phaseCode;
+ }
  if(input.status!==undefined){
    if(!Number.isSafeInteger(input.status)||input.status<100||input.status>599)
      throw Error('INVALID_DIAGNOSTIC_STATUS');
