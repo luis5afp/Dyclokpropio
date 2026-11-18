@@ -1,5 +1,12 @@
-name: Dyclokpropio 30.0.15 - Motor nativo 0.4.2 (INSTALADOR PRUEBA)
+name: Dyclokpropio 30.0.15 - Motor 0.4.2 RC2 (EXPORTACION JSON)
 on:
+  push:
+    branches: [fix/v30.0.15-motor042-json-export-rc2]
+    paths:
+      - '.github/workflows/build-v30-0-15-motor-042.yml'
+      - 'tools/almacen-diagnostic-panel.*'
+      - 'tools/test-almacen-json-export-rc2.cjs'
+      - 'release-build/native-30.0.15/**'
   pull_request:
     branches: [main]
     paths:
@@ -30,7 +37,7 @@ jobs:
         run: |
           node --check tools/build-dicloak-native-diagnostic-3015.js
           if ($LASTEXITCODE -ne 0) { throw 'ASAR builder JS syntax failed' }
-          node --test tools/test-almacen-diagnostic-readability-041.cjs tools/test-suppress-native-update-autopopup.js tools/test-suppress-native-download-confirmation.js tools/test-almacen-native-chromium-audit.cjs tools/test-audit-chromium-native-storage.cjs tools/test-almacen-integrated-diagnostic-3015.cjs tools/test-almacen-diagnostic-panel.cjs
+          node --test tools/test-almacen-diagnostic-readability-041.cjs tools/test-suppress-native-update-autopopup.js tools/test-suppress-native-download-confirmation.js tools/test-almacen-native-chromium-audit.cjs tools/test-audit-chromium-native-storage.cjs tools/test-almacen-integrated-diagnostic-3015.cjs tools/test-almacen-diagnostic-panel.cjs tools/test-almacen-json-export-rc2.cjs
           if ($LASTEXITCODE -ne 0) { throw 'UI-only regression tests failed' }
           python -m py_compile tools/prepare-dicloak-native-307.py
           if ($LASTEXITCODE -ne 0) { throw 'Native extraction Python syntax failed' }
@@ -165,16 +172,16 @@ jobs:
           $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
           npx electron-builder --win nsis --x64 --prepackaged $target --publish never --config electron-builder.json
           if ($LASTEXITCODE -ne 0) { throw 'Windows NSIS packaging failed' }
-          $installer = 'out/Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe'
+          $installer = 'out/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe'
           if (-not (Test-Path $installer -PathType Leaf)) { throw 'New installer not found' }
           if ((Get-Item $installer).Length -lt 140000000) { throw 'Installer truncated or incomplete' }
           $sha = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$sha  Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe" | Set-Content 'out/SHA256SUMS.txt' -Encoding ascii
+          "$sha  Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe" | Set-Content 'out/SHA256SUMS.txt' -Encoding ascii
 
       - name: Install update silently into isolated lab directory
         shell: pwsh
         run: |
-          $installer = (Resolve-Path 'release-build/native-30.0.15/out/Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe').Path
+          $installer = (Resolve-Path 'release-build/native-30.0.15/out/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe').Path
           $folder = Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015'
           if (Test-Path $folder) { throw 'Unexpected prior installation on fresh runner' }
           $proc = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
@@ -247,8 +254,8 @@ jobs:
       - name: Upload version 30.0.15 installer as experimental artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Dyclokpropio-30.0.15-Motor042-NSIS-PRUEBA
+          name: Dyclokpropio-30.0.15-Motor042-RC2-NSIS-PRUEBA
           path: |
-            release-build/native-30.0.15/out/Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe
+            release-build/native-30.0.15/out/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe
             release-build/native-30.0.15/out/SHA256SUMS.txt
           if-no-files-found: error
