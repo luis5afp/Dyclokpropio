@@ -1,0 +1,31 @@
+name: DICloak Almacén diagnostics 0.4.1 visual contrast and safe unknown stages
+on:
+  push:
+    branches: [fix/almacen-diagnostic-readability-041]
+    paths:
+      - "tools/almacen-diagnostic-panel.html"
+      - "tools/almacen-diagnostic-panel.cjs"
+      - "tools/almacen-native-integrated-diagnostic.cjs"
+      - "tools/test-almacen-diagnostic-readability-041.cjs"
+      - "tools/test-almacen-integrated-diagnostic-040.cjs"
+      - ".github/workflows/test-almacen-diagnostic-readability-041.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnostics:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify safe stage codes, panel contrast, no secret fields, native bridge
+        run: |
+          node --check tools/almacen-diagnostic-panel.cjs
+          node --check tools/almacen-native-integrated-diagnostic.cjs
+          node --test tools/test-almacen-diagnostic-readability-041.cjs tools/test-almacen-integrated-diagnostic-040.cjs tools/test-almacen-diagnostic-panel.cjs tools/test-dicloak-auth-prompt-regression.cjs

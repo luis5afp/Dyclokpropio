@@ -1,0 +1,11 @@
+{
+  "name": "dicloak-native-readability-diagnostic-041",
+  "version": "0.4.1",
+  "private": true,
+  "description": "DICloak Nativo 0.4.1 integrated profile opening diagnostics and separate read-only native audit",
+  "devDependencies": {
+    "@electron/asar": "3.2.18",
+    "electron-builder": "^26.0.0",
+    "resedit": "2.0.3"
+  }
+}

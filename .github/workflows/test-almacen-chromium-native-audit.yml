@@ -1,0 +1,27 @@
+name: Audit Chromium native profile integrity (synthetic fixtures)
+on:
+  push:
+    branches: [feature/almacen-chromium-integrity-audit]
+    paths:
+      - "tools/audit-chromium-native-storage.cjs"
+      - "tools/test-audit-chromium-native-storage.cjs"
+      - ".github/workflows/test-almacen-chromium-native-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-fixtures:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate read-only native storage audit (fake data only)
+        run: node --test tools/test-audit-chromium-native-storage.cjs

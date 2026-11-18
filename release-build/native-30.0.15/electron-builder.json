@@ -1,0 +1,34 @@
+{
+  "appId": "com.dyclokpropio.native307.diagnostic3015",
+  "productName": "Dyclokpropio Motor 0.4.2 Diagnóstico 30.0.15",
+  "artifactName": "Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe",
+  "electronVersion": "31.7.7",
+  "directories": {
+    "output": "out"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "executableName": "DICloak",
+    "signAndEditExecutable": false,
+    "requestedExecutionLevel": "asInvoker"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowElevation": false,
+    "selectPerMachineByDefault": false,
+    "allowToChangeInstallationDirectory": false,
+    "createDesktopShortcut": false,
+    "createStartMenuShortcut": false,
+    "deleteAppDataOnUninstall": false,
+    "runAfterFinish": false,
+    "include": "installer.nsh"
+  }
+}

@@ -1,0 +1,44 @@
+name: Inspect DICloak 3.0.7 launch source from verified prior build
+on:
+  push:
+    branches: [feature/almacen-profile-open-trace-035]
+    paths:
+      - ".github/workflows/inspect-official-operation-from-artifact.yml"
+      - "tools/inspect-official-operation-open.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect-pinned:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: DICloak-Nativo-0.3.4-Chromium-Audit-Experimental
+          run-id: 43910299282
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: downloaded
+      - name: Install exact prior experimental artifact in fresh runner
+        shell: pwsh
+        run: |
+          $installer = Join-Path $PWD 'downloaded/DICloak_Nativo_0.3.4_AlmacenAudit_win_x64.exe'
+          if (!(Test-Path -LiteralPath $installer -PathType Leaf)) { throw 'Verified 0.3.4 artifact missing' }
+          $proc = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw "Could not unpack prior signed-payload build $($proc.ExitCode)" }
+          $asar = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Audit-034/resources/app.asar'
+          if (!(Test-Path -LiteralPath $asar -PathType Leaf)) { throw 'Installed app.asar absent' }
+          Write-Host ('APP_ASAR_BYTES='+(Get-Item -LiteralPath $asar).Length)
+          Copy-Item -LiteralPath $asar -Destination (Join-Path $env:RUNNER_TEMP 'installed-034.asar')
+      - name: Install inspector ASAR dependencies
+        shell: pwsh
+        working-directory: release-build/native-0.3.4
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Inspect native 3.0.7 operation hooks without profile data
+        shell: pwsh
+        run: |
+          $asar = Join-Path $env:RUNNER_TEMP 'installed-034.asar'
+          node tools/inspect-official-operation-open.cjs $asar
+          if ($LASTEXITCODE -ne 0) { throw 'ASAR inspection failure' }

@@ -1,0 +1,11 @@
+{
+  "name": "dicloak-native-stagefix-diagnostic-040",
+  "version": "0.4.0",
+  "private": true,
+  "description": "DICloak Nativo 0.4.0 integrated profile opening diagnostics and separate read-only native audit",
+  "devDependencies": {
+    "@electron/asar": "3.2.18",
+    "electron-builder": "^26.0.0",
+    "resedit": "2.0.3"
+  }
+}

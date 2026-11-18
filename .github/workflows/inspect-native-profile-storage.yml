@@ -1,0 +1,41 @@
+name: Investigate profile Almacén and native download locations (read-only)
+on:
+  push:
+    branches: [feature/almacen-por-perfil-020]
+    paths:
+      - "tools/inspect-native-profile-storage.cjs"
+      - "tools/inspect-native-almacen-targets.cjs"
+      - "tools/inspect-native-profile-table.cjs"
+      - ".github/workflows/inspect-native-profile-storage.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and extract pinned vendor DICloak 3.0.7
+        shell: pwsh
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'DICloak_3.0.7_win_x64.exe'
+          Invoke-WebRequest -Uri 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.7_win_x64.exe' -OutFile $source -TimeoutSec 900
+          if ((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant() -ne '01b412f603b1aeb0a9f479476d4dca2f1fe653c7d35b344a6fb59b45d1cc93ae') {
+            throw 'Vendor source version changed'
+          }
+          python tools/prepare-dicloak-native-307.py --installer $source --destination (Join-Path $env:RUNNER_TEMP 'native-original')
+          if ($LASTEXITCODE -ne 0) { throw 'Official ASAR verification failed' }
+      - name: Scan JS modules for profile table and downloaded-file mapping
+        shell: pwsh
+        working-directory: release-build/native-0.2.0
+        run: |
+          npm install --no-audit --no-fund --ignore-scripts
+          if ($LASTEXITCODE -ne 0) { throw 'Inspection dependency not available' }
+          $asar = Join-Path $env:RUNNER_TEMP 'native-original/resources/app.asar'
+          node ../../tools/inspect-native-profile-storage.cjs $asar
+          node ../../tools/inspect-native-almacen-targets.cjs $asar
+          node ../../tools/inspect-native-profile-table.cjs $asar
+          if ($LASTEXITCODE -ne 0) { throw 'Read-only inspection failed' }

@@ -1,0 +1,11 @@
+{
+  "name": "dicloak-native-almacen-031",
+  "version": "0.3.1",
+  "private": true,
+  "description": "DICloak Almacén lab 0.3.1 fix: visible saved column and safe preload IPC bridge",
+  "devDependencies": {
+    "@electron/asar": "3.2.18",
+    "electron-builder": "^26.0.0",
+    "resedit": "2.0.3"
+  }
+}

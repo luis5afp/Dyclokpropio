@@ -1,0 +1,11 @@
+{
+  "name": "dicloak-native-almacen-032",
+  "version": "0.3.2",
+  "private": true,
+  "description": "DICloak Almacén Lab 0.3.2 corrected-size Abrir and IPC feedback",
+  "devDependencies": {
+    "@electron/asar": "3.2.18",
+    "electron-builder": "^26.0.0",
+    "resedit": "2.0.3"
+  }
+}
