@@ -134,7 +134,7 @@ jobs:
           $original = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
           $edited = Join-Path $target 'resources/app.asar'
           $exe = Join-Path $target 'DICloak.exe'
-          node tools/inspect-dicloak-pe-asar-integrity.js $exe $original $edited
+          node tools/inspect-dicloak-pe-asar-integrity-3015.js $exe $original $edited
           if ($LASTEXITCODE -ne 0) { throw 'Unable to verify embedded integrity root cause' }
           $sig = Get-AuthenticodeSignature -LiteralPath $exe
           Write-Host "VENDOR_AUTHENTICODE_STATUS=$($sig.Status)"
@@ -145,7 +145,7 @@ jobs:
         run: |
           $target = Join-Path $env:RUNNER_TEMP 'dicloak-nativo-041'
           $official = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
-          node tools/repair-dicloak-pe-integrity.js $target $official
+          node tools/repair-dicloak-pe-integrity-3015.js $target $official
           if ($LASTEXITCODE -ne 0) { throw 'Could not preserve embedded ASAR integrity in modified PE' }
           $report = Get-Content (Join-Path $target 'resources/dyclok-native-update-ui-manifest.json') -Raw | ConvertFrom-Json
           $rebuilt = (Get-FileHash -LiteralPath (Join-Path $target 'DICloak.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -175,7 +175,7 @@ jobs:
         shell: pwsh
         run: |
           $installer = (Resolve-Path 'release-build/native-30.0.15/out/Dyclokpropio_30.0.15_Motor042_PRUEBA_win_x64.exe').Path
-          $folder = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Diagnostico-Legible-041'
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015'
           if (Test-Path $folder) { throw 'Unexpected prior installation on fresh runner' }
           $proc = Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
           if ($proc.ExitCode -ne 0) { throw "NSIS install failure: $($proc.ExitCode)" }
@@ -200,7 +200,7 @@ jobs:
       - name: Smoke launch patched official DICloak.exe on Windows
         shell: pwsh
         run: |
-          $exe = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Diagnostico-Legible-041/DICloak.exe'
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015/DICloak.exe'
           $proc = Start-Process -FilePath $exe -PassThru
           Start-Sleep -Seconds 16
           $proc.Refresh()
@@ -217,7 +217,7 @@ jobs:
         if: failure()
         shell: pwsh
         run: |
-          $folder = Join-Path $env:LOCALAPPDATA 'Programs/DICloak-Nativo-Almacen-Diagnostico-Legible-041'
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs/Dyclokpropio-Motor-042-Diagnostico-3015'
           $exe = Join-Path $folder 'DICloak.exe'
           $asar = Join-Path $folder 'resources/app.asar'
           $backup = Join-Path $env:RUNNER_TEMP 'vendor-original-307.asar'
