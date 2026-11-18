@@ -1,0 +1,96 @@
+name: Compilar Dyclokpropio 30.0.15 diagnóstico (PRUEBA)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/main/diagnostic-console.js'
+      - 'src/main/diagnostic-observer.js'
+      - 'src/renderer/diagnostic-panel.js'
+      - 'tools/verify-diagnostic-observer.js'
+      - 'electron-builder.yml'
+      - '.github/workflows/build-v30-0-15-diagnostic-lab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-lab-build:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate original runtime and diagnostic privacy
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          node tools/verify-safe-base.js
+          if ($LASTEXITCODE -ne 0) { throw 'Original runtime base changed' }
+          node tools/verify-diagnostic-observer.js
+          if ($LASTEXITCODE -ne 0) { throw 'Diagnostic observer tests failed' }
+          node tools/verify-diagnostic-console.js
+          if ($LASTEXITCODE -ne 0) { throw 'Existing diagnostic tests failed' }
+          node tools/test-silent-auto-update.js
+          if ($LASTEXITCODE -ne 0) { throw 'Updater regression tests failed' }
+      - name: Install Electron dependencies and required assets
+        shell: pwsh
+        run: |
+          npm install --legacy-peer-deps
+          if ($LASTEXITCODE -ne 0) { throw 'NPM install failed' }
+          node tools/unpack-bundled-extension.js
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled resources unavailable' }
+          node tools/verify-build-assets.js
+          if ($LASTEXITCODE -ne 0) { throw 'Required assets missing' }
+          node tools/verify-bootstrap-diagnostics.js
+          if ($LASTEXITCODE -ne 0) { throw 'Original extension and IPC bootstrap changed' }
+          npx electron-builder install-app-deps
+          if ($LASTEXITCODE -ne 0) { throw 'Native deps rebuild failed' }
+      - name: Apply guarded compatibility and diagnostic instrumentation
+        shell: pwsh
+        run: |
+          node tools/apply-legacy-expand-check.js --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Compatibility patch failed' }
+          node tools/instrument-open-stages.js --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Stage patch failed' }
+          node tools/instrument-params-merge.js --apply
+          if ($LASTEXITCODE -ne 0) { throw 'paramsMerge patch failed' }
+          node tools/install-diagnostic-panel.js --apply
+          if ($LASTEXITCODE -ne 0) { throw 'Diagnostic panel patch failed' }
+          @{family='Dyclokpropio';deliveryVersion='30.0.15'} |
+            ConvertTo-Json -Compress |
+            Set-Content -LiteralPath resources/auto-update-version.json -Encoding utf8
+      - name: Compile experimental NSIS installer
+        shell: pwsh
+        run: |
+          npm run build:win -- --publish never
+          if ($LASTEXITCODE -ne 0) { throw 'NSIS Windows build failed' }
+          $exe='release/win-unpacked/Dyclokpropio.exe'
+          if (-not (Test-Path $exe)) { throw 'Unpacked Electron application missing' }
+          $env:DYCLOKPROP_AUTO_UPDATE_DISABLED='1'
+          $process=Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $process.Refresh()
+          if ($process.HasExited -and $process.ExitCode -ne 0) {
+            throw ('Application smoke launch failed: '+$process.ExitCode)
+          }
+          if (-not $process.HasExited) { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue }
+          $original='release/Dyclokpropio_3.0.0_win_x64.exe'
+          if (-not (Test-Path $original)) { throw 'NSIS installer not found' }
+          New-Item -ItemType Directory -Force 'test-delivery' | Out-Null
+          $dest='test-delivery/Dyclokpropio_30.0.15_Diagnostico_PRUEBA_win_x64.exe'
+          Copy-Item $original $dest
+          $digest=(Get-FileHash -LiteralPath $dest -Algorithm SHA256).Hash.ToLowerInvariant()
+          ($digest+'  '+[IO.Path]::GetFileName($dest)) |
+            Set-Content test-delivery/SHA256SUMS.txt -Encoding ascii
+          'PRUEBA: no instalar sobre perfiles importantes. No verificado con Chromium real.' |
+            Set-Content test-delivery/LEEME.txt -Encoding utf8
+      - name: Upload test installer without publishing a release
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyclokpropio-30.0.15-Diagnostico-PRUEBA
+          path: |
+            test-delivery/*.exe
+            test-delivery/SHA256SUMS.txt
+            test-delivery/LEEME.txt
+          if-no-files-found: error
