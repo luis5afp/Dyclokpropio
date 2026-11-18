@@ -1,0 +1,97 @@
+name: Publicar corrección JSON — Motor 0.4.2 RC2 (pre-release)
+
+on:
+  push:
+    branches:
+      - fix/v30.0.15-motor042-json-export-rc2
+    paths:
+      - '.github/workflows/publish-v30-0-15-motor042-rc2.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: publish-motor042-rc2
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Confirmar Windows CI, verificar SHA y publicar RC2
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Wait for pinned Windows build and validate its identity
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_RUN: "44373268214"
+          SOURCE_SHA: "cdb66b3d7160e27aa7b52b8821ff1253db16bc7b"
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 90); do
+            metadata=$(gh run view "$SOURCE_RUN" --repo "$GH_REPO" --json status,conclusion,headSha)
+            state=$(jq -r '.status' <<<"$metadata")
+            if [[ "$state" == completed ]]; then break; fi
+            sleep 15
+          done
+          test "$state" = completed || { echo "BLOCKED: timed out waiting for Windows build"; exit 1; }
+          result=$(jq -r '.conclusion' <<<"$metadata")
+          sha=$(jq -r '.headSha' <<<"$metadata")
+          test "$result" = success || { echo "BLOCKED: Windows build failed"; exit 1; }
+          test "$sha" = "$SOURCE_SHA" || { echo "BLOCKED: unexpected Windows build commit"; exit 1; }
+      - name: Download verified NSIS artifact and check SHA256
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_RUN: "44373268214"
+        run: |
+          set -euo pipefail
+          mkdir -p delivery
+          gh run download "$SOURCE_RUN" --repo "$GH_REPO" --name "Dyclokpropio-30.0.15-Motor042-RC2-NSIS-PRUEBA" --dir delivery
+          test -s delivery/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe
+          test -s delivery/SHA256SUMS.txt
+          (cd delivery && sha256sum -c SHA256SUMS.txt)
+      - name: Create independent prerelease, preserving stable versions
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: "v30.0.15-motor042-rc2"
+          SOURCE_SHA: "cdb66b3d7160e27aa7b52b8821ff1253db16bc7b"
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo "Release already exists; refusing overwrite"
+            exit 1
+          fi
+          cat > release-notes.md <<'NOTES'
+          Dyclokpropio 30.0.15 - Motor nativo 0.4.2 (RC2 / EXPERIMENTAL)
+
+          Corrige la exportación JSON del diagnóstico integrado.
+          En RC1 el enlace usaba target="_blank", pero las ventanas emergentes
+          están bloqueadas por el panel aislado de Electron.
+          RC2 incluye el botón "Guardar JSON en Descargas": escribe el informe
+          desde el proceso principal y devuelve estado y nombre de archivo,
+          sin abrir ventanas ni descargar desde el navegador.
+
+          PRUEBAS AUTOMÁTICAS
+          - Guarda físicamente eventos de prueba en un JSON válido.
+          - Rechaza solicitudes de origen o token incorrectos.
+          - Excluye cookies, contraseñas, tokens, cuerpos y rutas privadas.
+          - Verifica el runtime DICloak 3.0.7, parche ASAR e integridad PE.
+          - Genera instalador NSIS, lo instala en carpeta separada y prueba arranque.
+
+          LIMITACIONES
+          No se ha probado un perfil real de Chromium en el equipo del usuario.
+          La observación de procesos/IP no demuestra envíos de archivos.
+          El ejecutable modificado no está firmado por un certificado propio.
+          Requiere autorización para redistribuir los componentes originales de terceros.
+          No instalar sobre perfiles importantes ni compartir informes con IP privadas.
+          Es una pre-release; no sustituye ni activa actualizaciones silenciosas
+          de la versión estable v30.0.15.
+          NOTES
+          gh release create "$TAG"             "delivery/Dyclokpropio_30.0.15_Motor042_RC2_win_x64.exe"             "delivery/SHA256SUMS.txt"             --repo "$GH_REPO"             --target "$SOURCE_SHA"             --title "Dyclokpropio 30.0.15 — Motor 0.4.2 RC2 (Guardar JSON)"             --notes-file release-notes.md --prerelease --latest=false
+          gh release view "$TAG" --repo "$GH_REPO" --json url,assets,isPrerelease
