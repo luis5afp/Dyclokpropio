@@ -52,7 +52,14 @@ function safeEvent(signal,phase) {
   else if(signal==='step_failed')event='operation_step_failed';
   else if(signal==='step_complete')event='operation_step_completed';
   else event=safeStage(phase);
-  return Object.freeze({source:'programa',event,at:new Date().toISOString()});
+  // Keep the stage of a completed/failed operation, not only a generic
+  // "completed" event. It is a fixed whitelist label, not raw vendor text.
+  const stage=signal==='step_failed'||signal==='step_complete'?
+    safeStage(phase):undefined;
+  return Object.freeze({
+    source:'programa',event,at:new Date().toISOString(),
+    ...(stage?{stage}:{})
+  });
 }
 function createNativeDiagnosticController({
   startPanel=startDiagnosticPanel, createWindow
