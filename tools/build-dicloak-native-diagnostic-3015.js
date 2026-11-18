@@ -21,7 +21,7 @@ const FIELD_DIALOG_MEMBER='dist/assets/TableFieldDialog-V53UVTu7.js';
 const PRELOAD_MEMBER='dist-electron/preload/index.js';
 const FIELD_SORT_OLD='i=new Set([e.Selection,e.Operation,...j]);return[...t?[t]:[],...l.filter(e=>!i.has(e.key)),...o?[o]:[],...s?[s]:[],...n?[n]:[]]';
 const FIELD_SORT_NEW='i=new Set([e.Selection,e.Operation,...j,"almacen_lab","almacen_diagnostico"]),alm=l.find(e=>e.key==="almacen_lab"),diag=l.find(e=>e.key==="almacen_diagnostico");return[...t?[t]:[],...l.filter(e=>!i.has(e.key)),...o?[o]:[],...s?[s]:[],...alm?[alm]:[],...diag?[diag]:[],...n?[n]:[]]';
-const PRELOAD_ADDITION='\n;try{const {contextBridge,ipcRenderer}=require("electron");const api=Object.freeze({open:id=>ipcRenderer.invoke("almacen-lab:open",String(id)),diagnostic:id=>ipcRenderer.invoke("almacen-diag:show",String(id)),noteOpen:id=>ipcRenderer.send("almacen-diag:event",String(id),"open_requested",""),noteStep:(id,step)=>ipcRenderer.send("almacen-diag:event",String(id),"step_start",String(step)),noteFailure:(id,step)=>ipcRenderer.send("almacen-diag:event",String(id),"step_failed",String(step)),noteComplete:(id,step)=>ipcRenderer.send("almacen-diag:event",String(id),"step_complete",String(step))});if(process.contextIsolated){contextBridge.exposeInMainWorld("dicloakAlmacenLab",api)}else{window.dicloakAlmacenLab=api}}catch(e){console.warn("[Almacén] No se pudo inicializar el puente")}\n';
+const PRELOAD_ADDITION='\n;try{const {contextBridge,ipcRenderer}=require("electron");const api=Object.freeze({open:id=>ipcRenderer.invoke("almacen-lab:open",String(id)),diagnostic:id=>ipcRenderer.invoke("almacen-diag:show",String(id)),noteOpen:id=>ipcRenderer.sendSync("almacen-diag:event",String(id),"open_requested",""),noteStep:(id,step)=>ipcRenderer.send("almacen-diag:event",String(id),"step_start",String(step)),noteFailure:(id,step)=>ipcRenderer.send("almacen-diag:event",String(id),"step_failed",String(step)),noteComplete:(id,step)=>ipcRenderer.send("almacen-diag:event",String(id),"step_complete",String(step))});if(process.contextIsolated){contextBridge.exposeInMainWorld("dicloakAlmacenLab",api)}else{window.dicloakAlmacenLab=api}}catch(e){console.warn("[Almacén] No se pudo inicializar el puente")}\n';
 const APP_MAIN_ADDITION='\n;try{require("./almacen-lab/almacen-native-chromium-audit.cjs").install()}catch(e){console.warn("[Almacén audit]",e.message)};try{require("./almacen-lab/almacen-native-integrated-diagnostic.cjs").install()}catch(e){console.warn("[Almacén diagnostico]",e.message)}\n';
 const TARGETS=['dist-electron/main.js','dist-electron/preload/index.js','dist/assets/envList-CYDbiryu.js','dist/assets/TableFieldDialog-V53UVTu7.js','dist/assets/index-bGjMkmkL.js'];
 const LAB_MODULES=[
@@ -31,7 +31,8 @@ const LAB_MODULES=[
   'almacen-native-integrated-diagnostic.cjs',
   'almacen-diagnostic-panel.cjs',
   'almacen-diagnostic-panel.html',
-  'almacen-observador-integrado.cjs'
+  'almacen-observador-integrado.cjs',
+  'almacen-captura-temprana.cjs'
 ];
 const LAB_DEST='dist-electron/almacen-lab/';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -189,7 +190,7 @@ async function build(folder) {
     fs.unlinkSync(backup);
     const manifest={
       nativeDiagnostic:'0.4.2',
-      deliveryVersion:'30.0.16',originalEngine:'DICloak 3.0.7',
+      deliveryVersion:'30.0.17',originalEngine:'DICloak 3.0.7',
       executableSha256:PE_SHA,originalExecutableSha256:PE_SHA,
       officialAsarSha256:ASAR_SHA,modifiedAsarSha256:sha(fs.readFileSync(archive)),
       changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostFixtureDisabled:true,capturesRealBrowsing:false,nativeIntegrityAuditReadOnly:true,integratedDiagnosticUI:true,observeRendererOpenPhases:true,realHttpBodiesCaptured:false,profileSessionVerifiedNatively:false,
