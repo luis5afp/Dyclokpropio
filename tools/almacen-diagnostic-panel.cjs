@@ -12,6 +12,13 @@ const path=require('node:path');
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
+ 'embedded_ui_only','operation_open_requested','operation_step_completed','operation_step_failed',
+ 'stage_pre_data_inject','stage_fetch_env_info','stage_expand_check','stage_params_merge',
+ 'stage_lock_env','stage_open_env','stage_cookie_encrypt_plan','stage_timeout',
+ 'stage_backend_data_fetch','stage_data_sync_start','stage_localstorage_download',
+ 'stage_localstorage_extract','stage_localstorage_sync','stage_indexeddb_download',
+ 'stage_indexeddb_extract','stage_indexeddb_sync','stage_extension_extract',
+ 'stage_extension_download','stage_browser_start','stage_unknown',
  'api_failed','api_connected','debugger_connected','debugger_failed',
  'target_connected','receiver_ready','response_approved','response_failed',
  'document_saved','document_failed','capture_completed','monitor_stopped',
@@ -20,7 +27,10 @@ const EVENTS=new Set([
 function validateDiagnostic(input){
  if(!input||typeof input!=='object'||!SOURCES.has(input.source)||
     !EVENTS.has(input.event))throw Error('INVALID_DIAGNOSTIC_EVENT');
- const out={at:new Date().toISOString(),source:input.source,event:input.event};
+ const at=input.at===undefined?new Date().toISOString():input.at;
+ if(typeof at!=='string'||!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/.test(at)||
+    Number.isNaN(Date.parse(at)))throw Error('INVALID_DIAGNOSTIC_TIME');
+ const out={at,source:input.source,event:input.event};
  if(input.status!==undefined){
    if(!Number.isSafeInteger(input.status)||input.status<100||input.status>599)
      throw Error('INVALID_DIAGNOSTIC_STATUS');
