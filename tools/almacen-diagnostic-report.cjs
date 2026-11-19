@@ -90,7 +90,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
   const http=[...requests.values()];
   const browserRequests=new Map();
   const browserStatuses=safe.filter(e=>e.event==='chromium_monitor_status');
-  const browserMapped=browserStatuses.some(e=>['verified','active'].includes(e.monitorStatus));
+  const browserMapped=browserStatuses.some(e=>e.monitorStatus==='active');
   for(const e of safe){
     if(!e.event?.startsWith('chromium_network_')&&
       !['chromium_cookie_request','chromium_cookie_response'].includes(e.event))continue;
