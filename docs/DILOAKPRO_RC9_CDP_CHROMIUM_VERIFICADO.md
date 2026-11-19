@@ -14,7 +14,7 @@ La integración CDP es **optativa**. Por defecto permanece desconectada y muestr
 
 No se conecta al navegador usando un PID, una URL WebSocket arbitraria o un escáner de puertos. La API local debe responder al endpoint de sesión `GET /openapi/v2/profiles/:id/session`, devolver **ese mismo perfil** en estado `running` e indicar su puerto de depuración. La dirección WebSocket se valida como **loopback y puerto exacto**. Si no existe ese endpoint, falta clave o la API no confirma el perfil, el monitor informa «No disponible». No se finge verificación de Chromium.
 
-El monitor se inicia **después** de la etapa de apertura del motor y se detiene junto con la captura temporal. Por lo tanto puede perder peticiones que Chromium haya realizado al arrancar. No inicia ni reinicia el navegador, y no modifica cookies ni configuración.
+El monitor se inicia **después** de la etapa de apertura del motor. Con CDP habilitado, la ventana de observación se prolonga **60 segundos** tras la apertura (tope absoluto: 120 segundos desde Abrir); sin CDP permanece en 15 segundos. Se detiene automáticamente, sin crear archivos. Por lo tanto puede perder peticiones que Chromium haya realizado al arrancar. No inicia ni reinicia el navegador, y no modifica cookies ni configuración.
 
 ## Datos que observa al habilitarse
 
