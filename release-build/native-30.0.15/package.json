@@ -1,8 +1,8 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.23",
+  "version": "30.0.24",
   "private": true,
-  "description": "diloakPRO RC10 - HTTP origins, media types and actionable Chromium diagnostics",
+  "description": "diloakPRO RC11 - passive pre-Chromium Node response-stream receipt proof",
   "devDependencies": {
     "@electron/asar": "3.2.18",
     "electron-builder": "^26.0.0",
