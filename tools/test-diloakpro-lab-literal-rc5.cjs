@@ -13,13 +13,14 @@ const {mapNativeEvent,startDiagnosticPanel,validateDiagnostic}=
 
 function requestAndDrain(url){
   return new Promise((resolve,reject)=>{
-    const req=http.get(url,res=>{
+    const req=http.request(url,res=>{
       const chunks=[];
       res.on('data',chunk=>chunks.push(chunk));
       res.on('end',()=>resolve(Buffer.concat(chunks)));
       res.on('error',reject);
     });
     req.on('error',reject);
+    req.end();
   });
 }
 
