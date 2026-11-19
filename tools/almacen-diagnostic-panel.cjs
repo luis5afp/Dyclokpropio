@@ -1,19 +1,23 @@
 'use strict';
 /**
  * Loopback-only read-only diagnostics UI for the opt-in test receiver.
- * NO global traffic interception. NO arbitrary strings, URLs, HTTP
- * headers, cookies, passwords, tokens or response bodies are accepted.
+ * Normal diagnostic events reject arbitrary sensitive values. One opt-in
+ * lab-only event stores unmodified synthetic response bytes from an exact
+ * test URL marked by its server; never unconditionally capture secrets.
  */
 const http=require('node:http');
+const https=require('node:https');
 const crypto=require('node:crypto');
 const fs=require('node:fs');
 const path=require('node:path');
 const net=require('node:net');
-const {startCapture}=require('./almacen-observador-integrado.cjs');
+const {startCapture,normalizeLabUrl,isLabResponse,labCookieValues,
+  MAX_LAB_CAPTURE_BYTES}=require('./almacen-observador-integrado.cjs');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
+ 'native_http_lab_literal',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
@@ -163,6 +167,34 @@ function validateDiagnostic(input){
      throw Error('INVALID_CAPTURE_FINISH_REASON');
    out.finishReason=input.finishReason;
  }
+ // Literal payload fields are accepted exclusively for a marked,
+ // explicitly allowlisted synthetic laboratory response.
+ const labFields=['literalBodyText','literalBodyBase64','literalBodySha256','literalSetCookieValues'];
+ if(input.event==='native_http_lab_literal'){
+   if(input.source!=='servidor_pruebas'||typeof input.literalBodyBase64!=='string'||
+      !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(input.literalBodyBase64))
+     throw Error('INVALID_LAB_FIXTURE');
+   const bytes=Buffer.from(input.literalBodyBase64,'base64');
+   if(bytes.length>65536||bytes.toString('base64')!==input.literalBodyBase64)
+     throw Error('INVALID_LAB_FIXTURE');
+   const hash=crypto.createHash('sha256').update(bytes).digest('hex');
+   if(input.literalBodySha256!==hash)throw Error('INVALID_LAB_FIXTURE');
+   out.literalBodyBase64=input.literalBodyBase64;
+   out.literalBodySha256=hash;
+   if(input.literalBodyText!==undefined){
+     if(typeof input.literalBodyText!=='string'||
+        !Buffer.from(input.literalBodyText,'utf8').equals(bytes))
+       throw Error('INVALID_LAB_FIXTURE');
+     out.literalBodyText=input.literalBodyText;
+   }
+   if(!Array.isArray(input.literalSetCookieValues)||
+      input.literalSetCookieValues.length>8||
+      input.literalSetCookieValues.some(v=>typeof v!=='string'||Buffer.byteLength(v,'utf8')>8192))
+     throw Error('INVALID_LAB_FIXTURE');
+   out.literalSetCookieValues=[...input.literalSetCookieValues];
+ }else if(labFields.some(key=>input[key]!==undefined)){
+   throw Error('LAB_PAYLOAD_OUTSIDE_FIXTURE');
+ }
  if(input.sha256!==undefined){
    if(typeof input.sha256!=='string'||!/^[a-f0-9]{64}$/.test(input.sha256))
      throw Error('INVALID_DIAGNOSTIC_SHA256');
@@ -174,13 +206,14 @@ function mapNativeEvent(row){
  if(!row||typeof row!=='object')return null;
  const base={source:'programa',at:new Date().toISOString()};
  if(row.kind==='http'){
-   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer'}[row.phase];
+   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer',lab_literal:'native_http_lab_literal'}[row.phase];
    if(!event)return null;
-   const out={...base,event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
+   const out={...base,...(row.phase==='lab_literal'?{source:'servidor_pruebas'}:{}),event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
    for(const key of ['status','elapsedMs','bytes','requestBytesDeclared',
      'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
      'requestAuthorizationPresent','requestCookiePresent',
-     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort'])if(row[key]!=null)out[key]=row[key];
+     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort',
+     'literalBodyText','literalBodyBase64','literalBodySha256','literalSetCookieValues'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
@@ -191,8 +224,59 @@ function mapNativeEvent(row){
  if(row.kind==='session'&&row.phase==='error')return {...base,event:'native_monitor_error'};
  return null;
 }
+// The UI can explicitly request a benign GET from the selected synthetic
+// endpoint. Never replay an application's authorization/cookie/proxy headers.
+function requestSyntheticLabFixture(labUrl,emit){
+ return new Promise(resolve=>{
+   if(!labUrl){resolve({ok:false,error:'LAB_NOT_CONFIGURED'});return;}
+   let settled=false;
+   const finish=result=>{if(settled)return;settled=true;resolve(result);};
+   try{
+     const mod=labUrl.protocol==='https:'?https:http;
+     const req=mod.get(labUrl,{
+       headers:{Accept:'application/vnd.diloakpro-lab+json'},
+       agent:false
+     },res=>{
+       if(res.statusCode!==200||!isLabResponse(res)){
+         res.resume();finish({ok:false,error:'LAB_RESPONSE_NOT_MARKED'});return;
+       }
+       const cookies=labCookieValues(res);
+       if(cookies===null){
+         res.resume();finish({ok:false,error:'LAB_COOKIE_LIMIT'});return;
+       }
+       let total=0,limited=false;const parts=[];
+       res.on('data',chunk=>{
+         total+=chunk.length;
+         if(total>MAX_LAB_CAPTURE_BYTES){limited=true;parts.length=0;}
+         else if(!limited)parts.push(Buffer.from(chunk));
+       });
+       res.once('error',()=>finish({ok:false,error:'LAB_RESPONSE_ERROR'}));
+       res.once('end',()=>{
+         if(limited){finish({ok:false,error:'LAB_BODY_LIMIT'});return;}
+         const bytes=Buffer.concat(parts,total);
+         let literalBodyText;
+         try{
+           const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+           if(Buffer.from(text,'utf8').equals(bytes))literalBodyText=text;
+         }catch{}
+         const entry={source:'servidor_pruebas',event:'native_http_lab_literal',
+           method:'GET',scope:labUrl.protocol==='http:'?'local':'remote',
+           literalBodyBase64:bytes.toString('base64'),
+           literalBodySha256:crypto.createHash('sha256').update(bytes).digest('hex'),
+           literalSetCookieValues:cookies,
+           ...(literalBodyText!==undefined?{literalBodyText}:{})};
+         try{emit(entry);finish({ok:true,bytes:bytes.length});}
+         catch{finish({ok:false,error:'LAB_VALIDATION_FAILED'});}
+       });
+     });
+     req.setTimeout(10000,()=>req.destroy(Error('LAB_TIMEOUT')));
+     req.on('error',()=>finish({ok:false,error:'LAB_REQUEST_FAILED'}));
+   }catch{finish({ok:false,error:'LAB_REQUEST_FAILED'});}
+ });
+}
 async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  const token=crypto.randomBytes(24).toString('hex');
+ const configuredLabUrl=normalizeLabUrl(process.env.DILOAKPRO_TEST_LITERAL_URL);
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
  const counters={total:0,approved:0,saved:0,failed:0};
@@ -205,7 +289,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
-   requestsWithProxyAuthorization:0,responsesWithSetCookie:0};
+   requestsWithProxyAuthorization:0,responsesWithSetCookie:0,
+   labLiteralResponseCount:0};
  function checks(){
    const has=stage=>completedStages.has(stage);
    return {
@@ -241,6 +326,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        requestsWithProxyAuthorization:telemetry.requestsWithProxyAuthorization,
        responsesWithSetCookie:telemetry.responsesWithSetCookie,
        byteCountingScope:'node_http_application_body_not_wire_traffic',
+       labLiteralResponseCount:telemetry.labLiteralResponseCount,
+       labLiteralCaptureRequested:Boolean(configuredLabUrl),
        uploadRouteRequests:telemetry.uploadRouteRequests,
        requestsWithKnownSize:telemetry.requestsWithKnownSize,
        declaredOutboundBytes:telemetry.declaredOutboundBytes
@@ -273,6 +360,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      return {ok:true,fileName,eventCount:events.length};
    }catch{return {ok:false,error:'WRITE_ERROR'};}
  }
+ let labRequestPending=false;
  const server=http.createServer((req,res)=>{
    const host='127.0.0.1:'+boundPort;
    const prefix='/diagnostico/'+token+'/';
@@ -280,11 +368,22 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
      'Cross-Origin-Resource-Policy':'same-origin'};
    const canSave=req.method==='POST'&&req.url===prefix+'save-json';
+   const canLab=req.method==='POST'&&req.url===prefix+'run-lab';
    if(req.headers.host!==host||
-      !(req.method==='GET'||canSave)||
+      !(req.method==='GET'||canSave||canLab)||
       (req.headers.origin && req.headers.origin!=='http://'+host)||
-      (canSave && req.headers.origin!=='http://'+host)){
+      ((canSave||canLab) && req.headers.origin!=='http://'+host)){
      res.writeHead(403,headers);res.end();return;
+   }
+   if(canLab){
+     if(labRequestPending){res.writeHead(409,headers);res.end();return;}
+     labRequestPending=true;
+     requestSyntheticLabFixture(configuredLabUrl,emit).then(result=>{
+       labRequestPending=false;
+       res.writeHead(result.ok?200:422,{...headers,
+         'Content-Type':'application/json; charset=utf-8'});
+       res.end(JSON.stringify(result));
+     });return;
    }
    if(canSave){
      const result=saveReport();
@@ -347,6 +446,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    if(event.event==='capture_unavailable')capture.status='unavailable';
    if(event.event==='native_process_seen'&&event.processClass==='browser')
      telemetry.browserProcessObserved=true;
+   if(event.event==='native_http_lab_literal')telemetry.labLiteralResponseCount++;
    if(event.event==='native_http_request'){
      telemetry.nodeRequests++;
      if(event.routeTemplate?.endsWith('/upload'))telemetry.uploadRouteRequests++;

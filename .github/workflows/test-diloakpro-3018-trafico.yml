@@ -1,7 +1,7 @@
-name: diloakPRO bidirectional traffic metadata tests
+name: diloakPRO bidirectional traffic and synthetic fixture tests
 on:
   push:
-    branches: [feature/diloakpro-3018-trafico-bidireccional]
+    branches: [feature/diloakpro-3018-trafico-bidireccional, feature/diloakpro-rc5-comparacion-exacta-fixtures]
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,6 +21,7 @@ jobs:
           node --check tools/almacen-native-integrated-diagnostic.cjs
           node --check tools/almacen-captura-temprana.cjs
           node --check tools/test-diloakpro-trafico-bidireccional-3018.cjs
+          node --check tools/test-diloakpro-lab-literal-rc5.cjs
       - name: HTTP privacy and diagnostic regressions
         run: |
-          node --test tools/test-diloakpro-trafico-bidireccional-3018.cjs tools/test-diloakpro-captura-temprana-3017.cjs tools/test-almacen-integrated-diagnostic-3015.cjs tools/test-almacen-diagnostic-panel.cjs
+          node --test tools/test-diloakpro-lab-literal-rc5.cjs tools/test-diloakpro-trafico-bidireccional-3018.cjs tools/test-diloakpro-captura-temprana-3017.cjs tools/test-almacen-integrated-diagnostic-3015.cjs tools/test-almacen-diagnostic-panel.cjs
