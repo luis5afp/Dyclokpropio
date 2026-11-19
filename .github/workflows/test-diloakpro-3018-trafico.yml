@@ -1,0 +1,26 @@
+name: diloakPRO bidirectional traffic metadata tests
+on:
+  push:
+    branches: [feature/diloakpro-3018-trafico-bidireccional]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax of amended instrumentation
+        run: |
+          node --check tools/almacen-observador-integrado.cjs
+          node --check tools/almacen-diagnostic-panel.cjs
+          node --check tools/almacen-native-integrated-diagnostic.cjs
+          node --check tools/almacen-captura-temprana.cjs
+          node --check tools/test-diloakpro-trafico-bidireccional-3018.cjs
+      - name: HTTP privacy and diagnostic regressions
+        run: |
+          node --test tools/test-diloakpro-trafico-bidireccional-3018.cjs tools/test-diloakpro-captura-temprana-3017.cjs tools/test-almacen-integrated-diagnostic-3015.cjs tools/test-almacen-diagnostic-panel.cjs
