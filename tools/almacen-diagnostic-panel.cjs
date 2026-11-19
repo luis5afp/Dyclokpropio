@@ -11,7 +11,7 @@ const path=require('node:path');
 const net=require('node:net');
 const {startCapture}=require('./almacen-observador-integrado.cjs');
 const {makeOpeningAudit,renderAuditTXT}=require('./almacen-diagnostic-report.cjs');
-const {safeHostname,ROUTE_WORDS,safeMime,safeEncoding,safeHttpProtocol,statusClass}=require('./almacen-http-context.cjs');
+const {safeHostname}=require('./almacen-http-context.cjs');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
