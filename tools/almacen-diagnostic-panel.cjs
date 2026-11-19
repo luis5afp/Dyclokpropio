@@ -96,7 +96,7 @@ function validateDiagnostic(input){
  }
  if(input.browserHost!==undefined){
    if(typeof input.browserHost!=='string'||input.browserHost.length>180||
-      !((/^(?:[a-z0-9-]{1,63}\\.)*[a-z0-9-]{1,63}$/.test(input.browserHost))||
+      !((/^(?:[a-z0-9-]{1,63}\.)*[a-z0-9-]{1,63}$/.test(input.browserHost))||
         net.isIP(input.browserHost)))throw Error('INVALID_CHROMIUM_HOST');
    out.browserHost=input.browserHost;
  }
