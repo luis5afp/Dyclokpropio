@@ -42,13 +42,15 @@ function chunkSize(chunk,encoding){
 }
 function startNodeHttpTrace(emit) {
   const restores=[];
+  const instrumented=new WeakSet();
   // One ephemeral secret key per capture. The HMAC is a private correlation
   // proof of the observed response stream, not a recoverable payload copy.
   const captureProofKey=crypto.randomBytes(32);
   for(const [mod,proto] of [[http,'http:'],[https,'https:']]){
-    const original=mod.request;
-    function traced(...args) {
-      const req=original.apply(this,args);
+    const original=mod.request,originalGet=mod.get;
+    function instrument(req,args) {
+      if(!req||typeof req!=='object'||instrumented.has(req))return req;
+      instrumented.add(req);
       let meta;
       try{meta=requestMetadata(args,proto);}catch{return req;}
       if(!meta)return req;
@@ -218,8 +220,14 @@ function startNodeHttpTrace(emit) {
       });
       return req;
     }
+    function traced(...args){return instrument(original.apply(this,args),args);}
+    function tracedGet(...args){return instrument(originalGet.apply(this,args),args);}
     mod.request=traced;
-    restores.push(()=>{if(mod.request===traced)mod.request=original;});
+    mod.get=tracedGet;
+    restores.push(()=>{
+      if(mod.request===traced)mod.request=original;
+      if(mod.get===tracedGet)mod.get=originalGet;
+    });
   }
   return ()=>{
     restores.forEach(fn=>fn());
