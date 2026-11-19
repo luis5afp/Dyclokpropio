@@ -134,6 +134,16 @@ function validateDiagnostic(input){
    if(!Number.isInteger(input.remotePort)||input.remotePort<0||input.remotePort>65535)throw Error('INVALID_DIAGNOSTIC_PORT');
    out.remotePort=input.remotePort;
  }
+ if(input.peerIp!==undefined){
+   if(typeof input.peerIp!=='string'||!net.isIP(input.peerIp))
+     throw Error('INVALID_DIAGNOSTIC_IP');
+   out.peerIp=input.peerIp;
+ }
+ if(input.peerPort!==undefined){
+   if(!Number.isInteger(input.peerPort)||input.peerPort<1||input.peerPort>65535)
+     throw Error('INVALID_DIAGNOSTIC_PORT');
+   out.peerPort=input.peerPort;
+ }
  if(input.fileExt!==undefined){
    if(!['txt','json','csv','zip','bin','pdf','other'].includes(input.fileExt))throw Error('INVALID_DIAGNOSTIC_EXTENSION');
    out.fileExt=input.fileExt;
@@ -170,7 +180,7 @@ function mapNativeEvent(row){
    for(const key of ['status','elapsedMs','bytes','requestBytesDeclared',
      'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
      'requestAuthorizationPresent','requestCookiePresent',
-     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState'])if(row[key]!=null)out[key]=row[key];
+     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
