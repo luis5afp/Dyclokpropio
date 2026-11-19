@@ -169,7 +169,11 @@ function renderAuditTXT(report){
       r.association||'sin asociación'].join(' | '));
   }
   lines.push('','VERIFICACIÓN PENDIENTE',
-    'Credenciales, cookies, proxy, 2FA y atribución al proceso Chromium: NO VERIFICADOS.',
+    'Credenciales: no verificadas.',
+    'Cookies: no verificadas.',
+    'Autenticación del proxy: no verificada.',
+    '2FA: no verificado.',
+    'Asociación exacta del proceso Chromium con el perfil: no verificada.',
     'La comparación byte a byte exige pruebas coordinadas en servidor y cliente.',
     'El informe no guarda contenidos, secretos ni valores reutilizables.',
     '','COBERTURA: Node http(s).request (parcial), fases UI y muestreo Windows.',
