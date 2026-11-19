@@ -477,8 +477,9 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      telemetry.browserProcessObserved=true;
    if(event.event==='chromium_monitor_status'){
      telemetry.chromiumStatus=event.monitorStatus;
-     if(event.monitorStatus==='verified'||event.monitorStatus==='active')
-       telemetry.chromiumMapped=true;
+     // A local API mapping alone is insufficient: require an active CDP
+     // WebSocket before claiming the browser network is observable.
+     if(event.monitorStatus==='active')telemetry.chromiumMapped=true;
    }
    if(event.event==='chromium_target_connected')telemetry.chromiumTargets++;
    if(event.event==='chromium_network_request'){
