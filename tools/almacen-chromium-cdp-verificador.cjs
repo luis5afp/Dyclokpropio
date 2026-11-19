@@ -44,7 +44,7 @@ function safeHost(urlValue){
  const hostname=u.hostname.toLowerCase();
  if(hostname.length>180||(!net.isIP(hostname)&&
    !/^(?:[a-z0-9-]{1,63}\.)*[a-z0-9-]{1,63}$/.test(hostname)))return null;
- const meta=requestMetadata([{method:'GET',hostname,path:u.pathname}],u.protocol);
+ const meta=requestMetadata([{method:'GET',hostname,path:u.pathname+u.search}],u.protocol);
  if(!meta)return null;
  return {browserHost:hostname,routeTemplate:meta.routeTemplate,
    routeDepth:meta.routeDepth,routeMaskedSegments:meta.routeMaskedSegments,
