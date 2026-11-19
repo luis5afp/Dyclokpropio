@@ -23,6 +23,16 @@ function requestMetadata(args,protocol) {
   const segments=pathname.split('/').filter(Boolean).slice(0,8);
   return {action,scope,routeTemplate:'/'+segments.map(v=>PARTS.has(v.toLowerCase())?v.toLowerCase():':id').join('/')};
 }
+// Count only bytes, never inspect or retain the transmitted content.
+const MAX_REPORTED_BODY_BYTES=32*1024*1024;
+function chunkSize(chunk,encoding){
+  if(Buffer.isBuffer(chunk)||chunk instanceof Uint8Array)return chunk.byteLength;
+  if(typeof chunk==='string'){
+    try{return Buffer.byteLength(chunk,typeof encoding==='string'?encoding:'utf8');}
+    catch{return null;}
+  }
+  return null;
+}
 function startNodeHttpTrace(emit) {
   const restores=[];
   for(const [mod,proto] of [[http,'http:'],[https,'https:']]){
@@ -33,31 +43,95 @@ function startNodeHttpTrace(emit) {
       try{meta=requestMetadata(args,proto);}catch{return req;}
       if(!meta)return req;
       const requestId=crypto.randomUUID(),started=performance.now();
-      // Content-Length is a declared size, not proof of actual bytes transmitted.
-      // Never read request body, cookies, authorization or any other headers.
       let requestBytesDeclared=null;
       try{
         const length=req.getHeader('content-length');
-        if(typeof length==='string' && /^\d{1,8}$/.test(length)){
+        if(typeof length==='string'&&/^\\d{1,8}$/.test(length)){
           const parsed=Number(length);
-          if(parsed<=33554432)requestBytesDeclared=parsed;
+          if(parsed<=MAX_REPORTED_BODY_BYTES)requestBytesDeclared=parsed;
         }
       }catch{}
       const base={kind:'http',transport:'node',phase:'request',
         action:meta.action,scope:meta.scope,routeTemplate:meta.routeTemplate,requestId,
         ...(requestBytesDeclared===null?{}:{requestBytesDeclared})};
-      try{emit(base);}catch{}
-      let done=false;
-      function finish(phase,res){
-        if(done)return;done=true;
-        const length=res?.headers?.['content-length'];
-        const bytes=typeof length==='string'&&/^\d{1,8}$/.test(length)?Number(length):null;
-        try{emit({...base,phase,elapsedMs:Math.max(0,Math.round(performance.now()-started)),
-          status:Number.isInteger(res?.statusCode)?res.statusCode:null,
-          bytes:Number.isSafeInteger(bytes)&&bytes<=33554432?bytes:null});}catch{}
+      const safeEmit=row=>{try{emit(row);}catch{}};
+      safeEmit(base);
+      let outbound=0,inbound=0,limited=false,transferred=false,done=false;
+      const add=(direction,chunk,encoding)=>{
+        const n=chunkSize(chunk,encoding);
+        if(n===null)return;
+        if(!Number.isSafeInteger(n)||n<0)return;
+        if(direction==='out'){
+          outbound+=n;
+          if(outbound>MAX_REPORTED_BODY_BYTES)limited=true;
+        }else{
+          inbound+=n;
+          if(inbound>MAX_REPORTED_BODY_BYTES)limited=true;
+        }
+      };
+      const originalWrite=req.write;
+      req.write=function(chunk,...rest){
+        const result=originalWrite.apply(this,arguments);
+        add('out',chunk,rest[0]);
+        return result;
+      };
+      const originalEnd=req.end;
+      req.end=function(chunk,...rest){
+        const previous=outbound;
+        const result=originalEnd.apply(this,arguments);
+        // Node normally calls req.write() from end(chunk); avoid double count.
+        if(outbound===previous)add('out',chunk,rest[0]);
+        return result;
+      };
+      function indicators(res){
+        let auth=false,cookie=false,proxyAuth=false;
+        try{
+          auth=req.hasHeader('authorization');
+          cookie=req.hasHeader('cookie');
+          proxyAuth=req.hasHeader('proxy-authorization');
+        }catch{}
+        const responseSetCookiePresent=Boolean(res&&res.headers&&
+          Object.prototype.hasOwnProperty.call(res.headers,'set-cookie'));
+        return {requestAuthorizationPresent:auth,requestCookiePresent:cookie,
+          requestProxyAuthorizationPresent:proxyAuth,responseSetCookiePresent};
       }
-      req.once('response',res=>finish('response',res));
-      req.once('error',()=>finish('error'));
+      function transfer(state,res){
+        if(transferred)return;
+        transferred=true;
+        safeEmit({...base,phase:'transfer',transferState:state,...indicators(res),
+          byteCountLimited:limited,
+          ...(limited?{}:{
+            outboundBodyBytesQueued:outbound,inboundBodyBytesObserved:inbound
+          })});
+      }
+      function finish(phase,res){
+        if(done)return;
+        done=true;
+        const length=res?.headers?.['content-length'];
+        const bytes=typeof length==='string'&&/^\\d{1,8}$/.test(length)?
+          Number(length):null;
+        safeEmit({...base,phase,elapsedMs:Math.max(0,Math.round(performance.now()-started)),
+          status:Number.isInteger(res?.statusCode)?res.statusCode:null,
+          bytes:Number.isSafeInteger(bytes)&&bytes<=MAX_REPORTED_BODY_BYTES?bytes:null,
+          ...indicators(res)});
+      }
+      // Install before the caller's response callback, without subscribing
+      // to 'data' or changing the response stream's flow mode.
+      req.prependOnceListener('response',res=>{
+        const originalPush=res.push;
+        res.push=function(chunk,...rest){
+          const result=originalPush.apply(this,arguments);
+          add('in',chunk,rest[0]);
+          return result;
+        };
+        res.once('end',()=>transfer('response_end',res));
+        res.once('close',()=>transfer('response_closed',res));
+        finish('response',res);
+      });
+      req.once('error',()=>{
+        finish('error');
+        transfer('request_error');
+      });
       return req;
     }
     mod.request=traced;
@@ -65,6 +139,7 @@ function startNodeHttpTrace(emit) {
   }
   return ()=>restores.forEach(fn=>fn());
 }
+
 const PS=[
   "$ErrorActionPreference='Stop'",
   "$rootPid=__PID__",
