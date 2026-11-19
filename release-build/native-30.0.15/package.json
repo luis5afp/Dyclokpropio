@@ -1,8 +1,8 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.24",
+  "version": "30.0.25",
   "private": true,
-  "description": "diloakPRO RC11 - passive pre-Chromium Node response-stream receipt proof",
+  "description": "diloakPRO RC12 - explicit exact-origin encrypted laboratory HTTP response recording",
   "devDependencies": {
     "@electron/asar": "3.2.18",
     "electron-builder": "^26.0.0",
