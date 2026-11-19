@@ -156,6 +156,9 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     transferSummaries:http.filter(r=>r.transferObserved).length,
     receivedStreamProofs:http.filter(r=>r.inboundStreamProof).length,
     receivedStreamChunks:http.reduce((n,r)=>n+(r.inboundChunkCount||0),0),
+    labEncryptedResponses:safe.filter(e=>e.event==='lab_capture_saved').length,
+    labReceivedBodyBytes:safe.filter(e=>e.event==='lab_capture_saved')
+      .reduce((n,e)=>n+(e.labReceivedBodyBytes||0),0),
     fetchRequests:http.filter(r=>r.transport==='node_fetch'&&r.requestObserved).length,
     fetchResponses:http.filter(r=>r.transport==='node_fetch'&&r.responseObserved).length,
     fetchCompleted:http.filter(r=>r.transport==='node_fetch'&&r.finishedObserved).length,
@@ -204,6 +207,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       'La ausencia de respuesta observada no implica necesariamente error del servidor.',
       'IP/puerto pueden corresponder a un proxy y la asociación al perfil es temporal.',
       'No contiene contraseñas, tokens, cookies, códigos 2FA, cabeceras ni cuerpos HTTP. Los dominios y nombres de consulta aprobados pueden ser información privada.',
+      'Si se habilita voluntariamente captura del servidor de laboratorio, los cuerpos y cabeceras originales residen únicamente dentro de archivos cifrados .dplab; no en este informe.',
       'Los comprobantes HMAC son solo del flujo Node recibido: la clave efímera no se guarda; no demuestran que el servidor enviase bytes idénticos ni que Chromium los aplicase.',
       'Para verificar igualdad de contenido se necesitan comprobantes del servidor y cliente de confianza.'
     ]
@@ -229,6 +233,8 @@ function renderAuditTXT(report){
     'Respuestas observadas: '+a.summary.responses,
     'Recepciones Node completas con comprobante efímero: '+a.summary.receivedStreamProofs,
     'Fragmentos de respuesta Node observados: '+a.summary.receivedStreamChunks,
+    'Respuestas de laboratorio cifradas localmente: '+a.summary.labEncryptedResponses,
+    'Bytes de cuerpo de laboratorio cifrados: '+a.summary.labReceivedBodyBytes,
     'Respuestas Node fetch observadas: '+a.summary.fetchResponses,
     'Solicitudes sin respuesta registrada: '+a.summary.requestsWithoutObservedResponse,
     'Sin resultado observado: '+a.summary.requestsWithoutObservedOutcome,
