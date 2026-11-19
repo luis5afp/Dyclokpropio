@@ -12,9 +12,10 @@
  */
 const {validateProfileId}=require('./almacen-perfil-readonly.js');
 const {senderIsApp}=require('./almacen-native-chromium-audit.cjs');
-const {startDiagnosticPanel}=require('./almacen-diagnostic-panel.cjs');
+const {startDiagnosticPanel,validateDiagnostic,mapNativeEvent}=require('./almacen-diagnostic-panel.cjs');
 const {startCapture}=require('./almacen-observador-integrado.cjs');
 const {createOpeningCaptureCoordinator}=require('./almacen-captura-temprana.cjs');
+const {startVerifiedBrowserNetwork}=require('./almacen-chromium-cdp-verificador.cjs');
 
 const SHOW_CHANNEL='almacen-diag:show';
 const EVENT_CHANNEL='almacen-diag:event';
@@ -88,6 +89,7 @@ function createNativeDiagnosticController({
   startPanel=startDiagnosticPanel,createWindow,
   // Tests inject a no-op; the packaged app explicitly injects startCapture.
   startObserver=()=>()=>{},getLabRoot=()=>undefined,
+  startBrowserMonitor=()=>()=>{},
   graceMs=15000,maxMs=120000
 }={}) {
   if(typeof startPanel!=='function'||typeof createWindow!=='function')
@@ -95,6 +97,22 @@ function createNativeDiagnosticController({
   const history=new Map();
   const windows=new Map();
   const stageStarts=new Map();
+  const browserMonitors=new Map();
+  function stopBrowser(profileId){
+    const stopper=browserMonitors.get(profileId);
+    if(stopper){browserMonitors.delete(profileId);try{stopper();}catch{}}
+  }
+  function startBrowser(profileId){
+    if(browserMonitors.has(profileId))return;
+    let stop=()=>{};
+    try{stop=startBrowserMonitor({profileId,emit:raw=>{
+      try{
+        const mapped=mapNativeEvent(raw);
+        if(mapped)record(profileId,validateDiagnostic(mapped));
+      }catch{/* ignore unrecognized or private fields */}
+    }});}catch{record(profileId,{source:'chromium',event:'chromium_monitor_status',monitorStatus:'unavailable'});}
+    browserMonitors.set(profileId,typeof stop==='function'?stop:()=>{});
+  }
   function record(profileId,item){
     if(!history.has(profileId)){
       if(history.size>=MAX_PROFILES)history.delete(history.keys().next().value);
@@ -105,7 +123,7 @@ function createNativeDiagnosticController({
     if(list.length>MAX_PER_PROFILE)list.shift();
     const current=windows.get(profileId);
     if(current)current.panel.emit(item);
-
+    if(item.event==='capture_finished')stopBrowser(profileId);
   }
   const coordinator=createOpeningCaptureCoordinator({
     emitToProfile:record,startObserver,getLabRoot,graceMs,maxMs
@@ -117,6 +135,7 @@ function createNativeDiagnosticController({
       // Bounded per-opening memory; no profile ID is serialized into the JSON.
       // Stop a previous unfinished capture; no reports are written to disk.
       coordinator.finish(profileId,'restarted');
+      stopBrowser(profileId);
       history.delete(profileId);
       // Synchronous IPC arms the Node observer before the vendor's open().
       capture=coordinator.arm(profileId);
@@ -134,6 +153,9 @@ function createNativeDiagnosticController({
     record(profileId,item);
     if(signal==='step_complete'||signal==='step_failed')
       coordinator.stage(profileId,signal,stage);
+    // Only after the vendor reports opening completed can a local OpenAPI
+    // runtime session identify the actual Chromium debug endpoint.
+    if(signal==='step_complete'&&stage==='stage_open_env')startBrowser(profileId);
     return {ok:true,recorded:true,nativeChromiumSessionVerified:false,
       ...(capture?{captureStarted:capture.captureStarted}: {})};
   }
@@ -171,7 +193,10 @@ function createNativeDiagnosticController({
     }
   }
   return Object.freeze({
-    note,show,shutdown:coordinator.shutdown,
+    note,show,shutdown:()=>{
+      coordinator.shutdown();
+      for(const id of [...browserMonitors.keys()])stopBrowser(id);
+    },
     snapshot:profileId=>{
       validateProfileId(profileId);
       return [...(history.get(profileId)||[])];
@@ -200,6 +225,7 @@ function install(){
   const controller=createNativeDiagnosticController({
     createWindow:args=>createDiagnosticWindow({...args,BrowserWindow}),
     startObserver:startCapture,
+    startBrowserMonitor:startVerifiedBrowserNetwork,
     getLabRoot:()=>undefined
   });
   app.once('before-quit',()=>controller.shutdown());
