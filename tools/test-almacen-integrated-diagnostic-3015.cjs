@@ -155,7 +155,7 @@ test('30.0.18 UI has Almacén and Diagnóstico side by side; vendor authenticati
   assert.ok(builder.includes('nativeIntegrityAuditReadOnly:true'));
   assert.ok(builder.includes('integratedDiagnosticUI:true'));
   assert.ok(builder.includes('realHttpBodiesCaptured:false'));
-  assert.ok(builder.includes("deliveryVersion:'30.0.17'"));
+  assert.ok(builder.includes("deliveryVersion:'30.0.18'"));
   assert.ok(!builder.includes("sessionExpired=false"));
   assert.ok(!builder.includes("disableWebSecurity"));
 });
