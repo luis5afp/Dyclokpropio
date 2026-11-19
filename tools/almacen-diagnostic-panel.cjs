@@ -15,9 +15,10 @@ const {makeOpeningAudit,renderAuditTXT}=require('./almacen-diagnostic-report.cjs
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
+ 'native_fetch_request','native_fetch_response','native_fetch_error','native_fetch_complete',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
- 'archive_saved','archive_failed',
+
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
  'embedded_ui_only','operation_open_requested','operation_step_completed','operation_step_failed',
  'stage_pre_data_inject','stage_pre_check','stage_choose_kernel','stage_pre_proxy_check','stage_catch_error',
@@ -185,6 +186,15 @@ function mapNativeEvent(row){
      'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
+ if(row.kind==='fetch'){
+   const event={request:'native_fetch_request',response:'native_fetch_response',
+     error:'native_fetch_error',complete:'native_fetch_complete'}[row.phase];
+   if(!event)return null;
+   return {...base,event,method:row.action,scope:row.scope,
+     routeTemplate:row.routeTemplate,requestId:row.requestId,
+     ...(row.status!==undefined?{status:row.status}:{}),
+     ...(row.elapsedMs!==undefined?{elapsedMs:row.elapsedMs}:{})};
+ }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
  if(row.kind==='connection')return {...base,event:'native_connection_seen',pid:row.pid,protocol:row.protocol,
    ...(row.remoteIp?{remoteIp:row.remoteIp}:{}),remotePort:row.remotePort};
@@ -193,7 +203,7 @@ function mapNativeEvent(row){
  if(row.kind==='session'&&row.phase==='error')return {...base,event:'native_monitor_error'};
  return null;
 }
-async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=null,profileId=null}={}){
+async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  const token=crypto.randomBytes(24).toString('hex');
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
@@ -204,6 +214,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
    ambiguousEventCount:0,finishReason:null,relation:'not_verified',
    captureId:null};
  const telemetry={browserProcessObserved:false,nodeRequests:0,
+   fetchRequests:0,fetchResponses:0,fetchErrors:0,fetchCompletions:0,
    nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
@@ -233,6 +244,11 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
      },
      networkMetadata:{
        nodeRequests:telemetry.nodeRequests,
+       fetchRequests:telemetry.fetchRequests,
+       fetchResponses:telemetry.fetchResponses,
+       fetchErrors:telemetry.fetchErrors,
+       fetchCompletions:telemetry.fetchCompletions,
+       networkCoverage:'node_http_request_and_undici_fetch_partial_no_chromium',
        nodeResponses:telemetry.nodeResponses,
        nodeTransfers:telemetry.nodeTransfers,
        outboundBodyBytesQueued:telemetry.outboundBodyBytesQueued,
@@ -253,7 +269,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
  function makeReport(){
    const report={
      schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
-     delivery:'v30.0.20-diloakpro-rc7',coverage:'partial',
+     delivery:'v30.0.21-diloakpro-rc8',coverage:'partial',
      exportedAt:new Date().toISOString(),
      events,counters,checks:checks()
    };
@@ -319,27 +335,6 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
        'Content-Disposition':'attachment; filename="diloakPRO-Diagnostico-RC6.json"'});
      res.end(json);return;
    }
-   // History is scoped to the profile selected by the trusted main process.
-   // A random URL token + loopback-only host checks protect the local viewer.
-   if(req.url===prefix+'history'){
-     let entries=[];
-     try{if(archive&&profileId)entries=archive.list(profileId);}catch{}
-     res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8'});
-     res.end(JSON.stringify({enabled:Boolean(archive&&profileId),entries}));return;
-   }
-   const match=req.url?.startsWith(prefix)?req.url.slice(prefix.length)
-     .match(/^history\/(diloakPRO-Apertura-\d{8}-\d{6}-[a-f0-9]{12})\/(json|txt)$/):null;
-   if(match){
-     try{
-       if(!archive||!profileId)throw Error('ARCHIVE_DISABLED');
-       const id=match[1],format=match[2],body=archive.read(profileId,id,format);
-       res.writeHead(200,{...headers,'Content-Type':format==='json'?
-         'application/json; charset=utf-8':'text/plain; charset=utf-8',
-         'Content-Disposition':'attachment; filename="'+id+'.'+format+'"'});
-       res.end(body);
-     }catch{res.writeHead(404,headers);res.end();}
-     return;
-   }
    if(req.url===prefix+'state'){
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8'});
      res.end(JSON.stringify({events,counters,checks:checks(),audit:makeOpeningAudit({events,counters,checks:checks()})}));return;
@@ -391,6 +386,10 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
      }
    }
    if(event.event==='native_http_response')telemetry.nodeResponses++;
+   if(event.event==='native_fetch_request')telemetry.fetchRequests++;
+   if(event.event==='native_fetch_response')telemetry.fetchResponses++;
+   if(event.event==='native_fetch_error')telemetry.fetchErrors++;
+   if(event.event==='native_fetch_complete')telemetry.fetchCompletions++;
    if(event.event==='native_http_transfer'){
      telemetry.nodeTransfers++;
      if(event.byteCountLimited)telemetry.byteCountLimited++;
@@ -408,7 +407,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
    counters.total++;
    if(event.event==='response_approved')counters.approved++;
    if(event.event==='document_saved')counters.saved++;
-   if(['operation_step_failed','api_failed','debugger_failed','response_failed','document_failed','connection_failed','native_http_error','native_monitor_error'].includes(event.event))
+   if(['operation_step_failed','api_failed','debugger_failed','response_failed','document_failed','connection_failed','native_http_error','native_fetch_error','native_monitor_error'].includes(event.event))
      counters.failed++;
  }
  emit({source:'programa',event:'panel_ready'});
