@@ -226,6 +226,9 @@ function install(){
     createWindow:args=>createDiagnosticWindow({...args,BrowserWindow}),
     startObserver:startCapture,
     startBrowserMonitor:startVerifiedBrowserNetwork,
+    // In opt-in Chromium mode leave time for a user to navigate. The hard
+    // cap remains 120 seconds and no data is archived automatically.
+    graceMs:process.env.DILOAKPRO_DIAG_CDP_ENABLE==='1'?60000:15000,
     getLabRoot:()=>undefined
   });
   app.once('before-quit',()=>controller.shutdown());
