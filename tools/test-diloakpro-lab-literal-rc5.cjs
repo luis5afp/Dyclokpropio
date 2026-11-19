@@ -94,6 +94,47 @@ test('opt-in exact lab URL stores literal synthetic server response, Set-Cookie 
   }
 });
 
+test('panel button endpoint fetches configured synthetic URL and stores exact server values',async()=>{
+  const body=Buffer.from('{"correo":"lab@ejemplo.invalid","clave":"PRUEBA_Lab_999"}\\n','utf8');
+  const cookie='test_session=XYZFALSA; HttpOnly; Path=/';
+  let marked=true;
+  const server=http.createServer((req,res)=>{
+    if(marked)res.setHeader('X-Diloakpro-Fixture','synthetic-only-v1');
+    res.setHeader('Content-Type','application/vnd.diloakpro-lab+json');
+    res.setHeader('Set-Cookie',cookie);
+    res.end(body);
+  });
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  const previous=process.env.DILOAKPRO_TEST_LITERAL_URL;
+  process.env.DILOAKPRO_TEST_LITERAL_URL=
+    'http://127.0.0.1:'+server.address().port+'/lab/verified';
+  let panel;
+  try{
+    panel=await startDiagnosticPanel({observeOnOpen:false});
+    const post=()=>fetch(panel.url+'run-lab',{method:'POST',
+      headers:{Origin:new URL(panel.url).origin}});
+    const result=await post();
+    assert.equal(result.status,200);
+    assert.equal((await result.json()).ok,true);
+    const json=await (await fetch(panel.url+'export')).json();
+    const literal=json.events.find(e=>e.event==='native_http_lab_literal');
+    assert.equal(literal.literalBodyText,body.toString('utf8'));
+    assert.equal(literal.literalBodyBase64,body.toString('base64'));
+    assert.deepEqual(literal.literalSetCookieValues,[cookie]);
+    assert.equal(json.checks.networkMetadata.labLiteralCaptureRequested,true);
+    marked=false;
+    const rejected=await post();
+    assert.equal(rejected.status,422);
+    assert.equal(json.events.filter(e=>e.event==='native_http_lab_literal').length,1);
+    assert.equal(panel.getState().events.filter(e=>e.event==='native_http_lab_literal').length,1);
+  }finally{
+    if(panel)await panel.stop();
+    if(previous===undefined)delete process.env.DILOAKPRO_TEST_LITERAL_URL;
+    else process.env.DILOAKPRO_TEST_LITERAL_URL=previous;
+    await new Promise(resolve=>server.close(resolve));
+  }
+});
+
 test('normal events cannot inject lab-only values; malformed payload and hashes are rejected',()=>{
   const fields={literalBodyText:'pass',literalBodyBase64:'cGFzcw==',
     literalBodySha256:crypto.createHash('sha256').update('pass').digest('hex'),
