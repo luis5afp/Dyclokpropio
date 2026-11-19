@@ -49,6 +49,9 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <h2>Recepción pasiva antes de crear Chromium — servidor → programa</h2>
 <p>Este es el punto solicitado: el observador está instalado antes de pulsar Abrir, registra la llegada de fragmentos al flujo de respuesta Node y los deja pasar sin redirigir, consumir ni modificar su contenido. Genera solo un comprobante HMAC temporal (clave efímera descartada), número de fragmentos y bytes observados. No copia los datos secretos ni los guarda. Una respuesta de Node puede estar comprimida; el comprobante corresponde a los bytes del flujo Node recibido, no necesariamente a los datos descomprimidos ni a lo aplicado por Chromium.</p>
 <div class="checks" id="receive-proof" aria-live="polite"></div>
+<h2>Captura de contenido — solo servidor de laboratorio autorizado</h2>
+<p>Por defecto está desactivada. Cuando se habilita voluntariamente con DILOAKPRO_LAB_CAPTURE_ENABLE=1, una dirección exacta en DILOAKPRO_LAB_CAPTURE_ORIGIN y una frase de cifrado, guarda exclusivamente las respuestas de ese origen en archivos .dplab cifrados AES-256-GCM. Incluye URL, cabeceras de respuesta y cuerpo original del flujo Node, sin modificarlo. Los archivos se guardan localmente en la carpeta LabCaptures dentro de los datos de usuario de esta aplicación; no se suben ni se añaden al JSON/TXT de diagnóstico. No se registran respuestas de servidores DICloak. Límite: 4 MiB por respuesta, 16 MiB por sesión. No incluye tráfico fetch, Chromium ni otras librerías nativas.</p>
+<div class="checks" id="lab-response-status" aria-live="polite"></div>
 <h2>Tráfico Node HTTP(S), fetch y TCP/TLS (metadatos secundarios)</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
@@ -102,6 +105,11 @@ const kinds={
  native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",
  native_http_socket:"Socket asignado (HTTP Node)",native_http_tcp:"Conexión TCP establecida (HTTP Node)",
  native_http_tls:"Conexión TLS negociada (HTTP Node)",
+ lab_capture_active:"Laboratorio cifrado: habilitado",
+ lab_capture_saved:"Respuesta de laboratorio guardada cifrada",
+ lab_capture_skipped:"Respuesta de laboratorio omitida por seguridad",
+ lab_capture_unavailable:"Captura de laboratorio no disponible",
+ lab_capture_stopped:"Fin de la captura cifrada de laboratorio",
  chromium_monitor_status:"Estado del observador Chromium",
  chromium_target_connected:"Pestaña o iframe de Chromium conectado",
  chromium_network_request:"Chromium solicita recurso",
@@ -248,6 +256,19 @@ async function update(){
       const span=document.createElement("span");span.textContent=value;
       div.append(strong,span);reception.append(div);
     }
+    const labNode=document.getElementById("lab-response-status");labNode.replaceChildren();
+    const labStats=[
+      ["Estado",network.labCaptureActive?"Laboratorio cifrado habilitado":"Desactivado o captura finalizada"],
+      ["Respuestas de laboratorio guardadas",String(network.labCaptureSaved||0)],
+      ["Bytes de cuerpo de laboratorio protegidos",String(network.labCaptureBytes||0)+" bytes"],
+      ["Capturas omitidas o fallidas",String(network.labCaptureFailed||0)]
+    ];
+    for(const [title,value] of labStats){
+      const item=document.createElement("div");item.className="check";
+      const a=document.createElement("strong");a.textContent=title;
+      const b=document.createElement("span");b.textContent=value;
+      item.append(a,b);labNode.append(item);
+    }
     const traffic=document.getElementById("traffic-checks");traffic.replaceChildren();
     const metrics=[
       ["Cuerpo HTTP saliente",String(network.outboundBodyBytesQueued||0)+" bytes entregados a solicitudes Node"],
@@ -371,6 +392,8 @@ async function update(){
         ev.contentEncoding?"Compresión: "+ev.contentEncoding:null,
         ev.inboundStreamComplete?"Flujo Node completo (según observador)":null,
         ev.inboundStreamProof?"HMAC temporal: "+ev.inboundStreamProof.slice(0,16)+"…":null,
+        ev.labReason?"Laboratorio: "+ev.labReason:null,
+        ev.labReceivedBodyBytes!==undefined?"Cuerpo cifrado de laboratorio: "+String(ev.labReceivedBodyBytes)+" bytes":null,
         ev.inboundChunkCount!==undefined?"Fragmentos recibidos: "+String(ev.inboundChunkCount):null,
         ev.responseClass?"Grupo: "+ev.responseClass:null,
         ev.servedFromCache?"Caché local":null,
