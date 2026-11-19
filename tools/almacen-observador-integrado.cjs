@@ -123,6 +123,26 @@ function startNodeHttpTrace(emit) {
           ...(peerIp?{peerIp}:{}),...(peerPort?{peerPort}:{}),
           ...indicators(res)});
       }
+      // Nonintrusive request-socket lifecycle. No headers, certificate,
+      // names, bodies or cookies are inspected. TCP peer can be a proxy.
+      req.once('socket',socket=>{
+        safeEmit({...base,phase:'socket',socketReused:!socket.connecting,
+          transportEncrypted:Boolean(socket.encrypted)});
+        if(socket.connecting){
+          socket.once('connect',()=>{
+            const ip=socket.remoteAddress,port=socket.remotePort;
+            safeEmit({...base,phase:'tcp',
+              ...(typeof ip==='string'&&net.isIP(ip)?{peerIp:ip}:{}),
+              ...(Number.isInteger(port)&&port>0&&port<=65535?{peerPort:port}:{})});
+          });
+          socket.once('secureConnect',()=>{
+            safeEmit({...base,phase:'tls',
+              tlsAuthorized:socket.authorized===true,
+              tlsProtocol:/^TLSv1\.[0-3]$/.test(String(socket.getProtocol?.()||''))?
+                socket.getProtocol():undefined});
+          });
+        }
+      });
       // Install before the caller's response callback, without subscribing
       // to 'data' or changing the response stream's flow mode.
       req.prependOnceListener('response',res=>{
@@ -211,7 +231,7 @@ function startWindowsSampler(emit,pid=process.pid){
         catch{if(errors++<2)emit({kind:'session',phase:'error',code:'MONITOR_ERROR'});}
       });
   }
-  poll();const timer=setInterval(poll,6000);timer.unref?.();
+  poll();const timer=setInterval(poll,3500);timer.unref?.();
   return ()=>{live=false;clearInterval(timer);};
 }
 function startLabWatcher(emit,root){
@@ -235,7 +255,8 @@ function startCapture({emit,pid=process.pid,labRoot}={}){
   if(typeof emit!=='function')throw new TypeError('emit required');
   const safeEmit=e=>{try{emit(e);}catch{}},stops=[];
   for(const factory of [()=>startNodeHttpTrace(safeEmit),
-    ()=>startWindowsSampler(safeEmit,pid),()=>startLabWatcher(safeEmit,labRoot)]){
+    ()=>require('./almacen-undici-observador.cjs').startUndiciTrace(safeEmit),
+    ()=>startWindowsSampler(safeEmit,pid)]){
     try{stops.push(factory());}catch{safeEmit({kind:'session',phase:'error',code:'MONITOR_ERROR'});}
   }
   let stopped=false;
