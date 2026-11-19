@@ -124,6 +124,7 @@ function validateDiagnostic(input){
    monitorIssue:['none','disabled_by_default','missing_api_port','invalid_api_port',
      'missing_api_key','api_access_denied','api_endpoint_unsupported',
      'api_profile_mismatch','api_session_not_running','api_unreachable',
+     'remote_inspector_unavailable',
      'api_response_unavailable','cdp_connection_unavailable',
      'cdp_transport_missing','cdp_ws_invalid']
  })){
