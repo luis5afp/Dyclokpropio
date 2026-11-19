@@ -1,8 +1,9 @@
 'use strict';
 /**
  * Loopback-only read-only diagnostics UI for the opt-in test receiver.
- * NO global traffic interception. NO arbitrary strings, URLs, HTTP
- * headers, cookies, passwords, tokens or response bodies are accepted.
+ * Normal diagnostic events reject arbitrary sensitive values. One opt-in
+ * lab-only event stores unmodified synthetic response bytes from an exact
+ * test URL marked by its server; never unconditionally capture secrets.
  */
 const http=require('node:http');
 const crypto=require('node:crypto');
@@ -14,6 +15,7 @@ const {startCapture}=require('./almacen-observador-integrado.cjs');
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
+ 'native_http_lab_literal',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
@@ -163,6 +165,34 @@ function validateDiagnostic(input){
      throw Error('INVALID_CAPTURE_FINISH_REASON');
    out.finishReason=input.finishReason;
  }
+ // Literal payload fields are accepted exclusively for a marked,
+ // explicitly allowlisted synthetic laboratory response.
+ const labFields=['literalBodyText','literalBodyBase64','literalBodySha256','literalSetCookieValues'];
+ if(input.event==='native_http_lab_literal'){
+   if(input.source!=='servidor_pruebas'||typeof input.literalBodyBase64!=='string'||
+      !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(input.literalBodyBase64))
+     throw Error('INVALID_LAB_FIXTURE');
+   const bytes=Buffer.from(input.literalBodyBase64,'base64');
+   if(bytes.length>65536||bytes.toString('base64')!==input.literalBodyBase64)
+     throw Error('INVALID_LAB_FIXTURE');
+   const hash=crypto.createHash('sha256').update(bytes).digest('hex');
+   if(input.literalBodySha256!==hash)throw Error('INVALID_LAB_FIXTURE');
+   out.literalBodyBase64=input.literalBodyBase64;
+   out.literalBodySha256=hash;
+   if(input.literalBodyText!==undefined){
+     if(typeof input.literalBodyText!=='string'||
+        !Buffer.from(input.literalBodyText,'utf8').equals(bytes))
+       throw Error('INVALID_LAB_FIXTURE');
+     out.literalBodyText=input.literalBodyText;
+   }
+   if(!Array.isArray(input.literalSetCookieValues)||
+      input.literalSetCookieValues.length>8||
+      input.literalSetCookieValues.some(v=>typeof v!=='string'||Buffer.byteLength(v,'utf8')>8192))
+     throw Error('INVALID_LAB_FIXTURE');
+   out.literalSetCookieValues=[...input.literalSetCookieValues];
+ }else if(labFields.some(key=>input[key]!==undefined)){
+   throw Error('LAB_PAYLOAD_OUTSIDE_FIXTURE');
+ }
  if(input.sha256!==undefined){
    if(typeof input.sha256!=='string'||!/^[a-f0-9]{64}$/.test(input.sha256))
      throw Error('INVALID_DIAGNOSTIC_SHA256');
@@ -174,13 +204,14 @@ function mapNativeEvent(row){
  if(!row||typeof row!=='object')return null;
  const base={source:'programa',at:new Date().toISOString()};
  if(row.kind==='http'){
-   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer'}[row.phase];
+   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer',lab_literal:'native_http_lab_literal'}[row.phase];
    if(!event)return null;
-   const out={...base,event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
+   const out={...base,...(row.phase==='lab_literal'?{source:'servidor_pruebas'}:{}),event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
    for(const key of ['status','elapsedMs','bytes','requestBytesDeclared',
      'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
      'requestAuthorizationPresent','requestCookiePresent',
-     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort'])if(row[key]!=null)out[key]=row[key];
+     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort',
+     'literalBodyText','literalBodyBase64','literalBodySha256','literalSetCookieValues'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
@@ -205,7 +236,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
-   requestsWithProxyAuthorization:0,responsesWithSetCookie:0};
+   requestsWithProxyAuthorization:0,responsesWithSetCookie:0,
+   labLiteralResponseCount:0};
  function checks(){
    const has=stage=>completedStages.has(stage);
    return {
@@ -241,6 +273,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        requestsWithProxyAuthorization:telemetry.requestsWithProxyAuthorization,
        responsesWithSetCookie:telemetry.responsesWithSetCookie,
        byteCountingScope:'node_http_application_body_not_wire_traffic',
+       labLiteralResponseCount:telemetry.labLiteralResponseCount,
+       labLiteralCaptureRequested:Boolean(process.env.DILOAKPRO_TEST_LITERAL_URL),
        uploadRouteRequests:telemetry.uploadRouteRequests,
        requestsWithKnownSize:telemetry.requestsWithKnownSize,
        declaredOutboundBytes:telemetry.declaredOutboundBytes
@@ -347,6 +381,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    if(event.event==='capture_unavailable')capture.status='unavailable';
    if(event.event==='native_process_seen'&&event.processClass==='browser')
      telemetry.browserProcessObserved=true;
+   if(event.event==='native_http_lab_literal')telemetry.labLiteralResponseCount++;
    if(event.event==='native_http_request'){
      telemetry.nodeRequests++;
      if(event.routeTemplate?.endsWith('/upload'))telemetry.uploadRouteRequests++;
