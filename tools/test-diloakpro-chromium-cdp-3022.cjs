@@ -16,7 +16,7 @@ test('browser URL parsing retains a domain and route template, never userinfo, q
   const result=safeHost('https://portal.example.test/gateway/v1/session/'+SECRET+'?auth='+SECRET);
   assert.equal(result.browserHost,'portal.example.test');
   assert.equal(result.transportProtocol,'https');
-  assert.equal(result.routeTemplate,'/:id/v1/session/:id');
+  assert.equal(result.routeTemplate,'/gateway/v1/session/:id');
   assert.ok(!JSON.stringify(result).includes(SECRET));
   assert.equal(safeHost('https://user:password@example.test/profile'),null);
   assert.equal(safeHost('file:///private/profile'),null);
