@@ -46,7 +46,7 @@ function startNodeHttpTrace(emit) {
       let requestBytesDeclared=null;
       try{
         const length=req.getHeader('content-length');
-        if(typeof length==='string'&&/^\\d{1,8}$/.test(length)){
+        if(typeof length==='string'&&/^\d{1,8}$/.test(length)){
           const parsed=Number(length);
           if(parsed<=MAX_REPORTED_BODY_BYTES)requestBytesDeclared=parsed;
         }
@@ -108,7 +108,7 @@ function startNodeHttpTrace(emit) {
         if(done)return;
         done=true;
         const length=res?.headers?.['content-length'];
-        const bytes=typeof length==='string'&&/^\\d{1,8}$/.test(length)?
+        const bytes=typeof length==='string'&&/^\d{1,8}$/.test(length)?
           Number(length):null;
         let peerIp=null,peerPort=null;
         try{
