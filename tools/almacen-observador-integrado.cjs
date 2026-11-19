@@ -312,4 +312,4 @@ function startCapture({emit,pid=process.pid,labRoot}={}){
   let stopped=false;
   return ()=>{if(stopped)return;stopped=true;for(const stop of stops)try{stop();}catch{}};
 }
-module.exports={requestMetadata,startNodeHttpTrace,parseWindowsSample,startCapture,processClass};
+module.exports={requestMetadata,startNodeHttpTrace,parseWindowsSample,startCapture,processClass,normalizeLabUrl,isLabResponse,labCookieValues,MAX_LAB_CAPTURE_BYTES};
