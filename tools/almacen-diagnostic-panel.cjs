@@ -428,7 +428,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  function makeReport(){
    const report={
      schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
-     delivery:'v30.0.22-diloakpro-rc9',coverage:'partial',
+     delivery:'v30.0.23-diloakpro-rc10',coverage:'partial',
      exportedAt:new Date().toISOString(),
      events,counters,checks:checks()
    };
