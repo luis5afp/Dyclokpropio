@@ -42,6 +42,9 @@ function chunkSize(chunk,encoding){
 }
 function startNodeHttpTrace(emit) {
   const restores=[];
+  // One ephemeral secret key per capture. The HMAC is a private correlation
+  // proof of the observed response stream, not a recoverable payload copy.
+  const captureProofKey=crypto.randomBytes(32);
   for(const [mod,proto] of [[http,'http:'],[https,'https:']]){
     const original=mod.request;
     function traced(...args) {
@@ -67,6 +70,9 @@ function startNodeHttpTrace(emit) {
       const safeEmit=row=>{try{emit(row);}catch{}};
       safeEmit(base);
       let outbound=0,inbound=0,limited=false,transferred=false,done=false;
+      let inboundChunks=0,bodyMac=null,bodyProofUnavailable=false;
+      // The MAC is initialized when a response is received, before its stream
+      // is handed to DICloak's normal response callback.
       const add=(direction,chunk,encoding)=>{
         const n=chunkSize(chunk,encoding);
         if(n===null)return;
@@ -108,8 +114,19 @@ function startNodeHttpTrace(emit) {
       function transfer(state,res){
         if(transferred)return;
         transferred=true;
+        let inboundStreamProof;
+        // Only complete streams can be compared within this capture. Never
+        // expose the HMAC key or retain individual chunks or bodies.
+        if(state==='response_end'&&!limited&&!bodyProofUnavailable&&bodyMac){
+          try{inboundStreamProof=bodyMac.digest('hex');}catch{}
+        }
+        bodyMac=null;
         safeEmit({...base,phase:'transfer',transferState:state,...indicators(res),
           byteCountLimited:limited,
+          proofScope:'node_received_stream_hmac_ephemeral',
+          inboundChunkCount:Math.min(inboundChunks,1000000),
+          inboundStreamComplete:state==='response_end'&&!limited,
+          ...(inboundStreamProof?{inboundStreamProof}:{}),
           ...(limited?{}:{
             outboundBodyBytesQueued:outbound,inboundBodyBytesObserved:inbound
           })});
@@ -165,8 +182,28 @@ function startNodeHttpTrace(emit) {
       // Install before the caller's response callback, without subscribing
       // to 'data' or changing the response stream's flow mode.
       req.prependOnceListener('response',res=>{
+        // Instrument the same decoded-from-TLS Node stream consumed by the
+        // application. Do NOT subscribe to data/read(), buffer, redirect,
+        // change headers, write a file, or alter downstream stream behavior.
+        bodyMac=crypto.createHmac('sha256',captureProofKey);
         const originalPush=res.push;
         res.push=function(chunk,...rest){
+          // Read-only before forwarding to the application's stream.
+          if(chunk!==null&&chunk!==undefined){
+            const size=chunkSize(chunk,rest[0]);
+            if(size!==null&&size>0){
+              inboundChunks++;
+              if(!bodyProofUnavailable&&inbound+size<=MAX_REPORTED_BODY_BYTES){
+                try{
+                  if(Buffer.isBuffer(chunk)||chunk instanceof Uint8Array)
+                    bodyMac.update(chunk);
+                  else if(typeof chunk==='string')
+                    bodyMac.update(chunk,typeof rest[0]==='string'?rest[0]:'utf8');
+                  else bodyProofUnavailable=true;
+                }catch{bodyProofUnavailable=true;}
+              }else bodyProofUnavailable=true;
+            }
+          }
           const result=originalPush.apply(this,arguments);
           add('in',chunk,rest[0]);
           return result;
@@ -184,7 +221,10 @@ function startNodeHttpTrace(emit) {
     mod.request=traced;
     restores.push(()=>{if(mod.request===traced)mod.request=original;});
   }
-  return ()=>restores.forEach(fn=>fn());
+  return ()=>{
+    restores.forEach(fn=>fn());
+    captureProofKey.fill(0);
+  };
 }
 
 const PS=[
