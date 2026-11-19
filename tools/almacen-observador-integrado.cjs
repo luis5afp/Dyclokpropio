@@ -110,9 +110,17 @@ function startNodeHttpTrace(emit) {
         const length=res?.headers?.['content-length'];
         const bytes=typeof length==='string'&&/^\\d{1,8}$/.test(length)?
           Number(length):null;
+        let peerIp=null,peerPort=null;
+        try{
+          const address=res?.socket?.remoteAddress;
+          const port=res?.socket?.remotePort;
+          if(typeof address==='string'&&net.isIP(address))peerIp=address;
+          if(Number.isInteger(port)&&port>=1&&port<=65535)peerPort=port;
+        }catch{}
         safeEmit({...base,phase,elapsedMs:Math.max(0,Math.round(performance.now()-started)),
           status:Number.isInteger(res?.statusCode)?res.statusCode:null,
           bytes:Number.isSafeInteger(bytes)&&bytes<=MAX_REPORTED_BODY_BYTES?bytes:null,
+          ...(peerIp?{peerIp}:{}),...(peerPort?{peerPort}:{}),
           ...indicators(res)});
       }
       // Install before the caller's response callback, without subscribing
