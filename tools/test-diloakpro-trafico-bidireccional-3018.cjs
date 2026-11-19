@@ -2,6 +2,9 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const http=require('node:http');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
 const {startNodeHttpTrace}=require('./almacen-observador-integrado.cjs');
 const {mapNativeEvent,validateDiagnostic,startDiagnosticPanel}=
   require('./almacen-diagnostic-panel.cjs');
@@ -46,6 +49,8 @@ test('bidirectional Node HTTP metadata preserves bytes but never secrets',async(
     assert.equal(transfer.requestProxyAuthorizationPresent,true);
     assert.equal(transfer.responseSetCookiePresent,true);
     assert.equal(response.status,200);
+    assert.equal(response.peerIp,'127.0.0.1');
+    assert.equal(validateDiagnostic(mapNativeEvent(response)).peerIp,'127.0.0.1');
     assert.equal(request.routeTemplate,'/api/:id');
     const sanitized=validateDiagnostic(mapNativeEvent(transfer));
     assert.equal(sanitized.outboundBodyBytesQueued,5);
@@ -81,5 +86,16 @@ test('panel aggregates only whitelisted transfer metrics',async()=>{
       event:'native_http_transfer',requestCookiePresent:'SECRET'}),/INVALID_DIAGNOSTIC_FLAG/);
     assert.throws(()=>validateDiagnostic({source:'programa',
       event:'native_http_transfer',outboundBodyBytesQueued:-1}),/INVALID_DIAGNOSTIC_SIZE/);
+    assert.throws(()=>validateDiagnostic({source:'programa',
+      event:'native_http_response',peerIp:'server.example/?secret=1'}),/INVALID_DIAGNOSTIC_IP/);
   }finally{await panel.stop();}
+});
+
+test('diagnostic panel script and traffic columns are syntactically sound',()=>{
+  const html=fs.readFileSync(path.join(__dirname,'almacen-diagnostic-panel.html'),'utf8');
+  const script=html.match(/<script[^>]*>([\\s\\S]*?)<\\/script>/);
+  assert.ok(script,'embedded panel script must exist');
+  new vm.Script(script[1]);
+  assert.ok(html.includes('id="traffic-checks"'));
+  assert.ok(html.includes('<th>Cuerpo entrada</th>'));
 });
