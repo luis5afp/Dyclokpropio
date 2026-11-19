@@ -93,9 +93,9 @@ test('panel aggregates only whitelisted transfer metrics',async()=>{
 
 test('diagnostic panel script and traffic columns are syntactically sound',()=>{
   const html=fs.readFileSync(path.join(__dirname,'almacen-diagnostic-panel.html'),'utf8');
-  const script=html.match(/<script[^>]*>([\\s\\S]*?)<\\/script>/);
+  const script=html.split('<script nonce="PANEL_CSP_NONCE">')[1]?.split('</script>')[0];
   assert.ok(script,'embedded panel script must exist');
-  new vm.Script(script[1]);
+  new vm.Script(script);
   assert.ok(html.includes('id="traffic-checks"'));
   assert.ok(html.includes('<th>Cuerpo entrada</th>'));
 });
