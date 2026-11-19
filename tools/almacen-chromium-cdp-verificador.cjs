@@ -261,6 +261,7 @@ function safeApiProblem(error){
  if(/DICLOAK_RUNTIME_PROFILE_MISMATCH|LOCAL_API_PROFILE_ID_MISMATCH/.test(msg))
    return 'api_profile_mismatch';
  if(/LOCAL_API_KEY_MISSING|START_REJECTED/.test(msg))return 'api_access_denied';
+ if(/DICLOAK_DEBUG_PORT_UNAVAILABLE/.test(msg))return 'remote_inspector_unavailable';
  if(/ECONNREFUSED|ECONNRESET|ETIMEDOUT|TIMEOUT|EHOSTUNREACH/.test(msg))
    return 'api_unreachable';
  return 'api_response_unavailable';
