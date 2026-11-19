@@ -22,6 +22,7 @@ on:
       - 'tools/diloak-lab-read.cjs'
       - 'tools/test-diloakpro-lab-respuestas-cifradas-3025.cjs'
       - 'tools/Iniciar-diloakPRO-RC12-LAB.ps1'
+      - 'docs/DILOAKPRO_RC12_LAB_RESPUESTAS_CIFRADAS.md'
       - 'tools/almacen-native-integrated-diagnostic.cjs'
       - 'tools/build-dicloak-native-diagnostic-3015.js'
       - 'release-build/native-30.0.15/migrate-legacy.ps1'
