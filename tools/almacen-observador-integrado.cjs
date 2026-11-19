@@ -6,22 +6,29 @@ const net=require('node:net'), path=require('node:path'), fs=require('node:fs');
 const crypto=require('node:crypto');
 const {execFile}=require('node:child_process');
 const {performance}=require('node:perf_hooks');
+const {safeHostname,describePath,safeMime,safeEncoding,statusClass}=require('./almacen-http-context.cjs');
 const METHODS=new Set(['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS']);
-const PARTS=new Set('api gin openapi v1 v2 v3 v4 v5 v6 env envs profile profiles request start stop open close login logout sync data local remote status config info list update version download upload check proxy browser extension extensions user users get set settings health events session sessions http auth files file desktop windows'.split(' '));
 function requestMetadata(args,protocol) {
   const target=args[0];
   const opts={...(target&&typeof target==='object'&&!(target instanceof URL)?target:{}),
     ...(args[1]&&typeof args[1]==='object'?args[1]:{})};
   let url;
-  if(typeof target==='string'||target instanceof URL)try{url=new URL(String(target),protocol+'//localhost');}catch{}
+  if(typeof target==='string'||target instanceof URL){
+    try{url=new URL(String(target),protocol+'//localhost');}catch{}
+  }
   const action=String(opts.method||'GET').toUpperCase();
   if(!METHODS.has(action))return null;
-  const hostname=String(opts.hostname||opts.host||url?.hostname||'').toLowerCase();
-  const scope=/^(?:localhost|127(?:\.\d{1,3}){3}|\[?::1\]?)$/.test(hostname)?'local':'remote';
-  let pathname;
-  try{pathname=new URL(String(opts.path||opts.pathname||url?.pathname||'/'),'http://localhost').pathname;}catch{pathname='/';}
-  const segments=pathname.split('/').filter(Boolean).slice(0,8);
-  return {action,scope,routeTemplate:'/'+segments.map(v=>PARTS.has(v.toLowerCase())?v.toLowerCase():':id').join('/')};
+  const originHost=safeHostname(String(opts.hostname||opts.host||url?.hostname||''));
+  const scope=originHost&&(
+    originHost==='localhost'||originHost==='127.0.0.1'||originHost==='::1')?'local':'remote';
+  let pathname='/',search='';
+  try{
+    const candidate=new URL(String(opts.path||opts.pathname||
+      (url?url.pathname+url.search:'/')),'http://localhost');
+    pathname=candidate.pathname;search=candidate.search;
+  }catch{}
+  return {action,scope,...describePath(pathname,search),
+    ...(originHost?{originHost}:{})};
 }
 // Count only bytes, never inspect or retain the transmitted content.
 const MAX_REPORTED_BODY_BYTES=32*1024*1024;
@@ -53,6 +60,9 @@ function startNodeHttpTrace(emit) {
       }catch{}
       const base={kind:'http',transport:'node',phase:'request',
         action:meta.action,scope:meta.scope,routeTemplate:meta.routeTemplate,requestId,
+        routeDepth:meta.routeDepth,routeMaskedSegments:meta.routeMaskedSegments,
+        endpointArea:meta.endpointArea,queryKeyNames:meta.queryKeyNames,
+        ...(meta.originHost?{originHost:meta.originHost}:{}),
         ...(requestBytesDeclared===null?{}:{requestBytesDeclared})};
       const safeEmit=row=>{try{emit(row);}catch{}};
       safeEmit(base);
@@ -117,7 +127,16 @@ function startNodeHttpTrace(emit) {
           if(typeof address==='string'&&net.isIP(address))peerIp=address;
           if(Number.isInteger(port)&&port>=1&&port<=65535)peerPort=port;
         }catch{}
+        const headerType=typeof res?.headers?.['content-type']==='string'?
+          res.headers['content-type']:undefined;
+        const headerEncoding=typeof res?.headers?.['content-encoding']==='string'?
+          res.headers['content-encoding']:undefined;
         safeEmit({...base,phase,elapsedMs:Math.max(0,Math.round(performance.now()-started)),
+          ...(phase==='response'?{
+            mediaType:safeMime(headerType),
+            contentEncoding:safeEncoding(headerEncoding),
+            responseClass:statusClass(res?.statusCode)
+          }:{}),
           status:Number.isInteger(res?.statusCode)?res.statusCode:null,
           bytes:Number.isSafeInteger(bytes)&&bytes<=MAX_REPORTED_BODY_BYTES?bytes:null,
           ...(peerIp?{peerIp}:{}),...(peerPort?{peerPort}:{}),

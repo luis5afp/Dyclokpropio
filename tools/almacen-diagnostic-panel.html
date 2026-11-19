@@ -37,7 +37,7 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 </style></head><body>
 <h1>diloakPRO · Diagnóstico de comunicación</h1>
 <p>Operación → Abrir · Diagnóstico en vivo · Sin archivo automático</p>
-<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API. No se archiva automáticamente; solo se guardan JSON y TXT cuando el usuario pulsa Exportar. Se conservan metadatos en memoria durante esta sesión.</div>
+<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras ni cuerpos privados. Ahora indica el dominio de origen, la familia del endpoint, el tipo MIME y la estructura anonimizada de rutas y parámetros de consulta permitidos. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API. No se archiva automáticamente; solo se guardan JSON y TXT cuando el usuario pulsa Exportar. Se conservan metadatos en memoria durante esta sesión.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Estado de configuración y comunicación (verificación parcial)</h2>
@@ -52,12 +52,13 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <h2>Tráfico de las páginas Chromium (verificación de sesión por API local)</h2>
 <p>Este monitor solo se activa si la API local identifica el perfil y su WebSocket de Chromium. Es opcional y de lectura: utiliza Network.enable para registrar los dominios visitados, códigos HTTP, tipos de recursos, redirecciones, tiempos, bytes y bloqueos de cookies, sin leer valores de cookies ni cuerpos HTTP. Se conecta tras finalizar la etapa de apertura: puede perder solicitudes iniciales del navegador. Requiere DILOAKPRO_DIAG_CDP_ENABLE=1, DILOAKPRO_DIAG_API_PORT y DICLOAK_LOCAL_API_KEY configurados antes de iniciar diloakPRO.</p>
 <div class="checks" id="chromium-network" aria-live="polite"></div>
+<div class="note" id="chromium-setup-help" aria-live="polite">La supervisión de Chromium es opcional y exige habilitar Open API y Remote Inspector en tu instalación. No pongas claves en este informe ni en capturas de pantalla.</div>
 <h2>Cómo pasan las cookies a Chromium</h2>
 <p>El motor puede restaurar cookies desde los datos del perfil, recibir una cabecera Set-Cookie en una respuesta o crearlas mediante JavaScript o APIs del navegador. Este diagnóstico confirma etapas de preparación y presencia de Set-Cookie en solicitudes Node observadas, pero <strong>no comprueba que Chromium las haya instalado</strong>. No inspecciona la base de cookies ni guarda sus valores.</p>
 <div class="checks" id="cookie-path" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Exportar JSON + TXT voluntariamente</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
-<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Dominio (solo Chromium)</th><th>Ruta anonimizada</th><th>Recurso</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Dominio de origen</th><th>Ruta anon. y categoría</th><th>Recurso / MIME</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
@@ -104,6 +105,7 @@ const kinds={
  chromium_network_response:"Servidor web responde a Chromium",
  chromium_network_finish:"Chromium termina transferencia",
  chromium_network_fail:"Chromium cancela o falla recurso",
+ chromium_network_redirect:"Chromium redirige la solicitud (HTTP 3xx)",
  chromium_cookie_response:"Política de Set-Cookie en respuesta Chromium",
  chromium_cookie_request:"Política de cookies en solicitud Chromium",
  native_fetch_request:"Solicitud Node fetch",native_fetch_response:"Respuesta Node fetch",
@@ -263,8 +265,30 @@ async function update(){
       unavailable:"No disponible: la API o la sesión no pudo verificarse",
       stopped:"Observación finalizada"
     };
+    const reasons={
+      none:"Configuración disponible; no se han detectado impedimentos",
+      disabled_by_default:"Activa DILOAKPRO_DIAG_CDP_ENABLE=1 antes de iniciar el programa",
+      missing_api_port:"Falta DILOAKPRO_DIAG_API_PORT: utiliza el puerto de Open API local, no el del proxy",
+      invalid_api_port:"Puerto de Open API no válido (1024-65535)",
+      missing_api_key:"Falta DICLOAK_LOCAL_API_KEY: introdúcela solo en tu PowerShell local",
+      api_access_denied:"Open API rechazó el acceso: comprueba la clave y los permisos de tu cuenta",
+      api_endpoint_unsupported:"Esta versión no ofrece el endpoint V2 de sesión requerido",
+      api_profile_mismatch:"La API devolvió una identidad de perfil diferente; no se conecta CDP",
+      api_session_not_running:"La API indica que el perfil aún no está abierto",
+      api_unreachable:"No se pudo conectar a Open API en 127.0.0.1 y el puerto configurado",
+      api_response_unavailable:"No hubo una respuesta de sesión compatible y verificable",
+      remote_inspector_unavailable:"Activa Remote Inspector en la configuración del perfil de DICloak",
+      cdp_connection_unavailable:"No se pudo establecer la sesión de depuración de Chromium",
+      cdp_transport_missing:"La versión de Electron no ofrece WebSocket compatible",
+      cdp_ws_invalid:"El WebSocket de depuración no coincide con la sesión local autorizada"
+    };
+    const help=document.getElementById("chromium-setup-help");
+    help.textContent="Diagnóstico de conexión: "+(reasons[network.chromiumIssue]||
+      "Comprueba la configuración de Open API y Remote Inspector")+
+      ". Opciones: DICloak → Más → Configuración → Open API; en el perfil, permitir Remote Inspector. Reinicia diloakPRO desde el mismo PowerShell que configuraste. No compartas la clave.";
     const chromiumCards=[
       ["Estado Chromium",statusLabel[network.chromiumStatus]||"Sin información"],
+      ["Causa concreta",reasons[network.chromiumIssue]||"Pendiente de revisar"],
       ["Solicitudes y respuestas Chromium",String(network.chromiumRequests||0)+
         " solicitudes · "+String(network.chromiumResponses||0)+" respuestas"],
       ["Respuestas HTTP 200 en Chromium",String(network.chromiumHttp200||0)+
@@ -329,6 +353,11 @@ async function update(){
         ev.sentCookieCount?"Cookies asociadas: "+String(ev.sentCookieCount):null,
         ev.cookieBlockedReasons?.length?"Motivos: "+ev.cookieBlockedReasons.join(", "):null,
         ev.monitorStatus?"Estado: "+ev.monitorStatus:null,
+        ev.monitorIssue?"Causa: "+(reasons[ev.monitorIssue]||"desconocida"):null,
+        ev.contentEncoding?"Compresión: "+ev.contentEncoding:null,
+        ev.responseClass?"Grupo: "+ev.responseClass:null,
+        ev.servedFromCache?"Caché local":null,
+        ev.servedFromServiceWorker?"Service worker":null,
         ev.tlsAuthorized===true?"TLS autorizado":ev.tlsAuthorized===false?"TLS no autorizado":null,
         ev.transportEncrypted?"Transporte cifrado":null,
         ev.socketReused?"Socket reutilizado":null,
@@ -338,9 +367,12 @@ async function update(){
         new Date(ev.at).toLocaleTimeString("es-PE"),
         sources[ev.source]||"",((kinds[ev.event]||"")+(ev.stage&&kinds[ev.stage]?" — "+kinds[ev.stage]:""))+phaseCode,
         ev.method===undefined?"—":String(ev.method),
-        ev.browserHost||"—",
-        ev.routeTemplate===undefined?"—":String(ev.routeTemplate),
-        ev.resourceType||"—",
+        ev.browserHost||ev.originHost||"—",
+        (ev.routeTemplate||"—")+(ev.endpointArea?" · "+ev.endpointArea:"")+
+          (ev.routeMaskedSegments?" · "+String(ev.routeMaskedSegments)+" segmentos reservados":"")+
+          (ev.queryKeyNames?.length?" · consulta: "+ev.queryKeyNames.join(", "):""),
+        (ev.resourceType||"—")+(ev.mediaType?" · "+ev.mediaType:"")+
+          (ev.httpProtocol?" · "+ev.httpProtocol:""),
         ev.status===undefined?"—":String(ev.status),
         ev.durationMs===undefined&&ev.elapsedMs===undefined?"—":String(ev.durationMs??ev.elapsedMs),
         ev.bytes===undefined?"—":String(ev.bytes),

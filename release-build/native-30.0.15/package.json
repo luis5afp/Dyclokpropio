@@ -1,8 +1,8 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.22",
+  "version": "30.0.23",
   "private": true,
-  "description": "diloakPRO RC9 - optional Chromium HTTP and cookie-policy verifier, no automatic archiving",
+  "description": "diloakPRO RC10 - HTTP origins, media types and actionable Chromium diagnostics",
   "devDependencies": {
     "@electron/asar": "3.2.18",
     "electron-builder": "^26.0.0",

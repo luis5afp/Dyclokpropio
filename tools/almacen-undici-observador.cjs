@@ -44,6 +44,9 @@ function startUndiciTrace(emit){
       tracked.set(req,item);
       publish({kind:'fetch',phase:'request',action:meta.action,
         scope:meta.scope,routeTemplate:meta.routeTemplate,
+        ...(meta.originHost?{originHost:meta.originHost}:{}),
+        routeDepth:meta.routeDepth,routeMaskedSegments:meta.routeMaskedSegments,
+        endpointArea:meta.endpointArea,queryKeyNames:meta.queryKeyNames,
         requestId:item.requestId});
       return;
     }

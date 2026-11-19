@@ -14,6 +14,7 @@ const crypto=require('node:crypto');
 const net=require('node:net');
 const {performance}=require('node:perf_hooks');
 const {requestMetadata}=require('./almacen-observador-integrado.cjs');
+const {safeMime,safeHttpProtocol,statusClass}=require('./almacen-http-context.cjs');
 const {
   getRunningTestProfile,findBrowserWebSocket,validateLocalBrowserWebSocket
 }=require('./dicloak-local-api-profile.cjs');
@@ -43,9 +44,11 @@ function safeHost(urlValue){
  const hostname=u.hostname.toLowerCase();
  if(hostname.length>180||(!net.isIP(hostname)&&
    !/^(?:[a-z0-9-]{1,63}\.)*[a-z0-9-]{1,63}$/.test(hostname)))return null;
- const meta=requestMetadata([{method:'GET',hostname,path:u.pathname}],u.protocol);
+ const meta=requestMetadata([{method:'GET',hostname,path:u.pathname+u.search}],u.protocol);
  if(!meta)return null;
  return {browserHost:hostname,routeTemplate:meta.routeTemplate,
+   routeDepth:meta.routeDepth,routeMaskedSegments:meta.routeMaskedSegments,
+   endpointArea:meta.endpointArea,queryKeyNames:meta.queryKeyNames,
    transportProtocol:u.protocol==='https:'?'https':'http'};
 }
 function safeReasons(cookies){
@@ -98,6 +101,15 @@ function createCdpSessionMonitor({wsUrl,debugPort,emit,WebSocketImpl=globalThis.
    if(typeof id!=='string'||id.length>128)return;
    const key=msg.sessionId+':'+id;
    if(requests.size>=MAX_REQUESTS)requests.delete(requests.keys().next().value);
+   const prior=requests.get(key);
+   if(prior&&p.redirectResponse){
+     const status=safeNumber(p.redirectResponse.status,599);
+     sendRow({kind:'chromium',phase:'redirect',requestId:prior.requestId,
+       method:prior.method,browserHost:prior.browserHost,
+       routeTemplate:prior.routeTemplate,endpointArea:prior.endpointArea,
+       ...(status>=300&&status<=399?{status,responseClass:'3xx'}:{}),
+       sessionMapping:'openapi_verified'});
+   }
    const item={requestId:crypto.randomUUID(),started:performance.now(),
      ...url,method:action,resourceType:safeResourceType(p.type)};
    requests.set(key,item);
@@ -129,11 +141,17 @@ function createCdpSessionMonitor({wsUrl,debugPort,emit,WebSocketImpl=globalThis.
    const core={kind:'chromium',requestId:item.requestId,method:item.method,
      browserHost:item.browserHost,routeTemplate:item.routeTemplate,
      transportProtocol:item.transportProtocol,resourceType:item.resourceType,
+     routeDepth:item.routeDepth,routeMaskedSegments:item.routeMaskedSegments,
+     endpointArea:item.endpointArea,queryKeyNames:item.queryKeyNames,
      sessionMapping:'openapi_verified'};
    if(msg.method==='Network.responseReceived'){
      const response=p.response||{},status=safeNumber(response.status,599);
      sendRow({...core,phase:'response',
-       ...(status>=100?{status}:{ }),
+       ...(status>=100?{status,responseClass:statusClass(status)}:{ }),
+       mediaType:safeMime(response.mimeType),
+       httpProtocol:safeHttpProtocol(response.protocol),
+       servedFromCache:response.fromDiskCache===true,
+       servedFromServiceWorker:response.fromServiceWorker===true,
        durationMs:Math.min(3600000,Math.max(0,Math.round(performance.now()-item.started))),
        ...(typeof response.remoteIPAddress==='string'&&net.isIP(response.remoteIPAddress)?
          {peerIp:response.remoteIPAddress}:{}),
@@ -222,6 +240,32 @@ function createCdpSessionMonitor({wsUrl,debugPort,emit,WebSocketImpl=globalThis.
  * Runtime configuration is opt-in. Secrets stay in the environment and are
  * never copied to events, panel or logs. No API key => no CDP attachment.
  */
+// Public finite-state explanation; never emit environment or API key values.
+function diagnosticConfig(config={}){
+ if(config.DILOAKPRO_DIAG_CDP_ENABLE!=='1')
+   return {enabled:false,issue:'disabled_by_default'};
+ const portText=String(config.DILOAKPRO_DIAG_API_PORT||'');
+ if(!portText)return {enabled:false,issue:'missing_api_port'};
+ const port=Number(portText);
+ if(!/^\d{4,5}$/.test(portText)||!Number.isInteger(port)||
+   port<1024||port>65535)return {enabled:false,issue:'invalid_api_port'};
+ if(typeof config.DICLOAK_LOCAL_API_KEY!=='string'||
+   config.DICLOAK_LOCAL_API_KEY.length<12)
+   return {enabled:false,issue:'missing_api_key'};
+ return {enabled:true,port,issue:'none'};
+}
+function safeApiProblem(error){
+ const msg=String(error?.message||'');
+ if(/_HTTP_401|_HTTP_403/.test(msg))return 'api_access_denied';
+ if(/_HTTP_404|LOCAL_API_ENDPOINT_INVALID/.test(msg))return 'api_endpoint_unsupported';
+ if(/DICLOAK_RUNTIME_PROFILE_MISMATCH|LOCAL_API_PROFILE_ID_MISMATCH/.test(msg))
+   return 'api_profile_mismatch';
+ if(/LOCAL_API_KEY_MISSING|START_REJECTED/.test(msg))return 'api_access_denied';
+ if(/DICLOAK_DEBUG_PORT_UNAVAILABLE/.test(msg))return 'remote_inspector_unavailable';
+ if(/ECONNREFUSED|ECONNRESET|ETIMEDOUT|TIMEOUT|EHOSTUNREACH/.test(msg))
+   return 'api_unreachable';
+ return 'api_response_unavailable';
+}
 function startVerifiedBrowserNetwork({
   profileId,emit,
   config=process.env,
@@ -233,24 +277,28 @@ function startVerifiedBrowserNetwork({
  if(typeof profileId!=='string'||typeof emit!=='function')
    throw TypeError('BROWSER_MONITOR_CONFIG_INVALID');
  let live=true,session=null;
- const safeSend=row=>{if(!live)return;try{emit(row);}catch{}};
- const configured=config.DILOAKPRO_DIAG_CDP_ENABLE==='1'&&
-   typeof config.DICLOAK_LOCAL_API_KEY==='string'&&
-   config.DICLOAK_LOCAL_API_KEY.length>=12&&
-   /^(?:[1-9]\d{3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/.test(
-     String(config.DILOAKPRO_DIAG_API_PORT||''));
- const port=Number(config.DILOAKPRO_DIAG_API_PORT);
+ const safeSend=row=>{if(live)try{emit(row);}catch{}};
+ const setup=diagnosticConfig(config);
  async function begin(){
-   if(!configured){
-     safeSend({kind:'chromium',phase:'status',monitorStatus:'not_configured'});
+   if(!setup.enabled){
+     safeSend({kind:'chromium',phase:'status',monitorStatus:'not_configured',
+       monitorIssue:setup.issue});
      return;
    }
-   safeSend({kind:'chromium',phase:'status',monitorStatus:'resolving'});
-   let status=null;
+   safeSend({kind:'chromium',phase:'status',monitorStatus:'resolving',
+     monitorIssue:'none'});
+   let status=null,reason='api_response_unavailable';
    for(let i=0;i<retryCount&&live;i++){
-     try{status=await getSession({apiPort:port,apiKey:config.DICLOAK_LOCAL_API_KEY,profileId});}
-     catch{/* endpoint may be absent or browser not yet ready */}
-     if(status)break;
+     try{
+       status=await getSession({apiPort:setup.port,
+         apiKey:config.DICLOAK_LOCAL_API_KEY,profileId});
+       if(status)break;
+       reason='api_session_not_running';
+     }catch(error){
+       reason=safeApiProblem(error);
+       if(['api_access_denied','api_endpoint_unsupported','api_profile_mismatch'].includes(reason))
+         break;
+     }
      if(i+1<retryCount)await new Promise(resolve=>{
        const timer=setTimeout(resolve,retryMs);timer.unref?.();
      });
@@ -258,29 +306,40 @@ function startVerifiedBrowserNetwork({
    if(!live)return;
    if(!status||status.sessionIdentityVerifiedByOpenAPI!==true||
       status.profileId!==profileId){
-     safeSend({kind:'chromium',phase:'status',monitorStatus:'unavailable'});
+     if(status)reason='api_profile_mismatch';
+     safeSend({kind:'chromium',phase:'status',monitorStatus:'unavailable',
+       monitorIssue:reason});
      return;
    }
-   safeSend({kind:'chromium',phase:'status',monitorStatus:'verified'});
+   safeSend({kind:'chromium',phase:'status',monitorStatus:'verified',
+     monitorIssue:'none'});
    try{
-     const ws=status.webSocketUrl||
-       await discover(status.debugPort);
+     const ws=status.webSocketUrl||await discover(status.debugPort);
      if(!live)return;
      validateLocalBrowserWebSocket(ws,status.debugPort);
-     session=createSession({wsUrl:ws,debugPort:status.debugPort,
-       emit:safeSend});
+     session=createSession({wsUrl:ws,debugPort:status.debugPort,emit:safeSend});
      await session.start();
      if(!live){await session.stop();return;}
-     safeSend({kind:'chromium',phase:'status',monitorStatus:'active'});
-   }catch{
-     if(live)safeSend({kind:'chromium',phase:'status',monitorStatus:'unavailable'});
+     safeSend({kind:'chromium',phase:'status',monitorStatus:'active',
+       monitorIssue:'none'});
+   }catch(error){
+     let issue='cdp_connection_unavailable';
+     if(/CDP_MONITOR_DEPENDENCIES_UNAVAILABLE/.test(String(error?.message||'')))
+       issue='cdp_transport_missing';
+     else if(/BROWSER_DEBUG_URL/.test(String(error?.message||'')))
+       issue='cdp_ws_invalid';
+     if(live)safeSend({kind:'chromium',phase:'status',monitorStatus:'unavailable',
+       monitorIssue:issue});
      if(session)await session.stop().catch(()=>{});
    }
  }
- void begin().catch(()=>{if(live)safeSend({kind:'chromium',phase:'status',monitorStatus:'unavailable'});});
+ void begin().catch(()=>{
+   if(live)safeSend({kind:'chromium',phase:'status',monitorStatus:'unavailable',
+     monitorIssue:'api_response_unavailable'});
+ });
  return ()=>{
    live=false;
    if(session)void session.stop().catch(()=>{});
  };
 }
-module.exports={safeHost,safeReasons,createCdpSessionMonitor,startVerifiedBrowserNetwork};
+module.exports={safeHost,safeReasons,diagnosticConfig,safeApiProblem,createCdpSessionMonitor,startVerifiedBrowserNetwork};
