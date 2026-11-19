@@ -29,6 +29,8 @@ $env:DICLOAK_LOCAL_API_KEY = Read-Host 'Introduce clave Open API local (no compa
 & 'RUTA_REAL_AL_EJECUTABLE_DICloak.exe'
 ```
 
+**Lanzador opcional de Windows:** `tools/Iniciar-diloakPRO-RC10-CDP.ps1` pide el puerto y la clave de Open API, la oculta al teclearla, inicia diloakPRO con las variables correspondientes y limpia esas variables de la PowerShell al terminar el lanzamiento. Comprueba que no haya otro proceso de DICloak ya abierto. El lanzador no se instala como servicio ni guarda claves.
+
 La API local **debe** responder con el mismo ID de perfil, su estado `running` y el puerto/WS de depuración. La RC10 no busca claves, no enumera puertos y no se conecta a navegadores arbitrarios. Un perfil abierto no demuestra que su Remote Inspector esté habilitado.
 
 La documentación de DICloak describe `GET /openapi/v2/profiles/{profileId}/session` en su [Local API V2 Runtime Interface](https://dicloak.crisp.help/en/article/local-api-v2-runtime-interface-t3iabr/) y el ajuste [Remote Inspector](https://dicloak.crisp.help/en/article/personal-settings-profile-preferences-1jt4g7w/). No todas las versiones o planes de DICloak disponen de estas opciones.
