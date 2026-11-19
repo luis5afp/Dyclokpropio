@@ -13,7 +13,7 @@ const {startCapture}=require('./almacen-observador-integrado.cjs');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
- 'native_http_request','native_http_response','native_http_error',
+ 'native_http_request','native_http_response','native_http_error','native_http_transfer',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
@@ -64,6 +64,25 @@ function validateDiagnostic(input){
       input.requestBytesDeclared<0||input.requestBytesDeclared>32*1024*1024)
      throw Error('INVALID_DIAGNOSTIC_SIZE');
    out.requestBytesDeclared=input.requestBytesDeclared;
+ }
+ for(const key of ['outboundBodyBytesQueued','inboundBodyBytesObserved']){
+   if(input[key]!==undefined){
+     if(!Number.isSafeInteger(input[key])||input[key]<0||input[key]>32*1024*1024)
+       throw Error('INVALID_DIAGNOSTIC_SIZE');
+     out[key]=input[key];
+   }
+ }
+ for(const key of ['requestAuthorizationPresent','requestCookiePresent',
+   'requestProxyAuthorizationPresent','responseSetCookiePresent','byteCountLimited']){
+   if(input[key]!==undefined){
+     if(typeof input[key]!=='boolean')throw Error('INVALID_DIAGNOSTIC_FLAG');
+     out[key]=input[key];
+   }
+ }
+ if(input.transferState!==undefined){
+   if(!['response_end','response_closed','request_error'].includes(input.transferState))
+     throw Error('INVALID_DIAGNOSTIC_TRANSFER_STATE');
+   out.transferState=input.transferState;
  }
  if(input.durationMs!==undefined){
    if(!Number.isSafeInteger(input.durationMs)||input.durationMs<0||input.durationMs>3600000)throw Error('INVALID_DIAGNOSTIC_DURATION');
@@ -145,10 +164,13 @@ function mapNativeEvent(row){
  if(!row||typeof row!=='object')return null;
  const base={source:'programa',at:new Date().toISOString()};
  if(row.kind==='http'){
-   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error'}[row.phase];
+   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer'}[row.phase];
    if(!event)return null;
    const out={...base,event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
-   for(const key of ['status','elapsedMs','bytes','requestBytesDeclared'])if(row[key]!=null)out[key]=row[key];
+   for(const key of ['status','elapsedMs','bytes','requestBytesDeclared',
+     'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
+     'requestAuthorizationPresent','requestCookiePresent',
+     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
@@ -170,8 +192,10 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    ambiguousEventCount:0,finishReason:null,relation:'not_verified',
    captureId:null};
  const telemetry={browserProcessObserved:false,nodeRequests:0,
-   nodeResponses:0,uploadRouteRequests:0,declaredOutboundBytes:0,
-   requestsWithKnownSize:0};
+   nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
+   requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
+   byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
+   requestsWithProxyAuthorization:0,responsesWithSetCookie:0};
  function checks(){
    const has=stage=>completedStages.has(stage);
    return {
@@ -198,6 +222,15 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      networkMetadata:{
        nodeRequests:telemetry.nodeRequests,
        nodeResponses:telemetry.nodeResponses,
+       nodeTransfers:telemetry.nodeTransfers,
+       outboundBodyBytesQueued:telemetry.outboundBodyBytesQueued,
+       inboundBodyBytesObserved:telemetry.inboundBodyBytesObserved,
+       byteCountLimited:telemetry.byteCountLimited,
+       requestsWithAuthorization:telemetry.requestsWithAuthorization,
+       requestsWithCookie:telemetry.requestsWithCookie,
+       requestsWithProxyAuthorization:telemetry.requestsWithProxyAuthorization,
+       responsesWithSetCookie:telemetry.responsesWithSetCookie,
+       byteCountingScope:'node_http_application_body_not_wire_traffic',
        uploadRouteRequests:telemetry.uploadRouteRequests,
        requestsWithKnownSize:telemetry.requestsWithKnownSize,
        declaredOutboundBytes:telemetry.declaredOutboundBytes
@@ -313,6 +346,18 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      }
    }
    if(event.event==='native_http_response')telemetry.nodeResponses++;
+   if(event.event==='native_http_transfer'){
+     telemetry.nodeTransfers++;
+     if(event.byteCountLimited)telemetry.byteCountLimited++;
+     if(event.outboundBodyBytesQueued!==undefined)
+       telemetry.outboundBodyBytesQueued+=event.outboundBodyBytesQueued;
+     if(event.inboundBodyBytesObserved!==undefined)
+       telemetry.inboundBodyBytesObserved+=event.inboundBodyBytesObserved;
+     if(event.requestAuthorizationPresent)telemetry.requestsWithAuthorization++;
+     if(event.requestCookiePresent)telemetry.requestsWithCookie++;
+     if(event.requestProxyAuthorizationPresent)telemetry.requestsWithProxyAuthorization++;
+     if(event.responseSetCookiePresent)telemetry.responsesWithSetCookie++;
+   }
    events.push(event);
    if(events.length>400)events.shift();
    counters.total++;
