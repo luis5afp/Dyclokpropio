@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
   Launches diloakPRO with explicit encrypted capture of synthetic test-server responses.
@@ -18,7 +18,7 @@ $ErrorActionPreference='Stop'
 $path=(Resolve-Path -LiteralPath $ExecutablePath -ErrorAction Stop).ProviderPath
 if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or
     [IO.Path]::GetExtension($path).ToLowerInvariant() -ne '.exe') {
-  throw 'La ruta no contiene un ejecutable EXE válido.'
+  throw 'La ruta no contiene un ejecutable EXE valido.'
 }
 $uri=$null
 if (-not [Uri]::TryCreate($LabOrigin,[UriKind]::Absolute,[ref]$uri)) {
@@ -37,10 +37,10 @@ if ($uri.Host -match '(?i)(^|\.)dicloak\.(net|com)$|(^|\.)ipflygates\.com$') {
 $processes=@(Get-Process -ErrorAction SilentlyContinue | Where-Object {
   $_.ProcessName -match '^(DICloak|diloakPRO)$'
 })
-if ($processes.Count -gt 0)throw 'Cierra completamente DICloak/diloakPRO antes de iniciar esta prueba.'
+if ($processes.Count -gt 0) { throw 'Cierra completamente DICloak/diloakPRO antes de iniciar esta prueba.' }
 Write-Host 'Activando SOLO respuestas del origen autorizado:' $uri.GetLeftPart([UriPartial]::Authority)
-Write-Host 'Se guardarán como archivos cifrados .dplab; no guardamos la clave de cifrado.'
-$secure=Read-Host 'Frase de cifrado de laboratorio (mínimo 16 caracteres)' -AsSecureString
+Write-Host 'Se guardaran como archivos cifrados .dplab; no guardamos la clave de cifrado.'
+$secure=Read-Host 'Frase de cifrado de laboratorio (minimo 16 caracteres)' -AsSecureString
 $ptr=[IntPtr]::Zero
 $passphrase=$null
 try{
@@ -53,8 +53,8 @@ try{
   $env:DILOAKPRO_LAB_CAPTURE_ORIGIN=$uri.GetLeftPart([UriPartial]::Authority)
   $env:DILOAKPRO_LAB_CAPTURE_PASSPHRASE=$passphrase
   Start-Process -FilePath $path -WorkingDirectory ([IO.Path]::GetDirectoryName($path)) | Out-Null
-  Write-Host 'diloakPRO iniciado. Abre tu perfil de laboratorio y consulta Diagnóstico → Ver.'
-  Write-Host 'Los ficheros cifrados estarán bajo LabCaptures en la carpeta de datos de usuario de diloakPRO.'
+  Write-Host 'diloakPRO iniciado. Abre tu perfil de laboratorio y consulta Diagnostico > Ver.'
+  Write-Host 'Los ficheros cifrados estaran bajo LabCaptures en la carpeta de datos de usuario de diloakPRO.'
 }finally{
   Remove-Item Env:\DILOAKPRO_LAB_CAPTURE_ENABLE -ErrorAction SilentlyContinue
   Remove-Item Env:\DILOAKPRO_LAB_CAPTURE_ORIGIN -ErrorAction SilentlyContinue
