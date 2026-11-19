@@ -51,7 +51,7 @@ test('RC3: save JSON on disk from the embedded panel, without popup/download and
     const parsed=JSON.parse(raw);
     assert.equal(parsed.events.length,3);
     assert.equal(parsed.coverage,'partial');
-    assert.equal(parsed.delivery,'v30.0.24-diloakpro-rc11');
+    assert.equal(parsed.delivery,'v30.0.25-diloakpro-rc12');
     for(const secret of ['DO-NOT-EXPORT','SECRET-EXAMPLE','PRIVATE','SENSITIVE_TOKEN']){
       assert.equal(raw.includes(secret),false,'Private value leaked: '+secret);
     }
