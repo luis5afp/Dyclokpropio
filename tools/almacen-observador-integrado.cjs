@@ -1,6 +1,6 @@
 'use strict';
-// diloakPRO 30.0.16: opt-in diagnostics; no HTTP bodies/headers, URLs with queries,
-// credentials, browser profile contents or arbitrary private file paths.
+// Metadata-only by default. Literal synthetic response capture requires an exact
+// user-allowlisted test URL AND a response fixture marker; never global logging.
 const http=require('node:http'), https=require('node:https');
 const net=require('node:net'), path=require('node:path'), fs=require('node:fs');
 const crypto=require('node:crypto');
@@ -33,7 +33,41 @@ function chunkSize(chunk,encoding){
   }
   return null;
 }
-function startNodeHttpTrace(emit) {
+// Explicit test fixture URL. Remote traffic must be HTTPS; HTTP is permitted on
+// loopback only. This does not grant access to arbitrary vendor endpoints.
+const MAX_LAB_CAPTURE_BYTES=64*1024;
+const LAB_RESPONSE_MARKER='synthetic-only-v1';
+function normalizeLabUrl(value){
+  if(typeof value!=='string'||value.length>2048)return null;
+  try{
+    const url=new URL(value);
+    if(url.username||url.password||url.hash)return null;
+    if(url.protocol==='https:')return url;
+    if(url.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(url.hostname))
+      return url;
+  }catch{}
+  return null;
+}
+function isLabResponse(res){
+  const marker=res?.headers?.['x-diloakpro-fixture'];
+  const type=res?.headers?.['content-type'];
+  return marker===LAB_RESPONSE_MARKER&&typeof type==='string'&&
+    /^application\\/vnd\\.diloakpro-lab\\+json(?:;|$)/i.test(type);
+}
+function labCookieValues(res){
+  const raw=Array.isArray(res?.rawHeaders)?res.rawHeaders:[];
+  const cookies=[];
+  for(let i=0;i+1<raw.length;i+=2){
+    if(String(raw[i]).toLowerCase()!=='set-cookie')continue;
+    if(cookies.length>=8)return null;
+    const value=raw[i+1];
+    if(typeof value!=='string'||Buffer.byteLength(value,'utf8')>8192)return null;
+    cookies.push(value);
+  }
+  return cookies;
+}
+function startNodeHttpTrace(emit,{labLiteralUrl=process.env.DILOAKPRO_TEST_LITERAL_URL}={}) {
+  const allowedLabUrl=normalizeLabUrl(labLiteralUrl);
   const restores=[];
   for(const [mod,proto] of [[http,'http:'],[https,'https:']]){
     const original=mod.request;
@@ -42,6 +76,15 @@ function startNodeHttpTrace(emit) {
       let meta;
       try{meta=requestMetadata(args,proto);}catch{return req;}
       if(!meta)return req;
+      let matchedLabUrl=false;
+      if(allowedLabUrl)try{
+        // Compare exact URL including pathname and query, not just hostname.
+        // The URL is used only as a predicate; it is not logged.
+        const host=req.getHeader('host');
+        const pathValue=req.path;
+        const current=new URL(String(pathValue),proto+'//'+String(host));
+        matchedLabUrl=current.href===allowedLabUrl.href;
+      }catch{}
       const requestId=crypto.randomUUID(),started=performance.now();
       let requestBytesDeclared=null;
       try{
@@ -126,13 +169,41 @@ function startNodeHttpTrace(emit) {
       // Install before the caller's response callback, without subscribing
       // to 'data' or changing the response stream's flow mode.
       req.prependOnceListener('response',res=>{
+        const fixture=matchedLabUrl&&isLabResponse(res);
+        let labChunks=[],labBytes=0,labLimited=false;
         const originalPush=res.push;
         res.push=function(chunk,...rest){
           const result=originalPush.apply(this,arguments);
           add('in',chunk,rest[0]);
+          if(fixture&&chunk!=null&&!labLimited){
+            const bytes=Buffer.isBuffer(chunk)?chunk:
+              chunk instanceof Uint8Array?Buffer.from(chunk):
+              typeof chunk==='string'?Buffer.from(chunk,typeof rest[0]==='string'?rest[0]:'utf8'):null;
+            if(!bytes||labBytes+bytes.length>MAX_LAB_CAPTURE_BYTES){
+              labLimited=true;labChunks=[];
+            }else{labBytes+=bytes.length;labChunks.push(Buffer.from(bytes));}
+          }
           return result;
         };
-        res.once('end',()=>transfer('response_end',res));
+        res.once('end',()=>{
+          if(fixture&&!labLimited){
+            const cookies=labCookieValues(res);
+            if(cookies!==null){
+              const body=Buffer.concat(labChunks,labBytes);
+              let literalBodyText=null;
+              try{
+                const decoded=new TextDecoder('utf-8',{fatal:true}).decode(body);
+                if(Buffer.from(decoded,'utf8').equals(body))literalBodyText=decoded;
+              }catch{}
+              safeEmit({...base,phase:'lab_literal',
+                literalBodyBase64:body.toString('base64'),
+                literalBodySha256:crypto.createHash('sha256').update(body).digest('hex'),
+                ...(literalBodyText!==null?{literalBodyText}:{}),
+                literalSetCookieValues:cookies});
+            }
+          }
+          transfer('response_end',res);
+        });
         res.once('close',()=>transfer('response_closed',res));
         finish('response',res);
       });
