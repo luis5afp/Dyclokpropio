@@ -19,7 +19,7 @@ const {createOpeningCaptureCoordinator}=require('./almacen-captura-temprana.cjs'
 const SHOW_CHANNEL='almacen-diag:show';
 const EVENT_CHANNEL='almacen-diag:event';
 const SIGNALS=new Set(['open_requested','step_start','step_complete','step_failed']);
-const MAX_PER_PROFILE=850;
+const MAX_PER_PROFILE=2400;
 const MAX_PROFILES=32;
 
 const STAGES=new Map([
