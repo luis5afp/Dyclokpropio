@@ -128,5 +128,5 @@ test('original vendor operation is preceded by a bounded synchronous bridge call
   assert.ok(builder.includes('window.dicloakAlmacenLab?.noteOpen?.(String(e.row.id??""))'));
   assert.ok(builder.includes('return oi(e.row)'));
   assert.ok(builder.includes("'almacen-captura-temprana.cjs'"));
-  assert.ok(builder.includes("deliveryVersion:'30.0.19'"));
+  assert.ok(builder.includes("deliveryVersion:'30.0.20'"));
 });

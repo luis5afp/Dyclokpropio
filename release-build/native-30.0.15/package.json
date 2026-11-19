@@ -1,8 +1,8 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.19",
+  "version": "30.0.20",
   "private": true,
-  "description": "diloakPRO 30.0.19 RC6 - opening-to-browser metadata audit with JSON and TXT",
+  "description": "diloakPRO RC7 - automatic Almacen diagnostic reports and persistent history",
   "devDependencies": {
     "@electron/asar": "3.2.18",
     "electron-builder": "^26.0.0",
