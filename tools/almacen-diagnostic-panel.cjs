@@ -84,7 +84,7 @@ function validateDiagnostic(input){
  for(const key of ['requestAuthorizationPresent','requestCookiePresent',
    'requestProxyAuthorizationPresent','responseSetCookiePresent','byteCountLimited',
    'socketReused','transportEncrypted','tlsAuthorized','cookieSetAttempt',
-   'servedFromCache','servedFromServiceWorker']){
+   'servedFromCache','servedFromServiceWorker','inboundStreamComplete']){
    if(input[key]!==undefined){
      if(typeof input[key]!=='boolean')throw Error('INVALID_DIAGNOSTIC_FLAG');
      out[key]=input[key];
@@ -132,6 +132,26 @@ function validateDiagnostic(input){
      if(!allowed.includes(input[field]))throw Error('INVALID_NETWORK_METADATA_ENUM');
      out[field]=input[field];
    }
+ }
+ if(input.inboundStreamProof!==undefined){
+   if(input.event!=='native_http_transfer'||
+      typeof input.inboundStreamProof!=='string'||
+      !/^[a-f0-9]{64}$/.test(input.inboundStreamProof))
+     throw Error('INVALID_INBOUND_STREAM_PROOF');
+   out.inboundStreamProof=input.inboundStreamProof;
+ }
+ if(input.inboundChunkCount!==undefined){
+   if(input.event!=='native_http_transfer'||
+      !Number.isSafeInteger(input.inboundChunkCount)||
+      input.inboundChunkCount<0||input.inboundChunkCount>1000000)
+     throw Error('INVALID_INBOUND_CHUNK_COUNT');
+   out.inboundChunkCount=input.inboundChunkCount;
+ }
+ if(input.proofScope!==undefined){
+   if(input.proofScope!=='node_received_stream_hmac_ephemeral'||
+      input.event!=='native_http_transfer')
+     throw Error('INVALID_INBOUND_PROOF_SCOPE');
+   out.proofScope=input.proofScope;
  }
  for(const key of ['encodedBytes','blockedCookieCount','sentCookieCount']){
    if(input[key]!==undefined){
@@ -290,7 +310,8 @@ function mapNativeEvent(row){
      'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
      'requestAuthorizationPresent','requestCookiePresent',
      'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort',
-     'socketReused','transportEncrypted','tlsAuthorized','tlsProtocol'])if(row[key]!=null)out[key]=row[key];
+     'socketReused','transportEncrypted','tlsAuthorized','tlsProtocol',
+     'inboundStreamProof','inboundStreamComplete','inboundChunkCount','proofScope'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='fetch'){
@@ -355,7 +376,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    chromiumSetCookieAttempts:0,chromiumCookiesBlocked:0,
    chromiumCookiesSent:0,chromiumEncodedBytes:0,
    chromiumHosts:new Set(),
-   nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
+   nodeResponses:0,nodeTransfers:0,nodeInboundProofs:0,
+   nodeInboundChunks:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
    requestsWithProxyAuthorization:0,responsesWithSetCookie:0};
@@ -410,6 +432,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        chromiumHostCount:telemetry.chromiumHosts.size,
        nodeResponses:telemetry.nodeResponses,
        nodeTransfers:telemetry.nodeTransfers,
+       nodeInboundProofs:telemetry.nodeInboundProofs,
+       nodeInboundChunks:telemetry.nodeInboundChunks,
        outboundBodyBytesQueued:telemetry.outboundBodyBytesQueued,
        inboundBodyBytesObserved:telemetry.inboundBodyBytesObserved,
        byteCountLimited:telemetry.byteCountLimited,
@@ -428,7 +452,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  function makeReport(){
    const report={
      schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
-     delivery:'v30.0.23-diloakpro-rc10',coverage:'partial',
+     delivery:'v30.0.24-diloakpro-rc11',coverage:'partial',
      exportedAt:new Date().toISOString(),
      events,counters,checks:checks()
    };
@@ -586,6 +610,9 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    }
    if(event.event==='native_http_transfer'){
      telemetry.nodeTransfers++;
+     if(event.inboundStreamProof)telemetry.nodeInboundProofs++;
+     if(event.inboundChunkCount!==undefined)
+       telemetry.nodeInboundChunks+=event.inboundChunkCount;
      if(event.byteCountLimited)telemetry.byteCountLimited++;
      if(event.outboundBodyBytesQueued!==undefined)
        telemetry.outboundBodyBytesQueued+=event.outboundBodyBytesQueued;
