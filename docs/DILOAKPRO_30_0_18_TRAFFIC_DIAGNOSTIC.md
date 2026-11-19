@@ -7,6 +7,7 @@ En el panel «Diagnóstico de comunicación» observar la comunicación entre el
 - El observador se activa al pulsar **Abrir** un perfil de prueba y se detiene automáticamente según el coordinador RC4.
 - Los eventos `native_http_request` y `native_http_response` conservan método, plantilla de ruta, estado, latencia y tamaño declarado, si existe.
 - `native_http_transfer` registra bytes del **cuerpo** proporcionados al cliente Node HTTP(S) para envío y bytes recibidos mediante el flujo HTTP observado. Son métricas de la aplicación, **no** bytes de red garantizados ni prueba de aceptación por el servidor.
+- Las respuestas HTTP pueden incluir IP/puerto del **peer TCP** observado (servidor o proxy intermedio), nunca una identidad garantizada del servidor final.
 - Se registran únicamente booleanos de presencia para `Authorization`, `Proxy-Authorization`, `Cookie` y `Set-Cookie`. No se registran nombres de cuenta ni valores.
 - La respuesta puede terminar normalmente (`response_end`) o cerrarse antes de completar la lectura (`response_closed`); errores de solicitud (`request_error`).
 - Hay un límite de 32 MiB por cuerpo. Si se supera, se marca `byteCountLimited` y se omiten los contadores de esa transferencia en lugar de presentar una cifra engañosa.
