@@ -1,8 +1,8 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.20",
+  "version": "30.0.21",
   "private": true,
-  "description": "diloakPRO RC7 - automatic Almacen diagnostic reports and persistent history",
+  "description": "diloakPRO RC8 - live network lifecycle diagnosis, no automatic archiving",
   "devDependencies": {
     "@electron/asar": "3.2.18",
     "electron-builder": "^26.0.0",

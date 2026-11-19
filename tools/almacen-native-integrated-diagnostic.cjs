@@ -1,9 +1,9 @@
 'use strict';
 /**
  * Embedded DICloak 3.0.7 profile-opening diagnostic.
- * This observes ONLY the first-party Vue renderer's public lifecycle
- * callbacks (button pressed, opening phase, stage completion, stage failure).
- * It does NOT intercept HTTP traffic or control authentication.
+ * This records the first-party Vue renderer's opening lifecycle
+ * callbacks plus sanitized metadata from selected Node network transports.
+ * It does NOT control authentication or inspect Chromium's private traffic.
  *
  * The renderer's row id is NOT proof of Chromium session identity. Any future
  * network data must be joined using a verified native Chromium session, not
@@ -15,12 +15,11 @@ const {senderIsApp}=require('./almacen-native-chromium-audit.cjs');
 const {startDiagnosticPanel}=require('./almacen-diagnostic-panel.cjs');
 const {startCapture}=require('./almacen-observador-integrado.cjs');
 const {createOpeningCaptureCoordinator}=require('./almacen-captura-temprana.cjs');
-const {createDiagnosticArchive}=require('./almacen-diagnostic-archive.cjs');
-const path=require('node:path');
+
 const SHOW_CHANNEL='almacen-diag:show';
 const EVENT_CHANNEL='almacen-diag:event';
 const SIGNALS=new Set(['open_requested','step_start','step_complete','step_failed']);
-const MAX_PER_PROFILE=850;
+const MAX_PER_PROFILE=2400;
 const MAX_PROFILES=32;
 
 const STAGES=new Map([
@@ -89,7 +88,7 @@ function createNativeDiagnosticController({
   startPanel=startDiagnosticPanel,createWindow,
   // Tests inject a no-op; the packaged app explicitly injects startCapture.
   startObserver=()=>()=>{},getLabRoot=()=>undefined,
-  graceMs=15000,maxMs=120000,archive=null
+  graceMs=15000,maxMs=120000
 }={}) {
   if(typeof startPanel!=='function'||typeof createWindow!=='function')
     throw Error('DIAG_MISSING_WINDOW_FACTORY');
@@ -106,17 +105,7 @@ function createNativeDiagnosticController({
     if(list.length>MAX_PER_PROFILE)list.shift();
     const current=windows.get(profileId);
     if(current)current.panel.emit(item);
-    // Persist at the actual capture end, even when Diagnóstico → Ver has
-    // never been opened. The renderer and vendor are not involved in storage.
-    if(item.event==='capture_finished'&&archive){
-      let event='archive_saved';
-      try{archive.save(profileId,[...list]);}
-      catch{event='archive_failed';}
-      const status={source:'programa',event,at:new Date().toISOString()};
-      list.push(status);
-      if(list.length>MAX_PER_PROFILE)list.shift();
-      if(current)current.panel.emit(status);
-    }
+
   }
   const coordinator=createOpeningCaptureCoordinator({
     emitToProfile:record,startObserver,getLabRoot,graceMs,maxMs
@@ -126,7 +115,7 @@ function createNativeDiagnosticController({
     let capture=null;
     if(signal==='open_requested'){
       // Bounded per-opening memory; no profile ID is serialized into the JSON.
-      // Archive a previous unfinished run before resetting the buffer.
+      // Stop a previous unfinished capture; no reports are written to disk.
       coordinator.finish(profileId,'restarted');
       history.delete(profileId);
       // Synchronous IPC arms the Node observer before the vendor's open().
@@ -159,7 +148,7 @@ function createNativeDiagnosticController({
     let panel=null,window=null;
     try{
       // Do not start a second observer when a user opens this panel later.
-      panel=await startPanel({observeOnOpen:false,archive,profileId});
+      panel=await startPanel({observeOnOpen:false});
       // Events from the Vue table are informational; they have NOT been
       // verified against a native browser identity or vendor server.
       panel.emit({source:'programa',event:'embedded_ui_only'});
@@ -211,9 +200,7 @@ function install(){
   const controller=createNativeDiagnosticController({
     createWindow:args=>createDiagnosticWindow({...args,BrowserWindow}),
     startObserver:startCapture,
-    getLabRoot:()=>app.getPath('userData'),
-    archive:createDiagnosticArchive({rootDir:path.join(app.getPath('userData'),
-      'Almacen','Diagnosticos')})
+    getLabRoot:()=>undefined
   });
   app.once('before-quit',()=>controller.shutdown());
   ipcMain.handle(SHOW_CHANNEL,async(event,profileId)=>{

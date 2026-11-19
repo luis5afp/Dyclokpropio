@@ -83,7 +83,7 @@ test('panel saves synchronized JSON and TXT to downloads, not credentials or coo
   assert.equal(report.audit.summary.responses,1);
   assert.equal(report.audit.coverage.fullTrafficCapture,false);
   assert.match(txt,/Auditoría de comunicación/);
-  assert.match(txt,/Solicitudes Node observadas: 1/);
+  assert.match(txt,/Solicitudes Node observadas \(HTTP y fetch\): 1/);
   assert.ok(!json.includes(privateSecret));
   assert.ok(!txt.includes(privateSecret));
   assert.ok(!JSON.stringify(panel.getState()).includes(privateSecret));

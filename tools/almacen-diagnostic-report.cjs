@@ -15,7 +15,7 @@ const PHASES=Object.freeze([
   {key:'browserOpen',label:'Apertura del navegador',stages:['stage_open_env','stage_browser_start']}
 ]);
 const COVERAGE=Object.freeze({
-  mainElectronHTTP:'partial_node_http_request_only',
+  mainElectronHTTP:'partial_node_http_request_and_undici_fetch',
   chromiumNetwork:'not_captured_by_http_observer',
   fullTrafficCapture:false,
   chromiumToProfileIdentity:'not_verified',
@@ -46,7 +46,8 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
   const opened=safe.filter(e=>e.event==='operation_open_requested');
   const requests=new Map(),orphans=[];
   for(const e of safe){
-    if(!['native_http_request','native_http_response','native_http_transfer','native_http_error'].includes(e.event))continue;
+    if(!['native_http_request','native_http_response','native_http_transfer','native_http_error',
+      'native_fetch_request','native_fetch_response','native_fetch_error','native_fetch_complete'].includes(e.event))continue;
     if(!e.requestId){orphans.push({event:e.event,at:e.at});continue;}
     let r=requests.get(e.requestId);
     if(!r){r={requestId:e.requestId,firstObservedAt:e.at,method:null,
@@ -56,21 +57,23 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       authorizationHeaderPresent:null,cookieHeaderPresent:null,
       proxyAuthorizationHeaderPresent:null,setCookieHeaderPresent:null,
       requestObserved:false,responseObserved:false,transferObserved:false,
-      errorObserved:false};requests.set(e.requestId,r);}
+      errorObserved:false,transport:e.event.startsWith('native_fetch_')?'node_fetch':'node_http',
+      finishedObserved:false};requests.set(e.requestId,r);}
     if(!r.method&&e.method)r.method=e.method;
     if(!r.routeTemplate&&e.routeTemplate)r.routeTemplate=e.routeTemplate;
     if(!r.scope&&e.scope)r.scope=e.scope;
     if(e.captureRelation==='ambiguous')r.association='ambiguous';
     else if(!r.association&&e.captureRelation)r.association=e.captureRelation;
-    if(e.event==='native_http_request')r.requestObserved=true;
-    if(e.event==='native_http_response'){
+    if(['native_http_request','native_fetch_request'].includes(e.event))r.requestObserved=true;
+    if(['native_http_response','native_fetch_response'].includes(e.event)){
       r.responseObserved=true;
       if(Number.isInteger(e.status))r.status=e.status;
       if(Number.isInteger(e.elapsedMs))r.responseMs=e.elapsedMs;
       if(e.peerIp)r.peerIp=e.peerIp;
       if(Number.isInteger(e.peerPort))r.peerPort=e.peerPort;
     }
-    if(e.event==='native_http_error')r.errorObserved=true;
+    if(['native_http_error','native_fetch_error'].includes(e.event))r.errorObserved=true;
+    if(e.event==='native_fetch_complete')r.finishedObserved=true;
     if(e.event==='native_http_transfer'){
       r.transferObserved=true;
       r.transferState=e.transferState||null;
@@ -92,6 +95,9 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     requestsWithoutObservedOutcome:http.filter(r=>r.requestObserved&&!r.responseObserved&&!r.errorObserved).length,
     errors:http.filter(r=>r.errorObserved).length,
     transferSummaries:http.filter(r=>r.transferObserved).length,
+    fetchRequests:http.filter(r=>r.transport==='node_fetch'&&r.requestObserved).length,
+    fetchResponses:http.filter(r=>r.transport==='node_fetch'&&r.responseObserved).length,
+    fetchCompleted:http.filter(r=>r.transport==='node_fetch'&&r.finishedObserved).length,
     browserProcesses:safe.filter(e=>e.event==='native_process_seen'&&e.processClass==='browser').length,
     sampledConnections:safe.filter(e=>e.event==='native_connection_seen').length,
     concurrentAmbiguityEvents:safe.filter(e=>e.captureRelation==='ambiguous').length
@@ -122,7 +128,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     coverage:{...COVERAGE},
     notes:[
       'Resultados de etapas no demuestran aplicación correcta de credenciales, cookies o proxy.',
-      'El observador HTTP no cubre todo el tráfico Chromium ni Node fetch/WebSockets.',
+      'La captura incluye parte de Node http(s).request y Node fetch (Undici), no todo Chromium ni WebSockets.',
       'La ausencia de respuesta observada no implica necesariamente error del servidor.',
       'IP/puerto pueden corresponder a un proxy y la asociación al perfil es temporal.',
       'No contiene contraseñas, tokens, cookies, códigos 2FA ni cuerpos HTTP.',
@@ -145,8 +151,10 @@ function renderAuditTXT(report){
     'Motivo de fin: '+(a.timeline.captureFinishReason||'no observado'),
     '',
     'RESUMEN HTTP Y PROCESOS',
-    'Solicitudes Node observadas: '+a.summary.requests,
+    'Solicitudes Node observadas (HTTP y fetch): '+a.summary.requests,
+    'Solicitudes Node fetch observadas: '+a.summary.fetchRequests,
     'Respuestas observadas: '+a.summary.responses,
+    'Respuestas Node fetch observadas: '+a.summary.fetchResponses,
     'Solicitudes sin respuesta registrada: '+a.summary.requestsWithoutObservedResponse,
     'Sin resultado observado: '+a.summary.requestsWithoutObservedOutcome,
     'Errores: '+a.summary.errors,
@@ -161,7 +169,7 @@ function renderAuditTXT(report){
   }
   lines.push('','SOLICITUDES Y RESPUESTAS (rutas anonimizadas)');
   for(const r of a.http){
-    lines.push([r.firstObservedAt,r.method||'?',r.routeTemplate||'?',
+    lines.push([r.firstObservedAt,r.transport,r.method||'?',r.routeTemplate||'?',
       r.status??'sin HTTP',r.responseMs==null?'sin duración':r.responseMs+' ms',
       r.responseObserved?'respuesta observada':r.errorObserved?'error observado':'sin respuesta observada',
       'salida='+String(r.outboundBodyBytesQueued??'?'),
@@ -176,8 +184,8 @@ function renderAuditTXT(report){
     'Asociación exacta del proceso Chromium con el perfil: no verificada.',
     'La comparación byte a byte exige pruebas coordinadas en servidor y cliente.',
     'El informe no guarda contenidos, secretos ni valores reutilizables.',
-    '','COBERTURA: Node http(s).request (parcial), fases UI y muestreo Windows.',
-    'Sin captura íntegra de red de Chromium, fetch ni WebSocket.',
+    '','COBERTURA: Node http(s).request y Undici fetch (parcial), fases UI y muestreo Windows.',
+    'Sin captura íntegra de red de Chromium ni WebSocket.',
     '');
   return lines.join('\r\n');
 }

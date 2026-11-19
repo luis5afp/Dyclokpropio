@@ -36,8 +36,8 @@ button#save-json:disabled{opacity:.5;cursor:progress}
   color:#d6e5f1;margin:14px 0}
 </style></head><body>
 <h1>diloakPRO · Diagnóstico de comunicación</h1>
-<p>Operación → Abrir · Perfil de pruebas · Almacén</p>
-<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API. Los informes JSON y TXT registran metadatos; no incluyen valores de autenticación.</div>
+<p>Operación → Abrir · Diagnóstico en vivo · Sin archivo automático</p>
+<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API. No se archiva automáticamente; solo se guardan JSON y TXT cuando el usuario pulsa Exportar. Se conservan metadatos en memoria durante esta sesión.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Estado de configuración y comunicación (verificación parcial)</h2>
@@ -46,15 +46,14 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <h2>Auditoría de apertura completa (cobertura parcial)</h2>
 <p>Se registran desde Abrir hasta el fin del observador las etapas, solicitudes/respuestas de Electron y procesos/conexiones muestreados. No se leen contraseñas, tokens, valores de cookies, códigos 2FA ni cuerpos de solicitudes/respuestas. Una etapa completada no demuestra que Chromium haya aplicado una configuración.</p>
 <div id="opening-audit" class="checks" aria-live="polite"></div>
-<h2>Tráfico entre programa y servidor (HTTP Node observado)</h2>
+<h2>Tráfico en vivo — HTTP(S), Node fetch y conexión TCP/TLS</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
-<h2>Almacén → Historial de diagnósticos guardados automáticamente</h2>
-<p>Al terminar la captura, diloakPRO guarda los informes JSON y TXT dentro de los datos de la aplicación, en la carpeta <code>Almacen/Diagnosticos</code>. Aquí puedes consultar los informes del perfil seleccionado incluso después de reiniciar el programa. Se guardan únicamente metadatos, no contraseñas, cookies de sesión, tokens ni códigos 2FA.</p>
-<p id="history-message" role="status">Consultando historial…</p>
-<div id="archive-history" aria-live="polite"></div>
+<h2>Cómo pasan las cookies a Chromium</h2>
+<p>El motor puede restaurar cookies desde los datos del perfil, recibir una cabecera Set-Cookie en una respuesta o crearlas mediante JavaScript o APIs del navegador. Este diagnóstico confirma etapas de preparación y presencia de Set-Cookie en solicitudes Node observadas, pero <strong>no comprueba que Chromium las haya instalado</strong>. No inspecciona la base de cookies ni guarda sus valores.</p>
+<div class="checks" id="cookie-path" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
-<p><button id="save-json" type="button">Guardar JSON + TXT en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
+<p><button id="save-json" type="button">Exportar JSON + TXT voluntariamente</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
 <div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
@@ -93,13 +92,16 @@ const kinds={
  stage_unknown:"Etapa de apertura no identificada",
  api_request:"Programa solicita estado de sesión",api_response:"Servidor API responde",
  native_http_request:"Solicitud Node HTTP(S)",native_http_response:"Respuesta Node HTTP(S)",
- native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",native_process_seen:"Proceso descendiente observado",
+ native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",
+ native_http_socket:"Socket asignado (HTTP Node)",native_http_tcp:"Conexión TCP establecida (HTTP Node)",
+ native_http_tls:"Conexión TLS negociada (HTTP Node)",
+ native_fetch_request:"Solicitud Node fetch",native_fetch_response:"Respuesta Node fetch",
+ native_fetch_error:"Error Node fetch",native_fetch_complete:"Transferencia Node fetch terminada",native_process_seen:"Proceso descendiente observado",
  native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
  native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
  capture_started:"Observador iniciado antes de abrir",capture_finished:"Observador detenido tras apertura",
  capture_unavailable:"No se pudo iniciar observador",
- archive_saved:"Informe guardado automáticamente en Almacén",
- archive_failed:"No se pudo guardar el informe automáticamente",
+ 
  profile_running:"Perfil abierto",api_failed:"API local no disponible",api_connected:"API local conectada",
  debugger_connected:"Depurador conectado",debugger_failed:"Depurador no disponible",
  target_connected:"Pestaña supervisada",receiver_ready:"Receptor de pruebas activo",
@@ -125,54 +127,6 @@ document.getElementById("save-json").addEventListener("click",async()=>{
     notice.textContent="No se pudo guardar en Descargas. Comprueba permisos y espacio libre.";
   }finally{button.disabled=false;}
 });
-async function loadHistory(){
-  const root=document.getElementById("archive-history");
-  const message=document.getElementById("history-message");
-  try{
-    const response=await fetch("history",{cache:"no-store"});
-    if(!response.ok)throw Error("NOT_AVAILABLE");
-    const body=await response.json();
-    root.replaceChildren();
-    if(!body.enabled){
-      message.textContent="El historial automático no está activado en esta instalación.";
-      return;
-    }
-    const entries=Array.isArray(body.entries)?body.entries:[];
-    message.textContent=entries.length?
-      String(entries.length)+" diagnósticos archivados disponibles para este perfil":
-      "Aún no hay archivos guardados para este perfil. Pulsa Abrir y espera a que termine la captura.";
-    for(const entry of entries){
-      if(typeof entry.id!=="string"||
-         !/^diloakPRO-Apertura-\d{8}-\d{6}-[a-f0-9]{12}$/.test(entry.id))continue;
-      const item=document.createElement("section");item.className="history-item";
-      const heading=document.createElement("strong");
-      heading.textContent=(entry.firstOpeningRequestedAt?
-        new Date(entry.firstOpeningRequestedAt).toLocaleString("es-PE"):
-        "Apertura sin hora registrada")+" · "+
-        String(entry.requests||0)+" solicitudes, "+String(entry.responses||0)+
-        " respuestas · "+String(entry.errors||0)+" errores";
-      item.append(heading);
-      const actions=document.createElement("div");
-      const details=document.createElement("pre");
-      details.hidden=true;
-      for(const format of ["json","txt"]){
-        const button=document.createElement("button");button.type="button";
-        button.textContent="Ver "+format.toUpperCase();
-        button.addEventListener("click",async()=>{
-          button.disabled=true;details.hidden=false;details.textContent="Abriendo…";
-          try{
-            const r=await fetch("history/"+entry.id+"/"+format,{cache:"no-store"});
-            if(!r.ok)throw Error("NOT_FOUND");
-            details.textContent=await r.text();
-          }catch{details.textContent="No se pudo abrir el informe archivado.";}
-          finally{button.disabled=false;}
-        });
-        actions.append(button);
-      }
-      item.append(actions,details);root.append(item);
-    }
-  }catch{message.textContent="No se pudo consultar el historial local.";root.replaceChildren();}
-}
 async function update(){
   try{
     const response=await fetch("state",{cache:"no-store"});
@@ -270,13 +224,38 @@ async function update(){
       ["Cuerpo HTTP entrante",String(network.inboundBodyBytesObserved||0)+" bytes observados en respuestas Node"],
       ["Transferencias resumidas",String(network.nodeTransfers||0)+" · "+String(network.byteCountLimited||0)+" limitadas"],
       ["Autenticación indicada",String(network.requestsWithAuthorization||0)+" solicitudes con Authorization, "+String(network.requestsWithProxyAuthorization||0)+" con Proxy-Authorization"],
-      ["Cookies indicadas",String(network.requestsWithCookie||0)+" solicitudes con Cookie, "+String(network.responsesWithSetCookie||0)+" respuestas con Set-Cookie"]
+      ["Cookies indicadas",String(network.requestsWithCookie||0)+" solicitudes Node con Cookie, "+
+        String(network.responsesWithSetCookie||0)+" respuestas Node con Set-Cookie (no prueba Chromium)"],
+      ["Node fetch / Undici",String(network.fetchRequests||0)+" solicitudes, "+
+        String(network.fetchResponses||0)+" respuestas, "+
+        String(network.fetchCompletions||0)+" finalizadas, "+
+        String(network.fetchErrors||0)+" errores"],
+      ["Conexiones HTTP Node",String(network.tcpConnections||0)+" TCP nuevos · "+
+        String(network.tlsHandshakes||0)+" TLS · "+
+        String(network.tlsAuthorized||0)+" TLS autorizados"]
     ];
     for(const [name,value] of metrics){
       const card=document.createElement("div");card.className="check";
       const strong=document.createElement("strong");strong.textContent=name;
       const span=document.createElement("span");span.textContent=value;
       card.append(strong,span);traffic.append(card);
+    }
+    const cookieNode=document.getElementById("cookie-path");cookieNode.replaceChildren();
+    const cookieChecks=[
+      ["Solicitud de configuración del perfil",summary.profileOpenStageCompleted?
+        "Etapa de apertura completada, recepción de valores sin verificar":"No confirmada"],
+      ["Plan de restauración de cookies",summary.cookiePlanStageCompleted?
+        "Preparación completada; aplicación desconocida":"No observada"],
+      ["Set-Cookie en respuestas Node",String(network.responsesWithSetCookie||0)+
+        " respuestas observadas; no equivale a cookies instaladas en Chromium"],
+      ["Cookies del propio Chromium","No inspeccionadas: falta asociar una sesión nativa verificada"],
+      ["Persistencia y cifrado", "Chromium decide aceptación, expiración y almacenamiento; no observado"]
+    ];
+    for(const [label,value] of cookieChecks){
+      const div=document.createElement("div");div.className="check";
+      const title=document.createElement("strong");title.textContent=label;
+      const info=document.createElement("span");info.textContent=value;
+      div.append(title,info);cookieNode.append(div);
     }
     const stats=document.getElementById("stats");stats.replaceChildren();
     for(const [key,label] of Object.entries(counters)){
@@ -296,7 +275,11 @@ async function update(){
         ev.requestProxyAuthorizationPresent?"Proxy-Authorization presente":null,
         ev.requestCookiePresent?"Cookie presente":null,
         ev.responseSetCookiePresent?"Set-Cookie presente":null,
-        ev.byteCountLimited?"Medición limitada":null
+        ev.byteCountLimited?"Medición limitada":null,
+        ev.tlsAuthorized===true?"TLS autorizado":ev.tlsAuthorized===false?"TLS no autorizado":null,
+        ev.transportEncrypted?"Transporte cifrado":null,
+        ev.socketReused?"Socket reutilizado":null,
+        ev.tlsProtocol||null
       ].filter(Boolean).join(", ");
       const cells=[
         new Date(ev.at).toLocaleTimeString("es-PE"),
@@ -325,7 +308,6 @@ async function update(){
     document.getElementById("conn").textContent="Panel desconectado del proceso local";
   }
 }
-update();loadHistory();
+update();
 setInterval(update,1000);
-setInterval(loadHistory,10000);
 </script></body></html>

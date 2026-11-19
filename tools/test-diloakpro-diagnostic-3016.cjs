@@ -71,7 +71,7 @@ test('outbound Node metadata tracks only declared length, not request bodies or 
     });
     assert.equal(out[0].requestBytesDeclared,Buffer.byteLength(secret));
     assert.equal(out[0].routeTemplate,'/gin/v2/user/:id/upload');
-    assert.equal(out[1].status,204);
+    assert.equal(out.find(e=>e.phase==='response')?.status,204);
     assert.equal(JSON.stringify(out).includes(secret),false);
   }finally{stop();await new Promise(resolve=>server.close(resolve));}
 });
