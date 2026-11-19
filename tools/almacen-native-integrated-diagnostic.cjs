@@ -229,7 +229,9 @@ function install(){
     // In opt-in Chromium mode leave time for a user to navigate. The hard
     // cap remains 120 seconds and no data is archived automatically.
     graceMs:process.env.DILOAKPRO_DIAG_CDP_ENABLE==='1'?60000:15000,
-    getLabRoot:()=>undefined
+    // The directory is passed only as a root. Files are created exclusively
+    // when exact-origin synthetic lab capture is explicitly enabled.
+    getLabRoot:()=>app.getPath('userData')
   });
   app.once('before-quit',()=>controller.shutdown());
   ipcMain.handle(SHOW_CHANNEL,async(event,profileId)=>{

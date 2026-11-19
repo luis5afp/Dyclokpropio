@@ -18,6 +18,8 @@ const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
  'native_fetch_request','native_fetch_response','native_fetch_error','native_fetch_complete',
  'native_http_socket','native_http_tcp','native_http_tls',
+ 'lab_capture_active','lab_capture_saved','lab_capture_skipped',
+ 'lab_capture_unavailable','lab_capture_stopped',
  'chromium_monitor_status','chromium_target_connected','chromium_network_request',
  'chromium_network_response','chromium_network_finish','chromium_network_fail',
  'chromium_network_redirect',
@@ -152,6 +154,22 @@ function validateDiagnostic(input){
       input.event!=='native_http_transfer')
      throw Error('INVALID_INBOUND_PROOF_SCOPE');
    out.proofScope=input.proofScope;
+ }
+ if(input.labReason!==undefined){
+   const allowed=new Set(['enabled','encrypted','capture_finished',
+     'invalid_lab_origin','missing_passphrase','invalid_lab_root',
+     'lab_directory_failed','lab_encryption_failed',
+     'lab_metadata_too_large','lab_size_limit','lab_write_failed',
+     'lab_initialization_failed']);
+   if(!allowed.has(input.labReason))throw Error('INVALID_LAB_REASON');
+   out.labReason=input.labReason;
+ }
+ for(const key of ['labEncryptedBytes','labReceivedBodyBytes']){
+   if(input[key]!==undefined){
+     if(!Number.isSafeInteger(input[key])||input[key]<0||input[key]>5*1024*1024)
+       throw Error('INVALID_LAB_SIZE');
+     out[key]=input[key];
+   }
  }
  for(const key of ['encodedBytes','blockedCookieCount','sentCookieCount']){
    if(input[key]!==undefined){
@@ -297,6 +315,15 @@ function validateDiagnostic(input){
 function mapNativeEvent(row){
  if(!row||typeof row!=='object')return null;
  const base={source:'programa',at:new Date().toISOString()};
+ if(row.kind==='lab'){
+   const event={active:'lab_capture_active',saved:'lab_capture_saved',
+     skipped:'lab_capture_skipped',unavailable:'lab_capture_unavailable',
+     stopped:'lab_capture_stopped'}[row.phase];
+   if(!event)return null;
+   return {...base,event,labReason:row.reason,
+     ...(row.encryptedBytes!==undefined?{labEncryptedBytes:row.encryptedBytes}:{}),
+     ...(row.receivedBodyBytes!==undefined?{labReceivedBodyBytes:row.receivedBodyBytes}:{})};
+ }
  if(row.kind==='http'){
    const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer',
      socket:'native_http_socket',tcp:'native_http_tcp',tls:'native_http_tls'}[row.phase];
@@ -377,7 +404,9 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    chromiumCookiesSent:0,chromiumEncodedBytes:0,
    chromiumHosts:new Set(),
    nodeResponses:0,nodeTransfers:0,nodeInboundProofs:0,
-   nodeInboundChunks:0,uploadRouteRequests:0,declaredOutboundBytes:0,
+   nodeInboundChunks:0,labCaptureActive:false,
+   labCaptureSaved:0,labCaptureBytes:0,labCaptureFailed:0,
+   uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
    requestsWithProxyAuthorization:0,responsesWithSetCookie:0};
@@ -434,6 +463,10 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        nodeTransfers:telemetry.nodeTransfers,
        nodeInboundProofs:telemetry.nodeInboundProofs,
        nodeInboundChunks:telemetry.nodeInboundChunks,
+       labCaptureActive:telemetry.labCaptureActive,
+       labCaptureSaved:telemetry.labCaptureSaved,
+       labCaptureBytes:telemetry.labCaptureBytes,
+       labCaptureFailed:telemetry.labCaptureFailed,
        outboundBodyBytesQueued:telemetry.outboundBodyBytesQueued,
        inboundBodyBytesObserved:telemetry.inboundBodyBytesObserved,
        byteCountLimited:telemetry.byteCountLimited,
@@ -452,7 +485,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  function makeReport(){
    const report={
      schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
-     delivery:'v30.0.24-diloakpro-rc11',coverage:'partial',
+     delivery:'v30.0.25-diloakpro-rc12',coverage:'partial',
      exportedAt:new Date().toISOString(),
      events,counters,checks:checks()
    };
@@ -608,6 +641,14 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      telemetry.tlsHandshakes++;
      if(event.tlsAuthorized)telemetry.tlsAuthorized++;
    }
+   if(event.event==='lab_capture_active')telemetry.labCaptureActive=true;
+   if(event.event==='lab_capture_stopped')telemetry.labCaptureActive=false;
+   if(event.event==='lab_capture_saved'){
+     telemetry.labCaptureSaved++;
+     telemetry.labCaptureBytes+=event.labReceivedBodyBytes||0;
+   }
+   if(event.event==='lab_capture_unavailable'||event.event==='lab_capture_skipped')
+     telemetry.labCaptureFailed++;
    if(event.event==='native_http_transfer'){
      telemetry.nodeTransfers++;
      if(event.inboundStreamProof)telemetry.nodeInboundProofs++;

@@ -40,7 +40,7 @@ function chunkSize(chunk,encoding){
   }
   return null;
 }
-function startNodeHttpTrace(emit) {
+function startNodeHttpTrace(emit,{labCapture=null}={}) {
   const restores=[];
   const instrumented=new WeakSet();
   // One ephemeral secret key per capture. The HMAC is a private correlation
@@ -184,6 +184,11 @@ function startNodeHttpTrace(emit) {
       // Install before the caller's response callback, without subscribing
       // to 'data' or changing the response stream's flow mode.
       req.prependOnceListener('response',res=>{
+        // A laboratory capture applies only to one exact configured origin.
+        // It processes each chunk without changing the normal Node response.
+        let labResponse=null;
+        try{labResponse=labCapture?.begin({args,protocol:proto,res,method:meta.action})||null;}
+        catch{/* lab failure is never allowed to stop profile opening */}
         // Instrument the same decoded-from-TLS Node stream consumed by the
         // application. Do NOT subscribe to data/read(), buffer, redirect,
         // change headers, write a file, or alter downstream stream behavior.
@@ -206,12 +211,21 @@ function startNodeHttpTrace(emit) {
               }else bodyProofUnavailable=true;
             }
           }
+          if(labResponse&&chunk!==null&&chunk!==undefined){
+            try{labResponse.add(chunk,rest[0]);}catch{/* fail open */}
+          }
           const result=originalPush.apply(this,arguments);
           add('in',chunk,rest[0]);
           return result;
         };
-        res.once('end',()=>transfer('response_end',res));
-        res.once('close',()=>transfer('response_closed',res));
+        res.once('end',()=>{
+          try{labResponse?.complete('response_end');}catch{}
+          transfer('response_end',res);
+        });
+        res.once('close',()=>{
+          try{labResponse?.complete('response_closed');}catch{}
+          transfer('response_closed',res);
+        });
         finish('response',res);
       });
       req.once('error',()=>{
@@ -321,7 +335,13 @@ function startLabWatcher(emit,root){
 function startCapture({emit,pid=process.pid,labRoot}={}){
   if(typeof emit!=='function')throw new TypeError('emit required');
   const safeEmit=e=>{try{emit(e);}catch{}},stops=[];
-  for(const factory of [()=>startNodeHttpTrace(safeEmit),
+  let labCapture=null;
+  try{
+    labCapture=require('./diloak-lab-response-capture.cjs')
+      .createLabResponseCapture({root:labRoot,emit:safeEmit});
+  }catch{safeEmit({kind:'lab',phase:'unavailable',reason:'lab_initialization_failed'});}
+  if(labCapture)stops.push(()=>labCapture.stop());
+  for(const factory of [()=>startNodeHttpTrace(safeEmit,{labCapture}),
     ()=>require('./almacen-undici-observador.cjs').startUndiciTrace(safeEmit),
     ()=>startWindowsSampler(safeEmit,pid)]){
     try{stops.push(factory());}catch{safeEmit({kind:'session',phase:'error',code:'MONITOR_ERROR'});}
