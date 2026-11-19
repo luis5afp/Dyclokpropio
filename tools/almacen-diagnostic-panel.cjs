@@ -17,6 +17,7 @@ const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
+ 'archive_saved','archive_failed',
  'panel_ready','configuration_missing','profile_wait','profile_running','api_request','api_response',
  'embedded_ui_only','operation_open_requested','operation_step_completed','operation_step_failed',
  'stage_pre_data_inject','stage_pre_check','stage_choose_kernel','stage_pre_proxy_check','stage_catch_error',
@@ -192,7 +193,7 @@ function mapNativeEvent(row){
  if(row.kind==='session'&&row.phase==='error')return {...base,event:'native_monitor_error'};
  return null;
 }
-async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
+async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=null,profileId=null}={}){
  const token=crypto.randomBytes(24).toString('hex');
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
@@ -317,6 +318,27 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8',
        'Content-Disposition':'attachment; filename="diloakPRO-Diagnostico-RC6.json"'});
      res.end(json);return;
+   }
+   // History is scoped to the profile selected by the trusted main process.
+   // A random URL token + loopback-only host checks protect the local viewer.
+   if(req.url===prefix+'history'){
+     let entries=[];
+     try{if(archive&&profileId)entries=archive.list(profileId);}catch{}
+     res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8'});
+     res.end(JSON.stringify({enabled:Boolean(archive&&profileId),entries}));return;
+   }
+   const match=req.url?.startsWith(prefix)?req.url.slice(prefix.length)
+     .match(/^history\/(diloakPRO-Apertura-\d{8}-\d{6}-[a-f0-9]{12})\/(json|txt)$/):null;
+   if(match){
+     try{
+       if(!archive||!profileId)throw Error('ARCHIVE_DISABLED');
+       const id=match[1],format=match[2],body=archive.read(profileId,id,format);
+       res.writeHead(200,{...headers,'Content-Type':format==='json'?
+         'application/json; charset=utf-8':'text/plain; charset=utf-8',
+         'Content-Disposition':'attachment; filename="'+id+'.'+format+'"'});
+       res.end(body);
+     }catch{res.writeHead(404,headers);res.end();}
+     return;
    }
    if(req.url===prefix+'state'){
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8'});
