@@ -16,6 +16,7 @@ const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
  'native_fetch_request','native_fetch_response','native_fetch_error','native_fetch_complete',
+ 'native_http_socket','native_http_tcp','native_http_tls',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
 
@@ -76,11 +77,17 @@ function validateDiagnostic(input){
    }
  }
  for(const key of ['requestAuthorizationPresent','requestCookiePresent',
-   'requestProxyAuthorizationPresent','responseSetCookiePresent','byteCountLimited']){
+   'requestProxyAuthorizationPresent','responseSetCookiePresent','byteCountLimited',
+   'socketReused','transportEncrypted','tlsAuthorized']){
    if(input[key]!==undefined){
      if(typeof input[key]!=='boolean')throw Error('INVALID_DIAGNOSTIC_FLAG');
      out[key]=input[key];
    }
+ }
+ if(input.tlsProtocol!==undefined){
+   if(!['TLSv1.0','TLSv1.1','TLSv1.2','TLSv1.3'].includes(input.tlsProtocol))
+     throw Error('INVALID_TLS_PROTOCOL');
+   out.tlsProtocol=input.tlsProtocol;
  }
  if(input.transferState!==undefined){
    if(!['response_end','response_closed','request_error'].includes(input.transferState))
@@ -177,13 +184,15 @@ function mapNativeEvent(row){
  if(!row||typeof row!=='object')return null;
  const base={source:'programa',at:new Date().toISOString()};
  if(row.kind==='http'){
-   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer'}[row.phase];
+   const event={request:'native_http_request',response:'native_http_response',error:'native_http_error',transfer:'native_http_transfer',
+     socket:'native_http_socket',tcp:'native_http_tcp',tls:'native_http_tls'}[row.phase];
    if(!event)return null;
    const out={...base,event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
    for(const key of ['status','elapsedMs','bytes','requestBytesDeclared',
      'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
      'requestAuthorizationPresent','requestCookiePresent',
-     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort'])if(row[key]!=null)out[key]=row[key];
+     'requestProxyAuthorizationPresent','responseSetCookiePresent','transferState','peerIp','peerPort',
+     'socketReused','transportEncrypted','tlsAuthorized','tlsProtocol'])if(row[key]!=null)out[key]=row[key];
    return out;
  }
  if(row.kind==='fetch'){
@@ -215,6 +224,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    captureId:null};
  const telemetry={browserProcessObserved:false,nodeRequests:0,
    fetchRequests:0,fetchResponses:0,fetchErrors:0,fetchCompletions:0,
+   tcpConnections:0,tlsHandshakes:0,tlsAuthorized:0,
    nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
@@ -248,6 +258,9 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        fetchResponses:telemetry.fetchResponses,
        fetchErrors:telemetry.fetchErrors,
        fetchCompletions:telemetry.fetchCompletions,
+       tcpConnections:telemetry.tcpConnections,
+       tlsHandshakes:telemetry.tlsHandshakes,
+       tlsAuthorized:telemetry.tlsAuthorized,
        networkCoverage:'node_http_request_and_undici_fetch_partial_no_chromium',
        nodeResponses:telemetry.nodeResponses,
        nodeTransfers:telemetry.nodeTransfers,
@@ -390,6 +403,11 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    if(event.event==='native_fetch_response')telemetry.fetchResponses++;
    if(event.event==='native_fetch_error')telemetry.fetchErrors++;
    if(event.event==='native_fetch_complete')telemetry.fetchCompletions++;
+   if(event.event==='native_http_tcp')telemetry.tcpConnections++;
+   if(event.event==='native_http_tls'){
+     telemetry.tlsHandshakes++;
+     if(event.tlsAuthorized)telemetry.tlsAuthorized++;
+   }
    if(event.event==='native_http_transfer'){
      telemetry.nodeTransfers++;
      if(event.byteCountLimited)telemetry.byteCountLimited++;
@@ -403,7 +421,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      if(event.responseSetCookiePresent)telemetry.responsesWithSetCookie++;
    }
    events.push(event);
-   if(events.length>850)events.shift();
+   if(events.length>2400)events.shift();
    counters.total++;
    if(event.event==='response_approved')counters.approved++;
    if(event.event==='document_saved')counters.saved++;
