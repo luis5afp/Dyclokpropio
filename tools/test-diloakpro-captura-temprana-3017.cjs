@@ -36,6 +36,8 @@ test('observer starts before vendor open and its bounded events survive a late d
   assert.equal(calls[0],'vendor_open');
   assert.equal(controller.snapshot(row)[0].event,'capture_started');
   assert.equal(controller.snapshot(row)[1].event,'operation_open_requested');
+  assert.ok(Date.parse(controller.snapshot(row)[0].at)<=
+    Date.parse(controller.snapshot(row)[1].at),'capture timestamp must precede opening');
 
   observe(REQUEST);
   controller.note(row,'step_start','FETCH_ENV_INFO');
@@ -51,6 +53,8 @@ test('observer starts before vendor open and its bounded events survive a late d
   assert.equal(network.requestBytesDeclared,42);
   assert.equal(network.captureRelation,'temporal');
   assert.equal(history.at(-1).event,'capture_finished');
+  assert.ok(Date.parse(history.at(-1).at)>=Date.parse(history[1].at),
+    'capture end timestamp must be the actual finish, not late panel playback');
   assert.ok(!JSON.stringify(history).includes(row));
   for(const privateValue of ['SECRET','SENSITIVE_COOKIE','private.example','Bearer']){
     assert.ok(!JSON.stringify(history).includes(privateValue),'private data leaked: '+privateValue);
