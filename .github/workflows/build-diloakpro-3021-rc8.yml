@@ -3,7 +3,7 @@ on:
   push:
     branches: [feature/diloakpro-3021-trafico-vivo-chromium]
     paths:
-      - '.github/workflows/build-diloakpro-3020-rc7.yml'
+      - '.github/workflows/build-diloakpro-3021-rc8.yml'
       - 'tools/test-diloakpro-diagnostic-3016.cjs'
       - 'tools/test-diloakpro-captura-temprana-3017.cjs'
       - 'tools/almacen-captura-temprana.cjs'
