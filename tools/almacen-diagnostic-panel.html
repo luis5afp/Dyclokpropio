@@ -28,6 +28,10 @@ tbody tr:nth-child(even){background:#1c2a39}
 button#save-json{background:#1d695e;border:1px solid #5eead4;color:white;padding:10px 15px;border-radius:8px;font-weight:650;cursor:pointer}
 button#save-json:disabled{opacity:.5;cursor:progress}
 #save-json-status{margin-left:12px;color:#c6d5e6;font-size:13px}
+.history-item{padding:12px;border:1px solid #40566c;border-radius:9px;margin:10px 0;background:#1c2938}
+.history-item button{margin-right:8px;padding:6px 10px;border:1px solid #5eead4;background:#173b38;color:white;border-radius:6px;cursor:pointer}
+.history-item pre{overflow:auto;max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere}
+#history-message{color:#67e8d0}
 .note{padding:12px;border-left:3px solid #2dd4bf;background:#1a2a36;
   color:#d6e5f1;margin:14px 0}
 </style></head><body>
@@ -45,6 +49,10 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <h2>Tráfico entre programa y servidor (HTTP Node observado)</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
+<h2>Almacén → Historial de diagnósticos guardados automáticamente</h2>
+<p>Al terminar la captura, diloakPRO guarda los informes JSON y TXT dentro de los datos de la aplicación, en la carpeta <code>Almacen/Diagnosticos</code>. Aquí puedes consultar los informes del perfil seleccionado incluso después de reiniciar el programa. Se guardan únicamente metadatos, no contraseñas, cookies de sesión, tokens ni códigos 2FA.</p>
+<p id="history-message" role="status">Consultando historial…</p>
+<div id="archive-history" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Guardar JSON + TXT en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
 <div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
@@ -90,6 +98,8 @@ const kinds={
  native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
  capture_started:"Observador iniciado antes de abrir",capture_finished:"Observador detenido tras apertura",
  capture_unavailable:"No se pudo iniciar observador",
+ archive_saved:"Informe guardado automáticamente en Almacén",
+ archive_failed:"No se pudo guardar el informe automáticamente",
  profile_running:"Perfil abierto",api_failed:"API local no disponible",api_connected:"API local conectada",
  debugger_connected:"Depurador conectado",debugger_failed:"Depurador no disponible",
  target_connected:"Pestaña supervisada",receiver_ready:"Receptor de pruebas activo",
@@ -115,6 +125,54 @@ document.getElementById("save-json").addEventListener("click",async()=>{
     notice.textContent="No se pudo guardar en Descargas. Comprueba permisos y espacio libre.";
   }finally{button.disabled=false;}
 });
+async function loadHistory(){
+  const root=document.getElementById("archive-history");
+  const message=document.getElementById("history-message");
+  try{
+    const response=await fetch("history",{cache:"no-store"});
+    if(!response.ok)throw Error("NOT_AVAILABLE");
+    const body=await response.json();
+    root.replaceChildren();
+    if(!body.enabled){
+      message.textContent="El historial automático no está activado en esta instalación.";
+      return;
+    }
+    const entries=Array.isArray(body.entries)?body.entries:[];
+    message.textContent=entries.length?
+      String(entries.length)+" diagnósticos archivados disponibles para este perfil":
+      "Aún no hay archivos guardados para este perfil. Pulsa Abrir y espera a que termine la captura.";
+    for(const entry of entries){
+      if(typeof entry.id!=="string"||
+         !/^diloakPRO-Apertura-\d{8}-\d{6}-[a-f0-9]{12}$/.test(entry.id))continue;
+      const item=document.createElement("section");item.className="history-item";
+      const heading=document.createElement("strong");
+      heading.textContent=(entry.firstOpeningRequestedAt?
+        new Date(entry.firstOpeningRequestedAt).toLocaleString("es-PE"):
+        "Apertura sin hora registrada")+" · "+
+        String(entry.requests||0)+" solicitudes, "+String(entry.responses||0)+
+        " respuestas · "+String(entry.errors||0)+" errores";
+      item.append(heading);
+      const actions=document.createElement("div");
+      const details=document.createElement("pre");
+      details.hidden=true;
+      for(const format of ["json","txt"]){
+        const button=document.createElement("button");button.type="button";
+        button.textContent="Ver "+format.toUpperCase();
+        button.addEventListener("click",async()=>{
+          button.disabled=true;details.hidden=false;details.textContent="Abriendo…";
+          try{
+            const r=await fetch("history/"+entry.id+"/"+format,{cache:"no-store"});
+            if(!r.ok)throw Error("NOT_FOUND");
+            details.textContent=await r.text();
+          }catch{details.textContent="No se pudo abrir el informe archivado.";}
+          finally{button.disabled=false;}
+        });
+        actions.append(button);
+      }
+      item.append(actions,details);root.append(item);
+    }
+  }catch{message.textContent="No se pudo consultar el historial local.";root.replaceChildren();}
+}
 async function update(){
   try{
     const response=await fetch("state",{cache:"no-store"});
@@ -267,6 +325,7 @@ async function update(){
     document.getElementById("conn").textContent="Panel desconectado del proceso local";
   }
 }
-update();
+update();loadHistory();
 setInterval(update,1000);
+setInterval(loadHistory,10000);
 </script></body></html>
