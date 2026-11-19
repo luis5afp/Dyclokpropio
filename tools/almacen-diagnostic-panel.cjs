@@ -10,6 +10,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const net=require('node:net');
 const {startCapture}=require('./almacen-observador-integrado.cjs');
+const {makeOpeningAudit,renderAuditTXT}=require('./almacen-diagnostic-report.cjs');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
@@ -248,29 +249,41 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    };
  }
  let boundPort=null,stopObserver=null;
- function reportJSON(){
-   // Whitelisted events are already sanitized at emit() time.
-   return JSON.stringify({schema:1,engine:'DICloak 3.0.7',
-     diagnostic:'0.4.2',delivery:'v30.0.17-diloakpro-rc4',
-     coverage:'partial',events,counters,checks:checks()},null,2);
+ function makeReport(){
+   const report={
+     schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
+     delivery:'v30.0.19-diloakpro-rc6',coverage:'partial',
+     exportedAt:new Date().toISOString(),
+     events,counters,checks:checks()
+   };
+   return {...report,audit:makeOpeningAudit(report)};
  }
+ function reportJSON(){return JSON.stringify(makeReport(),null,2);}
  function saveReport(){
    let directory=exportDirectory;
    if(directory===undefined){
-     try {directory=require('electron').app.getPath('downloads');}
-     catch {return {ok:false,error:'DOWNLOAD_DIRECTORY_UNAVAILABLE'};}
+     try{directory=require('electron').app.getPath('downloads');}
+     catch{return {ok:false,error:'DOWNLOAD_DIRECTORY_UNAVAILABLE'};}
    }
    if(typeof directory!=='string'||!path.isAbsolute(directory))
      return {ok:false,error:'DOWNLOAD_DIRECTORY_UNAVAILABLE'};
-   // No user-controlled names or paths. Do not touch browser profile storage.
    const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\..*$/,'').replace('T','-');
-   const fileName='diloakPRO-Diagnostico-'+stamp+'-'+crypto.randomBytes(4).toString('hex')+'.json';
+   const base='diloakPRO-Diagnostico-'+stamp+'-'+crypto.randomBytes(4).toString('hex');
+   const fileName=base+'.json',txtFileName=base+'.txt';
+   const jsonPath=path.join(directory,fileName),txtPath=path.join(directory,txtFileName);
+   const report=makeReport();
    try{
      fs.mkdirSync(directory,{recursive:true});
-     fs.writeFileSync(path.join(directory,fileName),reportJSON(),{
-       encoding:'utf8',flag:'wx',mode:0o600
-     });
-     return {ok:true,fileName,eventCount:events.length};
+     const json=JSON.stringify(report,null,2);
+     const txt=renderAuditTXT(report);
+     fs.writeFileSync(jsonPath,json,{encoding:'utf8',flag:'wx',mode:0o600});
+     try{
+       fs.writeFileSync(txtPath,txt,{encoding:'utf8',flag:'wx',mode:0o600});
+     }catch{
+       try{fs.unlinkSync(jsonPath);}catch{}
+       throw Error('REPORT_PAIR_INCOMPLETE');
+     }
+     return {ok:true,fileName,txtFileName,eventCount:events.length};
    }catch{return {ok:false,error:'WRITE_ERROR'};}
  }
  const server=http.createServer((req,res)=>{
@@ -302,12 +315,12 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    if(req.url===prefix+'export'){
      const json=reportJSON();
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8',
-       'Content-Disposition':'attachment; filename="Dyclok-Diagnostico-Motor-042.json"'});
+       'Content-Disposition':'attachment; filename="diloakPRO-Diagnostico-RC6.json"'});
      res.end(json);return;
    }
    if(req.url===prefix+'state'){
      res.writeHead(200,{...headers,'Content-Type':'application/json; charset=utf-8'});
-     res.end(JSON.stringify({events,counters,checks:checks()}));return;
+     res.end(JSON.stringify({events,counters,checks:checks(),audit:makeOpeningAudit({events,counters,checks:checks()})}));return;
    }
    res.writeHead(404,headers);res.end();
  });
@@ -369,7 +382,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      if(event.responseSetCookiePresent)telemetry.responsesWithSetCookie++;
    }
    events.push(event);
-   if(events.length>400)events.shift();
+   if(events.length>850)events.shift();
    counters.total++;
    if(event.event==='response_approved')counters.approved++;
    if(event.event==='document_saved')counters.saved++;
@@ -386,7 +399,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  return Object.freeze({
    url:'http://127.0.0.1:'+boundPort+'/diagnostico/'+token+'/',
    emit,
-   getState:()=>JSON.parse(JSON.stringify({events,counters,checks:checks()})),
+   getState:()=>JSON.parse(JSON.stringify({events,counters,checks:checks(),audit:makeOpeningAudit({events,counters,checks:checks()})})),
    stop:()=>{
      if(stopObserver){try{stopObserver();}catch{}stopObserver=null;}
      return new Promise((resolve,reject)=>server.close(err=>err?reject(err):resolve()));

@@ -33,17 +33,20 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 </style></head><body>
 <h1>diloakPRO · Diagnóstico de comunicación</h1>
 <p>Operación → Abrir · Perfil de pruebas · Almacén</p>
-<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API.</div>
+<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API. Los informes JSON y TXT registran metadatos; no incluyen valores de autenticación.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Estado de configuración y comunicación (verificación parcial)</h2>
 <div class="note">El diagnóstico registra <strong>si una etapa se ejecutó</strong>, no si se restauraron las contraseñas, cookies o credenciales de proxy. Nunca registra estos valores.</div>
 <div class="checks" id="profile-checks" aria-live="polite"></div>
+<h2>Auditoría de apertura completa (cobertura parcial)</h2>
+<p>Se registran desde Abrir hasta el fin del observador las etapas, solicitudes/respuestas de Electron y procesos/conexiones muestreados. No se leen contraseñas, tokens, valores de cookies, códigos 2FA ni cuerpos de solicitudes/respuestas. Una etapa completada no demuestra que Chromium haya aplicado una configuración.</p>
+<div id="opening-audit" class="checks" aria-live="polite"></div>
 <h2>Tráfico entre programa y servidor (HTTP Node observado)</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
-<p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
+<p><button id="save-json" type="button">Guardar JSON + TXT en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
 <div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
@@ -106,7 +109,7 @@ document.getElementById("save-json").addEventListener("click",async()=>{
       headers:{"Accept":"application/json"}});
     const result=await response.json();
     if(!response.ok||!result.ok)throw Error("SAVE_FAILED");
-    notice.textContent="Guardado en Descargas: "+result.fileName+
+    notice.textContent="Guardados en Descargas: "+result.fileName+" y "+result.txtFileName+
       " ("+String(result.eventCount)+" eventos)";
   }catch{
     notice.textContent="No se pudo guardar en Descargas. Comprueba permisos y espacio libre.";
@@ -118,6 +121,37 @@ async function update(){
     if(!response.ok)throw Error("unavailable");
     const state=await response.json();
     document.getElementById("conn").textContent="Panel local conectado · "+state.events.length+" eventos visibles";
+    const audit=state.audit||{};
+    const auditNode=document.getElementById("opening-audit");auditNode.replaceChildren();
+    const auditTimeline=audit.timeline||{},auditSummary=audit.summary||{};
+    const reportCards=[
+      ["Inicio del diagnóstico",auditTimeline.captureStartedAt||"No observado"],
+      ["Orden Abrir",auditTimeline.firstOpeningRequestedAt||"No registrada"],
+      ["Cierre de captura",auditTimeline.captureFinishedAt||"Pendiente o no registrado"],
+      ["Captura antes de Abrir",auditTimeline.coverageStartedBeforeOpen?"Sí":"No confirmada"],
+      ["Solicitudes y respuestas Node",String(auditSummary.requests||0)+" solicitudes · "+String(auditSummary.responses||0)+" respuestas"],
+      ["Solicitudes sin respuesta registrada",String(auditSummary.requestsWithoutObservedResponse||0)+
+         " (pueden quedar fuera de la ventana de captura)"],
+      ["Chromium y conexiones",String(auditSummary.browserProcesses||0)+
+         " procesos navegador · "+String(auditSummary.sampledConnections||0)+" conexiones muestreadas"],
+      ["Verificación de valores sensibles","No verificada: credenciales, cookies, proxy, 2FA"]
+    ];
+    for(const [name,value] of reportCards){
+      const card=document.createElement("div");card.className="check";
+      const h=document.createElement("strong");h.textContent=name;
+      const v=document.createElement("span");v.textContent=value;
+      card.append(h,v);auditNode.append(card);
+    }
+    const auditStages=audit.stages||{};
+    for(const [key,phase] of Object.entries(auditStages)){
+      const card=document.createElement("div");card.className="check";
+      const name=document.createElement("strong");name.textContent=phase.label||key;
+      const val=document.createElement("span");
+      const states={stage_completed:"Etapa completada, aplicación no verificada",
+        failed_stage:"Etapa fallida",not_observed:"No observada"};
+      val.textContent=states[phase.status]||"Estado desconocido";
+      card.append(name,val);auditNode.append(card);
+    }
     const checks=document.getElementById("profile-checks");checks.replaceChildren();
     const summary=state.checks||{};
     const labels=[
