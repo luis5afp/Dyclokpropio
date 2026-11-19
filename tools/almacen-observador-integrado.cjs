@@ -52,7 +52,7 @@ function isLabResponse(res){
   const marker=res?.headers?.['x-diloakpro-fixture'];
   const type=res?.headers?.['content-type'];
   return marker===LAB_RESPONSE_MARKER&&typeof type==='string'&&
-    /^application\\/vnd\\.diloakpro-lab\\+json(?:;|$)/i.test(type);
+    type.split(';',1)[0].trim().toLowerCase()==='application/vnd.diloakpro-lab+json';
 }
 function labCookieValues(res){
   const raw=Array.isArray(res?.rawHeaders)?res.rawHeaders:[];
