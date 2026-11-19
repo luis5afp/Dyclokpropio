@@ -30,18 +30,25 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 #save-json-status{margin-left:12px;color:#c6d5e6;font-size:13px}
 .note{padding:12px;border-left:3px solid #2dd4bf;background:#1a2a36;
   color:#d6e5f1;margin:14px 0}
+#lab-literals pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1622;
+  border:1px solid #42546a;border-radius:7px;padding:12px;max-height:320px;overflow:auto}
+#lab-literals article{border:1px solid #46596d;padding:12px;border-radius:8px;margin:12px 0}
+#lab-literals strong{display:block;margin-top:10px}
 </style></head><body>
 <h1>diloakPRO · Diagnóstico de comunicación</h1>
 <p>Operación → Abrir · Perfil de pruebas · Almacén</p>
-<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API.</div>
+<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red. Por defecto no muestra cookies, contraseñas, tokens, cabeceras ni cuerpos: solo metadatos. Únicamente un servidor de laboratorio seleccionado explícitamente y que marque una respuesta como sintética permite conservar sus valores literales de prueba. El diagnóstico de apertura funciona sin clave Open API.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Estado de configuración y comunicación (verificación parcial)</h2>
-<div class="note">El diagnóstico registra <strong>si una etapa se ejecutó</strong>, no si se restauraron las contraseñas, cookies o credenciales de proxy. Nunca registra estos valores.</div>
+<div class="note">El diagnóstico registra <strong>si una etapa se ejecutó</strong>, no si se restauraron las contraseñas, cookies o credenciales de proxy. No registra estos valores del perfil real. Las respuestas sintéticas del servidor de pruebas se muestran aparte si se habilitaron expresamente.</div>
 <div class="checks" id="profile-checks" aria-live="polite"></div>
 <h2>Tráfico entre programa y servidor (HTTP Node observado)</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
+<h2>Contenido literal de pruebas (solo URL autorizada)</h2>
+<p>Para comprobar carácter por carácter: muestra el cuerpo UTF-8 tal como lo recibió Node, las cabeceras Set-Cookie de la respuesta y una copia Base64 para verificar los bytes exactos. No se modifican los valores sintéticos. Esta captura requiere una URL exacta configurada y la cabecera de prueba del servidor; no registra credenciales de perfiles reales ni garantiza el tráfico de Chromium.</p>
+<div id="lab-literals" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
 <div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
@@ -82,7 +89,8 @@ const kinds={
  stage_unknown:"Etapa de apertura no identificada",
  api_request:"Programa solicita estado de sesión",api_response:"Servidor API responde",
  native_http_request:"Solicitud Node HTTP(S)",native_http_response:"Respuesta Node HTTP(S)",
- native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",native_process_seen:"Proceso descendiente observado",
+ native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",
+ native_http_lab_literal:"Respuesta literal de servidor de prueba autorizado",native_process_seen:"Proceso descendiente observado",
  native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
  native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
  capture_started:"Observador iniciado antes de abrir",capture_finished:"Observador detenido tras apertura",
@@ -178,13 +186,44 @@ async function update(){
       ["Cuerpo HTTP entrante",String(network.inboundBodyBytesObserved||0)+" bytes observados en respuestas Node"],
       ["Transferencias resumidas",String(network.nodeTransfers||0)+" · "+String(network.byteCountLimited||0)+" limitadas"],
       ["Autenticación indicada",String(network.requestsWithAuthorization||0)+" solicitudes con Authorization, "+String(network.requestsWithProxyAuthorization||0)+" con Proxy-Authorization"],
-      ["Cookies indicadas",String(network.requestsWithCookie||0)+" solicitudes con Cookie, "+String(network.responsesWithSetCookie||0)+" respuestas con Set-Cookie"]
+      ["Cookies indicadas",String(network.requestsWithCookie||0)+" solicitudes con Cookie, "+String(network.responsesWithSetCookie||0)+" respuestas con Set-Cookie"],
+      ["Respuestas literales de prueba",String(network.labLiteralResponseCount||0)+
+        " capturadas · "+(network.labLiteralCaptureRequested?"URL de laboratorio solicitada":"modo desactivado")]
     ];
     for(const [name,value] of metrics){
       const card=document.createElement("div");card.className="check";
       const strong=document.createElement("strong");strong.textContent=name;
       const span=document.createElement("span");span.textContent=value;
       card.append(strong,span);traffic.append(card);
+    }
+    const lab=document.getElementById("lab-literals");lab.replaceChildren();
+    const literalEvents=state.events.filter(e=>e.event==="native_http_lab_literal").slice(-5).reverse();
+    if(!literalEvents.length){
+      const empty=document.createElement("p");
+      empty.textContent="Sin respuestas literales de prueba. "+(
+        network.labLiteralCaptureRequested?
+        "Solo se aceptan respuestas desde la URL exacta con marcador de prueba.":"Activa el modo de laboratorio antes de iniciar la aplicación.");
+      lab.append(empty);
+    }
+    for(const ev of literalEvents){
+      const article=document.createElement("article");
+      const heading=document.createElement("h3");
+      heading.textContent="Respuesta sintética · "+new Date(ev.at).toLocaleString("es-PE");
+      article.append(heading);
+      const sections=[
+        ["Cuerpo recibido — texto UTF-8 exacto",ev.literalBodyText===undefined?
+          "(binario o UTF-8 no válido; consulta Base64)":ev.literalBodyText],
+        ["Set-Cookie recibido — valores sin máscara",
+          (ev.literalSetCookieValues||[]).join("\n")||"(ninguna cabecera)"],
+        ["Cuerpo original codificado en Base64",ev.literalBodyBase64||""],
+        ["SHA-256 del cuerpo recibido",ev.literalBodySha256||""]
+      ];
+      for(const [title,value] of sections){
+        const label=document.createElement("strong");label.textContent=title;
+        const pre=document.createElement("pre");pre.textContent=value;
+        article.append(label,pre);
+      }
+      lab.append(article);
     }
     const stats=document.getElementById("stats");stats.replaceChildren();
     for(const [key,label] of Object.entries(counters)){
