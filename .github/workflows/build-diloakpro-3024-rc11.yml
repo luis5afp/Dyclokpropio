@@ -9,6 +9,7 @@ on:
       - 'tools/almacen-captura-temprana.cjs'
       - 'tools/almacen-diagnostic-report.cjs'
       - 'tools/test-diloakpro-auditoria-e2e-3019.cjs'
+      - 'tools/almacen-observador-integrado.cjs'
       - 'tools/almacen-undici-observador.cjs'
       - 'tools/test-diloakpro-trafico-vivo-3021.cjs'
       - 'tools/almacen-chromium-cdp-verificador.cjs'
