@@ -46,7 +46,10 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <h2>Auditoría de apertura completa (cobertura parcial)</h2>
 <p>Se registran desde Abrir hasta el fin del observador las etapas, solicitudes/respuestas de Electron y procesos/conexiones muestreados. No se leen contraseñas, tokens, valores de cookies, códigos 2FA ni cuerpos de solicitudes/respuestas. Una etapa completada no demuestra que Chromium haya aplicado una configuración.</p>
 <div id="opening-audit" class="checks" aria-live="polite"></div>
-<h2>Tráfico en vivo — HTTP(S), Node fetch y conexión TCP/TLS</h2>
+<h2>Recepción pasiva antes de crear Chromium — servidor → programa</h2>
+<p>Este es el punto solicitado: el observador está instalado antes de pulsar Abrir, registra la llegada de fragmentos al flujo de respuesta Node y los deja pasar sin redirigir, consumir ni modificar su contenido. Genera solo un comprobante HMAC temporal (clave efímera descartada), número de fragmentos y bytes observados. No copia los datos secretos ni los guarda. Una respuesta de Node puede estar comprimida; el comprobante corresponde a los bytes del flujo Node recibido, no necesariamente a los datos descomprimidos ni a lo aplicado por Chromium.</p>
+<div class="checks" id="receive-proof" aria-live="polite"></div>
+<h2>Tráfico Node HTTP(S), fetch y TCP/TLS (metadatos secundarios)</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
 <h2>Tráfico de las páginas Chromium (verificación de sesión por API local)</h2>
@@ -234,6 +237,17 @@ async function update(){
       ?String(network.declaredOutboundBytes)+" bytes declarados en "+String(network.requestsWithKnownSize)+" solicitudes"
       :"No disponible: no se recibieron tamaños declarados";
     sizes.append(sizesName,sizesValue);checks.append(sizes);
+    const reception=document.getElementById("receive-proof");reception.replaceChildren();
+    for(const [label,value] of [
+      ["Respuestas Node completas con HMAC temporal",String(network.nodeInboundProofs||0)],
+      ["Fragmentos recibidos sin alterar",String(network.nodeInboundChunks||0)],
+      ["Persistencia de contenidos","Nunca: no se conservan fragmentos, claves HMAC, cookies ni contraseñas"]
+    ]){
+      const div=document.createElement("div");div.className="check";
+      const strong=document.createElement("strong");strong.textContent=label;
+      const span=document.createElement("span");span.textContent=value;
+      div.append(strong,span);reception.append(div);
+    }
     const traffic=document.getElementById("traffic-checks");traffic.replaceChildren();
     const metrics=[
       ["Cuerpo HTTP saliente",String(network.outboundBodyBytesQueued||0)+" bytes entregados a solicitudes Node"],
@@ -355,6 +369,9 @@ async function update(){
         ev.monitorStatus?"Estado: "+ev.monitorStatus:null,
         ev.monitorIssue?"Causa: "+(reasons[ev.monitorIssue]||"desconocida"):null,
         ev.contentEncoding?"Compresión: "+ev.contentEncoding:null,
+        ev.inboundStreamComplete?"Flujo Node completo (según observador)":null,
+        ev.inboundStreamProof?"HMAC temporal: "+ev.inboundStreamProof.slice(0,16)+"…":null,
+        ev.inboundChunkCount!==undefined?"Fragmentos recibidos: "+String(ev.inboundChunkCount):null,
         ev.responseClass?"Grupo: "+ev.responseClass:null,
         ev.servedFromCache?"Caché local":null,
         ev.servedFromServiceWorker?"Service worker":null,
