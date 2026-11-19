@@ -49,12 +49,15 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <h2>Tráfico en vivo — HTTP(S), Node fetch y conexión TCP/TLS</h2>
 <p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
+<h2>Tráfico de las páginas Chromium (verificación de sesión por API local)</h2>
+<p>Este monitor solo se activa si la API local identifica el perfil y su WebSocket de Chromium. Es opcional y de lectura: utiliza Network.enable para registrar los dominios visitados, códigos HTTP, tipos de recursos, redirecciones, tiempos, bytes y bloqueos de cookies, sin leer valores de cookies ni cuerpos HTTP. Se conecta tras finalizar la etapa de apertura: puede perder solicitudes iniciales del navegador. Requiere DILOAKPRO_DIAG_CDP_ENABLE=1, DILOAKPRO_DIAG_API_PORT y DICLOAK_LOCAL_API_KEY configurados antes de iniciar diloakPRO.</p>
+<div class="checks" id="chromium-network" aria-live="polite"></div>
 <h2>Cómo pasan las cookies a Chromium</h2>
 <p>El motor puede restaurar cookies desde los datos del perfil, recibir una cabecera Set-Cookie en una respuesta o crearlas mediante JavaScript o APIs del navegador. Este diagnóstico confirma etapas de preparación y presencia de Set-Cookie en solicitudes Node observadas, pero <strong>no comprueba que Chromium las haya instalado</strong>. No inspecciona la base de cookies ni guarda sus valores.</p>
 <div class="checks" id="cookie-path" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Exportar JSON + TXT voluntariamente</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
-<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Dominio (solo Chromium)</th><th>Ruta anonimizada</th><th>Recurso</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
@@ -95,6 +98,14 @@ const kinds={
  native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",
  native_http_socket:"Socket asignado (HTTP Node)",native_http_tcp:"Conexión TCP establecida (HTTP Node)",
  native_http_tls:"Conexión TLS negociada (HTTP Node)",
+ chromium_monitor_status:"Estado del observador Chromium",
+ chromium_target_connected:"Pestaña o iframe de Chromium conectado",
+ chromium_network_request:"Chromium solicita recurso",
+ chromium_network_response:"Servidor web responde a Chromium",
+ chromium_network_finish:"Chromium termina transferencia",
+ chromium_network_fail:"Chromium cancela o falla recurso",
+ chromium_cookie_response:"Política de Set-Cookie en respuesta Chromium",
+ chromium_cookie_request:"Política de cookies en solicitud Chromium",
  native_fetch_request:"Solicitud Node fetch",native_fetch_response:"Respuesta Node fetch",
  native_fetch_error:"Error Node fetch",native_fetch_complete:"Transferencia Node fetch terminada",native_process_seen:"Proceso descendiente observado",
  native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
@@ -176,13 +187,16 @@ async function update(){
       ["cookiesRestored","Cookies restauradas","Verificadas","No verificadas"],
       ["credentialsRestored","Credenciales restauradas","Verificadas","No verificadas"],
       ["proxyExitAndAuthentication","Autenticación y salida del proxy","Verificadas","No verificadas"],
-      ["browserSessionLinkedToRow","Sesión vinculada al perfil","Verificada","No verificada"]
+      ["browserSessionLinkedToRow","Sesión vinculada al perfil",
+        "Identificada por OpenAPI local","No verificada"]
     ];
     for(const [key,title,success,missing] of labels){
       const div=document.createElement("div");div.className="check";
       const name=document.createElement("strong");name.textContent=title;
       const result=document.createElement("span");
-      result.textContent=summary[key]===true?success:missing;
+      result.textContent=summary[key]===true||
+        (key==='browserSessionLinkedToRow'&&summary[key]==='openapi_verified')?
+          success:missing;
       div.append(name,result);checks.append(div);
     }
     const capture=summary.capture||{};
@@ -240,6 +254,38 @@ async function update(){
       const span=document.createElement("span");span.textContent=value;
       card.append(strong,span);traffic.append(card);
     }
+    const chromiumNode=document.getElementById("chromium-network");chromiumNode.replaceChildren();
+    const statusLabel={
+      not_configured:"Desactivado: faltan permisos/configuración de diagnóstico",
+      resolving:"Comprobando perfil y sesión local",
+      verified:"Perfil identificado por OpenAPI, conectando CDP",
+      active:"Conectado a Chromium (observación parcial)",
+      unavailable:"No disponible: la API o la sesión no pudo verificarse",
+      stopped:"Observación finalizada"
+    };
+    const chromiumCards=[
+      ["Estado Chromium",statusLabel[network.chromiumStatus]||"Sin información"],
+      ["Solicitudes y respuestas Chromium",String(network.chromiumRequests||0)+
+        " solicitudes · "+String(network.chromiumResponses||0)+" respuestas"],
+      ["Respuestas HTTP 200 en Chromium",String(network.chromiumHttp200||0)+
+        " respuestas · no equivalen a cookies guardadas"],
+      ["Pestañas/iframes observados",String(network.chromiumTargets||0)],
+      ["Dominios web distintos",String(network.chromiumHostCount||0)],
+      ["Transferencias / fallos",String(network.chromiumFinished||0)+
+        " terminadas · "+String(network.chromiumFailures||0)+" fallidas"],
+      ["Bytes codificados de recursos",String(network.chromiumEncodedBytes||0)+" bytes CDP observados"],
+      ["Intentos Set-Cookie / bloqueos",String(network.chromiumSetCookieAttempts||0)+
+        " respuestas con cabecera · "+String(network.chromiumCookiesBlocked||0)+
+        " cookies bloqueadas"],
+      ["Cookies adjuntadas a solicitudes",String(network.chromiumCookiesSent||0)+
+        " entradas CDP sin leer valores"]
+    ];
+    for(const [label,value] of chromiumCards){
+      const card=document.createElement("div");card.className="check";
+      const h=document.createElement("strong");h.textContent=label;
+      const v=document.createElement("span");v.textContent=value;
+      card.append(h,v);chromiumNode.append(card);
+    }
     const cookieNode=document.getElementById("cookie-path");cookieNode.replaceChildren();
     const cookieChecks=[
       ["Solicitud de configuración del perfil",summary.profileOpenStageCompleted?
@@ -248,8 +294,10 @@ async function update(){
         "Preparación completada; aplicación desconocida":"No observada"],
       ["Set-Cookie en respuestas Node",String(network.responsesWithSetCookie||0)+
         " respuestas observadas; no equivale a cookies instaladas en Chromium"],
-      ["Cookies del propio Chromium","No inspeccionadas: falta asociar una sesión nativa verificada"],
-      ["Persistencia y cifrado", "Chromium decide aceptación, expiración y almacenamiento; no observado"]
+      ["Cookies del propio Chromium",network.chromiumSessionMapped?
+        "Se observan indicadores de política CDP; contenido y persistencia no inspeccionados":
+        "No inspeccionadas: falta vincular una sesión nativa por OpenAPI"],
+      ["Persistencia y cifrado", "No verificado: CDP observa intentos y bloqueos, no confirma almacenamiento persistente"]
     ];
     for(const [label,value] of cookieChecks){
       const div=document.createElement("div");div.className="check";
@@ -276,6 +324,11 @@ async function update(){
         ev.requestCookiePresent?"Cookie presente":null,
         ev.responseSetCookiePresent?"Set-Cookie presente":null,
         ev.byteCountLimited?"Medición limitada":null,
+        ev.cookieSetAttempt?"Set-Cookie observado (sin valor)":null,
+        ev.blockedCookieCount?"Cookies bloqueadas: "+String(ev.blockedCookieCount):null,
+        ev.sentCookieCount?"Cookies asociadas: "+String(ev.sentCookieCount):null,
+        ev.cookieBlockedReasons?.length?"Motivos: "+ev.cookieBlockedReasons.join(", "):null,
+        ev.monitorStatus?"Estado: "+ev.monitorStatus:null,
         ev.tlsAuthorized===true?"TLS autorizado":ev.tlsAuthorized===false?"TLS no autorizado":null,
         ev.transportEncrypted?"Transporte cifrado":null,
         ev.socketReused?"Socket reutilizado":null,
@@ -285,7 +338,9 @@ async function update(){
         new Date(ev.at).toLocaleTimeString("es-PE"),
         sources[ev.source]||"",((kinds[ev.event]||"")+(ev.stage&&kinds[ev.stage]?" — "+kinds[ev.stage]:""))+phaseCode,
         ev.method===undefined?"—":String(ev.method),
+        ev.browserHost||"—",
         ev.routeTemplate===undefined?"—":String(ev.routeTemplate),
+        ev.resourceType||"—",
         ev.status===undefined?"—":String(ev.status),
         ev.durationMs===undefined&&ev.elapsedMs===undefined?"—":String(ev.durationMs??ev.elapsedMs),
         ev.bytes===undefined?"—":String(ev.bytes),
@@ -296,7 +351,8 @@ async function update(){
           ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—"),
         ev.pid===undefined?"—":String(ev.pid),
         ev.captureRelation==="ambiguous"?"Ambigua (varios perfiles)":
-          ev.captureRelation==="temporal"?"Temporal (no verificada)":"—",
+          ev.captureRelation==="temporal"?"Temporal (no verificada)":
+          ev.sessionMapping==="openapi_verified"?"Identificada por OpenAPI":"—",
         ev.sha256===undefined?"—":ev.sha256.slice(0,16)+"…"
       ];
       for(const value of cells){

@@ -17,6 +17,9 @@ const EVENTS=new Set([
  'native_http_request','native_http_response','native_http_error','native_http_transfer',
  'native_fetch_request','native_fetch_response','native_fetch_error','native_fetch_complete',
  'native_http_socket','native_http_tcp','native_http_tls',
+ 'chromium_monitor_status','chromium_target_connected','chromium_network_request',
+ 'chromium_network_response','chromium_network_finish','chromium_network_fail',
+ 'chromium_cookie_response','chromium_cookie_request',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
 
@@ -78,11 +81,55 @@ function validateDiagnostic(input){
  }
  for(const key of ['requestAuthorizationPresent','requestCookiePresent',
    'requestProxyAuthorizationPresent','responseSetCookiePresent','byteCountLimited',
-   'socketReused','transportEncrypted','tlsAuthorized']){
+   'socketReused','transportEncrypted','tlsAuthorized','cookieSetAttempt']){
    if(input[key]!==undefined){
      if(typeof input[key]!=='boolean')throw Error('INVALID_DIAGNOSTIC_FLAG');
      out[key]=input[key];
    }
+ }
+ for(const key of ['encodedBytes','blockedCookieCount','sentCookieCount']){
+   if(input[key]!==undefined){
+     if(!Number.isSafeInteger(input[key])||input[key]<0||input[key]>33554432)
+       throw Error('INVALID_CHROMIUM_METRIC');
+     out[key]=input[key];
+   }
+ }
+ if(input.browserHost!==undefined){
+   if(typeof input.browserHost!=='string'||input.browserHost.length>180||
+      !((/^(?:[a-z0-9-]{1,63}\.)*[a-z0-9-]{1,63}$/.test(input.browserHost))||
+        net.isIP(input.browserHost)))throw Error('INVALID_CHROMIUM_HOST');
+   out.browserHost=input.browserHost;
+ }
+ for(const [field,allowed] of Object.entries({
+   resourceType:['Document','Stylesheet','Image','Media','Font','Script',
+     'TextTrack','XHR','Fetch','Prefetch','EventSource','WebSocket',
+     'Manifest','SignedExchange','Ping','CSPViolationReport','Other'],
+   monitorStatus:['not_configured','resolving','verified','active','unavailable','stopped'],
+   transportProtocol:['http','https'],
+   targetType:['page','iframe'],
+   sessionMapping:['openapi_verified'],
+   failureKind:['blocked','network_or_cancelled']
+ })){
+   if(input[field]!==undefined){
+     if(!allowed.includes(input[field]))throw Error('INVALID_CHROMIUM_ENUM');
+     out[field]=input[field];
+   }
+ }
+ if(input.cookieBlockedReasons!==undefined){
+   const allowed=new Set(['SecureOnly','NotOnPath','DomainMismatch',
+     'SameSiteStrict','SameSiteLax','SameSiteUnspecifiedTreatedAsLax',
+     'SameSiteNoneInsecure','UserPreferences','ThirdPartyPhaseout',
+     'NameValuePairExceedsMaxSize','SchemefulSameSiteStrict',
+     'SchemefulSameSiteLax','InvalidDomain','InvalidPrefix','UnknownError',
+     'SyntaxError','SameSiteUnspecifiedLaxAllowUnsafe',
+     'SamePartyFromCrossPartyContext',
+     'SamePartyConflictsWithOtherAttributes',
+     'SamePartyFromSamePartyContext','SamePartyExclusionOverruled','Other']);
+   if(!Array.isArray(input.cookieBlockedReasons)||
+      input.cookieBlockedReasons.length>15||
+      !input.cookieBlockedReasons.every(v=>allowed.has(v)))
+     throw Error('INVALID_COOKIE_REASONS');
+   out.cookieBlockedReasons=[...input.cookieBlockedReasons];
  }
  if(input.tlsProtocol!==undefined){
    if(!['TLSv1.0','TLSv1.1','TLSv1.2','TLSv1.3'].includes(input.tlsProtocol))
@@ -204,6 +251,23 @@ function mapNativeEvent(row){
      ...(row.status!==undefined?{status:row.status}:{}),
      ...(row.elapsedMs!==undefined?{elapsedMs:row.elapsedMs}:{})};
  }
+ if(row.kind==='chromium'){
+   const event={status:'chromium_monitor_status',target:'chromium_target_connected',
+     request:'chromium_network_request',response:'chromium_network_response',
+     finish:'chromium_network_finish',fail:'chromium_network_fail',
+     cookie_response:'chromium_cookie_response',
+     cookie_request:'chromium_cookie_request'}[row.phase];
+   if(!event)return null;
+   const out={...base,source:'chromium',event};
+   for(const key of ['requestId','method','routeTemplate','browserHost',
+     'transportProtocol','resourceType','status','durationMs',
+     'encodedBytes','blockedCookieCount','sentCookieCount',
+     'cookieBlockedReasons','cookieSetAttempt','targetType',
+     'monitorStatus','sessionMapping','failureKind','peerIp','peerPort']){
+     if(row[key]!==undefined)out[key]=row[key];
+   }
+   return out;
+ }
  if(row.kind==='process')return {...base,event:'native_process_seen',pid:row.pid,ppid:row.ppid,processClass:row.processClass};
  if(row.kind==='connection')return {...base,event:'native_connection_seen',pid:row.pid,protocol:row.protocol,
    ...(row.remoteIp?{remoteIp:row.remoteIp}:{}),remotePort:row.remotePort};
@@ -225,6 +289,12 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  const telemetry={browserProcessObserved:false,nodeRequests:0,
    fetchRequests:0,fetchResponses:0,fetchErrors:0,fetchCompletions:0,
    tcpConnections:0,tlsHandshakes:0,tlsAuthorized:0,
+   chromiumStatus:'not_configured',chromiumMapped:false,
+   chromiumRequests:0,chromiumResponses:0,chromiumHttp200:0,
+   chromiumFailures:0,chromiumFinished:0,chromiumTargets:0,
+   chromiumSetCookieAttempts:0,chromiumCookiesBlocked:0,
+   chromiumCookiesSent:0,chromiumEncodedBytes:0,
+   chromiumHosts:new Set(),
    nodeResponses:0,nodeTransfers:0,uploadRouteRequests:0,declaredOutboundBytes:0,
    requestsWithKnownSize:0,outboundBodyBytesQueued:0,inboundBodyBytesObserved:0,
    byteCountLimited:0,requestsWithAuthorization:0,requestsWithCookie:0,
@@ -242,7 +312,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      credentialsRestored:'not_verified',
      cookiesRestored:'not_verified',
      proxyExitAndAuthentication:'not_verified',
-     browserSessionLinkedToRow:'not_verified',
+     browserSessionLinkedToRow:telemetry.chromiumMapped?
+       'openapi_verified':'not_verified',
      capture:{
        status:capture.status,
        startedBeforeOpen:capture.startedBeforeOpen,
@@ -261,7 +332,21 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        tcpConnections:telemetry.tcpConnections,
        tlsHandshakes:telemetry.tlsHandshakes,
        tlsAuthorized:telemetry.tlsAuthorized,
-       networkCoverage:'node_http_request_and_undici_fetch_partial_no_chromium',
+       networkCoverage:telemetry.chromiumMapped?
+         'node_and_cdp_mapped_partial':'node_http_request_and_undici_fetch_partial_no_chromium',
+       chromiumStatus:telemetry.chromiumStatus,
+       chromiumSessionMapped:telemetry.chromiumMapped,
+       chromiumRequests:telemetry.chromiumRequests,
+       chromiumResponses:telemetry.chromiumResponses,
+       chromiumHttp200:telemetry.chromiumHttp200,
+       chromiumFailures:telemetry.chromiumFailures,
+       chromiumFinished:telemetry.chromiumFinished,
+       chromiumTargets:telemetry.chromiumTargets,
+       chromiumSetCookieAttempts:telemetry.chromiumSetCookieAttempts,
+       chromiumCookiesBlocked:telemetry.chromiumCookiesBlocked,
+       chromiumCookiesSent:telemetry.chromiumCookiesSent,
+       chromiumEncodedBytes:telemetry.chromiumEncodedBytes,
+       chromiumHostCount:telemetry.chromiumHosts.size,
        nodeResponses:telemetry.nodeResponses,
        nodeTransfers:telemetry.nodeTransfers,
        outboundBodyBytesQueued:telemetry.outboundBodyBytesQueued,
@@ -282,7 +367,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  function makeReport(){
    const report={
      schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
-     delivery:'v30.0.21-diloakpro-rc8',coverage:'partial',
+     delivery:'v30.0.22-diloakpro-rc9',coverage:'partial',
      exportedAt:new Date().toISOString(),
      events,counters,checks:checks()
    };
@@ -390,6 +475,35 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    if(event.event==='capture_unavailable')capture.status='unavailable';
    if(event.event==='native_process_seen'&&event.processClass==='browser')
      telemetry.browserProcessObserved=true;
+   if(event.event==='chromium_monitor_status'){
+     telemetry.chromiumStatus=event.monitorStatus;
+     // A local API mapping alone is insufficient: require an active CDP
+     // WebSocket before claiming the browser network is observable.
+     if(event.monitorStatus==='active')telemetry.chromiumMapped=true;
+   }
+   if(event.event==='chromium_target_connected')telemetry.chromiumTargets++;
+   if(event.event==='chromium_network_request'){
+     telemetry.chromiumRequests++;
+     if(event.browserHost&&telemetry.chromiumHosts.size<300)
+       telemetry.chromiumHosts.add(event.browserHost);
+   }
+   if(event.event==='chromium_network_response'){
+     telemetry.chromiumResponses++;
+     if(event.status===200)telemetry.chromiumHttp200++;
+   }
+   if(event.event==='chromium_network_fail')telemetry.chromiumFailures++;
+   if(event.event==='chromium_network_finish'){
+     telemetry.chromiumFinished++;
+     if(event.encodedBytes!==undefined)telemetry.chromiumEncodedBytes+=event.encodedBytes;
+   }
+   if(event.event==='chromium_cookie_response'){
+     if(event.cookieSetAttempt)telemetry.chromiumSetCookieAttempts++;
+     telemetry.chromiumCookiesBlocked+=event.blockedCookieCount||0;
+   }
+   if(event.event==='chromium_cookie_request'){
+     telemetry.chromiumCookiesSent+=event.sentCookieCount||0;
+     telemetry.chromiumCookiesBlocked+=event.blockedCookieCount||0;
+   }
    if(event.event==='native_http_request'){
      telemetry.nodeRequests++;
      if(event.routeTemplate?.endsWith('/upload'))telemetry.uploadRouteRequests++;
@@ -425,7 +539,8 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
    counters.total++;
    if(event.event==='response_approved')counters.approved++;
    if(event.event==='document_saved')counters.saved++;
-   if(['operation_step_failed','api_failed','debugger_failed','response_failed','document_failed','connection_failed','native_http_error','native_fetch_error','native_monitor_error'].includes(event.event))
+   if(['operation_step_failed','api_failed','debugger_failed','response_failed','document_failed','connection_failed','native_http_error','native_fetch_error','native_monitor_error',
+     'chromium_network_fail'].includes(event.event))
      counters.failed++;
  }
  emit({source:'programa',event:'panel_ready'});

@@ -1,7 +1,7 @@
 {
   "appId": "com.diloakpro.desktop",
   "productName": "diloakPRO",
-  "artifactName": "diloakPRO_30.0.21_TraficoVivo_RC8_win_x64.exe",
+  "artifactName": "diloakPRO_30.0.22_ChromiumVerificado_RC9_win_x64.exe",
   "electronVersion": "31.7.7",
   "directories": {
     "output": "out"

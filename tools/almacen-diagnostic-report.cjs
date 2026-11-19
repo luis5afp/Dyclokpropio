@@ -88,6 +88,46 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     }
   }
   const http=[...requests.values()];
+  const browserRequests=new Map();
+  const browserStatuses=safe.filter(e=>e.event==='chromium_monitor_status');
+  const browserMapped=browserStatuses.some(e=>e.monitorStatus==='active');
+  for(const e of safe){
+    if(!e.event?.startsWith('chromium_network_')&&
+      !['chromium_cookie_request','chromium_cookie_response'].includes(e.event))continue;
+    if(!e.requestId)continue;
+    let r=browserRequests.get(e.requestId);
+    if(!r){
+      r={requestId:e.requestId,firstObservedAt:e.at,
+        browserHost:null,routeTemplate:null,method:null,resourceType:null,
+        status:null,durationMs:null,encodedBytes:null,
+        sentCookieCount:0,blockedCookieCount:0,cookieSetAttempt:false,
+        cookieBlockedReasons:[],responseObserved:false,failed:false,
+        finished:false};
+      browserRequests.set(e.requestId,r);
+    }
+    for(const key of ['browserHost','routeTemplate','method','resourceType']){
+      if(e[key]!==undefined)r[key]=e[key];
+    }
+    if(e.event==='chromium_network_response'){
+      r.responseObserved=true;
+      if(e.status!==undefined)r.status=e.status;
+      if(e.durationMs!==undefined)r.durationMs=e.durationMs;
+    }
+    if(e.event==='chromium_network_finish'){
+      r.finished=true;
+      if(e.encodedBytes!==undefined)r.encodedBytes=e.encodedBytes;
+    }
+    if(e.event==='chromium_network_fail')r.failed=true;
+    if(e.event==='chromium_cookie_response'||e.event==='chromium_cookie_request'){
+      r.cookieSetAttempt ||= e.cookieSetAttempt===true;
+      r.blockedCookieCount+=e.blockedCookieCount||0;
+      r.sentCookieCount+=e.sentCookieCount||0;
+      if(Array.isArray(e.cookieBlockedReasons))
+        r.cookieBlockedReasons=[...new Set([...r.cookieBlockedReasons,
+          ...e.cookieBlockedReasons])].slice(0,15);
+    }
+  }
+  const chromium=[...browserRequests.values()].slice(-1400);
   const summary={
     events:safe.length,requests:http.filter(r=>r.requestObserved).length,
     responses:http.filter(r=>r.responseObserved).length,
@@ -100,7 +140,14 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     fetchCompleted:http.filter(r=>r.transport==='node_fetch'&&r.finishedObserved).length,
     browserProcesses:safe.filter(e=>e.event==='native_process_seen'&&e.processClass==='browser').length,
     sampledConnections:safe.filter(e=>e.event==='native_connection_seen').length,
-    concurrentAmbiguityEvents:safe.filter(e=>e.captureRelation==='ambiguous').length
+    concurrentAmbiguityEvents:safe.filter(e=>e.captureRelation==='ambiguous').length,
+    chromiumSessionMapped:browserMapped,
+    chromiumRequests:safe.filter(e=>e.event==='chromium_network_request').length,
+    chromiumResponses:safe.filter(e=>e.event==='chromium_network_response').length,
+    chromiumHttp200:safe.filter(e=>e.event==='chromium_network_response'&&e.status===200).length,
+    chromiumCookieBlocks:safe.filter(e=>e.event.startsWith('chromium_cookie_'))
+      .reduce((n,e)=>n+(e.blockedCookieCount||0),0),
+    chromiumCookieSetAttempts:safe.filter(e=>e.event==='chromium_cookie_response'&&e.cookieSetAttempt).length
   };
   const timeline={
     firstOpeningRequestedAt:opened[0]?.at||null,
@@ -116,6 +163,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     cookiesPreparationStage:stages.cookiePlan.status,
     browserOpenStage:stages.browserOpen.status,
     browserProcessObserved:summary.browserProcesses>0,
+    chromiumSessionIdentifiedByOpenAPI:browserMapped,
     credentialsApplied:'not_verified',
     cookiesApplied:'not_verified',
     proxyAuthenticated:'not_verified',
@@ -124,11 +172,13 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
   };
   return {
     schema:1,purpose:'opening_traffic_metadata_audit',
-    timeline,summary,stages,http,orphans,verification,
-    coverage:{...COVERAGE},
+    timeline,summary,stages,http,chromium,orphans,verification,
+    coverage:{...COVERAGE,
+      chromiumNetwork:browserMapped?'cdp_partial_after_open':'not_captured_by_http_observer',
+      chromiumToProfileIdentity:browserMapped?'reported_by_local_openapi':'not_verified'},
     notes:[
       'Resultados de etapas no demuestran aplicación correcta de credenciales, cookies o proxy.',
-      'La captura incluye parte de Node http(s).request y Node fetch (Undici), no todo Chromium ni WebSockets.',
+      'La captura incluye parte de Node http(s).request, Node fetch y, cuando está habilitada y vinculada, actividad CDP tras abrir Chromium.',
       'La ausencia de respuesta observada no implica necesariamente error del servidor.',
       'IP/puerto pueden corresponder a un proxy y la asociación al perfil es temporal.',
       'No contiene contraseñas, tokens, cookies, códigos 2FA ni cuerpos HTTP.',
@@ -161,6 +211,12 @@ function renderAuditTXT(report){
     'Procesos navegador observados: '+a.summary.browserProcesses,
     'Conexiones muestreadas: '+a.summary.sampledConnections,
     'Eventos de asociación ambigua: '+a.summary.concurrentAmbiguityEvents,
+    'Sesión Chromium identificada por OpenAPI: '+(a.summary.chromiumSessionMapped?'sí':'no'),
+    'Solicitudes web de Chromium observadas: '+a.summary.chromiumRequests,
+    'Respuestas web de Chromium observadas: '+a.summary.chromiumResponses,
+    'Respuestas HTTP 200 de Chromium: '+a.summary.chromiumHttp200,
+    'Intentos Set-Cookie en Chromium: '+a.summary.chromiumCookieSetAttempts,
+    'Cookies bloqueadas (indicadores): '+a.summary.chromiumCookieBlocks,
     '',
     'ETAPAS (completadas NO implican configuración aplicada)'
   ];
@@ -176,16 +232,28 @@ function renderAuditTXT(report){
       'entrada='+String(r.inboundBodyBytesObserved??'?'),
       r.association||'sin asociación'].join(' | '));
   }
+  lines.push('','TRÁFICO DE CHROMIUM (dominio y ruta anonimizados)');
+  for(const row of a.chromium||[]){
+    lines.push([row.firstObservedAt,row.browserHost||'?',row.method||'?',
+      row.routeTemplate||'?',row.resourceType||'Other',
+      row.status??'sin respuesta',row.durationMs==null?'sin duración':row.durationMs+' ms',
+      'cookies adjuntadas='+row.sentCookieCount,
+      'cookies bloqueadas='+row.blockedCookieCount,
+      'Set-Cookie indicado='+String(row.cookieSetAttempt),
+      'persistencia no verificada'].join(' | '));
+  }
   lines.push('','VERIFICACIÓN PENDIENTE',
     'Credenciales: no verificadas.',
     'Cookies: no verificadas.',
     'Autenticación del proxy: no verificada.',
     '2FA: no verificado.',
-    'Asociación exacta del proceso Chromium con el perfil: no verificada.',
+    'Asociación Chromium-perfil: '+(a.summary.chromiumSessionMapped?
+      'reportada por OpenAPI local (no comprobación criptográfica)':'no verificada.'),
     'La comparación byte a byte exige pruebas coordinadas en servidor y cliente.',
     'El informe no guarda contenidos, secretos ni valores reutilizables.',
     '','COBERTURA: Node http(s).request y Undici fetch (parcial), fases UI y muestreo Windows.',
-    'Sin captura íntegra de red de Chromium ni WebSocket.',
+    'Chromium CDP: observación opcional posterior a abrir, sujeta a validación local del perfil.',
+    'Sin cuerpos, cookies, cabeceras completas ni garantía de captura íntegra.',
     '');
   return lines.join('\r\n');
 }

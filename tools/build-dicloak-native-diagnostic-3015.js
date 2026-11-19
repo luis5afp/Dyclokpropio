@@ -34,7 +34,9 @@ const LAB_MODULES=[
   'almacen-observador-integrado.cjs',
   'almacen-captura-temprana.cjs',
   'almacen-diagnostic-report.cjs',
-  'almacen-undici-observador.cjs'
+  'almacen-undici-observador.cjs',
+  'dicloak-local-api-profile.cjs',
+  'almacen-chromium-cdp-verificador.cjs'
 ];
 const LAB_DEST='dist-electron/almacen-lab/';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -192,7 +194,7 @@ async function build(folder) {
     fs.unlinkSync(backup);
     const manifest={
       nativeDiagnostic:'0.4.2',
-      deliveryVersion:'30.0.21',originalEngine:'DICloak 3.0.7',
+      deliveryVersion:'30.0.22',originalEngine:'DICloak 3.0.7',
       executableSha256:PE_SHA,originalExecutableSha256:PE_SHA,
       officialAsarSha256:ASAR_SHA,modifiedAsarSha256:sha(fs.readFileSync(archive)),
       changedMembers:TARGETS,additionalMembers:LAB_MODULES,localhostFixtureDisabled:true,capturesRealBrowsing:false,nativeIntegrityAuditReadOnly:true,integratedDiagnosticUI:true,observeRendererOpenPhases:true,realHttpBodiesCaptured:false,profileSessionVerifiedNatively:false,
