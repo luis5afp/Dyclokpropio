@@ -70,6 +70,7 @@ function createLabResponseCapture({config=process.env,root,emit=()=>{}}={}){
   const allowedOrigin=parseLabOrigin(config.DILOAKPRO_LAB_CAPTURE_ORIGIN);
   const passphrase=config.DILOAKPRO_LAB_CAPTURE_PASSPHRASE;
   let enabled=false,sessions=0,totalBody=0;
+  const activeResponses=new Set();
   const publish=row=>{try{emit(row);}catch{}};
   if(!allowedOrigin){
     publish({kind:'lab',phase:'unavailable',reason:'invalid_lab_origin'});return null;
@@ -108,8 +109,11 @@ function createLabResponseCapture({config=process.env,root,emit=()=>{}}={}){
     }catch{
       publish({kind:'lab',phase:'skipped',reason:'lab_encryption_failed'});return null;
     }
+    const release=()=>{done=true;chunks=[];activeResponses.delete(cancel);};
+    const cancel=()=>{release();};
+    activeResponses.add(cancel);
     const add=(chunk,encoding)=>{
-      if(!ok||done||chunk===null||chunk===undefined)return;
+      if(!enabled||!ok||done||chunk===null||chunk===undefined)return;
       let content;
       if(Buffer.isBuffer(chunk)||chunk instanceof Uint8Array)content=chunk;
       else if(typeof chunk==='string'){
@@ -126,7 +130,8 @@ function createLabResponseCapture({config=process.env,root,emit=()=>{}}={}){
     function complete(state){
       if(done)return;
       done=true;
-      if(state!=='response_end'||!ok){
+      activeResponses.delete(cancel);
+      if(!enabled||state!=='response_end'||!ok){
         chunks=[];return;
       }
       let output;
@@ -151,6 +156,8 @@ function createLabResponseCapture({config=process.env,root,emit=()=>{}}={}){
   return Object.freeze({begin,stop:()=>{
     if(!enabled)return;
     enabled=false;
+    for(const cancel of activeResponses)try{cancel();}catch{}
+    activeResponses.clear();
     key.fill(0);
     publish({kind:'lab',phase:'stopped',reason:'capture_finished'});
   },folder,allowedOrigin});
