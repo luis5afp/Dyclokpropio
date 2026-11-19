@@ -1,8 +1,8 @@
 {
   "name": "diloakpro-native-042",
-  "version": "30.0.17",
+  "version": "30.0.18",
   "private": true,
-  "description": "diloakPRO 30.0.16 Motor DICloak 3.0.7 with opt-in diagnostic and legacy upgrade",
+  "description": "diloakPRO 30.0.18 Motor DICloak 3.0.7 with opt-in diagnostic and legacy upgrade",
   "devDependencies": {
     "@electron/asar": "3.2.18",
     "electron-builder": "^26.0.0",
