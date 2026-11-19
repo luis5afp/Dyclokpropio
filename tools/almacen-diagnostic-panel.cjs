@@ -201,7 +201,8 @@ function validateDiagnostic(input){
  }
  if(input.routeTemplate!==undefined){
    if(typeof input.routeTemplate!=='string'||input.routeTemplate.length>160||
-      !/^\/(?:[a-z0-9]+|:id)(?:\/(?:[a-z0-9]+|:id))*\/?$/.test(input.routeTemplate))
+      !(input.routeTemplate==='/'||
+        /^\/(?:[a-z0-9]+|:id)(?:\/(?:[a-z0-9]+|:id))*\/?$/.test(input.routeTemplate)))
      throw Error('INVALID_DIAGNOSTIC_ROUTE');
    out.routeTemplate=input.routeTemplate;
  }
