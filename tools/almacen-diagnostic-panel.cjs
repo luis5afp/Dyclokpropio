@@ -11,6 +11,7 @@ const path=require('node:path');
 const net=require('node:net');
 const {startCapture}=require('./almacen-observador-integrado.cjs');
 const {makeOpeningAudit,renderAuditTXT}=require('./almacen-diagnostic-report.cjs');
+const {safeHostname,ROUTE_WORDS,safeMime,safeEncoding,safeHttpProtocol,statusClass}=require('./almacen-http-context.cjs');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
@@ -19,6 +20,7 @@ const EVENTS=new Set([
  'native_http_socket','native_http_tcp','native_http_tls',
  'chromium_monitor_status','chromium_target_connected','chromium_network_request',
  'chromium_network_response','chromium_network_finish','chromium_network_fail',
+ 'chromium_network_redirect',
  'chromium_cookie_response','chromium_cookie_request',
  'native_process_seen','native_connection_seen','native_file_changed','native_file_removed','native_monitor_error',
  'capture_started','capture_finished','capture_unavailable',
@@ -81,10 +83,53 @@ function validateDiagnostic(input){
  }
  for(const key of ['requestAuthorizationPresent','requestCookiePresent',
    'requestProxyAuthorizationPresent','responseSetCookiePresent','byteCountLimited',
-   'socketReused','transportEncrypted','tlsAuthorized','cookieSetAttempt']){
+   'socketReused','transportEncrypted','tlsAuthorized','cookieSetAttempt',
+   'servedFromCache','servedFromServiceWorker']){
    if(input[key]!==undefined){
      if(typeof input[key]!=='boolean')throw Error('INVALID_DIAGNOSTIC_FLAG');
      out[key]=input[key];
+   }
+ }
+ for(const key of ['routeDepth','routeMaskedSegments']){
+   if(input[key]!==undefined){
+     if(!Number.isInteger(input[key])||input[key]<0||input[key]>10)
+       throw Error('INVALID_ROUTE_STRUCTURE');
+     out[key]=input[key];
+   }
+ }
+ if(input.queryKeyNames!==undefined){
+   const approved=new Set(['page','limit','offset','size','sort','order','lang','language','version']);
+   if(!Array.isArray(input.queryKeyNames)||input.queryKeyNames.length>9||
+      !input.queryKeyNames.every(x=>approved.has(x)))throw Error('INVALID_QUERY_KEY_NAMES');
+   out.queryKeyNames=[...input.queryKeyNames];
+ }
+ if(input.originHost!==undefined){
+   if(safeHostname(input.originHost)!==input.originHost)
+     throw Error('INVALID_ORIGIN_HOST');
+   out.originHost=input.originHost;
+ }
+ for(const [field,allowed] of Object.entries({
+   endpointArea:['other','proxy','cookie','cookies','session','auth','login',
+     'env','profile','profiles','storage','fingerprint','network','gateway'],
+   mediaType:['application/json','application/problem+json','application/xml',
+     'application/javascript','application/wasm','application/octet-stream',
+     'application/x-www-form-urlencoded','application/pdf',
+     'text/html','text/plain','text/css','text/javascript','text/xml',
+     'image/png','image/jpeg','image/gif','image/webp','image/svg+xml',
+     'font/woff','font/woff2','multipart/form-data',
+     'application/vnd.diloakpro-lab+json','other'],
+   contentEncoding:['gzip','br','deflate','identity','zstd','other'],
+   responseClass:['1xx','2xx','3xx','4xx','5xx','unknown'],
+   httpProtocol:['http/1.0','http/1.1','h2','h3','http/2','http/3','quic','http','other'],
+   monitorIssue:['none','disabled_by_default','missing_api_port','invalid_api_port',
+     'missing_api_key','api_access_denied','api_endpoint_unsupported',
+     'api_profile_mismatch','api_session_not_running','api_unreachable',
+     'api_response_unavailable','cdp_connection_unavailable',
+     'cdp_transport_missing','cdp_ws_invalid']
+ })){
+   if(input[field]!==undefined){
+     if(!allowed.includes(input[field]))throw Error('INVALID_NETWORK_METADATA_ENUM');
+     out[field]=input[field];
    }
  }
  for(const key of ['encodedBytes','blockedCookieCount','sentCookieCount']){
@@ -235,6 +280,10 @@ function mapNativeEvent(row){
      socket:'native_http_socket',tcp:'native_http_tcp',tls:'native_http_tls'}[row.phase];
    if(!event)return null;
    const out={...base,event,method:row.action,scope:row.scope,routeTemplate:row.routeTemplate,requestId:row.requestId};
+   for(const key of ['originHost','routeDepth','routeMaskedSegments',
+     'endpointArea','queryKeyNames','mediaType','contentEncoding','responseClass']){
+     if(row[key]!==undefined)out[key]=row[key];
+   }
    for(const key of ['status','elapsedMs','bytes','requestBytesDeclared',
      'outboundBodyBytesQueued','inboundBodyBytesObserved','byteCountLimited',
      'requestAuthorizationPresent','requestCookiePresent',
@@ -248,18 +297,27 @@ function mapNativeEvent(row){
    if(!event)return null;
    return {...base,event,method:row.action,scope:row.scope,
      routeTemplate:row.routeTemplate,requestId:row.requestId,
+     ...(row.originHost?{originHost:row.originHost}:{}),
+     ...(row.routeDepth!==undefined?{routeDepth:row.routeDepth}:{}),
+     ...(row.routeMaskedSegments!==undefined?{routeMaskedSegments:row.routeMaskedSegments}:{}),
+     ...(row.endpointArea?{endpointArea:row.endpointArea}:{}),
+     ...(row.queryKeyNames?{queryKeyNames:row.queryKeyNames}:{}),
      ...(row.status!==undefined?{status:row.status}:{}),
      ...(row.elapsedMs!==undefined?{elapsedMs:row.elapsedMs}:{})};
  }
  if(row.kind==='chromium'){
    const event={status:'chromium_monitor_status',target:'chromium_target_connected',
      request:'chromium_network_request',response:'chromium_network_response',
+     redirect:'chromium_network_redirect',
      finish:'chromium_network_finish',fail:'chromium_network_fail',
      cookie_response:'chromium_cookie_response',
      cookie_request:'chromium_cookie_request'}[row.phase];
    if(!event)return null;
    const out={...base,source:'chromium',event};
    for(const key of ['requestId','method','routeTemplate','browserHost',
+     'routeDepth','routeMaskedSegments','queryKeyNames','endpointArea',
+     'mediaType','httpProtocol','responseClass','servedFromCache',
+     'servedFromServiceWorker','monitorIssue',
      'transportProtocol','resourceType','status','durationMs',
      'encodedBytes','blockedCookieCount','sentCookieCount',
      'cookieBlockedReasons','cookieSetAttempt','targetType',
@@ -289,7 +347,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  const telemetry={browserProcessObserved:false,nodeRequests:0,
    fetchRequests:0,fetchResponses:0,fetchErrors:0,fetchCompletions:0,
    tcpConnections:0,tlsHandshakes:0,tlsAuthorized:0,
-   chromiumStatus:'not_configured',chromiumMapped:false,
+   chromiumStatus:'not_configured',chromiumIssue:'disabled_by_default',chromiumMapped:false,
    chromiumRequests:0,chromiumResponses:0,chromiumHttp200:0,
    chromiumFailures:0,chromiumFinished:0,chromiumTargets:0,
    chromiumSetCookieAttempts:0,chromiumCookiesBlocked:0,
@@ -335,6 +393,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        networkCoverage:telemetry.chromiumMapped?
          'node_and_cdp_mapped_partial':'node_http_request_and_undici_fetch_partial_no_chromium',
        chromiumStatus:telemetry.chromiumStatus,
+       chromiumIssue:telemetry.chromiumIssue,
        chromiumSessionMapped:telemetry.chromiumMapped,
        chromiumRequests:telemetry.chromiumRequests,
        chromiumResponses:telemetry.chromiumResponses,
@@ -477,6 +536,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      telemetry.browserProcessObserved=true;
    if(event.event==='chromium_monitor_status'){
      telemetry.chromiumStatus=event.monitorStatus;
+     if(event.monitorIssue)telemetry.chromiumIssue=event.monitorIssue;
      // A local API mapping alone is insufficient: require an active CDP
      // WebSocket before claiming the browser network is observable.
      if(event.monitorStatus==='active')telemetry.chromiumMapped=true;
