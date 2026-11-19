@@ -6,11 +6,13 @@
  * test URL marked by its server; never unconditionally capture secrets.
  */
 const http=require('node:http');
+const https=require('node:https');
 const crypto=require('node:crypto');
 const fs=require('node:fs');
 const path=require('node:path');
 const net=require('node:net');
-const {startCapture}=require('./almacen-observador-integrado.cjs');
+const {startCapture,normalizeLabUrl,isLabResponse,labCookieValues,
+  MAX_LAB_CAPTURE_BYTES}=require('./almacen-observador-integrado.cjs');
 
 const SOURCES=new Set(['programa','servidor_pruebas','chromium','almacen']);
 const EVENTS=new Set([
@@ -222,8 +224,59 @@ function mapNativeEvent(row){
  if(row.kind==='session'&&row.phase==='error')return {...base,event:'native_monitor_error'};
  return null;
 }
+// The UI can explicitly request a benign GET from the selected synthetic
+// endpoint. Never replay an application's authorization/cookie/proxy headers.
+function requestSyntheticLabFixture(labUrl,emit){
+ return new Promise(resolve=>{
+   if(!labUrl){resolve({ok:false,error:'LAB_NOT_CONFIGURED'});return;}
+   let settled=false;
+   const finish=result=>{if(settled)return;settled=true;resolve(result);};
+   try{
+     const mod=labUrl.protocol==='https:'?https:http;
+     const req=mod.get(labUrl,{
+       headers:{Accept:'application/vnd.diloakpro-lab+json'},
+       agent:false
+     },res=>{
+       if(res.statusCode!==200||!isLabResponse(res)){
+         res.resume();finish({ok:false,error:'LAB_RESPONSE_NOT_MARKED'});return;
+       }
+       const cookies=labCookieValues(res);
+       if(cookies===null){
+         res.resume();finish({ok:false,error:'LAB_COOKIE_LIMIT'});return;
+       }
+       let total=0,limited=false;const parts=[];
+       res.on('data',chunk=>{
+         total+=chunk.length;
+         if(total>MAX_LAB_CAPTURE_BYTES){limited=true;parts.length=0;}
+         else if(!limited)parts.push(Buffer.from(chunk));
+       });
+       res.once('error',()=>finish({ok:false,error:'LAB_RESPONSE_ERROR'}));
+       res.once('end',()=>{
+         if(limited){finish({ok:false,error:'LAB_BODY_LIMIT'});return;}
+         const bytes=Buffer.concat(parts,total);
+         let literalBodyText;
+         try{
+           const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+           if(Buffer.from(text,'utf8').equals(bytes))literalBodyText=text;
+         }catch{}
+         const entry={source:'servidor_pruebas',event:'native_http_lab_literal',
+           method:'GET',scope:labUrl.protocol==='http:'?'local':'remote',
+           literalBodyBase64:bytes.toString('base64'),
+           literalBodySha256:crypto.createHash('sha256').update(bytes).digest('hex'),
+           literalSetCookieValues:cookies,
+           ...(literalBodyText!==undefined?{literalBodyText}:{})};
+         try{emit(entry);finish({ok:true,bytes:bytes.length});}
+         catch{finish({ok:false,error:'LAB_VALIDATION_FAILED'});}
+       });
+     });
+     req.setTimeout(10000,()=>req.destroy(Error('LAB_TIMEOUT')));
+     req.on('error',()=>finish({ok:false,error:'LAB_REQUEST_FAILED'}));
+   }catch{finish({ok:false,error:'LAB_REQUEST_FAILED'});}
+ });
+}
 async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
  const token=crypto.randomBytes(24).toString('hex');
+ const configuredLabUrl=normalizeLabUrl(process.env.DILOAKPRO_TEST_LITERAL_URL);
  const nonce=crypto.randomBytes(16).toString('base64');
  const events=[];
  const counters={total:0,approved:0,saved:0,failed:0};
@@ -274,7 +327,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
        responsesWithSetCookie:telemetry.responsesWithSetCookie,
        byteCountingScope:'node_http_application_body_not_wire_traffic',
        labLiteralResponseCount:telemetry.labLiteralResponseCount,
-       labLiteralCaptureRequested:Boolean(process.env.DILOAKPRO_TEST_LITERAL_URL),
+       labLiteralCaptureRequested:Boolean(configuredLabUrl),
        uploadRouteRequests:telemetry.uploadRouteRequests,
        requestsWithKnownSize:telemetry.requestsWithKnownSize,
        declaredOutboundBytes:telemetry.declaredOutboundBytes
@@ -307,6 +360,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      return {ok:true,fileName,eventCount:events.length};
    }catch{return {ok:false,error:'WRITE_ERROR'};}
  }
+ let labRequestPending=false;
  const server=http.createServer((req,res)=>{
    const host='127.0.0.1:'+boundPort;
    const prefix='/diagnostico/'+token+'/';
@@ -314,11 +368,22 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true}={}){
      'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
      'Cross-Origin-Resource-Policy':'same-origin'};
    const canSave=req.method==='POST'&&req.url===prefix+'save-json';
+   const canLab=req.method==='POST'&&req.url===prefix+'run-lab';
    if(req.headers.host!==host||
-      !(req.method==='GET'||canSave)||
+      !(req.method==='GET'||canSave||canLab)||
       (req.headers.origin && req.headers.origin!=='http://'+host)||
-      (canSave && req.headers.origin!=='http://'+host)){
+      ((canSave||canLab) && req.headers.origin!=='http://'+host)){
      res.writeHead(403,headers);res.end();return;
+   }
+   if(canLab){
+     if(labRequestPending){res.writeHead(409,headers);res.end();return;}
+     labRequestPending=true;
+     requestSyntheticLabFixture(configuredLabUrl,emit).then(result=>{
+       labRequestPending=false;
+       res.writeHead(result.ok?200:422,{...headers,
+         'Content-Type':'application/json; charset=utf-8'});
+       res.end(JSON.stringify(result));
+     });return;
    }
    if(canSave){
      const result=saveReport();
