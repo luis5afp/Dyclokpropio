@@ -60,7 +60,9 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       errorObserved:false,transport:e.event.startsWith('native_fetch_')?'node_fetch':'node_http',
       finishedObserved:false,originHost:null,endpointArea:null,mediaType:null,
       contentEncoding:null,responseClass:null,routeMaskedSegments:null,
-      routeDepth:null,queryKeyNames:[]};requests.set(e.requestId,r);}
+      routeDepth:null,queryKeyNames:[],
+      inboundStreamProof:null,inboundStreamComplete:false,
+      inboundChunkCount:0,proofScope:null};requests.set(e.requestId,r);}
     if(!r.method&&e.method)r.method=e.method;
     if(!r.routeTemplate&&e.routeTemplate)r.routeTemplate=e.routeTemplate;
     if(!r.scope&&e.scope)r.scope=e.scope;
@@ -86,6 +88,10 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       for(const [source,dest] of [
         ['outboundBodyBytesQueued','outboundBodyBytesQueued'],
         ['inboundBodyBytesObserved','inboundBodyBytesObserved'],
+        ['inboundStreamProof','inboundStreamProof'],
+        ['inboundStreamComplete','inboundStreamComplete'],
+        ['inboundChunkCount','inboundChunkCount'],
+        ['proofScope','proofScope'],
         ['requestAuthorizationPresent','authorizationHeaderPresent'],
         ['requestCookiePresent','cookieHeaderPresent'],
         ['requestProxyAuthorizationPresent','proxyAuthorizationHeaderPresent'],
@@ -148,6 +154,8 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     requestsWithoutObservedOutcome:http.filter(r=>r.requestObserved&&!r.responseObserved&&!r.errorObserved).length,
     errors:http.filter(r=>r.errorObserved).length,
     transferSummaries:http.filter(r=>r.transferObserved).length,
+    receivedStreamProofs:http.filter(r=>r.inboundStreamProof).length,
+    receivedStreamChunks:http.reduce((n,r)=>n+(r.inboundChunkCount||0),0),
     fetchRequests:http.filter(r=>r.transport==='node_fetch'&&r.requestObserved).length,
     fetchResponses:http.filter(r=>r.transport==='node_fetch'&&r.responseObserved).length,
     fetchCompleted:http.filter(r=>r.transport==='node_fetch'&&r.finishedObserved).length,
@@ -196,6 +204,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       'La ausencia de respuesta observada no implica necesariamente error del servidor.',
       'IP/puerto pueden corresponder a un proxy y la asociación al perfil es temporal.',
       'No contiene contraseñas, tokens, cookies, códigos 2FA, cabeceras ni cuerpos HTTP. Los dominios y nombres de consulta aprobados pueden ser información privada.',
+      'Los comprobantes HMAC son solo del flujo Node recibido: la clave efímera no se guarda; no demuestran que el servidor enviase bytes idénticos ni que Chromium los aplicase.',
       'Para verificar igualdad de contenido se necesitan comprobantes del servidor y cliente de confianza.'
     ]
   };
@@ -218,6 +227,8 @@ function renderAuditTXT(report){
     'Solicitudes Node observadas (HTTP y fetch): '+a.summary.requests,
     'Solicitudes Node fetch observadas: '+a.summary.fetchRequests,
     'Respuestas observadas: '+a.summary.responses,
+    'Recepciones Node completas con comprobante efímero: '+a.summary.receivedStreamProofs,
+    'Fragmentos de respuesta Node observados: '+a.summary.receivedStreamChunks,
     'Respuestas Node fetch observadas: '+a.summary.fetchResponses,
     'Solicitudes sin respuesta registrada: '+a.summary.requestsWithoutObservedResponse,
     'Sin resultado observado: '+a.summary.requestsWithoutObservedOutcome,
@@ -247,6 +258,8 @@ function renderAuditTXT(report){
       r.responseObserved?'respuesta observada':r.errorObserved?'error observado':'sin respuesta observada',
       'salida='+String(r.outboundBodyBytesQueued??'?'),
       'entrada='+String(r.inboundBodyBytesObserved??'?'),
+      'fragmentos='+String(r.inboundChunkCount),
+      'comprobante HMAC temporal='+(r.inboundStreamProof||'no disponible'),
       r.association||'sin asociación'].join(' | '));
   }
   lines.push('','TRÁFICO DE CHROMIUM (dominio y ruta anonimizados)');
