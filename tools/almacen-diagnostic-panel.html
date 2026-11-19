@@ -33,15 +33,18 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 </style></head><body>
 <h1>diloakPRO · Diagnóstico de comunicación</h1>
 <p>Operación → Abrir · Perfil de pruebas · Almacén</p>
-<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra cookies, contraseñas, tokens, cabeceras o cuerpos privados. El diagnóstico de apertura funciona sin clave Open API.</div>
+<div class="note">Al pulsar <strong>Abrir</strong>, se inicia una captura temporal de metadatos antes de solicitar la apertura. El panel puede abrirse después; conserva los eventos de esa operación. Si se configura aparte, pueden observarse documentos de un servidor de pruebas autorizado. El ID de fila todavía no verifica la identidad de Chromium. No captura todo el tráfico de red ni muestra valores de cookies, contraseñas, tokens, cabeceras o cuerpos privados. Solo indica la presencia de algunas cabeceras sensibles y contabiliza bytes sin leer su contenido. El diagnóstico de apertura funciona sin clave Open API.</div>
 <div id="conn" role="status">Conectando con el diagnóstico local…</div>
 <div class="flex" id="stats" aria-live="polite"></div>
 <h2>Estado de configuración y comunicación (verificación parcial)</h2>
 <div class="note">El diagnóstico registra <strong>si una etapa se ejecutó</strong>, no si se restauraron las contraseñas, cookies o credenciales de proxy. Nunca registra estos valores.</div>
 <div class="checks" id="profile-checks" aria-live="polite"></div>
+<h2>Tráfico entre programa y servidor (HTTP Node observado)</h2>
+<p>Los bytes de salida son cuerpo entregado a la solicitud para envío; los de entrada son cuerpo observado por el cliente. No incluyen todo el tráfico de Chromium ni prueban por sí solos cuántos bytes llegaron al servidor. «Presente» no confirma que el servidor haya aceptado una cookie o credencial.</p>
+<div class="checks" id="traffic-checks" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
-<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes</th><th>Conexión</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
@@ -79,7 +82,7 @@ const kinds={
  stage_unknown:"Etapa de apertura no identificada",
  api_request:"Programa solicita estado de sesión",api_response:"Servidor API responde",
  native_http_request:"Solicitud Node HTTP(S)",native_http_response:"Respuesta Node HTTP(S)",
- native_http_error:"Error Node HTTP(S)",native_process_seen:"Proceso descendiente observado",
+ native_http_error:"Error Node HTTP(S)",native_http_transfer:"Resumen de datos HTTP observados",native_process_seen:"Proceso descendiente observado",
  native_connection_seen:"Conexión TCP/UDP observada",native_file_changed:"Archivo de laboratorio modificado",
  native_file_removed:"Archivo de laboratorio retirado",native_monitor_error:"Fallo de monitor",
  capture_started:"Observador iniciado antes de abrir",capture_finished:"Observador detenido tras apertura",
@@ -169,6 +172,20 @@ async function update(){
       ?String(network.declaredOutboundBytes)+" bytes declarados en "+String(network.requestsWithKnownSize)+" solicitudes"
       :"No disponible: no se recibieron tamaños declarados";
     sizes.append(sizesName,sizesValue);checks.append(sizes);
+    const traffic=document.getElementById("traffic-checks");traffic.replaceChildren();
+    const metrics=[
+      ["Cuerpo HTTP saliente",String(network.outboundBodyBytesQueued||0)+" bytes entregados a solicitudes Node"],
+      ["Cuerpo HTTP entrante",String(network.inboundBodyBytesObserved||0)+" bytes observados en respuestas Node"],
+      ["Transferencias resumidas",String(network.nodeTransfers||0)+" · "+String(network.byteCountLimited||0)+" limitadas"],
+      ["Autenticación indicada",String(network.requestsWithAuthorization||0)+" solicitudes con Authorization, "+String(network.requestsWithProxyAuthorization||0)+" con Proxy-Authorization"],
+      ["Cookies indicadas",String(network.requestsWithCookie||0)+" solicitudes con Cookie, "+String(network.responsesWithSetCookie||0)+" respuestas con Set-Cookie"]
+    ];
+    for(const [name,value] of metrics){
+      const card=document.createElement("div");card.className="check";
+      const strong=document.createElement("strong");strong.textContent=name;
+      const span=document.createElement("span");span.textContent=value;
+      card.append(strong,span);traffic.append(card);
+    }
     const stats=document.getElementById("stats");stats.replaceChildren();
     for(const [key,label] of Object.entries(counters)){
       const card=document.createElement("div");card.className="stat";
@@ -182,6 +199,13 @@ async function update(){
       const tr=document.createElement("tr");
       const phaseCode=(Number.isInteger(ev.phaseCode)&&ev.phaseCode>=0&&ev.phaseCode<=255)?
         " (código de etapa "+String(ev.phaseCode)+")":"";
+      const signals=[
+        ev.requestAuthorizationPresent?"Authorization presente":null,
+        ev.requestProxyAuthorizationPresent?"Proxy-Authorization presente":null,
+        ev.requestCookiePresent?"Cookie presente":null,
+        ev.responseSetCookiePresent?"Set-Cookie presente":null,
+        ev.byteCountLimited?"Medición limitada":null
+      ].filter(Boolean).join(", ");
       const cells=[
         new Date(ev.at).toLocaleTimeString("es-PE"),
         sources[ev.source]||"",((kinds[ev.event]||"")+(ev.stage&&kinds[ev.stage]?" — "+kinds[ev.stage]:""))+phaseCode,
@@ -190,7 +214,11 @@ async function update(){
         ev.status===undefined?"—":String(ev.status),
         ev.durationMs===undefined&&ev.elapsedMs===undefined?"—":String(ev.durationMs??ev.elapsedMs),
         ev.bytes===undefined?"—":String(ev.bytes),
-        ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—",
+        ev.outboundBodyBytesQueued===undefined?"—":String(ev.outboundBodyBytesQueued),
+        ev.inboundBodyBytesObserved===undefined?"—":String(ev.inboundBodyBytesObserved),
+        signals||"—",
+        ev.peerIp?ev.peerIp+":"+String(ev.peerPort||"")+" (HTTP)":(
+          ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—"),
         ev.pid===undefined?"—":String(ev.pid),
         ev.captureRelation==="ambiguous"?"Ambigua (varios perfiles)":
           ev.captureRelation==="temporal"?"Temporal (no verificada)":"—",

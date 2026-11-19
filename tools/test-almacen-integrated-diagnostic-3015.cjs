@@ -179,9 +179,13 @@ test('0.4.2 observer reports redacted HTTP method/route with matching response I
       method:'POST'
     },res=>{res.resume();res.once('end',resolve)}).once('error',reject).end());
   }finally{restore();await new Promise(resolve=>server.close(resolve))}
-  assert.equal(events.length,2);
+  assert.equal(events.length,3,'request, response and sanitized body metrics');
   assert.equal(events[0].requestId,events[1].requestId);
+  assert.equal(events[1].requestId,events[2].requestId);
   assert.equal(events[1].status,200);
+  assert.equal(events[2].phase,'transfer');
+  assert.equal(events[2].inboundBodyBytesObserved,2);
+  assert.equal(events[2].outboundBodyBytesQueued,0);
   assert.equal(JSON.stringify(events).includes('ULTRASECRET'),false);
   assert.equal(JSON.stringify(events).includes('PRIVATE_123'),false);
   const mapped=mapNativeEvent(events[1]);

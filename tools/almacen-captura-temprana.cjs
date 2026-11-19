@@ -34,7 +34,7 @@ function createOpeningCaptureCoordinator({
     if(item.timer)clearTimeout(item.timer);
     if(item.timeout)clearTimeout(item.timeout);
     active.delete(profileId);
-    send(profileId,{source:'programa',event:'capture_finished',
+    send(profileId,{source:'programa',at:new Date().toISOString(),event:'capture_finished',
       captureId:item.captureId,finishReason:reason});
     if(active.size===0&&stopObserver){
       const stop=stopObserver;stopObserver=null;
@@ -68,14 +68,14 @@ function createOpeningCaptureCoordinator({
         stopObserver=stop;
       }catch{
         active.delete(profileId);
-        send(profileId,{source:'programa',event:'capture_unavailable'});
+        send(profileId,{source:'programa',at:new Date().toISOString(),event:'capture_unavailable'});
         return {ok:false,captureStarted:false,reason:'OBSERVER_UNAVAILABLE'};
       }
     }
     const item=active.get(profileId);
     item.timeout=setTimeout(()=>finish(profileId,'timeout'),maxMs);
     item.timeout.unref?.();
-    send(profileId,{source:'programa',event:'capture_started',captureId,
+    send(profileId,{source:'programa',at:new Date().toISOString(),event:'capture_started',captureId,
       captureRelation:active.size===1?'temporal':'ambiguous'});
     return {ok:true,captureStarted:true,profileVerified:false,
       coverage:'node_http_and_windows_process_metadata'};
