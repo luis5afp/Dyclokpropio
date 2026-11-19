@@ -253,7 +253,7 @@ async function startDiagnosticPanel({exportDirectory,observeOnOpen=true,archive=
  function makeReport(){
    const report={
      schema:2,engine:'DICloak 3.0.7',diagnostic:'0.4.2',
-     delivery:'v30.0.19-diloakpro-rc6',coverage:'partial',
+     delivery:'v30.0.20-diloakpro-rc7',coverage:'partial',
      exportedAt:new Date().toISOString(),
      events,counters,checks:checks()
    };
