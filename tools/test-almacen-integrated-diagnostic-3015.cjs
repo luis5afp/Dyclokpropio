@@ -143,7 +143,7 @@ test('builder resolves vendor numeric enum stepType before sending only symbolic
   assert.equal(safeStage('123456'),'stage_unknown');
 });
 
-test('30.0.17 UI has Almacén and Diagnóstico side by side; vendor authentication is unchanged',()=>{
+test('30.0.18 UI has Almacén and Diagnóstico side by side; vendor authentication is unchanged',()=>{
   const diag=buildConst('ADD_DIAG_COLUMN','FIELD_CONFIG');
   assert.ok(diag.includes('label:"Diagnóstico"'));
   assert.ok(diag.includes('width:162,align:"center"'));
