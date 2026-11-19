@@ -44,7 +44,7 @@ button#save-json:disabled{opacity:.5;cursor:progress}
 <div class="checks" id="traffic-checks" aria-live="polite"></div>
 <h2>Comunicación observada</h2>
 <p><button id="save-json" type="button">Guardar JSON en Descargas</button><span id="save-json-status" role="status" aria-live="polite"></span></p>
-<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
+<div class="wrap"><table><thead><tr><th>Hora</th><th>Origen</th><th>Evento</th><th>Método</th><th>Ruta</th><th>HTTP</th><th>Duración ms</th><th>Bytes declarados</th><th>Cuerpo salida</th><th>Cuerpo entrada</th><th>Indicadores</th><th>Conexión / peer HTTP</th><th>PID</th><th>Asociación</th><th>SHA-256</th></tr></thead><tbody id="events"></tbody></table></div>
 <small>Los eventos de apertura proceden de la interfaz y no prueban transferencia HTTP. Las descargas de servidores de pruebas requieren otro receptor autorizado. Cerrar esta ventana no cierra DICloak ni Chromium.</small>
 <script nonce="PANEL_CSP_NONCE">
 "use strict";
@@ -217,7 +217,8 @@ async function update(){
         ev.outboundBodyBytesQueued===undefined?"—":String(ev.outboundBodyBytesQueued),
         ev.inboundBodyBytesObserved===undefined?"—":String(ev.inboundBodyBytesObserved),
         signals||"—",
-        ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—",
+        ev.peerIp?ev.peerIp+":"+String(ev.peerPort||"")+" (HTTP)":(
+          ev.remoteIp?ev.remoteIp+":"+String(ev.remotePort||""):"—"),
         ev.pid===undefined?"—":String(ev.pid),
         ev.captureRelation==="ambiguous"?"Ambigua (varios perfiles)":
           ev.captureRelation==="temporal"?"Temporal (no verificada)":"—",
