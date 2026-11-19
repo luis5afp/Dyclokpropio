@@ -54,7 +54,7 @@ function repair(folder,originalAsarPath){
     'baseline original ASAR differs from pinned official source');
   assert(fs.existsSync(manifestPath),'missing patch manifest');
   const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
-  assert(['0.2.0','0.3.0','0.3.1','0.3.2','0.3.3','0.3.4','0.3.9','0.4.0','0.4.1','30.0.15','30.0.16','30.0.17','30.0.19','30.0.20','30.0.21'].includes(manifest.deliveryVersion) &&
+  assert(['0.2.0','0.3.0','0.3.1','0.3.2','0.3.3','0.3.4','0.3.9','0.4.0','0.4.1','30.0.15','30.0.16','30.0.17','30.0.19','30.0.20','30.0.21','30.0.22'].includes(manifest.deliveryVersion) &&
     manifest.modifiedAsarSha256===sha(fs.readFileSync(asarPath)),
     'ASAR patch manifest differs from staged build');
   const oldDigest=headerHash(originalAsarPath);
