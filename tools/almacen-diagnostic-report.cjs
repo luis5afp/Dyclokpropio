@@ -58,7 +58,9 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       proxyAuthorizationHeaderPresent:null,setCookieHeaderPresent:null,
       requestObserved:false,responseObserved:false,transferObserved:false,
       errorObserved:false,transport:e.event.startsWith('native_fetch_')?'node_fetch':'node_http',
-      finishedObserved:false};requests.set(e.requestId,r);}
+      finishedObserved:false,originHost:null,endpointArea:null,mediaType:null,
+      contentEncoding:null,responseClass:null,routeMaskedSegments:null,
+      routeDepth:null,queryKeyNames:[]};requests.set(e.requestId,r);}
     if(!r.method&&e.method)r.method=e.method;
     if(!r.routeTemplate&&e.routeTemplate)r.routeTemplate=e.routeTemplate;
     if(!r.scope&&e.scope)r.scope=e.scope;
@@ -74,6 +76,10 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     }
     if(['native_http_error','native_fetch_error'].includes(e.event))r.errorObserved=true;
     if(e.event==='native_fetch_complete')r.finishedObserved=true;
+    for(const key of ['originHost','endpointArea','mediaType',
+      'contentEncoding','responseClass','routeMaskedSegments','routeDepth'])
+      if(e[key]!==undefined&&e[key]!==null)r[key]=e[key];
+    if(Array.isArray(e.queryKeyNames))r.queryKeyNames=e.queryKeyNames;
     if(e.event==='native_http_transfer'){
       r.transferObserved=true;
       r.transferState=e.transferState||null;
@@ -102,12 +108,19 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
         status:null,durationMs:null,encodedBytes:null,
         sentCookieCount:0,blockedCookieCount:0,cookieSetAttempt:false,
         cookieBlockedReasons:[],responseObserved:false,failed:false,
+        endpointArea:null,mediaType:null,httpProtocol:null,responseClass:null,
+        routeMaskedSegments:null,queryKeyNames:[],servedFromCache:false,
+        servedFromServiceWorker:false,redirectObserved:false,
         finished:false};
       browserRequests.set(e.requestId,r);
     }
-    for(const key of ['browserHost','routeTemplate','method','resourceType']){
+    for(const key of ['browserHost','routeTemplate','method','resourceType',
+      'endpointArea','mediaType','httpProtocol','responseClass',
+      'routeMaskedSegments','servedFromCache','servedFromServiceWorker']){
       if(e[key]!==undefined)r[key]=e[key];
     }
+    if(Array.isArray(e.queryKeyNames))r.queryKeyNames=e.queryKeyNames;
+    if(e.event==='chromium_network_redirect')r.redirectObserved=true;
     if(e.event==='chromium_network_response'){
       r.responseObserved=true;
       if(e.status!==undefined)r.status=e.status;
@@ -145,6 +158,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
     chromiumRequests:safe.filter(e=>e.event==='chromium_network_request').length,
     chromiumResponses:safe.filter(e=>e.event==='chromium_network_response').length,
     chromiumHttp200:safe.filter(e=>e.event==='chromium_network_response'&&e.status===200).length,
+    chromiumRedirects:safe.filter(e=>e.event==='chromium_network_redirect').length,
     chromiumCookieBlocks:safe.filter(e=>e.event.startsWith('chromium_cookie_'))
       .reduce((n,e)=>n+(e.blockedCookieCount||0),0),
     chromiumCookieSetAttempts:safe.filter(e=>e.event==='chromium_cookie_response'&&e.cookieSetAttempt).length
@@ -181,7 +195,7 @@ function makeOpeningAudit({events=[],counters={},checks={}}={}){
       'La captura incluye parte de Node http(s).request, Node fetch y, cuando está habilitada y vinculada, actividad CDP tras abrir Chromium.',
       'La ausencia de respuesta observada no implica necesariamente error del servidor.',
       'IP/puerto pueden corresponder a un proxy y la asociación al perfil es temporal.',
-      'No contiene contraseñas, tokens, cookies, códigos 2FA ni cuerpos HTTP.',
+      'No contiene contraseñas, tokens, cookies, códigos 2FA, cabeceras ni cuerpos HTTP. Los dominios y nombres de consulta aprobados pueden ser información privada.',
       'Para verificar igualdad de contenido se necesitan comprobantes del servidor y cliente de confianza.'
     ]
   };
@@ -215,6 +229,7 @@ function renderAuditTXT(report){
     'Solicitudes web de Chromium observadas: '+a.summary.chromiumRequests,
     'Respuestas web de Chromium observadas: '+a.summary.chromiumResponses,
     'Respuestas HTTP 200 de Chromium: '+a.summary.chromiumHttp200,
+    'Redirecciones HTTP de Chromium observadas: '+a.summary.chromiumRedirects,
     'Intentos Set-Cookie en Chromium: '+a.summary.chromiumCookieSetAttempts,
     'Cookies bloqueadas (indicadores): '+a.summary.chromiumCookieBlocks,
     '',
@@ -225,7 +240,9 @@ function renderAuditTXT(report){
   }
   lines.push('','SOLICITUDES Y RESPUESTAS (rutas anonimizadas)');
   for(const r of a.http){
-    lines.push([r.firstObservedAt,r.transport,r.method||'?',r.routeTemplate||'?',
+    lines.push([r.firstObservedAt,r.transport,r.originHost||'origen desconocido',
+      r.method||'?',r.routeTemplate||'?',r.endpointArea||'other',
+      r.mediaType||'no disponible',r.responseClass||'unknown',
       r.status??'sin HTTP',r.responseMs==null?'sin duración':r.responseMs+' ms',
       r.responseObserved?'respuesta observada':r.errorObserved?'error observado':'sin respuesta observada',
       'salida='+String(r.outboundBodyBytesQueued??'?'),
@@ -235,11 +252,14 @@ function renderAuditTXT(report){
   lines.push('','TRÁFICO DE CHROMIUM (dominio y ruta anonimizados)');
   for(const row of a.chromium||[]){
     lines.push([row.firstObservedAt,row.browserHost||'?',row.method||'?',
+      row.endpointArea||'other',row.mediaType||'no disponible',
+      row.httpProtocol||'no disponible',
       row.routeTemplate||'?',row.resourceType||'Other',
       row.status??'sin respuesta',row.durationMs==null?'sin duración':row.durationMs+' ms',
       'cookies adjuntadas='+row.sentCookieCount,
       'cookies bloqueadas='+row.blockedCookieCount,
       'Set-Cookie indicado='+String(row.cookieSetAttempt),
+      row.redirectObserved?'redirección':'sin redirección observada',
       'persistencia no verificada'].join(' | '));
   }
   lines.push('','VERIFICACIÓN PENDIENTE',
