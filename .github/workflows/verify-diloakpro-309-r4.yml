@@ -1,0 +1,30 @@
+name: diloakPRO 3.0.9 R4 autorizado - pruebas locales
+on:
+  push:
+    branches: [feature/diloakpro-309-r4-integral-autorizado]
+    paths:
+      - 'release-build/diloakpro-official309/Diagnostico/**'
+      - 'release-build/diloakpro-official309/R4Tests/**'
+      - '.github/workflows/verify-diloakpro-309-r4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-r4-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Verify diagnostic Windows source compiles
+        shell: pwsh
+        run: |
+          dotnet build release-build/diloakpro-official309/Diagnostico/DiloakPRO.Diagnostico.csproj -c Release
+          if($LASTEXITCODE -ne 0){ throw 'Windows diagnostics source failed' }
+      - name: Test exact JSON/gzip bodies and encrypted content
+        shell: pwsh
+        run: |
+          dotnet run --project release-build/diloakpro-official309/R4Tests/R4Tests.csproj --configuration Release
+          if($LASTEXITCODE -ne 0){ throw 'R4 laboratory capture tests failed' }
