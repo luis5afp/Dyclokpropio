@@ -52,6 +52,17 @@ jobs:
           $exe=Join-Path $root 'DICloak.exe'
           (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant() |
             Set-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'original-official309-pe.sha256')
+      - name: Build the independent Windows diagnosis button
+        shell: pwsh
+        run: |
+          $app=Join-Path $env:RUNNER_TEMP 'diloakpro-native309-package'
+          $out=Join-Path $env:RUNNER_TEMP 'diloakpro-diagnostic-build'
+          dotnet publish 'release-build/diloakpro-official309/Diagnostico/DiloakPRO.Diagnostico.csproj' -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o $out
+          if ($LASTEXITCODE -ne 0) { throw 'Diagnostic WinForms build failed' }
+          $exe=Join-Path $out 'diloakPRO.exe'
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw 'Diagnostic EXE missing' }
+          Copy-Item -LiteralPath $exe -Destination (Join-Path $app 'diloakPRO.exe') -Force
+          if (-not (Test-Path (Join-Path $app 'DICloak.exe') -PathType Leaf)) { throw 'Native engine lost' }
       - name: Build isolated Windows x64 installer
         shell: pwsh
         working-directory: release-build/diloakpro-official309
@@ -78,6 +89,8 @@ jobs:
           if ($p.ExitCode -ne 0) { throw 'Windows installation failed' }
           $exe=Join-Path $folder 'DICloak.exe'
           $asar=Join-Path $folder 'resources/app.asar'
+          $diagnostic=Join-Path $folder 'diloakPRO.exe'
+          if (-not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) { throw 'Windows diagnostic companion missing' }
           if (-not (Test-Path -LiteralPath $exe) -or -not (Test-Path -LiteralPath $asar)) {
             throw 'Installed upstream runtime files missing'
           }
@@ -98,10 +111,20 @@ jobs:
           if (-not $proc.HasExited) {
             Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
           }
+          $companion=Start-Process -FilePath $diagnostic -PassThru
+          Start-Sleep -Seconds 6
+          $companion.Refresh()
+          if ($companion.HasExited) { throw 'Diagnostic companion failed to start' }
+          if ($companion.MainWindowHandle -eq [IntPtr]::Zero) {
+            throw 'Diagnostic companion has no visible Windows button'
+          }
+          Stop-Process -Id $companion.Id -Force -ErrorAction SilentlyContinue
+          Write-Host 'DILOAKPRO_DIAGNOSTIC_BUTTON=PASS'
+          Write-Host 'DIAGNOSTIC_COVERAGE=WINDOWS_PROCESSES_AND_TCP_ONLY'
           Write-Host 'OFFICIAL_309_PE_AND_ASAR_BYTE_IDENTICAL=PASS'
           Write-Host 'OFFICIAL_309_STARTUP_SMOKE=PASS'
           Write-Host 'USER_LOGIN_AND_PROFILES=NOT_TESTED'
-          Write-Host 'INTEGRATED_R4_DIAGNOSTIC=NOT_PRESENT'
+          Write-Host 'R4_INTERNAL_RESPONSES_AND_CHROMIUM_APPLIED_STATE=NOT_VERIFIED'
       - name: Publish artifact for LAB testing only (not Releases)
         shell: pwsh
         run: |
@@ -112,6 +135,9 @@ jobs:
             Set-Content (Join-Path $root 'SHA256SUMS.txt') -Encoding ascii
           @'
           Motor DICloak 3.0.9 OFICIAL e intacto.
+          El acceso directo inicia diloakPRO.exe, con botón Diagnóstico flotante.
+          La cobertura actual es PROCESOS Y CONEXIONES WINDOWS: no captura JSON interno, cookies, proxy ni fingerprint.
+          La captura íntegra de laboratorio R4 todavía requiere integración adicional.
           Instala lado a lado sin reemplazar RC1, R3 ni perfiles.
           RC de compatibilidad; NO incluye el diagnostico R4 integrado.
           No se ha verificado el login real en Windows del usuario.
