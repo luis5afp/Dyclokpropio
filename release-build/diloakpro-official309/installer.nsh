@@ -7,8 +7,8 @@
 
 !macro customInstall
   CreateDirectory "$SMPROGRAMS\diloakPRO Motor 3.0.9 Prueba"
-  CreateShortCut "$SMPROGRAMS\diloakPRO Motor 3.0.9 Prueba\diloakPRO Motor 3.0.9 Prueba.lnk" "$INSTDIR\DICloak.exe"
-  CreateShortCut "$DESKTOP\diloakPRO Motor 3.0.9 Prueba.lnk" "$INSTDIR\DICloak.exe"
+  CreateShortCut "$SMPROGRAMS\diloakPRO Motor 3.0.9 Prueba\diloakPRO Motor 3.0.9 Prueba.lnk" "$INSTDIR\diloakPRO.exe"
+  CreateShortCut "$DESKTOP\diloakPRO Motor 3.0.9 Prueba.lnk" "$INSTDIR\diloakPRO.exe"
 !macroend
 
 !macro customUnInstall
