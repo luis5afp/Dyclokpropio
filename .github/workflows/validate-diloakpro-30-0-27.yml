@@ -1,0 +1,109 @@
+name: diloakPRO 30.0.27 candidato (verificacion, NO release estable)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/main/diagnostic-observer.js'
+      - 'src/main/diagnostic-console.js'
+      - 'src/main/diloakpro-lab-response-capture.js'
+      - 'src/renderer/diagnostic-panel.js'
+      - 'tools/test-diloakpro-lab-integrity.js'
+      - 'electron-builder.yml'
+      - '.github/workflows/validate-diloakpro-30-0-27.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-node-integrity:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm baseline unchanged
+        shell: pwsh
+        run: node tools/verify-safe-base.js
+      - name: Verify exact bytes, gzip, mismatches, absent server proof
+        shell: pwsh
+        run: node tools/test-diloakpro-lab-integrity.js
+      - name: Verify previous diagnostic contracts
+        shell: pwsh
+        run: |
+          node tools/verify-diagnostic-console.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/verify-diagnostic-observer.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  build-windows-candidate:
+    needs: test-node-integrity
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Preserve LF bytes in recovered runtime
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify original runtime before patching
+        shell: pwsh
+        run: |
+          node tools/verify-safe-base.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/test-diloakpro-lab-integrity.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Install exact dependencies and verify assets
+        shell: pwsh
+        run: |
+          npm install --legacy-peer-deps
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/unpack-bundled-extension.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/verify-build-assets.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npx electron-builder install-app-deps
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Apply guarded runtime compatibility and diagnostics
+        shell: pwsh
+        run: |
+          node tools/apply-legacy-expand-check.js --apply
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/instrument-open-stages.js --apply
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/instrument-params-merge.js --apply
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/install-diagnostic-panel.js --apply
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          @{family='Dyclokpropio';deliveryVersion='0.0.0'} |
+            ConvertTo-Json -Compress |
+            Set-Content -LiteralPath resources/auto-update-version.json -Encoding utf8
+      - name: Build NSIS x64 candidate without GitHub stable release
+        shell: pwsh
+        run: |
+          npm run build:win -- --publish never
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $exe='release/Dyclokpropio_3.0.0_win_x64.exe'
+          if (-not (Test-Path $exe)) { throw 'Installer NSIS missing' }
+          New-Item -ItemType Directory -Force candidate | Out-Null
+          $dest='candidate/diloakPRO_30.0.27_RC_win_x64.exe'
+          Copy-Item $exe $dest
+          $hash=(Get-FileHash -Algorithm SHA256 -LiteralPath $dest).Hash.ToLowerInvariant()
+          ($hash+'  '+[IO.Path]::GetFileName($dest)) |
+            Set-Content candidate/SHA256SUMS.txt -Encoding ascii
+          'RC: verificar instalación y Chromium en Windows antes de promover a estable.' |
+            Set-Content candidate/LEEME.txt -Encoding utf8
+      - name: Upload test installer to Actions (not Releases)
+        uses: actions/upload-artifact@v4
+        with:
+          name: diloakPRO-30.0.27-RC-Windows-x64
+          path: candidate/*
+          if-no-files-found: error
+          retention-days: 7
