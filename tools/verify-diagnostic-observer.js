@@ -84,7 +84,7 @@ const {sanitize,createDiagnosticConsole,CONTROL,EVENT}=require('../src/main/diag
     assert.equal(out.includes(secret),false);
     assert.equal(out.includes(privateId),false);
     assert.ok(out.includes('fetchEnvInfo'));
-    assert.ok(out.includes('\"version\": \"v30.0.15-lab\"'));
+    assert.ok(out.includes('\"version\": \"diloakPRO-30.0.27-rc\"'));
     await handlers.get(CONTROL)(trusted,'stop');
     assert.equal((await handlers.get(CONTROL)(trusted,'status')).active,false);
   }finally{fs.rmSync(tmp,{recursive:true,force:true});}
