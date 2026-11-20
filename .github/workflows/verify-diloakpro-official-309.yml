@@ -1,0 +1,56 @@
+name: Verificar motor oficial DICloak 3.0.9 para diloakPRO (solo inspeccion)
+
+on:
+  push:
+    branches:
+      - feature/diloakpro-verificar-motor-oficial-309
+    paths:
+      - 'tools/inspect-dicloak-309.py'
+      - '.github/workflows/verify-diloakpro-official-309.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-upstream-309:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify inspection script
+        shell: pwsh
+        run: python -m py_compile tools/inspect-dicloak-309.py
+      - name: Download upstream 3.0.9 from the official DICloak site
+        shell: pwsh
+        run: |
+          $url='https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.9_win_x64.exe'
+          $installer=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.9_win_x64.exe'
+          Invoke-WebRequest -Uri $url -OutFile $installer -TimeoutSec 1200
+          if (-not (Test-Path -LiteralPath $installer -PathType Leaf)) { throw 'Official installer not downloaded' }
+          if ((Get-Item -LiteralPath $installer).Length -lt 160000000) { throw 'Official installer unexpectedly small' }
+          $signature=Get-AuthenticodeSignature -FilePath $installer
+          Write-Host "UPSTREAM_SIGNATURE_STATUS=$($signature.Status)"
+          Write-Host "UPSTREAM_SIGNER=$($signature.SignerCertificate.Subject)"
+          if ($signature.Status -ne 'Valid') { throw 'Official installer signature was not valid' }
+          if (-not $signature.SignerCertificate.Subject -or
+              $signature.SignerCertificate.Subject -notmatch 'DICloak') {
+            throw 'Official publisher signature must be reviewed'
+          }
+      - name: Verify true version from original ASAR without editing
+        shell: pwsh
+        run: |
+          $installer=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.9_win_x64.exe'
+          $folder=Join-Path $env:RUNNER_TEMP 'dicloak-309-upstream'
+          python tools/inspect-dicloak-309.py --installer $installer --destination $folder --report version-report/official-309.json
+          if ($LASTEXITCODE -ne 0) { throw 'Original DICloak 3.0.9 ASAR inspection failed' }
+          $result=Get-Content 'version-report/official-309.json' -Raw | ConvertFrom-Json
+          if ($result.versionInOriginalAsar -ne '3.0.9') { throw 'Not a real DICloak 3.0.9' }
+          if ($result.r4Integrated -or $result.loginValidated) { throw 'Report must not claim untested functions' }
+      - name: Archive verification report only (no vendor binaries)
+        uses: actions/upload-artifact@v4
+        with:
+          name: diloakPRO-oficial309-informe-integridad
+          path: version-report/official-309.json
+          if-no-files-found: error
+          retention-days: 30

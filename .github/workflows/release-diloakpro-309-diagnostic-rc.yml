@@ -1,0 +1,108 @@
+name: Publicar diloakPRO 30.0.28 RC - motor real 3.0.9 + diagnostico parcial
+
+on:
+  push:
+    branches:
+      - feature/diloakpro-verificar-motor-oficial-309
+    paths:
+      - '.github/workflows/release-diloakpro-309-diagnostic-rc.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish-candidate:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check source build success and identity
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ($env:GITHUB_REPOSITORY -ne 'luis5afp/Dyclokpropio') {
+            throw 'Unexpected repository'
+          }
+          $run=gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/44724770802" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0 -or $run.status -ne 'completed' -or
+              $run.conclusion -ne 'success' -or
+              $run.head_sha -ne '18c1742ca127e10526f1b859f058194db6eed31b') {
+            throw 'Unverified source Windows build; publication blocked'
+          }
+      - name: Retrieve verified Windows installer from successful Actions run
+        uses: actions/download-artifact@v4
+        with:
+          name: diloakPRO-motor-original-309-Windows-x64-PRUEBA
+          run-id: 44724770802
+          repository: luis5afp/Dyclokpropio
+          github-token: ${{ github.token }}
+          path: candidate
+      - name: Recheck original checksum and write release notes
+        shell: pwsh
+        run: |
+          $installer='candidate/diloakPRO_Motor309_Prueba_win_x64.exe'
+          $checksum='candidate/SHA256SUMS.txt'
+          if (-not (Test-Path -LiteralPath $installer -PathType Leaf) -or
+              -not (Test-Path -LiteralPath $checksum -PathType Leaf)) {
+            throw 'Candidate artifacts missing'
+          }
+          $sha=(Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ((Get-Content -LiteralPath $checksum -Raw).Trim() -ne
+              ($sha+'  diloakPRO_Motor309_Prueba_win_x64.exe')) {
+            throw 'Candidate hash mismatch'
+          }
+          if ((Get-Item $installer).Length -lt 180000000) {
+            throw 'Candidate too small'
+          }
+          New-Item release -ItemType Directory -Force | Out-Null
+          $target='release/diloakPRO_30.0.28_RC1_win_x64.exe'
+          Copy-Item -LiteralPath $installer -Destination $target
+          $targetSha=(Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($targetSha -ne $sha) { throw 'Release copy differs from tested installer' }
+          ($targetSha+'  diloakPRO_30.0.28_RC1_win_x64.exe') |
+            Set-Content 'release/SHA256SUMS.txt' -Encoding ascii
+          @'
+          # diloakPRO 30.0.28 RC1 - motor genuino 3.0.9 y diagnostico externo
+
+          Esta es una VERSION PRELIMINAR de Windows x64, no una actualizacion estable.
+
+          Incluye:
+          - Motor oficial DICloak 3.0.9, con DICloak.exe y resources/app.asar originales intactos.
+          - Acceso directo que abre diloakPRO.exe, el cual inicia el motor oficial.
+          - Boton flotante Diagnostico y panel independiente con Iniciar/Detener/Exportar JSON/Salir.
+          - Muestreo no invasivo de procesos y conexiones TCP de Windows.
+
+          Comprobado en GitHub Actions:
+          - Validez de firma digital del instalador oficial 3.0.9.
+          - Integridad SHA-256 del motor original antes y despues de instalar.
+          - Compilacion y arranque del componente de diagnostico.
+          - Instalacion NSIS y arranque basico del motor 3.0.9.
+
+          LIMITACIONES:
+          - El runner no pudo confirmar visualmente el boton flotante; comprobarlo en Windows del usuario.
+          - No captura los JSON internos ni las credenciales/cookies del cliente.
+          - No verifica proxy, fingerprint, extensiones ni datos aplicados en Chromium.
+          - NO es aun la integracion completa del Diagnostico Integral R4.
+          - No se ha validado inicio de sesion real del usuario en esta compilacion.
+          - Se instala en carpeta separada; respaldar perfiles y conservar version anterior.
+          - No hay actualizacion silenciosa de la familia estable 30.0.N.
+
+          Seguimiento: https://github.com/luis5afp/Dyclokpropio/pull/73
+          Build verificado: https://github.com/luis5afp/Dyclokpropio/actions/runs/44724770802
+          '@ | Set-Content 'release/NOTAS.md' -Encoding utf8
+          Write-Host "VERIFIED_RELEASE_SHA256=$targetSha"
+      - name: Publish unique prerelease without changing Latest stable
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag='v30.0.28-rc1'
+          gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            throw 'Refusing to overwrite existing prerelease'
+          }
+          $files=@('release/diloakPRO_30.0.28_RC1_win_x64.exe','release/SHA256SUMS.txt','release/NOTAS.md')
+          gh release create $tag @files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'diloakPRO 30.0.28 RC1 - Motor 3.0.9 y Diagnostico (parcial)' --notes-file 'release/NOTAS.md' --prerelease --latest=false
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub prerelease publication failed' }
+          Write-Host 'DILOAKPRO_309_DIAGNOSTIC_RC_PUBLISHED=PASS'
