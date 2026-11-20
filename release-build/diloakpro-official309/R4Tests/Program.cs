@@ -83,15 +83,15 @@ static class Program
         var data=File.ReadAllBytes(file);
         Assert(Encoding.ASCII.GetString(data,0,8)=="DPL30901","versioned encryption envelope");
         Assert(!data.AsSpan().SequenceEqual(body),"not stored plaintext");
-        var salt=data.AsSpan(8,16);
-        var nonce=data.AsSpan(24,12);
-        var tag=data.AsSpan(36,16);
-        var ciphertext=data.AsSpan(52);
+        var salt=data.Skip(8).Take(16).ToArray();
+        var nonce=data.Skip(24).Take(12).ToArray();
+        var tag=data.Skip(36).Take(16).ToArray();
+        var ciphertext=data.Skip(52).ToArray();
         var key=Rfc2898DeriveBytes.Pbkdf2(Phrase,salt,220_000,HashAlgorithmName.SHA256,32);
         var decrypted=new byte[ciphertext.Length];
         using(var aes=new AesGcm(key,16))
             aes.Decrypt(nonce,ciphertext,tag,decrypted,AAD);
-        Assert(decrypted.AsSpan().SequenceEqual(body),"AES-GCM decrypts exactly same bytes");
+        Assert(decrypted.SequenceEqual(body),"AES-GCM decrypts exactly same bytes");
     }
 
     static void Assert(bool value,string message)
