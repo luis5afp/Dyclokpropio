@@ -1,0 +1,9 @@
+{
+  "name": "diloakpro-official309-candidate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DiloakPRO isolated test installer with untouched upstream DICloak 3.0.9 runtime",
+  "devDependencies": {
+    "electron-builder": "^26.0.0"
+  }
+}
