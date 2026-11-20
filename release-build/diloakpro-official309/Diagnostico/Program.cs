@@ -43,6 +43,8 @@ internal sealed class DiagnosticBubble : Form
     private bool sampling;
     private DateTime nextSampleUtc = DateTime.MinValue;
     private string? error;
+    private R4CaptureProof? lastCapture;
+    private R4ChromiumAuditResult? lastChromiumAudit;
     private static readonly string Engine = Path.Combine(AppContext.BaseDirectory, "DICloak.exe");
 
     public DiagnosticBubble()
@@ -152,6 +154,8 @@ internal sealed class DiagnosticBubble : Form
     {
         history.Clear();
         error = null;
+        lastCapture = null;
+        lastChromiumAudit = null;
         recording = true;
         nextSampleUtc = DateTime.MinValue;
         UpdatePanel();
@@ -164,6 +168,48 @@ internal sealed class DiagnosticBubble : Form
     }
 
     internal void OpenMotor() => LaunchEngineIfNeeded();
+
+    internal async Task CaptureOwnLabAsync(string origin, string path, string passphrase)
+    {
+        try
+        {
+            var storage = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "diloakPRO", "R4AuthorizedLab");
+            lastCapture = await R4LabCapture.CaptureAsync(origin, path, passphrase, storage);
+            error = lastCapture.Result == "sha256_match"
+                ? "JSON de tu servidor: bytes y SHA-256 coinciden."
+                : "JSON de tu servidor: " + lastCapture.Result;
+        }
+        catch (Exception ex)
+        {
+            error = "Captura LAB: " + ex.Message;
+        }
+        UpdatePanel();
+    }
+
+    internal async Task AuditAuthorizedChromiumAsync(string origin, string portText)
+    {
+        if (!int.TryParse(portText, out int port))
+        {
+            error = "Auditoría CDP: puerto inválido.";
+            UpdatePanel();
+            return;
+        }
+        try
+        {
+            lastChromiumAudit = await R4ChromiumAudit.RunAsync(port, origin);
+            error = "Chromium CDP: " + lastChromiumAudit.Result;
+        }
+        catch (Exception ex)
+        {
+            error = "Chromium CDP: " + ex.Message;
+        }
+        UpdatePanel();
+    }
+
+    internal R4CaptureProof? LastCapture => lastCapture;
+    internal R4ChromiumAuditResult? LastChromiumAudit => lastChromiumAudit;
 
     internal string State => recording ? "Grabando (metadatos de Windows)" : "Detenido";
     internal int Count => history.Count;
@@ -260,7 +306,11 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                 schema = 1,
                 source = "Windows OS metadata companion; not DICloak internal diagnostics",
                 originalEngineModified = false,
+                // The laboratory request is made by diloakPRO, not intercepted from DICloak.exe.
                 exactHttpBodyCaptured = false,
+                directAuthorizedServerJsonCaptured = lastCapture != null,
+                directAuthorizedServerProof = lastCapture,
+                chromiumAuthorizedPageAudit = lastChromiumAudit,
                 cookiesVerified = false,
                 proxyVerified = false,
                 fingerprintVerified = false,
@@ -316,9 +366,9 @@ internal sealed class DiagnosticWindow : Form
     private readonly Label warning = new()
     {
         Dock = DockStyle.Bottom, Height = 80,
-        Text = "Cobertura PARCIAL: procesos y conexiones TCP del sistema.\n" +
-               "No intercepta tráfico cifrado, cookies ni credenciales del navegador.\n" +
-               "La captura íntegra R4 aún no está conectada al motor 3.0.9.",
+        Text = "LAB: captura JSON directa de TU servidor con SHA-256 y cifrado local.\n" +
+               "CDP: estado visible de una página propia; no lee valores de cookies.\n" +
+               "NO intercepta las respuestas internas del motor 3.0.9 ni verifica proxy/HttpOnly.",
         ForeColor = Color.FromArgb(210, 220, 234),
         Padding = new Padding(12), Font = new Font("Segoe UI", 9)
     };
@@ -327,9 +377,9 @@ internal sealed class DiagnosticWindow : Form
     public DiagnosticWindow(DiagnosticBubble owner)
     {
         bubble = owner;
-        Text = "diloakPRO 3.0.9 - Diagnóstico";
-        Width = 630; Height = 440;
-        MinimumSize = new Size(560, 380);
+        Text = "diloakPRO 3.0.9 - Diagnóstico R4 autorizado";
+        Width = 850; Height = 580;
+        MinimumSize = new Size(720, 480);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(20, 32, 48);
         ForeColor = Color.White;
@@ -351,9 +401,56 @@ internal sealed class DiagnosticWindow : Form
         add("Cerrar panel", Close);
         add("Salir", owner.Exit);
 
+        var labTools = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top, Height = 115,
+            Padding = new Padding(8),
+            BackColor = Color.FromArgb(24, 43, 61),
+            WrapContents = true, AutoScroll = true
+        };
+        TextBox AddInput(string caption, string value, int width, bool secret = false)
+        {
+            labTools.Controls.Add(new Label
+            {
+                Text = caption, AutoSize = true,
+                ForeColor = Color.White, Padding = new Padding(3, 6, 0, 0)
+            });
+            var field = new TextBox
+            {
+                Width = width, Text = value, UseSystemPasswordChar = secret
+            };
+            labTools.Controls.Add(field);
+            return field;
+        }
+        var labOrigin = AddInput("Origen LAB:", "http://127.0.0.1:8765", 240);
+        var labPath = AddInput("Ruta:", "/json", 110);
+        var labPhrase = AddInput("Frase cifrado:", "", 160, true);
+        var captureButton = new Button { Text = "Capturar JSON de MI servidor",
+            AutoSize = true, BackColor = Color.FromArgb(34, 98, 109),
+            ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+        captureButton.Click += async (_, _) =>
+        {
+            captureButton.Enabled = false;
+            try { await owner.CaptureOwnLabAsync(labOrigin.Text, labPath.Text, labPhrase.Text); }
+            finally { captureButton.Enabled = true; }
+        };
+        labTools.Controls.Add(captureButton);
+        var port = AddInput("CDP local:", "9222", 75);
+        var audit = new Button { Text = "Auditar Chromium LAB", AutoSize = true,
+            BackColor = Color.FromArgb(34, 98, 109),
+            ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+        audit.Click += async (_, _) =>
+        {
+            audit.Enabled = false;
+            try { await owner.AuditAuthorizedChromiumAsync(labOrigin.Text, port.Text); }
+            finally { audit.Enabled = true; }
+        };
+        labTools.Controls.Add(audit);
+
         Controls.Add(events);
         Controls.Add(warning);
         Controls.Add(toolbar);
+        Controls.Add(labTools);
         Controls.Add(status);
     }
 
@@ -362,7 +459,13 @@ internal sealed class DiagnosticWindow : Form
         if (IsDisposed) return;
         status.Text = "Estado: " + bubble.State + "   |   Mediciones: " + bubble.Count +
                       (bubble.Error is null ? "" : "\n" + bubble.Error);
-        events.Text = string.Join(Environment.NewLine,
+        var lab = bubble.LastCapture;
+        var cdp = bubble.LastChromiumAudit;
+        events.Text = (lab == null ? "" : "LAB JSON: " + lab.Result + " | " + lab.Bytes + " bytes | SHA256 " + lab.ClientSha256 + Environment.NewLine) +
+            (cdp == null ? "" : "CHROMIUM CDP: " + cdp.Result + " | Cookies JS visibles: " + (cdp.JavaScriptVisibleCookieCount?.ToString() ?? "n/v") +
+                " | Zona horaria observada: " + (cdp.Timezone ?? "n/v") +
+                " | Proxy aplicado: NO VERIFICADO" + Environment.NewLine) +
+            string.Join(Environment.NewLine,
             bubble.History.TakeLast(32).Select(x =>
                 x.Utc[11..19] + " UTC | Motor: " + x.MotorProcesses +
                 " | Descendientes: " + x.DescendantProcesses +
