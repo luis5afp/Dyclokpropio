@@ -349,6 +349,7 @@ internal sealed class DiagnosticWindow : Form
         add("Exportar JSON", owner.Export);
         add("Abrir DICloak", owner.OpenMotor);
         add("Cerrar panel", Close);
+        add("Salir", owner.Exit);
 
         Controls.Add(events);
         Controls.Add(warning);
