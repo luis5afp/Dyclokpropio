@@ -1,0 +1,52 @@
+name: diloakPRO - conservar Diagnóstico original y bloquear motor 3.0.0
+on:
+  push:
+    branches: [fix/diloakpro-diagnostico-original-motor309]
+    paths:
+      - 'src/main/**'
+      - 'src/renderer/diagnostic-panel.js'
+      - 'electron-builder.yml'
+      - 'package.json'
+      - 'tools/verify-diloakpro-original-preservation.cjs'
+      - '.github/workflows/verify-diloakpro-original-motor-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preserve-original-diagnostic:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Preserve LF bytes
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm original in-app diagnostic is still present
+        run: node tools/verify-diloakpro-original-preservation.cjs
+      - name: Existing diagnostic regression
+        shell: pwsh
+        run: |
+          node tools/verify-diagnostic-console.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/verify-diagnostic-observer.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/test-diloakpro-lab-integrity.js
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  block-incompatible-release:
+    needs: preserve-original-diagnostic
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce real engine compatibility and user acceptance
+        shell: pwsh
+        run: |
+          # Deliberately blocks if the base still contains 3.0.0.
+          # Even a new package.json version will not constitute login validation.
+          node tools/verify-diloakpro-original-preservation.cjs --release-gate
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

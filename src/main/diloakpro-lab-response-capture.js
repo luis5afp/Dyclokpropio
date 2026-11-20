@@ -124,9 +124,20 @@ function createLabResponseCapture({config=process.env,root,emit=()=>{}}={}){
         fileName:id+'.dplab',receivedBytes:size,clientSha256:clientSha,
         serverSha256:serverSha,byteForByteMatchesServer:same,reason
       };
+      // Publish proof atomically: a visible *.proof.json is always complete.
+      // Previously the file existed while writeFile was still in progress.
+      const proofPath=path.join(dir,id+'.proof.json');
+      const temporaryProof=proofPath+'.writing';
       void fs.promises.writeFile(path.join(dir,id+'.dplab'),data,{flag:'wx',mode:0o600})
-        .then(()=>fs.promises.writeFile(path.join(dir,id+'.proof.json'),
-          JSON.stringify(proof,null,2)+'\n',{flag:'wx',mode:0o600}))
+        .then(async()=>{
+          try{
+            await fs.promises.writeFile(temporaryProof,
+              JSON.stringify(proof,null,2)+'\n',{flag:'wx',mode:0o600});
+            await fs.promises.rename(temporaryProof,proofPath);
+          }finally{
+            await fs.promises.unlink(temporaryProof).catch(()=>{});
+          }
+        })
         .then(()=>{
           announce('saved','encrypted',{receivedBytes:size});
           announce(same===true?'verified':'unverified',reason);
