@@ -23,6 +23,7 @@ files:
   - src/main/open-stage-diagnostics.js
   - src/main/diagnostic-console.js
   - src/main/diagnostic-observer.js
+  - src/main/diloakpro-lab-response-capture.js
   - src/main/cache-ipc-compatibility.js
   - src/main/extension-download-diagnostics.js
   - package.json

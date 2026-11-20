@@ -13,8 +13,8 @@ const EVENT = 'dyclok-diag-event';
 const MAX_BYTES = 1536 * 1024;
 const MAX_ROWS = 3000;
 const MAX_TAIL = 90;
-const KINDS = new Set(['stage','ipc','http','session','process','connection','file']);
-const PHASES = new Set(['start','success','fail','terminal','request','response','error','info']);
+const KINDS = new Set(['stage','ipc','http','session','process','connection','file','lab']);
+const PHASES = new Set(['start','success','fail','terminal','request','response','error','info','active','saved','verified','unverified','skipped','unavailable','stopped']);
 const METHODS = new Set(['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS']);
 const SCOPES = new Set(['app','local','remote','unknown']);
 const RESULTS = new Set(['none','undefined','null','boolean','string','number','object','array','other']);
@@ -32,6 +32,7 @@ const CHANNELS = new Set([
   'generate-sha256-hash','get-cache-info'
 ]);
 const CHECKPOINTS = new Set(['begin','config-ready','geo-start','geo-ready','cache-start','cache-success','cache-fail','keys-start','keys-success']);
+const LAB_RESULTS = new Set(['configured','encrypted','sha256_match','sha256_mismatch','server_proof_missing','invalid_server_proof','invalid_origin','missing_passphrase','invalid_root','initialization_failed','encryption_failed','size_or_type_limit','write_failed','capture_finished']);
 const CODES = new Set([
   'UNKNOWN_ERROR','UNCLASSIFIED','EXPAND_DOWNLOAD_FAIL','EXPAND_CHECK_FAIL',
   'EXPAND_SHA256_CHECK_FAIL','EXPAND_SHA256_HASH_FAIL','EXPAND_MISSING',
@@ -52,6 +53,7 @@ function sanitize(payload) {
   if (kind === 'session') action = 'recording';
   if (kind === 'process' || kind === 'connection') action = 'seen';
   if (kind === 'file' && ['changed','removed'].includes(payload.action)) action = payload.action;
+  if (kind === 'lab' && LAB_RESULTS.has(payload.reason)) action = payload.reason;
   const status = Number.isInteger(payload.status) && payload.status >= 0 && payload.status <= 599
     ? payload.status : null;
   const elapsedMs = Number.isFinite(payload.elapsedMs) && payload.elapsedMs >= 0
@@ -81,6 +83,9 @@ function sanitize(payload) {
   }
   if (kind === 'file') {
     row.fileExt=['txt','json','csv','zip','bin','pdf'].includes(payload.fileExt)?payload.fileExt:'other';
+  }
+  if (kind === 'lab' && payload.phase === 'saved') {
+    row.bytes=Number.isSafeInteger(payload.receivedBytes) && payload.receivedBytes>=0 && payload.receivedBytes<=4194304?payload.receivedBytes:null;
   }
   if (kind === 'file' || (kind === 'http' && payload.transport==='node')) {
     row.bytes=Number.isSafeInteger(payload.bytes) && payload.bytes>=0 && payload.bytes<=33554432?payload.bytes:null;
@@ -173,8 +178,8 @@ function createDiagnosticConsole(ipcMain, app, {fileSystem = fs} = {}) {
       const fileName = 'Dyclok-Diagnostico-Completo-'+stamp+'.txt';
       const report = [
         'DYCLOKPROPIO - DIAGNOSTICO ESTRUCTURADO',
-        'Metadatos de etapas, HTTP Node y renderer, IPC, procesos, conexiones y archivos de laboratorio.',
-        'No contiene URLs, cuerpos, cabeceras, IDs de perfiles, cookies, tokens o claves.',
+        'Metadatos de etapas, HTTP Node y renderer, IPC, procesos, conexiones y pruebas de integridad del servidor autorizado.',
+        'Este informe no contiene URLs, cuerpos, cabeceras, IDs de perfiles, cookies, tokens o claves. Los archivos cifrados .dplab se guardan por separado solo con activacion expresa.',
         'Eventos: '+events.length,
         'Cobertura parcial: fetch/XHR, Node http(s).request, IPC y muestreo Windows.',
         'Las conexiones NO demuestran transferencias; Chromium externo y HTTP cifrado no se descifran.',
@@ -194,7 +199,7 @@ function createDiagnosticConsole(ipcMain, app, {fileSystem = fs} = {}) {
       const stamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\..*/,'').replace('T','-');
       const fileName = 'Dyclok-Diagnostico-'+stamp+'.json';
       const target=path.join(app.getPath('downloads'),fileName);
-      fileSystem.writeFileSync(target,JSON.stringify({schema:1,version:'v30.0.15-lab',coverage:'partial',events},null,2),{encoding:'utf8',flag:'wx',mode:0o600});
+      fileSystem.writeFileSync(target,JSON.stringify({schema:1,version:'diloakPRO-30.0.27-rc',coverage:'partial',events},null,2),{encoding:'utf8',flag:'wx',mode:0o600});
       return {fileName,count:events.length};
     } catch {return {error:'EXPORT_ERROR'};}
   }

@@ -23,10 +23,10 @@ function requestMetadata(args,protocol) {
   const segments=pathname.split('/').filter(Boolean).slice(0,8);
   return {action,scope,routeTemplate:'/'+segments.map(v=>PARTS.has(v.toLowerCase())?v.toLowerCase():':id').join('/')};
 }
-function startNodeHttpTrace(emit) {
+function startNodeHttpTrace(emit,{labCapture=null}={}) {
   const restores=[];
   for(const [mod,proto] of [[http,'http:'],[https,'https:']]){
-    const original=mod.request;
+    const original=mod.request,originalGet=mod.get;
     function traced(...args) {
       const req=original.apply(this,args);
       let meta;
@@ -45,12 +45,40 @@ function startNodeHttpTrace(emit) {
           status:Number.isInteger(res?.statusCode)?res.statusCode:null,
           bytes:Number.isSafeInteger(bytes)&&bytes<=33554432?bytes:null});}catch{}
       }
-      req.once('response',res=>finish('response',res));
+      // Lab-only: intercept push without subscribing to 'data' or changing
+      // the original IncomingMessage flow. Other origins remain metadata-only.
+      req.prependOnceListener('response',res=>{
+        let capture=null;
+        try{capture=labCapture?.begin({args,protocol:proto,res,method:meta.action})||null;}
+        catch{/* Never interrupt browser startup */}
+        if(capture){
+          const originalPush=res.push;
+          res.push=function(chunk,...rest){
+            if(chunk!==null&&chunk!==undefined){
+              try{capture.add(chunk,rest[0]);}catch{}
+            }
+            return originalPush.apply(this,arguments);
+          };
+          res.once('end',()=>{try{capture.complete('response_end');}catch{}});
+          res.once('close',()=>{try{capture.complete('response_closed');}catch{}});
+        }
+        finish('response',res);
+      });
       req.once('error',()=>finish('error'));
       return req;
     }
+    function tracedGet(...args){
+      // Node's native http.get may bypass the exported request wrapper.
+      const req=traced.apply(this,args);
+      req.end();
+      return req;
+    }
     mod.request=traced;
-    restores.push(()=>{if(mod.request===traced)mod.request=original;});
+    mod.get=tracedGet;
+    restores.push(()=>{
+      if(mod.request===traced)mod.request=original;
+      if(mod.get===tracedGet)mod.get=originalGet;
+    });
   }
   return ()=>restores.forEach(fn=>fn());
 }
@@ -129,7 +157,13 @@ function startLabWatcher(emit,root){
 function startCapture({emit,pid=process.pid,labRoot}={}){
   if(typeof emit!=='function')throw new TypeError('emit required');
   const safeEmit=e=>{try{emit(e);}catch{}},stops=[];
-  for(const factory of [()=>startNodeHttpTrace(safeEmit),
+  let labCapture=null;
+  try{
+    labCapture=require('./diloakpro-lab-response-capture.js')
+      .createLabResponseCapture({root:labRoot,emit:safeEmit});
+  }catch{safeEmit({kind:'lab',phase:'unavailable',reason:'initialization_failed'});}
+  if(labCapture)stops.push(()=>labCapture.stop());
+  for(const factory of [()=>startNodeHttpTrace(safeEmit,{labCapture}),
     ()=>startWindowsSampler(safeEmit,pid),()=>startLabWatcher(safeEmit,labRoot)]){
     try{stops.push(factory());}catch{safeEmit({kind:'session',phase:'error',code:'MONITOR_ERROR'});}
   }

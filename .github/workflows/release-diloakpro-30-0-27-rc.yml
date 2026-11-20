@@ -1,0 +1,99 @@
+name: Publicar diloakPRO 30.0.27 RC en Releases (NO estable)
+
+on:
+  push:
+    branches:
+      - feature/diloakpro-v30-0-27-integridad-servidor
+    paths:
+      - '.github/workflows/release-diloakpro-30-0-27-rc.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish-verified-prerelease:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check repository identity and source build
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ($env:GITHUB_REPOSITORY -ne 'luis5afp/Dyclokpropio') {
+            throw 'Unexpected repository'
+          }
+          $run = gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/44662276349" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot verify source build' }
+          if ($run.status -ne 'completed' -or $run.conclusion -ne 'success' -or
+              $run.head_sha -ne '36f2e0a3d9e791f5d94a17e6a901c8b7603f2f77') {
+            throw 'Source build not verified for this release'
+          }
+          Write-Host 'Validated GitHub Actions build 44662276349'
+      - name: Download exact tested installer from completed Actions run
+        uses: actions/download-artifact@v4
+        with:
+          name: diloakPRO-30.0.27-RC-Windows-x64
+          path: dist
+          run-id: 44662276349
+          repository: luis5afp/Dyclokpropio
+          github-token: ${{ github.token }}
+      - name: Validate EXE checksum and release notes
+        shell: pwsh
+        run: |
+          $installer='dist/diloakPRO_30.0.27_RC_win_x64.exe'
+          $sumFile='dist/SHA256SUMS.txt'
+          if (-not (Test-Path -LiteralPath $installer -PathType Leaf) -or
+              -not (Test-Path -LiteralPath $sumFile -PathType Leaf)) {
+            throw 'Missing candidate installer or SHA256'
+          }
+          $actual=(Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          $expected=($actual+'  '+[IO.Path]::GetFileName($installer))
+          if ((Get-Content -LiteralPath $sumFile -Raw).Trim() -ne $expected) {
+            throw 'Candidate EXE SHA-256 mismatch'
+          }
+          if ((Get-Item -LiteralPath $installer).Length -lt 50000000) {
+            throw 'Installer is implausibly small'
+          }
+          @'
+          # diloakPRO 30.0.27 RC1 (preliminar)
+
+          Instalador NSIS para Windows x64, **version de prueba**. No sustituye a la ultima version estable v30.0.15.
+
+          ## Novedades
+          - Inicio normal desde la interfaz grafica, sin consola de laboratorio.
+          - Boton Diagnostico y observacion de procesos y etapas de apertura existentes.
+          - Captura cifrada opcional AES-256-GCM de bytes originales de respuestas HTTP(S) de TU servidor de pruebas autorizado.
+          - Comparacion con X-Diloakpro-Body-SHA256, tambien con cuerpos gzip.
+          - Los informes TXT/JSON solo registran el resultado; los datos ficticios completos permanecen localmente cifrados.
+
+          ## Comprobaciones realizadas
+          Las pruebas automatizadas sobre HTTP sin compresion, gzip, SHA incorrecto, SHA ausente y regresiones del diagnostico superaron GitHub Actions. La compilacion NSIS x64 tambien termino correctamente.
+
+          ## Pendiente para publicacion estable
+          - Probar la instalacion y apertura real de perfiles Chromium en Windows.
+          - Verificar cookies, proxy, fingerprint y extensiones realmente aplicadas.
+          - Nombre interno y producto Electron Dyclokpropio todavia heredados.
+          - Esta candidata no se actualiza automaticamente: version de entrega integrada 0.0.0.
+
+          Probar primero en una instalacion de pruebas y hacer copia de seguridad de los perfiles. No subir .dplab ni datos privados a GitHub.
+
+          Codigo: https://github.com/luis5afp/Dyclokpropio/pull/71
+          Compilacion: https://github.com/luis5afp/Dyclokpropio/actions/runs/44662276349
+          '@ | Set-Content -LiteralPath 'dist/NOTAS_R4_RC1.md' -Encoding utf8
+          Write-Host "SHA256: $actual"
+      - name: Publish unique GitHub prerelease (no overwrite)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag='v30.0.27-rc1'
+          gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            throw 'Release tag already exists; refusing overwrite'
+          }
+          $files=@('dist/diloakPRO_30.0.27_RC_win_x64.exe','dist/SHA256SUMS.txt','dist/NOTAS_R4_RC1.md')
+          gh release create $tag @files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title 'diloakPRO 30.0.27 RC1 - diagnostico integrado (prueba)' --notes-file 'dist/NOTAS_R4_RC1.md' --prerelease --latest=false
+          if ($LASTEXITCODE -ne 0) { throw 'Could not publish preliminary release' }
+          Write-Host "Published prerelease: https://github.com/$env:GITHUB_REPOSITORY/releases/tag/$tag"
