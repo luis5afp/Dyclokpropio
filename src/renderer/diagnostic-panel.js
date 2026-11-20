@@ -163,7 +163,7 @@
     stopButton.disabled = !capturing;
     exportButton.disabled = !state.hasCapture;
     exportJsonButton.disabled = !state.hasCapture;
-    modeText.textContent = 'Etapas + HTTP renderer/Node + conexiones y procesos Windows + archivos de laboratorio' +
+    modeText.textContent = 'Etapas + HTTP renderer/Node + procesos Windows + verificación SHA-256 del servidor autorizado (opcional)' +
       (ipcHooked ? ' + IPC' : ' · IPC no interceptable');
     lines.textContent = '';
     const tail = Array.isArray(state.tail) ? state.tail.slice(-24) : [];
@@ -207,10 +207,10 @@
     const toggle = el('button','Diagnóstico',shadow);
     toggle.id = 'toggle';
     panel = el('section',undefined,shadow); panel.id = 'panel';
-    el('h2','Diagnóstico de Dyclok',panel);
+    el('h2','Diagnóstico de diloakPRO',panel);
     statusText = el('p','Detenido',panel);
-    modeText = el('p','Captura de metadatos sin datos privados.',panel);
-    el('p','No se guardan URLs, cookies, cuerpos HTTP, contraseñas ni contenido de perfiles.',panel);
+    modeText = el('p','Diagnóstico de apertura y del servidor autorizado.',panel);
+    el('p','El informe JSON/TXT no incluye valores privados. La captura exacta y cifrada se activa únicamente para tu servidor de pruebas y se guarda separada en LabCaptures.',panel);
     const buttons = el('div',undefined,panel); buttons.className='buttons';
     startButton = el('button','Iniciar',buttons);
     stopButton = el('button','Detener',buttons);
