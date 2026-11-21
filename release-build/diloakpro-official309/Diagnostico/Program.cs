@@ -1385,7 +1385,7 @@ internal sealed class DiagnosticWindow : Form
     // Guided start: only an explicitly authorized local CDP port is used.
     private void StartLabCapture()
     {
-        if (owner.State.StartsWith("Grabando", StringComparison.Ordinal)) return;
+        if (bubble.State.StartsWith("Grabando", StringComparison.Ordinal)) return;
         using var setup = new Form
         {
             Text = "Iniciar captura del servidor de pruebas",
@@ -1449,11 +1449,11 @@ internal sealed class DiagnosticWindow : Form
         }
         labOrigin.Text = originInput.Text.Trim();
         cdpPort.Text = port.ToString();
-        owner.EnableLabComparison(labOrigin.Text);
-        if (!owner.LabComparisonStatus.StartsWith("Activa:", StringComparison.Ordinal))
+        bubble.EnableLabComparison(labOrigin.Text);
+        if (!bubble.LabComparisonStatus.StartsWith("Activa:", StringComparison.Ordinal))
             return;
-        owner.StartRecording();
-        owner.ConnectCdp(cdpPort.Text);
+        bubble.StartRecording();
+        bubble.ConnectCdp(cdpPort.Text);
     }
 
     public void RefreshFrom(DiagnosticBubble bubble)
