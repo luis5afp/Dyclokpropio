@@ -51,6 +51,7 @@ async function run() {
         res.on('data', chunk => chunks.push(chunk));
         res.on('end', () => resolve({
           status: res.statusCode,
+          headers: res.headers,
           body: Buffer.concat(chunks)
         }));
       });
@@ -62,6 +63,10 @@ async function run() {
   try {
     const response = await exchange('/__diloakpro_lab__/test?access_token=PRIVATE_FAKE');
     assert.equal(response.status, 201);
+    assert.match(response.headers['x-diloakpro-lab-id'], /^[a-f0-9]{24}$/);
+    assert.equal(response.headers['x-diloakpro-lab-sha256'],
+      crypto.createHash('sha256').update(fakeResponse).digest('hex'));
+    assert.equal(response.headers['cache-control'], 'no-store');
     assert.deepEqual(response.body, fakeResponse);
     assert.equal(recorder.proofs.length, 1);
     const proof = recorder.proofs[0];
@@ -70,6 +75,8 @@ async function run() {
     assert.equal(proof.responseSha256,
       crypto.createHash('sha256').update(fakeResponse).digest('hex'));
     assert.equal(proof.pathname, '/__diloakpro_lab__/test');
+    assert.equal(proof.transactionId, response.headers['x-diloakpro-lab-id']);
+    assert.equal(proof.responseProofHeaderIssued, true);
     assert.ok(!JSON.stringify(proof).includes('access_token'));
     assert.ok(!JSON.stringify(proof).includes('FAKE-COOKIE'));
     assert.ok(!JSON.stringify(proof).includes('FAKE-TOKEN'));
@@ -89,6 +96,7 @@ async function run() {
     assert.equal(recorder.proofs.length, 1, 'Stopped recorder captured traffic');
     console.log('LAB_SERVER_REAL_REQUEST_AND_RESPONSE_BYTES=PASS');
     console.log('LAB_SERVER_PROOF_SHA256=PASS');
+    console.log('LAB_SERVER_BROWSER_CORRELATION_HEADER=PASS');
     console.log('LAB_SERVER_AES256_GCM_ROUNDTRIP=PASS');
     console.log('LAB_SERVER_REJECTS_UNRELATED_TRAFFIC=PASS');
     console.log('LAB_SERVER_OMITS_HEADERS_AND_QUERY=PASS');
