@@ -35,7 +35,8 @@ internal static class ProfileArchive
         IReadOnlyList<Snapshot> windows,
         IReadOnlyList<CdpDiagnosticEvent> cdpEvents,
         IReadOnlyList<ApiV2Finding> apiFindings,
-        IReadOnlyList<ArchiveOperation> commands)
+        IReadOnlyList<ArchiveOperation> commands,
+        IReadOnlyList<LabComparisonEvent>? comparisons = null)
     {
         // Each record is a structured, hard-coded allowlist of non-secret fields.
         var folder = Path.Combine(GetProfileDirectory(profileId), "Diagnosticos");
@@ -58,12 +59,17 @@ internal static class ProfileArchive
             proxyApplied = "NO_VERIFICADO",
             fingerprintApplied = "NO_VERIFICADO",
             extensionsLoaded = "NO_VERIFICADO",
-            authenticatedSession = "NO_VERIFICADO"
+            authenticatedSession = "NO_VERIFICADO",
+            labServerBrowserJson = (comparisons ?? Array.Empty<LabComparisonEvent>())
+                .Any(x => x.Result == "COINCIDE") ? "COINCIDE_EN_PRUEBA" :
+                (comparisons ?? Array.Empty<LabComparisonEvent>())
+                .Any(x => x.Result == "DIFERENTE") ? "DIFERENTE_EN_PRUEBA" :
+                "NO_VERIFICADO"
         };
         var report = new
         {
-            schema = 3,
-            diagnosticVersion = "30.0.28-rc2-archive-lab",
+            schema = 4,
+            diagnosticVersion = "30.0.28-rc2-http-comparison-lab",
             capturedAtUtc = DateTime.UtcNow.ToString("O"),
             profile = IsSafeProfileId(profileId) ? profileId : null,
             coverage = "Metadatos Windows/CDP/API V2 sin secretos",
@@ -71,7 +77,8 @@ internal static class ProfileArchive
             events = windows.ToArray(),
             cdp = cdpEvents.ToArray(),
             localApiFindings = apiFindings.ToArray(),
-            commands = commands.ToArray()
+            commands = commands.ToArray(),
+            browserServerComparisons = (comparisons ?? Array.Empty<LabComparisonEvent>()).ToArray()
         };
         var json = JsonSerializer.Serialize(report, JsonOptions) + "\n";
         var txt = new StringBuilder();
@@ -91,6 +98,11 @@ internal static class ProfileArchive
         txt.AppendLine("=== Estado API V2 ===");
         foreach (var e in apiFindings)
             txt.AppendLine(e.Utc + " " + e.Category + ": " + e.Status);
+        txt.AppendLine("=== Comparacion de JSON de laboratorio (sin cuerpos) ===");
+        foreach (var e in comparisons ?? Array.Empty<LabComparisonEvent>())
+            txt.AppendLine(e.Utc + " TEST=" + e.TestId + " " + e.Result +
+                " HTTP=" + e.HttpStatus + " SERVIDOR=" + e.ServerSha256 +
+                " CHROMIUM=" + e.ClientSha256);
         txt.AppendLine("=== Acciones propias del diagnostico (sin argumentos privados) ===");
         foreach (var e in commands)
             txt.AppendLine(e.Utc + " " + e.Action + ": " + e.Result);
