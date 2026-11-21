@@ -83,7 +83,7 @@ internal sealed class CdpObserver : IDisposable
                     continue;
                 if (!Uri.TryCreate(endpoint.GetString(), UriKind.Absolute, out var uri))
                     continue;
-                if (uri.Scheme != "ws" || uri.Host != "127.0.0.1" || uri.Port != port)
+                if (uri.Scheme != "ws" || !uri.IsLoopback || uri.Port != port)
                     continue;
                 selected = uri;
                 break;
