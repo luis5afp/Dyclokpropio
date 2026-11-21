@@ -1,0 +1,164 @@
+name: diloakPRO 30.0.28 RC2 LAB - motor 3.0.9 + CDP opt-in (no R4)
+
+on:
+  push:
+    branches:
+      - feature/diloakpro-30-0-28-rc2-cdp-monitor
+    paths:
+      - '.github/workflows/build-diloakpro-309-rc2.yml'
+      - 'release-build/diloakpro-official309/Diagnostico/**'
+      - 'release-build/diloakpro-official309/electron-builder-rc2.json'
+      - 'release-build/diloakpro-official309/installer-rc2.nsh'
+      - 'release-build/diloakpro-official309/**'
+      - 'tools/inspect-dicloak-309.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-309:
+    runs-on: windows-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch official authenticated 3.0.9 installer with pinned SHA-256
+        shell: pwsh
+        run: |
+          $file=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.9_win_x64.exe'
+          Invoke-WebRequest 'https://cdn1.dicloak.net/app/release/prod/DICloak_3.0.9_win_x64.exe' -OutFile $file -TimeoutSec 1200
+          if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw 'Missing upstream installer' }
+          $actual=(Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne '68d6c06123168061e7b4d04514413063a3816cbd89121e4c4a3b4a6da4dfba21') {
+            throw 'Upstream official installer has unexpected hash: build blocked'
+          }
+          $sig=Get-AuthenticodeSignature -FilePath $file
+          if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notmatch 'Dicloak Technology Limited') {
+            throw 'Unexpected upstream Authenticode signature'
+          }
+      - name: Extract and verify UNMODIFIED genuine 3.0.9 runtime
+        shell: pwsh
+        run: |
+          $installer=Join-Path $env:RUNNER_TEMP 'DICloak_3.0.9_win_x64.exe'
+          $root=Join-Path $env:RUNNER_TEMP 'diloakpro-native309-package'
+          python tools/inspect-dicloak-309.py --installer $installer --destination $root --report version-report/official-309.json
+          if ($LASTEXITCODE -ne 0) { throw '3.0.9 original runtime inspection failed' }
+          $report=Get-Content version-report/official-309.json -Raw | ConvertFrom-Json
+          if ($report.versionInOriginalAsar -ne '3.0.9' -or
+              $report.originalAsarSHA256 -ne 'e19091a4b1038701fd2d1db0b45d4c68c18b973b0285fa977bfc9640bbbb5cf3') {
+            throw 'Unexpected official 3.0.9 ASAR version or SHA256'
+          }
+          # Never redistribute existing profile or browser user data.
+          foreach ($rel in @('SourceData','Chromium/User Data','Chromium/Application/SetupMetrics')) {
+            Remove-Item -LiteralPath (Join-Path $root $rel) -Force -Recurse -ErrorAction SilentlyContinue
+          }
+          $exe=Join-Path $root 'DICloak.exe'
+          (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant() |
+            Set-Content -LiteralPath (Join-Path $env:RUNNER_TEMP 'original-official309-pe.sha256')
+      - name: Build the independent Windows diagnosis button with opt-in CDP RC2
+        shell: pwsh
+        run: |
+          $app=Join-Path $env:RUNNER_TEMP 'diloakpro-native309-package'
+          $out=Join-Path $env:RUNNER_TEMP 'diloakpro-diagnostic-build'
+          dotnet publish 'release-build/diloakpro-official309/Diagnostico/DiloakPRO.Diagnostico.csproj' -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o $out
+          if ($LASTEXITCODE -ne 0) { throw 'Diagnostic WinForms build failed' }
+          $exe=Join-Path $out 'diloakPRO.exe'
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw 'Diagnostic EXE missing' }
+          Copy-Item -LiteralPath $exe -Destination (Join-Path $app 'diloakPRO.exe') -Force
+          if (-not (Test-Path (Join-Path $app 'DICloak.exe') -PathType Leaf)) { throw 'Native engine lost' }
+      - name: Build isolated Windows x64 installer
+        shell: pwsh
+        working-directory: release-build/diloakpro-official309
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          npm install --no-audit --no-fund --ignore-scripts
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging dependencies failed' }
+          $root=Join-Path $env:RUNNER_TEMP 'diloakpro-native309-package'
+          npx electron-builder --win nsis --x64 --prepackaged $root --publish never --config electron-builder-rc2.json
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging native 3.0.9 failed' }
+          $exe='out/diloakPRO_30.0.28_RC2_LAB_win_x64.exe'
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf) -or
+              (Get-Item -LiteralPath $exe).Length -lt 140000000) {
+            throw 'Installer not generated or incomplete'
+          }
+      - name: Install side-by-side and check exact upstream PE and ASAR
+        shell: pwsh
+        run: |
+          $installer=(Resolve-Path 'release-build/diloakpro-official309/out/diloakPRO_30.0.28_RC2_LAB_win_x64.exe').Path
+          $folder=Join-Path $env:LOCALAPPDATA 'Programs/diloakPRO-Motor309-RC2-LAB'
+          if (Test-Path -LiteralPath $folder) { throw 'Unexpected prior test installation' }
+          $p=Start-Process -FilePath $installer -ArgumentList '/S' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw 'Windows installation failed' }
+          $exe=Join-Path $folder 'DICloak.exe'
+          $asar=Join-Path $folder 'resources/app.asar'
+          $diagnostic=Join-Path $folder 'diloakPRO.exe'
+          if (-not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) { throw 'Windows diagnostic companion missing' }
+          if (-not (Test-Path -LiteralPath $exe) -or -not (Test-Path -LiteralPath $asar)) {
+            throw 'Installed upstream runtime files missing'
+          }
+          $expected=(Get-Content (Join-Path $env:RUNNER_TEMP 'original-official309-pe.sha256') -Raw).Trim()
+          $actual=(Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($expected -ne $actual) { throw 'Installed EXE has been altered' }
+          $asarSha=(Get-FileHash -LiteralPath $asar -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($asarSha -ne 'e19091a4b1038701fd2d1db0b45d4c68c18b973b0285fa977bfc9640bbbb5cf3') {
+            throw 'Installed official ASAR has been altered'
+          }
+          if (Test-Path (Join-Path $folder 'DyclokPRO.exe')) {
+            throw 'Unexpected additional old launcher'
+          }
+          $proc=Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 12
+          $proc.Refresh()
+          if ($proc.HasExited -and $proc.ExitCode -ne 0) { throw 'Official runtime smoke-start failed' }
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          }
+          $companion=Start-Process -FilePath $diagnostic -PassThru
+          Start-Sleep -Seconds 6
+          $companion.Refresh()
+          if ($companion.HasExited) { throw 'Diagnostic companion failed to start' }
+          # GitHub hosted runners may not expose GUI-owned/borderless windows
+          # through Process.MainWindowHandle. Do not claim visual verification.
+          if ($companion.MainWindowHandle -eq [IntPtr]::Zero) {
+            Write-Host 'DILOAKPRO_BUTTON_VISIBILITY=NOT_VERIFIED_IN_CI'
+          } else {
+            Write-Host 'DILOAKPRO_BUTTON_WINDOW_HANDLE=OBSERVED'
+          }
+          Stop-Process -Id $companion.Id -Force -ErrorAction SilentlyContinue
+          Write-Host 'DILOAKPRO_DIAGNOSTIC_PROCESS=PASS'
+          Write-Host 'DIAGNOSTIC_COVERAGE=WINDOWS_PROCESSES_AND_TCP_PLUS_OPT_IN_CDP'
+          Write-Host 'OFFICIAL_309_PE_AND_ASAR_BYTE_IDENTICAL=PASS'
+          Write-Host 'OFFICIAL_309_STARTUP_SMOKE=PASS'
+          Write-Host 'USER_LOGIN_AND_PROFILES=NOT_TESTED'
+          Write-Host 'CDP_REAL_PROFILE=NOT_TESTED_IN_CI'
+          Write-Host 'R4_INTERNAL_RESPONSES_AND_CHROMIUM_APPLIED_STATE=NOT_VERIFIED'
+      - name: Publish RC2 LAB artifact only (not Releases)
+        shell: pwsh
+        run: |
+          $root='release-build/diloakpro-official309/out'
+          $installer=Join-Path $root 'diloakPRO_30.0.28_RC2_LAB_win_x64.exe'
+          $hash=(Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          ($hash+'  '+[IO.Path]::GetFileName($installer)) |
+            Set-Content (Join-Path $root 'SHA256SUMS.txt') -Encoding ascii
+          @'
+          Motor DICloak 3.0.9 OFICIAL e intacto.
+          El acceso directo inicia diloakPRO.exe, con botón Diagnóstico flotante.
+          RC2 LAB: además de Windows, CDP local opt-in permite estados HTTP sin URLs, cabeceras, cuerpos ni secretos.
+          Sin acceso CDP previo la cobertura sigue siendo solamente procesos y TCP.
+          La captura íntegra de laboratorio R4 todavía requiere integración adicional.
+          Instala en carpeta RC2 LAB separada, sin reemplazar RC1, RC2 anterior ni perfiles.
+          RC2 LAB es prueba, NO versión estable ni integracion R4.
+          No se ha verificado el login real en Windows del usuario.
+          No habilita actualizaciones silenciosas de la familia 30.0.N.
+          La version y autenticacion originales no se suplantan.
+          '@ | Set-Content (Join-Path $root 'LEEME_RC2_LAB.txt') -Encoding utf8
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diloakPRO-30-0-28-RC2-LAB-Windows-x64
+          path: |
+            release-build/diloakpro-official309/out/diloakPRO_30.0.28_RC2_LAB_win_x64.exe
+            release-build/diloakpro-official309/out/SHA256SUMS.txt
+            release-build/diloakpro-official309/out/LEEME_RC2_LAB.txt
+          if-no-files-found: error
+          retention-days: 7
