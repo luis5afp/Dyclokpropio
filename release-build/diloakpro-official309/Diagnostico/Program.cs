@@ -765,8 +765,6 @@ internal sealed class DiagnosticWindow : Form
         add("Detener", owner.StopRecording);
         add("Exportar JSON", owner.Export);
         add("Exportar TXT", owner.ExportTxt);
-        add("Guardar Almacén", () => owner.SaveToArchive());
-        add("Abrir Almacén", owner.OpenArchive);
         add("Abrir DICloak", owner.OpenMotor);
         add("Cerrar panel", Close);
         add("Salir", owner.Exit);
@@ -817,6 +815,12 @@ internal sealed class DiagnosticWindow : Form
             Dock = DockStyle.Top, Height = 40, Padding = new Padding(7),
             BackColor = Color.FromArgb(29, 45, 67)
         };
+        var saveArchive = new Button { Text = "Guardar Almacén", AutoSize = true };
+        saveArchive.Click += (_, _) => owner.SaveToArchive();
+        archiveBar.Controls.Add(saveArchive);
+        var openArchive = new Button { Text = "Abrir Almacén", AutoSize = true };
+        openArchive.Click += (_, _) => owner.OpenArchive();
+        archiveBar.Controls.Add(openArchive);
         archiveBar.Controls.Add(new Label
         {
             Text = "Respaldo seguro:", AutoSize = true, ForeColor = Color.White,
