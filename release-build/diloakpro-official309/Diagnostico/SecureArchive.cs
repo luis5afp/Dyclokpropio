@@ -70,6 +70,59 @@ internal static class SecureArchive
         }
     }
 
+    // Capture only an explicitly enabled, bounded JSON response from the user's lab.
+    // Never create a plaintext intermediate file; the output uses the existing
+    // .dlvault format and can be restored only with the chosen password.
+    internal static string EncryptLabResponse(string? profileId,
+        ReadOnlySpan<byte> plaintext, ReadOnlySpan<char> password)
+    {
+        if (plaintext.Length == 0 || plaintext.Length > 128 * 1024)
+            throw new InvalidDataException("Respuesta de laboratorio fuera del limite");
+        if (password.Length < 12)
+            throw new ArgumentException("Se necesita contraseña de 12+ caracteres");
+
+        var folder = Path.Combine(ProfileArchive.GetProfileDirectory(profileId),
+            "RespaldosCifrados");
+        Directory.CreateDirectory(folder);
+        var dest = Path.Combine(folder, "respuesta-lab-" +
+            DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fffffff") + "-" +
+            Guid.NewGuid().ToString("N")[..8] + ".dlvault");
+        var tmp = dest + ".tmp";
+        var salt = RandomNumberGenerator.GetBytes(16);
+        var nonce = RandomNumberGenerator.GetBytes(12);
+        var tag = new byte[16];
+        var ciphertext = new byte[plaintext.Length];
+        var key = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations,
+            HashAlgorithmName.SHA256, 32);
+        try
+        {
+            using (var aes = new AesGcm(key, tag.Length))
+                aes.Encrypt(nonce, plaintext, ciphertext, tag, AssociatedData);
+            using (var stream = new FileStream(tmp, FileMode.CreateNew,
+                       FileAccess.Write, FileShare.None, 65536, FileOptions.WriteThrough))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(Magic);
+                writer.Write((byte)1);
+                writer.Write(salt);
+                writer.Write(nonce);
+                writer.Write(tag);
+                writer.Write(ciphertext.Length);
+                writer.Write(ciphertext);
+                writer.Flush();
+                stream.Flush(true);
+            }
+            File.Move(tmp, dest);
+            return dest;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(key);
+            CryptographicOperations.ZeroMemory(ciphertext);
+            if (File.Exists(tmp)) File.Delete(tmp);
+        }
+    }
+
     internal static void RestoreToSelectedFile(string encryptedFile, string destination,
         string password)
     {
