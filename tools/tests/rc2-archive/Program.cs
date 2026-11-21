@@ -75,9 +75,20 @@ internal static class ArchiveTests
                 responseSha256 = labSha,
                 responseBytes = Encoding.UTF8.GetByteCount(testJson),
                 responseProofHeaderIssued = true,
-                statusCode = 200
+                statusCode = 200,
+                audit = new
+                {
+                    requestJson = new { categories = new { email = 1, password = 1, proxy = 0 } },
+                    responseJson = new { categories = new { email = 1, password = 0, proxy = 1, extension = 2 } },
+                    setCookieHeaderCount = 1,
+                    requestCookieHeaderPresent = true
+                }
             }));
             var independentProof = LabServerProofAudit.Read(proofPath);
+            if (!independentProof.FieldSummary.Contains("CLIENTE_ENVIA_EMAIL=1") ||
+                !independentProof.FieldSummary.Contains("SERVIDOR_ENVIA_EXTENSION=2") ||
+                !independentProof.FieldSummary.Contains("SERVIDOR_SET_COOKIE=1"))
+                throw new Exception("Safe field category summary missing");
             var tripleMatched = LabServerProofAudit.Compare(independentProof,
                 new[] { matches });
             if (tripleMatched.Result != "COINCIDE")
@@ -140,6 +151,7 @@ internal static class ArchiveTests
                 throw new Exception("Private fixture was mixed into plain reports");
             Console.WriteLine("RC2_LAB_BROWSER_SHA256_MATCH_AND_MISMATCH=PASS");
             Console.WriteLine("RC2_LAB_INDEPENDENT_SERVER_PROOF=PASS");
+            Console.WriteLine("RC2_LAB_SAFE_FIELD_AUDIT_IMPORT=PASS");
             Console.WriteLine("RC2_LAB_ORIGIN_FILTER=PASS");
             Console.WriteLine("RC2_ARCHIVE_JSON_TXT_SHA256=PASS");
             Console.WriteLine("RC2_ARCHIVE_AES256_GCM_ROUNDTRIP=PASS");
