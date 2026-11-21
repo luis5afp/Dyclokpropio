@@ -182,7 +182,11 @@ internal sealed class DiagnosticBubble : Form
 
     internal void StartRecording()
     {
+        if (recording) return;
         history.Clear();
+        labComparisons.Clear();
+        importedServerProofs.Clear();
+        labProofAudits.Clear();
         error = null;
         recording = true;
         nextAutoSaveUtc = DateTime.UtcNow.AddMinutes(1);
@@ -194,6 +198,8 @@ internal sealed class DiagnosticBubble : Form
     internal void StopRecording()
     {
         recording = false;
+        if (cdp.IsRunning) cdp.Stop();
+        cdp.StopLab();
         LogAction("DETENER_GRABACION", "OK");
         SaveToArchive(false);
         UpdatePanel();
