@@ -66,6 +66,21 @@ internal static class ArchiveTests
             var sealedData = File.ReadAllBytes(savedCapturePath);
             if (sealedData.AsSpan().IndexOf(Encoding.UTF8.GetBytes(testJson)) >= 0)
                 throw new Exception("Captured JSON leaked into ciphertext");
+            var viewedBytes = SecureArchive.ReadLabResponse(savedCapturePath,
+                "test-passphrase-strong-123!".AsSpan());
+            try
+            {
+                if (!viewedBytes.SequenceEqual(Encoding.UTF8.GetBytes(testJson)))
+                    throw new Exception("Password-gated in-memory JSON was modified");
+            }
+            finally { CryptographicOperations.ZeroMemory(viewedBytes); }
+            try
+            {
+                SecureArchive.ReadLabResponse(savedCapturePath,
+                    "incorrect-passphrase".AsSpan());
+                throw new Exception("Wrong lab viewer password was accepted");
+            }
+            catch (CryptographicException) { }
             var capturedRestore = Path.Combine(testFolder, "captured-lab.json");
             SecureArchive.RestoreToSelectedFile(savedCapturePath, capturedRestore,
                 "test-passphrase-strong-123!");
@@ -181,6 +196,7 @@ internal static class ArchiveTests
                 throw new Exception("Round-trip contents changed");
             if (File.ReadAllText(result.JsonPath).Contains("synthetic-value"))
                 throw new Exception("Private fixture was mixed into plain reports");
+            Console.WriteLine("RC2_LAB_PASSWORD_GATED_IN_MEMORY_VIEW=PASS");
             Console.WriteLine("RC2_LAB_ENCRYPTED_BROWSER_BODY_ROUNDTRIP=PASS");
             Console.WriteLine("RC2_LAB_CAPTURE_FOR_USER_REVIEW_NO_AUTO_VERDICT=PASS");
             Console.WriteLine("RC2_LAB_BROWSER_SHA256_MATCH_AND_MISMATCH=PASS");
