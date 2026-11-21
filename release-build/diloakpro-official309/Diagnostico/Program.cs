@@ -34,6 +34,8 @@ internal sealed class DiagnosticBubble : Form
     private readonly CdpObserver cdp = new();
     private readonly List<CdpDiagnosticEvent> cdpHistory = new();
     private readonly List<LabComparisonEvent> labComparisons = new();
+    private readonly List<LabServerProof> importedServerProofs = new();
+    private readonly List<LabProofAudit> labProofAudits = new();
     private string labComparisonStatus = "No configurada";
     private string cdpStatus = "No activado";
     private int? cdpPort;
@@ -256,6 +258,7 @@ internal sealed class DiagnosticBubble : Form
                     if (IsDisposed) return;
                     labComparisons.Add(entry);
                     if (labComparisons.Count > 120) labComparisons.RemoveAt(0);
+                    RefreshLabProofAudits();
                     labComparisonStatus = entry.Result + " (prueba " + entry.TestId + ")";
                     UpdatePanel();
                     SaveToArchive(false);
@@ -278,7 +281,53 @@ internal sealed class DiagnosticBubble : Form
         UpdatePanel();
     }
 
+    private void RefreshLabProofAudits()
+    {
+        labProofAudits.Clear();
+        foreach (var proof in importedServerProofs)
+            labProofAudits.Add(LabServerProofAudit.Compare(proof, labComparisons));
+    }
+
+    internal void ImportLabServerProof()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Importar prueba JSON de nuestro servidor de laboratorio",
+            Filter = "Pruebas del servidor (*.proof.json)|*.proof.json",
+            CheckFileExists = true
+        };
+        if (dialog.ShowDialog() != DialogResult.OK) return;
+        try
+        {
+            var proof = LabServerProofAudit.Read(dialog.FileName);
+            importedServerProofs.RemoveAll(x => x.TestId == proof.TestId);
+            importedServerProofs.Add(proof);
+            if (importedServerProofs.Count > 100)
+                importedServerProofs.RemoveAt(0);
+            RefreshLabProofAudits();
+            var audit = labProofAudits.LastOrDefault(x => x.TestId == proof.TestId);
+            labComparisonStatus = audit is null ? "NO_VERIFICADO" :
+                audit.Result + " (servidor + Chromium)";
+            LogAction("IMPORTAR_PRUEBA_LAB", "OK");
+            SaveToArchive(false);
+            MessageBox.Show("Comparación: " + (audit?.Result ?? "NO_VERIFICADO") +
+                "\nID de prueba: " + proof.TestId +
+                "\nNo se importan cuerpos JSON, contraseñas ni cookies.",
+                "Comparación de laboratorio", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            LogAction("IMPORTAR_PRUEBA_LAB", "ERROR");
+            MessageBox.Show("Archivo de prueba no válido (" + ex.GetType().Name + ").",
+                "Comparación de laboratorio", MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
+        UpdatePanel();
+    }
+
     internal string LabComparisonStatus => labComparisonStatus;
+    internal IReadOnlyList<LabProofAudit> LabProofAudits => labProofAudits;
     internal IReadOnlyList<LabComparisonEvent> LabComparisons => labComparisons;
 
     internal void DisconnectCdp()
@@ -488,7 +537,7 @@ internal sealed class DiagnosticBubble : Form
         try
         {
             var saved = ProfileArchive.SaveReport(archiveProfileId, history, cdpHistory,
-                apiFindings, operationHistory, labComparisons);
+                apiFindings, operationHistory, labComparisons, labProofAudits);
             archiveStatus = "Guardado: " + Path.GetFileName(saved.JsonPath);
             if (showMessage)
                 MessageBox.Show("Archivos TXT, JSON y SHA-256 guardados en:\n" +
@@ -781,6 +830,7 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                 extensionsVerified = false,
                 sessionAuthenticationVerified = false,
                 labServerBrowserComparisons = labComparisons.ToArray(),
+                independentServerProofAudits = labProofAudits.ToArray(),
                 verification = new
                 {
                     windowsProcesses = history.Count > 0 ? "OBSERVADOS" : "NO_VERIFICADO",
@@ -854,6 +904,10 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
             lines.AddRange(labComparisons.Select(x => x.Utc + " PRUEBA=" + x.TestId +
                 " RESULTADO=" + x.Result + " HTTP=" + x.HttpStatus +
                 " SERVIDOR=" + x.ServerSha256 + " NAVEGADOR=" + x.ClientSha256));
+            lines.Add("=== Pruebas independientes importadas del servidor ===");
+            lines.AddRange(labProofAudits.Select(x => x.Utc + " PRUEBA=" + x.TestId +
+                " RESULTADO=" + x.Result + " SERVIDOR=" + x.ServerSha256 +
+                " CHROMIUM=" + x.ChromiumSha256));
             lines.Add("=== CDP primer target page ===");
             lines.AddRange(cdpHistory.Select(x => x.Utc + " " + x.Type +
                 (x.HttpStatus.HasValue ? " HTTP=" + x.HttpStatus : "")));
@@ -1112,6 +1166,12 @@ internal sealed class DiagnosticWindow : Form
         var disableLab = new Button { Text = "Desactivar", AutoSize = true };
         disableLab.Click += (_, _) => owner.DisableLabComparison();
         labBar.Controls.Add(disableLab);
+        var importProof = new Button
+        {
+            Text = "Importar prueba servidor", AutoSize = true
+        };
+        importProof.Click += (_, _) => owner.ImportLabServerProof();
+        labBar.Controls.Add(importProof);
         Controls.Add(events);
         Controls.Add(labBar);
         Controls.Add(autoBar);
@@ -1142,10 +1202,12 @@ internal sealed class DiagnosticWindow : Form
         var labLines = bubble.LabComparisons.TakeLast(8).Select(x =>
             x.Utc[11..19] + " UTC | LAB " + x.Result +
             " | ID " + x.TestId);
+        var proofLines = bubble.LabProofAudits.TakeLast(6).Select(x =>
+            x.Utc[11..19] + " UTC | PRUEBA SERVIDOR " + x.Result + " | " + x.TestId);
         var apiLines = bubble.ApiFindings.TakeLast(10).Select(x =>
             x.Utc[11..19] + " UTC | API " + x.Category +
             " " + x.Status);
         events.Text = string.Join(Environment.NewLine,
-            windowsLines.Concat(cdpLines).Concat(labLines).Concat(apiLines));
+            windowsLines.Concat(cdpLines).Concat(labLines).Concat(proofLines).Concat(apiLines));
     }
 }
