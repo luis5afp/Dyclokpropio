@@ -301,7 +301,7 @@ internal sealed class DiagnosticBubble : Form
         if (!ready) ClearLabCapturePassword();
         labComparisonStatus = ready ?
             "Activa: JSON de prueba guardado cifrado al recibirse" : "No disponible";
-        LogAction("COMPARACION_LAB", ready ? "ACTIVADA" : "ERROR");
+        LogAction("CAPTURA_LAB", ready ? "ACTIVADA" : "ERROR");
         UpdatePanel();
     }
 
@@ -310,7 +310,7 @@ internal sealed class DiagnosticBubble : Form
         cdp.StopLab();
         ClearLabCapturePassword();
         labComparisonStatus = "Desactivada";
-        LogAction("COMPARACION_LAB", "DESACTIVADA");
+        LogAction("CAPTURA_LAB", "DESACTIVADA");
         SaveToArchive(false);
         UpdatePanel();
     }
@@ -1210,18 +1210,12 @@ internal sealed class DiagnosticWindow : Form
             Dock = DockStyle.Top, Height = 40, Padding = new Padding(7),
             BackColor = Color.FromArgb(29, 45, 67)
         };
-        var saveArchive = new Button { Text = "Guardar Almacén", AutoSize = true };
-        saveArchive.Click += (_, _) => owner.SaveToArchive();
-        archiveBar.Controls.Add(saveArchive);
-        var openArchive = new Button { Text = "Abrir Almacén", AutoSize = true };
-        openArchive.Click += (_, _) => owner.OpenArchive();
-        archiveBar.Controls.Add(openArchive);
         archiveBar.Controls.Add(new Label
         {
             Text = "Respaldo seguro:", AutoSize = true, ForeColor = Color.White,
             Padding = new Padding(2, 4, 0, 0)
         });
-        var encryptButton = new Button { Text = "Cifrar archivo seleccionado", AutoSize = true };
+        var encryptButton = new Button { Text = "Añadir archivo", AutoSize = true };
         encryptButton.Click += (_, _) => owner.BackupSelectedFile();
         archiveBar.Controls.Add(encryptButton);
         var openFolder = new Button { Text = "Abrir carpeta", AutoSize = true };
