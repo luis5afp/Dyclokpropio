@@ -65,15 +65,49 @@ controles originales en **Avanzado**, pero no abarrotan la vista principal.
 - No afirmar que funciona con cookies reales, proxy aplicado, extensiones
   cargadas o login sin pruebas independientes que lo demuestren.
 
+## Detección automática del perfil y servidor de laboratorio
+
+La vista principal ya no pide escribir el origen ni el puerto CDP.
+**Iniciar captura** solicita consentimiento y contraseña del respaldo,
+y consulta la **API local autorizada** para identificar un perfil en ejecución.
+Si hay un único perfil, utiliza su `debug_port` oficial; si hay varios,
+pide seleccionar uno para no mezclar capturas.
+
+En la primera ejecución sin clave autorizada, pide **una sola vez por sesión**
+la clave Open API local que el usuario ya ha obtenido legalmente.
+**La cuenta web iniciada no proporciona automáticamente esta clave.**
+No se leen archivos de claves del proveedor, llaveros, credenciales guardadas
+ni cookies de otros sitios. No se prueban puertos al azar.
+
+Una vez conectado CDP, el monitor reconoce automáticamente el origen
+**solo al observar una nueva respuesta** HTTPS (o HTTP en localhost) con
+ruta `/__diloakpro_lab__/`, cabeceras X-Diloakpro-Lab-Id y
+X-Diloakpro-Lab-SHA256, y JSON no comprimido de hasta 128 KiB.
+El origen queda bloqueado a la primera respuesta válida de laboratorio.
+Se prefiere una pestaña de laboratorio que ya esté abierta en la lista CDP.
+La función no puede recuperar peticiones anteriores a la conexión.
+
+Si la API Open API no está disponible o el perfil no expone CDP,
+la aplicación lo indica explícitamente: Windows/TCP no se convierte
+mágicamente en captura de contenidos. Los controles manuales siguen
+en **Avanzado** como alternativa.
+
+Solo se conservan los contenidos del JSON de la ruta propia marcada:
+el `Set-Cookie` de las cabeceras, cookies guardadas en Chromium, contraseñas
+del navegador, autenticación proxy y archivos instalados de extensiones
+requieren fuentes de evidencia diferentes y no se extraen automáticamente.
+Las comparaciones con el servidor siempre son manuales.
+
 ## Captura cifrada del contenido de prueba (nueva)
 
 Con un perfil de laboratorio abierto y CDP habilitado por el usuario:
 
-1. Pulsar **Iniciar captura**, indicar el origen HTTPS del servidor
-   propio (HTTP solo en localhost) y el puerto CDP local ya autorizado.
-   También se puede configurar manualmente en **Avanzado**.
-2. Confirmar que son datos desechables y establecer una contraseña local
-   de al menos 12 caracteres. La captura se inicia con ese consentimiento.
+1. Pulsar **Iniciar captura**. Confirmar que son datos desechables y
+   establecer una contraseña local de al menos 12 caracteres. Si aún no
+   está autorizada, proporcionar una vez la clave Open API local.
+2. El programa selecciona el único perfil abierto o solicita elegir entre
+   varios, obtiene su puerto CDP por la API autorizada y observa una nueva
+   respuesta de prueba del servidor sin escribir el origen a mano.
 3. En el navegador, navegar a la ruta del servidor
    `/__diloakpro_lab__/` instrumentada por el servidor propio. El navegador
    debe recibir una respuesta JSON con las cabeceras X-Diloakpro-Lab-Id y
