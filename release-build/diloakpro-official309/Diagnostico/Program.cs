@@ -39,6 +39,11 @@ internal sealed class DiagnosticBubble : Form
     private string apiStatus = "Sin consultar";
     private readonly List<ApiV2Finding> apiFindings = new();
     private bool apiBusy;
+    private bool autoBusy;
+    private string? authorizedApiKey;
+    private int? authorizedApiPort;
+    private string autoStatus = "Sin autorización";
+    private readonly List<string> autoCandidates = new();
     private string? archiveProfileId;
     private string archiveStatus = "Sin guardar";
     private readonly List<ArchiveOperation> operationHistory = new();
@@ -91,6 +96,8 @@ internal sealed class DiagnosticBubble : Form
         timer.Stop();
         if (history.Count > 0 || cdpHistory.Count > 0 || apiFindings.Count > 0)
             SaveToArchive(false);
+        authorizedApiKey = null;
+        authorizedApiPort = null;
         cdp.Dispose();
         window?.Close();
         base.OnFormClosing(e);
@@ -277,6 +284,137 @@ internal sealed class DiagnosticBubble : Form
             if (!IsDisposed) UpdatePanel();
         }
     }
+
+    // Called only after clicking the consent button. The key is held in
+    // memory for this app session, never persisted in JSON/TXT or profile files.
+    internal async Task<IReadOnlyList<string>> AutomaticDiagnosticAsync(
+        string manualPort, string suppliedKey, string preferredProfileId)
+    {
+        if (autoBusy || apiBusy)
+            return autoCandidates.ToArray();
+
+        if (!string.IsNullOrWhiteSpace(suppliedKey))
+            authorizedApiKey = suppliedKey;
+        if (string.IsNullOrWhiteSpace(authorizedApiKey))
+        {
+            autoStatus = "Copia una vez la clave de Open API; sin ella no hay permiso";
+            UpdatePanel();
+            return Array.Empty<string>();
+        }
+
+        int? port = null;
+        if (!string.IsNullOrWhiteSpace(manualPort))
+        {
+            if (!int.TryParse(manualPort, out var parsed) || parsed < 1024 || parsed > 65535)
+            {
+                autoStatus = "Puerto API inválido; déjalo vacío para probar el habitual";
+                UpdatePanel();
+                return Array.Empty<string>();
+            }
+            port = parsed;
+        }
+        else if (authorizedApiPort.HasValue)
+        {
+            port = authorizedApiPort;
+        }
+
+        autoBusy = true;
+        autoStatus = "Buscando API y perfiles abiertos mediante consulta autorizada";
+        LogAction("AUTODIAGNOSTICO", "SOLICITADO");
+        UpdatePanel();
+        try
+        {
+            var discovery = await AutoDiagnosticDiscovery.DiscoverAsync(
+                authorizedApiKey, port);
+            if (IsDisposed) return Array.Empty<string>();
+            autoCandidates.Clear();
+            autoCandidates.AddRange(discovery.RunningProfileIds);
+            if (!discovery.ApiPort.HasValue)
+            {
+                autoStatus = discovery.Status switch
+                {
+                    "API_NO_CONFIRMADA_EN_PUERTO_HABITUAL_52100" =>
+                        "No se encontró API en 52100. Escribe el puerto oficial una sola vez",
+                    "API_NO_CONFIRMADA_EN_PUERTO_INDICADO" =>
+                        "API no disponible o clave incorrecta: revisa Open API",
+                    _ => "API no confirmada: " + discovery.Status
+                };
+                LogAction("AUTODIAGNOSTICO", "API_NO_VERIFICADA");
+                UpdatePanel();
+                return autoCandidates.ToArray();
+            }
+            authorizedApiPort = discovery.ApiPort.Value;
+            var selected = "";
+            if (!string.IsNullOrWhiteSpace(preferredProfileId) &&
+                autoCandidates.Contains(preferredProfileId))
+                selected = preferredProfileId;
+            else if (autoCandidates.Count == 1)
+                selected = autoCandidates[0];
+
+            if (string.IsNullOrEmpty(selected))
+            {
+                autoStatus = autoCandidates.Count switch
+                {
+                    0 => "API conectada, pero no hay perfiles abiertos",
+                    _ => "Hay varios perfiles abiertos: elige uno para evitar mezclar datos"
+                };
+                LogAction("AUTODIAGNOSTICO", "SELECCION_REQUERIDA");
+                UpdatePanel();
+                return autoCandidates.ToArray();
+            }
+            if (cdp.IsRunning && archiveProfileId != selected)
+            {
+                autoStatus = "Desconecta primero el CDP del perfil anterior";
+                UpdatePanel();
+                return autoCandidates.ToArray();
+            }
+            if (!recording)
+                StartRecording();
+            if (archiveProfileId != selected)
+                cdpHistory.Clear();
+            await CheckApiV2Async(discovery.ApiPort.Value.ToString(),
+                authorizedApiKey, selected);
+            if (IsDisposed) return autoCandidates.ToArray();
+            if (apiDebugPort.HasValue)
+            {
+                ConnectProfileCdp();
+                autoStatus = "Perfil detectado; captura CDP solicitada. Revisa estado";
+            }
+            else
+            {
+                autoStatus = "Perfil detectado; sin CDP oficial disponible";
+            }
+            LogAction("AUTODIAGNOSTICO", "CONSULTA_COMPLETADA");
+            SaveToArchive(false);
+            return autoCandidates.ToArray();
+        }
+        catch (Exception ex)
+        {
+            autoStatus = "Automatización no disponible (" + ex.GetType().Name + ")";
+            LogAction("AUTODIAGNOSTICO", "ERROR");
+            UpdatePanel();
+            return Array.Empty<string>();
+        }
+        finally
+        {
+            autoBusy = false;
+            if (!IsDisposed) UpdatePanel();
+        }
+    }
+
+    internal void RevokeAutomaticAuthorization()
+    {
+        authorizedApiKey = null;
+        authorizedApiPort = null;
+        autoCandidates.Clear();
+        autoStatus = "Autorización revocada; clave liberada de la sesión";
+        if (cdp.IsRunning)
+            DisconnectCdp();
+        LogAction("AUTODIAGNOSTICO", "REVOCADO");
+        UpdatePanel();
+    }
+
+    internal string AutoStatus => autoStatus;
 
     internal void ConnectProfileCdp()
     {
@@ -698,7 +836,7 @@ internal sealed class DiagnosticWindow : Form
 {
     private readonly Label status = new()
     {
-        Dock = DockStyle.Top, Height = 65, ForeColor = Color.White,
+        Dock = DockStyle.Top, Height = 88, ForeColor = Color.White,
         Font = new Font("Segoe UI", 10, FontStyle.Bold), Padding = new Padding(12)
     };
     private readonly TextBox events = new()
@@ -734,6 +872,12 @@ internal sealed class DiagnosticWindow : Form
         Width = 135,
         PlaceholderText = "ID de perfil"
     };
+    private readonly ComboBox autoProfileSelector = new()
+    {
+        Width = 185,
+        DropDownStyle = ComboBoxStyle.DropDownList,
+        Visible = false
+    };
     private readonly TextBox cdpPort = new()
     {
         Width = 86,
@@ -745,8 +889,8 @@ internal sealed class DiagnosticWindow : Form
     {
         bubble = owner;
         Text = "diloakPRO 30.0.28 RC2 LAB - Diagnóstico";
-        Width = 980; Height = 610;
-        MinimumSize = new Size(850, 500);
+        Width = 1010; Height = 660;
+        MinimumSize = new Size(900, 550);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(20, 32, 48);
         ForeColor = Color.White;
@@ -832,7 +976,65 @@ internal sealed class DiagnosticWindow : Form
         var restoreButton = new Button { Text = "Restaurar respaldo", AutoSize = true };
         restoreButton.Click += (_, _) => owner.RestoreSelectedFile();
         archiveBar.Controls.Add(restoreButton);
+        var autoBar = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top, Height = 44, Padding = new Padding(8),
+            BackColor = Color.FromArgb(34, 58, 83)
+        };
+        var automatic = new Button
+        {
+            Text = "Autorizar diagnóstico automático", AutoSize = true,
+            BackColor = Color.FromArgb(34, 91, 155),
+            ForeColor = Color.White
+        };
+        async Task RunAutomatic(string requestedId)
+        {
+            var key = apiKey.Text;
+            apiKey.Clear();
+            var candidates = await owner.AutomaticDiagnosticAsync(
+                apiPort.Text, key, requestedId);
+            autoProfileSelector.Items.Clear();
+            if (candidates.Count > 1)
+            {
+                foreach (var candidate in candidates)
+                    autoProfileSelector.Items.Add(candidate);
+                autoProfileSelector.Visible = true;
+            }
+            else autoProfileSelector.Visible = false;
+        }
+        automatic.Click += async (_, _) =>
+        {
+            var approval = MessageBox.Show(
+                "El diagnóstico consultará la API LOCAL de solo lectura, " +
+                "buscará perfiles abiertos y conectará CDP si ese perfil ya lo permite.\n\n" +
+                "No abre/cierra perfiles, no cambia permisos y no guarda tu clave. " +
+                "No recoge contraseñas, cookies, tokens ni cuerpos HTTP.\n\n" +
+                "¿Autorizas iniciar estas consultas en tu propio DICloak?",
+                "Autorizar diagnóstico automático",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (approval != DialogResult.Yes) return;
+            await RunAutomatic(profileId.Text);
+        };
+        autoBar.Controls.Add(automatic);
+        autoBar.Controls.Add(autoProfileSelector);
+        var chooseProfile = new Button { Text = "Usar perfil elegido", AutoSize = true };
+        chooseProfile.Click += async (_, _) =>
+        {
+            if (autoProfileSelector.SelectedItem is string selected)
+                await RunAutomatic(selected);
+        };
+        autoBar.Controls.Add(chooseProfile);
+        var revoke = new Button { Text = "Revocar acceso", AutoSize = true };
+        revoke.Click += (_, _) =>
+        {
+            owner.RevokeAutomaticAuthorization();
+            apiKey.Clear();
+            autoProfileSelector.Items.Clear();
+            autoProfileSelector.Visible = false;
+        };
+        autoBar.Controls.Add(revoke);
         Controls.Add(events);
+        Controls.Add(autoBar);
         Controls.Add(archiveBar);
         Controls.Add(warning);
         Controls.Add(apiBar);
@@ -846,6 +1048,7 @@ internal sealed class DiagnosticWindow : Form
         if (IsDisposed) return;
         status.Text = "Windows: " + bubble.State + " (" + bubble.Count + " muestras)" +
                       " | CDP: " + bubble.CdpStatus + " | API: " + bubble.ApiStatus +
+                      "\nAuto: " + bubble.AutoStatus +
                       "\nArchivo: " + bubble.ArchiveStatus +
                       (bubble.Error is null ? "" : "\n" + bubble.Error);
         var windowsLines = bubble.History.TakeLast(12).Select(x =>
