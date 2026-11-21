@@ -120,8 +120,24 @@ internal sealed class CdpObserver : IDisposable
                     continue;
                 if (uri.Scheme != "ws" || !uri.IsLoopback || uri.Port != port)
                     continue;
-                selected = uri;
-                break;
+                selected ??= uri;
+                // If a test page is already open, prefer it rather than the
+                // first unrelated tab. URLs are examined in memory only.
+                if (item.TryGetProperty("url", out var pageUrl) &&
+                    pageUrl.ValueKind == JsonValueKind.String &&
+                    Uri.TryCreate(pageUrl.GetString(), UriKind.Absolute, out var pageUri) &&
+                    (pageUri.Scheme == Uri.UriSchemeHttps ||
+                     (pageUri.Scheme == Uri.UriSchemeHttp && pageUri.IsLoopback)) &&
+                    pageUri.AbsolutePath.StartsWith("/__diloakpro_lab__/",
+                        StringComparison.Ordinal) &&
+                    !pageUri.Host.Equals("dicloak.com", StringComparison.OrdinalIgnoreCase) &&
+                    !pageUri.Host.EndsWith(".dicloak.com", StringComparison.OrdinalIgnoreCase) &&
+                    !pageUri.Host.Equals("dicloak.net", StringComparison.OrdinalIgnoreCase) &&
+                    !pageUri.Host.EndsWith(".dicloak.net", StringComparison.OrdinalIgnoreCase))
+                {
+                    selected = uri;
+                    break;
+                }
             }
 
             if (selected is null)
@@ -137,7 +153,7 @@ internal sealed class CdpObserver : IDisposable
             var command = Encoding.UTF8.GetBytes("{\"id\":1,\"method\":\"Network.enable\"}");
             await ws.SendAsync(new ArraySegment<byte>(command), WebSocketMessageType.Text, true, token);
             Emit(report, "CDP_ATTACHED", null,
-                "WebSocket conectado al primer target page; esperando Network.enable");
+                "WebSocket conectado a target page autorizado; esperando Network.enable");
 
             var requestsForLab = new Dictionary<string, LabPendingResponse>();
             var bodyCommands = new Dictionary<int, LabPendingResponse>();
@@ -196,7 +212,7 @@ internal sealed class CdpObserver : IDisposable
                         return;
                     }
                     Emit(report, "CDP_NETWORK_ENABLED", null,
-                        "Network.enable confirmado; primer target page solamente");
+                        "Network.enable confirmado; un target page por sesion");
                     continue;
                 }
                 if (!root.TryGetProperty("method", out var methodValue))
