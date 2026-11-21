@@ -5,11 +5,49 @@ El usuario desea **capturar, mostrar y guardar** evidencias. La comparación
 contra su servidor es **manual**; diloakPRO no declara `COINCIDE` o
 `DIFERENTE` por su cuenta.
 
+## Requisito prioritario corregido: captura desde Windows, sin modificar el servidor
+
+La fuente de captura debe ser **el equipo Windows donde corre diloakPRO**, no
+un registrador que se instale ni ejecute en el servidor. El servidor del
+experimento se mantiene como está. El objetivo es que diloakPRO observe,
+muestre y almacene las respuestas **que llegan al cliente** (JSON y cabeceras
+HTTP de prueba), incluyendo campos de cookies, cuenta, proxy o extensiones
+**sintéticos** solo cuando aparezcan efectivamente en esas respuestas.
+Los botones siguen siendo **Iniciar captura, Detener, Ver evidencias, Guardar**;
+el usuario compara los datos manualmente. No hay veredicto automático.
+
+**Restricción técnica:** el muestreo Windows/TCP y una captura pasiva de
+paquetes no pueden revelar por sí solos cuerpos HTTP cifrados con HTTPS/TLS.
+La API local del proveedor y CDP remoto tampoco están disponibles en el
+entorno actual del usuario. Por lo tanto, la captura de los bytes descifrados
+del cliente requiere un punto de observación autorizado en la máquina del
+usuario, sin editar el servidor, y de momento **NO está implementada**.
+
+Camino propuesto: modo cliente de laboratorio con **proxy local de diagnóstico**
+explícito y limitado al origen de prueba. El perfil de prueba debe encaminar
+su tráfico por ese proxy; para leer cuerpos HTTPS se requiere autorización
+expresa y confianza en una CA de prueba, únicamente en dicho perfil. Esa
+configuración inicial no se puede eliminar de forma mágica ni debe alterar
+el proxy efectivo de otros perfiles o la instalación oficial de DICloak.
+Si el navegador no permite configurar el proxy de prueba, estudiar
+una extensión local autorizada con capacidad de depuración de pestaña,
+sin puerto CDP remoto, sujeta a disponibilidad y permisos. Ninguna vía
+puede prometer acceso universal a todo lo que recibe cualquier motor.
+
+**Aceptación antes de anunciar listo:** pruebas de un JSON de laboratorio
+HTTPS recibido por Chromium a través del punto de captura autorizado;
+visibilidad del cuerpo y de cabeceras de prueba en **Ver evidencias**;
+respaldo cifrado recuperable mediante contraseña; registro claro de
+SIN_CUERPO_TLS si el contenido no puede inspeccionarse; comprobar que
+no se alteró el motor oficial ni el servidor y que no se capturaron orígenes
+terceros. Hasta superar esas pruebas, solo Windows/TCP y la captura
+CDP previa están implementadas.
+
 ## Pantalla principal simplificada
 
 | Botón | Acción real |
 |---|---|
-| **Iniciar captura** | Abre un asistente con origen del servidor y puerto CDP autorizado; tras el consentimiento inicia Windows, CDP y captura JSON propia |
+| **Iniciar captura** | Inicia diagnóstico Windows; si existe autorización local/API o CDP, también intenta observar el laboratorio. La captura cliente HTTPS sin CDP está pendiente |
 | **Detener** | Detiene muestras Windows y guarda diagnóstico |
 | **Ver evidencias** | Lista el estado, los hashes y el nombre del respaldo cifrado de cada respuesta de laboratorio |
 | **Guardar** | Genera JSON, TXT y SHA-256 del diagnóstico |
@@ -38,9 +76,8 @@ navegador la tenga aplicada.
 ## Qué es y qué no es captura
 
 1. **Windows**: número de procesos y TCP; no muestra cuerpos HTTP.
-2. **Servidor propio de laboratorio instrumentado**: cuerpo JSON de
-   prueba y las categorías que realmente aparecieron, sin credenciales
-   reales en informes abiertos.
+2. **Servidor propio de laboratorio instrumentado**: función histórica opcional,
+   pero **no es el modo solicitado ni sustituye la captura en Windows**.
 3. **Chromium con CDP habilitado por el perfil**: previa elección explícita
    del origen y de una contraseña, se obtiene una respuesta JSON de
    `/__diloakpro_lab__/` con cabeceras de comprobante; se guarda su cuerpo
