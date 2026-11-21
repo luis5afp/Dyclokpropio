@@ -197,8 +197,9 @@ internal sealed class DiagnosticBubble : Form
                     if (IsDisposed) return;
                     cdpHistory.Add(entry);
                     if (cdpHistory.Count > 600) cdpHistory.RemoveAt(0);
-                    if (entry.Type is "CDP_CONNECTED" or "CDP_STOPPED" or
-                        "CDP_ERROR" or "CDP_NO_TARGET" or "CDP_UNAVAILABLE")
+                    if (entry.Type is "CDP_ATTACHED" or "CDP_NETWORK_ENABLED" or
+                        "CDP_ENABLE_FAILED" or "CDP_STOPPED" or "CDP_ERROR" or
+                        "CDP_NO_TARGET" or "CDP_UNAVAILABLE")
                         cdpStatus = entry.Type;
                     UpdatePanel();
                 }));
