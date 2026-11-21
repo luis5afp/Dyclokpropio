@@ -21,9 +21,19 @@ internal sealed class LabResponseComparison
 {
     private const int MaxBody = 128 * 1024;
     private const string LabPrefix = "/__diloakpro_lab__/";
-    private readonly Uri origin;
+    private Uri? origin;
+    private readonly bool autoDetectOrigin;
 
-    private LabResponseComparison(Uri origin) => this.origin = origin;
+    private LabResponseComparison(Uri? origin, bool autoDetectOrigin = false)
+    {
+        this.origin = origin;
+        this.autoDetectOrigin = autoDetectOrigin;
+    }
+
+    // Discover only a deliberately instrumented first-party lab response.
+    // Lock the capture to the first origin bearing both lab proof headers;
+    // never infer access to unrelated websites or browser credentials.
+    public static LabResponseComparison CreateAutomatic() => new(null, true);
 
     public static bool TryCreate(string? value, out LabResponseComparison? config)
     {
@@ -51,9 +61,14 @@ internal sealed class LabResponseComparison
             !response.TryGetProperty("url", out var urlValue) ||
             urlValue.ValueKind != JsonValueKind.String ||
             !Uri.TryCreate(urlValue.GetString(), UriKind.Absolute, out var responseUri) ||
-            !string.Equals(responseUri.GetLeftPart(UriPartial.Authority),
-                origin.GetLeftPart(UriPartial.Authority), StringComparison.OrdinalIgnoreCase) ||
-            !responseUri.AbsolutePath.StartsWith(LabPrefix, StringComparison.Ordinal))
+            !(responseUri.Scheme == Uri.UriSchemeHttps ||
+                (responseUri.Scheme == Uri.UriSchemeHttp && responseUri.IsLoopback)) ||
+            !string.IsNullOrEmpty(responseUri.UserInfo) ||
+            IsVendorHost(responseUri.Host) ||
+            !responseUri.AbsolutePath.StartsWith(LabPrefix, StringComparison.Ordinal) ||
+            (origin is not null &&
+             !string.Equals(responseUri.GetLeftPart(UriPartial.Authority),
+                origin.GetLeftPart(UriPartial.Authority), StringComparison.OrdinalIgnoreCase)))
             return false;
 
         // This is a real response from the browser's own network events.
@@ -83,6 +98,8 @@ internal sealed class LabResponseComparison
             !Regex.IsMatch(id, @"\A[a-fA-F0-9]{24}\z") ||
             !Regex.IsMatch(digest, @"\A[a-fA-F0-9]{64}\z"))
             return false;
+        if (origin is null && autoDetectOrigin)
+            origin = new Uri(responseUri.GetLeftPart(UriPartial.Authority));
         pending = new LabPendingResponse(id, digest.ToLowerInvariant(), (int)statusDouble);
         return true;
     }
@@ -185,6 +202,12 @@ internal sealed class LabResponseComparison
     public static LabComparisonEvent Unverified(LabPendingResponse expected, string explanation) =>
         new(DateTime.UtcNow.ToString("O"), expected.TestId, "NO_VERIFICADO",
             expected.HttpStatus, expected.ExpectedSha256, null, explanation);
+
+    private static bool IsVendorHost(string host) =>
+        host.Equals("dicloak.com", StringComparison.OrdinalIgnoreCase) ||
+        host.EndsWith(".dicloak.com", StringComparison.OrdinalIgnoreCase) ||
+        host.Equals("dicloak.net", StringComparison.OrdinalIgnoreCase) ||
+        host.EndsWith(".dicloak.net", StringComparison.OrdinalIgnoreCase);
 
     private static bool PropertyTrue(JsonElement data, string name) =>
         data.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.True;
