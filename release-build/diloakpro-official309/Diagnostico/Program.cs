@@ -31,6 +31,10 @@ internal sealed class DiagnosticBubble : Form
 {
     private readonly System.Windows.Forms.Timer timer = new() { Interval = 1100 };
     private readonly List<Snapshot> history = new();
+    private readonly CdpObserver cdp = new();
+    private readonly List<CdpDiagnosticEvent> cdpHistory = new();
+    private string cdpStatus = "No activado";
+    private int? cdpPort;
     private readonly Button bubble = new()
     {
         Text = "Diagnóstico", Dock = DockStyle.Fill,
@@ -72,6 +76,7 @@ internal sealed class DiagnosticBubble : Form
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         timer.Stop();
+        cdp.Dispose();
         window?.Close();
         base.OnFormClosing(e);
     }
@@ -165,6 +170,55 @@ internal sealed class DiagnosticBubble : Form
 
     internal void OpenMotor() => LaunchEngineIfNeeded();
 
+    internal void ConnectCdp(string portText)
+    {
+        if (!int.TryParse(portText, out var port) || port < 1024 || port > 65535)
+        {
+            cdpStatus = "Puerto inválido (1024-65535)";
+            UpdatePanel();
+            return;
+        }
+        if (cdp.IsRunning)
+        {
+            cdpStatus = "Ya hay un monitor CDP en ejecución";
+            UpdatePanel();
+            return;
+        }
+        cdpHistory.Clear();
+        cdpPort = port;
+        cdpStatus = "Conectando a 127.0.0.1:" + port;
+        cdp.Start(port, entry =>
+        {
+            if (IsDisposed || !IsHandleCreated) return;
+            try
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    if (IsDisposed) return;
+                    cdpHistory.Add(entry);
+                    if (cdpHistory.Count > 600) cdpHistory.RemoveAt(0);
+                    if (entry.Type is "CDP_CONNECTED" or "CDP_STOPPED" or
+                        "CDP_ERROR" or "CDP_NO_TARGET" or "CDP_UNAVAILABLE")
+                        cdpStatus = entry.Type;
+                    UpdatePanel();
+                }));
+            }
+            catch (InvalidOperationException) { }
+        });
+        UpdatePanel();
+    }
+
+    internal void DisconnectCdp()
+    {
+        cdp.Stop();
+        cdpStatus = "Desconectando";
+        UpdatePanel();
+    }
+
+    internal string CdpStatus => cdpStatus;
+    internal IReadOnlyList<CdpDiagnosticEvent> CdpHistory => cdpHistory;
+
+
     internal string State => recording ? "Grabando (metadatos de Windows)" : "Detenido";
     internal int Count => history.Count;
     internal string? Error => error;
@@ -257,7 +311,8 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
             var data = new
             {
                 title = "diloakPRO - diagnóstico externo del motor 3.0.9",
-                schema = 1,
+                diagnosticVersion = "30.0.28-rc2-lab",
+                schema = 2,
                 source = "Windows OS metadata companion; not DICloak internal diagnostics",
                 originalEngineModified = false,
                 exactHttpBodyCaptured = false,
@@ -265,6 +320,14 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                 proxyVerified = false,
                 fingerprintVerified = false,
                 extensionsVerified = false,
+                cdp = new
+                {
+                    userOptIn = cdpPort.HasValue,
+                    localPort = cdpPort,
+                    status = cdpStatus,
+                    coverage = "Primer target page; sin URLs, cabeceras, cuerpos, cookies ni credenciales",
+                    events = cdpHistory.ToArray()
+                },
                 events = history.ToArray()
             };
             File.WriteAllText(target, JsonSerializer.Serialize(data,
@@ -275,6 +338,40 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
         catch (Exception ex)
         {
             MessageBox.Show("No se pudo exportar: " + ex.GetType().Name,
+                "Diagnóstico", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    internal void ExportTxt()
+    {
+        try
+        {
+            var downloads = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            if (!Directory.Exists(downloads))
+                downloads = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var target = Path.Combine(downloads, "diloakPRO-Diagnostico-RC2-" +
+                DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".txt");
+            var lines = new List<string>
+            {
+                "diloakPRO 30.0.28 RC2 - Diagnostico externo",
+                "Motor DICloak 3.0.9 sin alterar",
+                "CDP: " + cdpStatus,
+                "No verificado: sesion, cookies, proxy, fingerprint, extensiones",
+                "=== Windows ==="
+            };
+            lines.AddRange(history.Select(x => x.Utc + " Motor=" + x.MotorProcesses +
+                " Chromium=" + x.ChromiumProcesses + " TCP=" + x.TcpConnections));
+            lines.Add("=== CDP primer target page ===");
+            lines.AddRange(cdpHistory.Select(x => x.Utc + " " + x.Type +
+                (x.HttpStatus.HasValue ? " HTTP=" + x.HttpStatus : "")));
+            File.WriteAllLines(target, lines, Encoding.UTF8);
+            MessageBox.Show("Informe TXT exportado:\\n" + target,
+                "Diagnóstico", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("No se pudo exportar TXT: " + ex.GetType().Name,
                 "Diagnóstico", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
@@ -316,20 +413,26 @@ internal sealed class DiagnosticWindow : Form
     private readonly Label warning = new()
     {
         Dock = DockStyle.Bottom, Height = 80,
-        Text = "Cobertura PARCIAL: procesos y conexiones TCP del sistema.\n" +
-               "No intercepta tráfico cifrado, cookies ni credenciales del navegador.\n" +
-               "La captura íntegra R4 aún no está conectada al motor 3.0.9.",
+        Text = "CDP opcional: puerto local de depuración que hayas habilitado.\\n" +
+               "Solo primer target page; sin URL, cabeceras, cuerpos ni secretos.\\n" +
+               "No verifica sesiones, cookies, proxy, fingerprint, extensiones ni R4.",
         ForeColor = Color.FromArgb(210, 220, 234),
         Padding = new Padding(12), Font = new Font("Segoe UI", 9)
     };
     private readonly DiagnosticBubble bubble;
+    private readonly TextBox cdpPort = new()
+    {
+        Width = 86,
+        Text = "",
+        PlaceholderText = "Puerto CDP"
+    };
 
     public DiagnosticWindow(DiagnosticBubble owner)
     {
         bubble = owner;
         Text = "diloakPRO 3.0.9 - Diagnóstico";
-        Width = 630; Height = 440;
-        MinimumSize = new Size(560, 380);
+        Width = 740; Height = 470;
+        MinimumSize = new Size(650, 390);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(20, 32, 48);
         ForeColor = Color.White;
@@ -347,12 +450,31 @@ internal sealed class DiagnosticWindow : Form
         add("Iniciar", owner.StartRecording);
         add("Detener", owner.StopRecording);
         add("Exportar JSON", owner.Export);
+        add("Exportar TXT", owner.ExportTxt);
         add("Abrir DICloak", owner.OpenMotor);
         add("Cerrar panel", Close);
         add("Salir", owner.Exit);
 
+        var cdpbar = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top, Height = 44, Padding = new Padding(9),
+            BackColor = Color.FromArgb(29, 45, 67)
+        };
+        cdpbar.Controls.Add(new Label
+        {
+            Text = "CDP local (opt-in):", AutoSize = true, ForeColor = Color.White,
+            Padding = new Padding(0, 4, 0, 0)
+        });
+        cdpbar.Controls.Add(cdpPort);
+        var connect = new Button { Text = "Conectar CDP", AutoSize = true };
+        connect.Click += (_, _) => owner.ConnectCdp(cdpPort.Text);
+        var disconnect = new Button { Text = "Desconectar", AutoSize = true };
+        disconnect.Click += (_, _) => owner.DisconnectCdp();
+        cdpbar.Controls.Add(connect);
+        cdpbar.Controls.Add(disconnect);
         Controls.Add(events);
         Controls.Add(warning);
+        Controls.Add(cdpbar);
         Controls.Add(toolbar);
         Controls.Add(status);
     }
@@ -360,13 +482,16 @@ internal sealed class DiagnosticWindow : Form
     public void RefreshFrom(DiagnosticBubble bubble)
     {
         if (IsDisposed) return;
-        status.Text = "Estado: " + bubble.State + "   |   Mediciones: " + bubble.Count +
-                      (bubble.Error is null ? "" : "\n" + bubble.Error);
-        events.Text = string.Join(Environment.NewLine,
-            bubble.History.TakeLast(32).Select(x =>
-                x.Utc[11..19] + " UTC | Motor: " + x.MotorProcesses +
-                " | Descendientes: " + x.DescendantProcesses +
-                " | Chromium: " + x.ChromiumProcesses +
-                " | TCP: " + x.TcpConnections));
+        status.Text = "Windows: " + bubble.State + " (" + bubble.Count + " muestras)" +
+                      " | CDP: " + bubble.CdpStatus +
+                      (bubble.Error is null ? "" : "\\n" + bubble.Error);
+        var windowsLines = bubble.History.TakeLast(12).Select(x =>
+            x.Utc[11..19] + " UTC | Motor: " + x.MotorProcesses +
+            " | Chromium: " + x.ChromiumProcesses +
+            " | TCP: " + x.TcpConnections);
+        var cdpLines = bubble.CdpHistory.TakeLast(20).Select(x =>
+            x.Utc[11..19] + " UTC | " + x.Type +
+            (x.HttpStatus.HasValue ? " | HTTP " + x.HttpStatus : ""));
+        events.Text = string.Join(Environment.NewLine, windowsLines.Concat(cdpLines));
     }
 }
