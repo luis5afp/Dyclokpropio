@@ -92,7 +92,8 @@ async function run() {
     assert.equal(proof.audit.direction.response, 'server-to-client');
     assert.equal(proof.audit.direction.request, 'client-to-server');
     assert.equal(proof.audit.requestJson.categories.email, 1);
-    assert.equal(proof.audit.requestJson.categories.password, 1);
+    // The fixture has both login.password and proxy.password keys.
+    assert.equal(proof.audit.requestJson.categories.password, 2);
     for (const category of ['email','password','proxy','extension','fingerprint','cookie'])
       assert.ok(proof.audit.responseJson.categories[category] >= 1,
         'Missing response field category: ' + category);
