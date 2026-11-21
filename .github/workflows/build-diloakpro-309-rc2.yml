@@ -13,6 +13,7 @@ on:
       - 'tools/inspect-dicloak-309.py'
       - 'tools/tests/rc2-archive/**'
       - 'tools/lab-server/**'
+      - 'docs/DILOAKPRO_RC2_PRUEBA_WINDOWS.md'
   workflow_dispatch:
 
 permissions:
@@ -156,7 +157,11 @@ jobs:
           @'
           Motor DICloak 3.0.9 OFICIAL e intacto.
           El acceso directo inicia diloakPRO.exe, con botón Diagnóstico flotante.
-          RC2 LAB: Windows/TCP y CDP autorizado; JSON de la ruta propia de laboratorio se conserva cifrado cuando se habilita explícitamente con contraseña.
+          RC2 LAB: al pulsar Iniciar captura el programa intenta identificar automaticamente el perfil abierto y el puerto CDP usando la Open API local autorizada.
+          Puede pedir tu clave Open API local una sola vez por sesion; entrar a una web NO concede permisos CDP.
+          Reconoce respuestas nuevas del propio servidor /__diloakpro_lab__/ solo si contienen cabeceras de prueba; guarda el cuerpo JSON cifrado.
+          Ver evidencias permite abrir el JSON con la contrasena que elegiste, sin comparacion automatica.
+          Si falta API autorizada, CDP o las cabeceras de prueba, NO se afirma que el JSON fue capturado.
           Sin acceso CDP previo la cobertura sigue siendo solamente procesos y TCP.
           La captura íntegra de laboratorio R4 todavía requiere integración adicional.
           Instala en carpeta RC2 LAB separada, sin reemplazar RC1, RC2 anterior ni perfiles.
@@ -165,6 +170,7 @@ jobs:
           No habilita actualizaciones silenciosas de la familia 30.0.N.
           La version y autenticacion originales no se suplantan.
           '@ | Set-Content (Join-Path $root 'LEEME_RC2_LAB.txt') -Encoding utf8
+          Copy-Item -LiteralPath 'docs/DILOAKPRO_RC2_PRUEBA_WINDOWS.md' -Destination (Join-Path $root 'GUIA_PRUEBA_WINDOWS_RC2.md') -Force
       - uses: actions/upload-artifact@v4
         with:
           name: diloakPRO-30-0-28-RC2-LAB-Windows-x64
@@ -172,5 +178,6 @@ jobs:
             release-build/diloakpro-official309/out/diloakPRO_30.0.28_RC2_LAB_win_x64.exe
             release-build/diloakpro-official309/out/SHA256SUMS.txt
             release-build/diloakpro-official309/out/LEEME_RC2_LAB.txt
+            release-build/diloakpro-official309/out/GUIA_PRUEBA_WINDOWS_RC2.md
           if-no-files-found: error
           retention-days: 7
