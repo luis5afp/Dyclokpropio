@@ -1,0 +1,29 @@
+name: diloakPRO - comprobar captura HTTP real en servidor propio de laboratorio
+
+on:
+  push:
+    branches:
+      - feature/diloakpro-30-0-28-rc2-cdp-monitor
+    paths:
+      - '.github/workflows/verify-diloakpro-first-party-lab.yml'
+      - 'tools/lab-server/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lab-server-exact-json:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Node first-party HTTP request and response recorder (synthetic only)
+        run: |
+          node --version
+          node tools/lab-server/test-first-party-http-recorder.cjs
+      - name: Confirm no live credentials or production origins used
+        run: |
+          echo "DILOAKPRO_LAB_SCOPE=SYNTHETIC_NODE_TEST_SERVER_ONLY"
+          echo "DILOAKPRO_VENDOR_ENGINE_MODIFIED=FALSE"
+          echo "DILOAKPRO_REAL_USER_TRAFFIC=NOT_TESTED"

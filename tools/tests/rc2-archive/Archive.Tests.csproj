@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/ProfileArchive.cs" Link="ProfileArchive.cs" />
+    <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/SecureArchive.cs" Link="SecureArchive.cs" />
+    <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/AutoDiagnosticDiscovery.cs" Link="AutoDiagnosticDiscovery.cs" />
+    <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/LabResponseComparison.cs" Link="LabResponseComparison.cs" />
+    <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/LabServerProofAudit.cs" Link="LabServerProofAudit.cs" />
+  </ItemGroup>
+</Project>
