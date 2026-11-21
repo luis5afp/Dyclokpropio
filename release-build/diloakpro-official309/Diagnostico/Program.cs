@@ -1434,9 +1434,9 @@ internal sealed class DiagnosticWindow : Form
                 var info = new Label
                 {
                     Left = 14, Top = 14, Width = 468, Height = 58,
-                    Text = "Para encontrar el perfil y conectar su CDP sin escribir puertos, " +
-                        "introduce la clave Open API local de DICloak. " +
-                        "La sesión web abierta no proporciona ese permiso."
+                    Text = "Puedes introducir tu clave Open API local o pulsar " +
+                        "«Sin API» para grabar Windows/TCP. Si ya configuraste " +
+                        "un puerto CDP autorizado en Avanzado, también se usará."
                 };
                 var keyInput = new TextBox
                 {
@@ -1446,19 +1446,54 @@ internal sealed class DiagnosticWindow : Form
                 };
                 var start = new Button
                 {
-                    Text = "Continuar", DialogResult = DialogResult.OK,
+                    Text = "Con API", DialogResult = DialogResult.OK,
                     Left = 355, Top = 117, Width = 123, Height = 30
                 };
                 var cancel = new Button
                 {
                     Text = "Cancelar", DialogResult = DialogResult.Cancel,
-                    Left = 215, Top = 117, Width = 125, Height = 30
+                    Left = 14, Top = 117, Width = 105, Height = 30
                 };
-                keyDialog.Controls.AddRange(new Control[] { info, keyInput, start, cancel });
+                var withoutApi = new Button
+                {
+                    Text = "Sin API", DialogResult = DialogResult.Ignore,
+                    Left = 220, Top = 117, Width = 125, Height = 30
+                };
+                keyDialog.Controls.AddRange(new Control[] { info, keyInput, start, cancel, withoutApi });
                 keyDialog.AcceptButton = start;
                 keyDialog.CancelButton = cancel;
-                if (keyDialog.ShowDialog(this) != DialogResult.OK ||
-                    string.IsNullOrWhiteSpace(keyInput.Text))
+                var choice = keyDialog.ShowDialog(this);
+                if (choice == DialogResult.Ignore)
+                {
+                    keyInput.Clear();
+                    bubble.StartRecording();
+                    // A port typed intentionally in Avanzado is allowed; no scan,
+                    // probing or privileged API fallback is attempted here.
+                    if (int.TryParse(cdpPort.Text, out var approvedPort) &&
+                        approvedPort >= 1024 && approvedPort <= 65535)
+                    {
+                        bubble.ConnectCdp(cdpPort.Text);
+                        MessageBox.Show(
+                            "Captura Windows/TCP iniciada. Se intentará observar " +
+                            "Chromium únicamente en el puerto CDP local que indicaste. " +
+                            "La captura JSON exige una respuesta nueva marcada por tu servidor.",
+                            "Captura sin API", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "Captura Windows/TCP iniciada sin API. " +
+                            "No se han leído cuerpos HTTP ni datos privados. " +
+                            "Para obtener JSON de Chromium, puedes conectar un puerto CDP " +
+                            "oficialmente habilitado desde Avanzado, o registrar " +
+                            "los JSON directamente en tu servidor de laboratorio.",
+                            "Captura sin API", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    return;
+                }
+                if (choice != DialogResult.OK || string.IsNullOrWhiteSpace(keyInput.Text))
                 {
                     bubble.DisableLabComparison();
                     return;
