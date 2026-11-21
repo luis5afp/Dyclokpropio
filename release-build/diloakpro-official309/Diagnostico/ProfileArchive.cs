@@ -66,15 +66,11 @@ internal static class ProfileArchive
             fingerprintApplied = "NO_VERIFICADO",
             extensionsLoaded = "NO_VERIFICADO",
             authenticatedSession = "NO_VERIFICADO",
-            independentServerProofMatched = (audits ?? Array.Empty<LabProofAudit>())
-                .Any(x => x.Result == "COINCIDE") ? "COINCIDE_EN_PRUEBA" :
-                (audits ?? Array.Empty<LabProofAudit>())
-                .Any(x => x.Result == "DIFERENTE") ? "DIFERENTE_EN_PRUEBA" :
+            independentServerProofImported = (audits ?? Array.Empty<LabProofAudit>())
+                .Any(x => x.Result == "IMPORTADO") ? "IMPORTADO_PARA_REVISION" :
                 "NO_VERIFICADO",
-            labServerBrowserJson = (comparisons ?? Array.Empty<LabComparisonEvent>())
-                .Any(x => x.Result == "COINCIDE") ? "COINCIDE_EN_PRUEBA" :
-                (comparisons ?? Array.Empty<LabComparisonEvent>())
-                .Any(x => x.Result == "DIFERENTE") ? "DIFERENTE_EN_PRUEBA" :
+            labJsonReceivedByChromium = (comparisons ?? Array.Empty<LabComparisonEvent>())
+                .Any(x => x.Result == "CAPTURADO") ? "CAPTURADO_PARA_REVISION" :
                 "NO_VERIFICADO"
         };
         var report = new
