@@ -1203,7 +1203,8 @@ internal sealed class DiagnosticWindow : Form
             x.Utc[11..19] + " UTC | LAB " + x.Result +
             " | ID " + x.TestId);
         var proofLines = bubble.LabProofAudits.TakeLast(6).Select(x =>
-            x.Utc[11..19] + " UTC | PRUEBA SERVIDOR " + x.Result + " | " + x.TestId);
+            x.Utc[11..19] + " UTC | PRUEBA SERVIDOR " + x.Result +
+            " | " + x.TestId + " | " + x.FieldSummary);
         var apiLines = bubble.ApiFindings.TakeLast(10).Select(x =>
             x.Utc[11..19] + " UTC | API " + x.Category +
             " " + x.Status);
