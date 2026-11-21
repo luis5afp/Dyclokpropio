@@ -35,6 +35,10 @@ internal sealed class DiagnosticBubble : Form
     private readonly List<CdpDiagnosticEvent> cdpHistory = new();
     private string cdpStatus = "No activado";
     private int? cdpPort;
+    private int? apiDebugPort;
+    private string apiStatus = "Sin consultar";
+    private readonly List<ApiV2Finding> apiFindings = new();
+    private bool apiBusy;
     private readonly Button bubble = new()
     {
         Text = "Diagnóstico", Dock = DockStyle.Fill,
@@ -216,6 +220,55 @@ internal sealed class DiagnosticBubble : Form
         UpdatePanel();
     }
 
+    internal async Task CheckApiV2Async(string portText, string apiKey, string profileId)
+    {
+        if (apiBusy) return;
+        if (!int.TryParse(portText, out var port) || port < 1024 || port > 65535 ||
+            string.IsNullOrWhiteSpace(apiKey) || !System.Text.RegularExpressions.Regex.IsMatch(
+                profileId, @"^\d{1,32}$"))
+        {
+            apiStatus = "Rellena puerto API, clave local e ID numérico";
+            UpdatePanel();
+            return;
+        }
+        apiBusy = true;
+        apiStatus = "Consultando API V2 de solo lectura";
+        apiDebugPort = null;
+        apiFindings.Clear();
+        UpdatePanel();
+        try
+        {
+            var result = await ApiV2Probe.CheckAsync(port, apiKey, profileId);
+            if (IsDisposed) return;
+            apiFindings.AddRange(result.Findings);
+            apiDebugPort = result.ProfileDebugPort;
+            apiStatus = apiDebugPort.HasValue ?
+                "API consultada; CDP del perfil disponible" : "API consultada; CDP no confirmado";
+        }
+        catch (Exception ex)
+        {
+            apiStatus = "Consulta fallida (" + ex.GetType().Name + ")";
+        }
+        finally
+        {
+            apiBusy = false;
+            if (!IsDisposed) UpdatePanel();
+        }
+    }
+
+    internal void ConnectProfileCdp()
+    {
+        if (apiDebugPort.HasValue)
+            ConnectCdp(apiDebugPort.Value.ToString());
+        else
+        {
+            cdpStatus = "Sin debug_port: abre perfil y consulta API V2";
+            UpdatePanel();
+        }
+    }
+
+    internal string ApiStatus => apiStatus;
+    internal IReadOnlyList<ApiV2Finding> ApiFindings => apiFindings;
     internal string CdpStatus => cdpStatus;
     internal IReadOnlyList<CdpDiagnosticEvent> CdpHistory => cdpHistory;
 
@@ -321,6 +374,27 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                 proxyVerified = false,
                 fingerprintVerified = false,
                 extensionsVerified = false,
+                sessionAuthenticationVerified = false,
+                verification = new
+                {
+                    windowsProcesses = history.Count > 0 ? "OBSERVADOS" : "NO_VERIFICADO",
+                    tcpConnections = history.Any(x => x.TcpConnections > 0) ?
+                        "OBSERVADAS" : "NO_VERIFICADO",
+                    httpResponseMetadata = cdpHistory.Any(x => x.Type == "HTTP_RESPONSE") ?
+                        "OBSERVADOS_POR_CDP" : "NO_VERIFICADO",
+                    exactHttpBody = "NO_VERIFICADO",
+                    cookiesApplied = "NO_VERIFICADO",
+                    proxyApplied = "NO_VERIFICADO",
+                    fingerprintApplied = "NO_VERIFICADO",
+                    extensionsLoaded = "NO_VERIFICADO",
+                    authenticatedSession = "NO_VERIFICADO"
+                },
+                localApiV2 = new
+                {
+                    status = apiStatus,
+                    findings = apiFindings.ToArray(),
+                    debugPortAvailable = apiDebugPort.HasValue
+                },
                 cdp = new
                 {
                     userOptIn = cdpPort.HasValue,
@@ -363,6 +437,10 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
             };
             lines.AddRange(history.Select(x => x.Utc + " Motor=" + x.MotorProcesses +
                 " Chromium=" + x.ChromiumProcesses + " TCP=" + x.TcpConnections));
+            lines.Add("=== API V2 (solo lectura, sin datos sensibles) ===");
+            lines.Add("API: " + apiStatus);
+            lines.AddRange(apiFindings.Select(x => x.Utc + " " + x.Category + " " +
+                x.Status + " " + x.Detail));
             lines.Add("=== CDP primer target page ===");
             lines.AddRange(cdpHistory.Select(x => x.Utc + " " + x.Type +
                 (x.HttpStatus.HasValue ? " HTTP=" + x.HttpStatus : "")));
@@ -416,11 +494,28 @@ internal sealed class DiagnosticWindow : Form
         Dock = DockStyle.Bottom, Height = 80,
         Text = "CDP opcional: puerto local de depuración que hayas habilitado.\n" +
                "Solo primer target page; sin URL, cabeceras, cuerpos ni secretos.\n" +
-               "No verifica sesiones, cookies, proxy, fingerprint, extensiones ni R4.",
+               "API V2: solo consultas GET; clave nunca exportada. Estado de perfil no es login.\\n" +
+               "Cookies, proxy aplicado, fingerprint aplicado, extensiones reales y R4: no verificados.",
         ForeColor = Color.FromArgb(210, 220, 234),
         Padding = new Padding(12), Font = new Font("Segoe UI", 9)
     };
     private readonly DiagnosticBubble bubble;
+    private readonly TextBox apiPort = new()
+    {
+        Width = 85,
+        PlaceholderText = "Puerto API"
+    };
+    private readonly TextBox apiKey = new()
+    {
+        Width = 140,
+        UseSystemPasswordChar = true,
+        PlaceholderText = "Clave API local"
+    };
+    private readonly TextBox profileId = new()
+    {
+        Width = 135,
+        PlaceholderText = "ID de perfil"
+    };
     private readonly TextBox cdpPort = new()
     {
         Width = 86,
@@ -432,8 +527,8 @@ internal sealed class DiagnosticWindow : Form
     {
         bubble = owner;
         Text = "diloakPRO 30.0.28 RC2 LAB - Diagnóstico";
-        Width = 740; Height = 470;
-        MinimumSize = new Size(650, 390);
+        Width = 890; Height = 540;
+        MinimumSize = new Size(790, 450);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(20, 32, 48);
         ForeColor = Color.White;
@@ -473,8 +568,33 @@ internal sealed class DiagnosticWindow : Form
         disconnect.Click += (_, _) => owner.DisconnectCdp();
         cdpbar.Controls.Add(connect);
         cdpbar.Controls.Add(disconnect);
+        var apiBar = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top, Height = 44, Padding = new Padding(9),
+            BackColor = Color.FromArgb(29, 45, 67)
+        };
+        apiBar.Controls.Add(new Label
+        {
+            Text = "API V2 local:", AutoSize = true, ForeColor = Color.White,
+            Padding = new Padding(0, 4, 0, 0)
+        });
+        apiBar.Controls.Add(apiPort);
+        apiBar.Controls.Add(apiKey);
+        apiBar.Controls.Add(profileId);
+        var apiCheck = new Button { Text = "Comprobar perfil", AutoSize = true };
+        apiCheck.Click += async (_, _) =>
+        {
+            var key = apiKey.Text;
+            apiKey.Clear();
+            await owner.CheckApiV2Async(apiPort.Text, key, profileId.Text);
+        };
+        apiBar.Controls.Add(apiCheck);
+        var profileCdp = new Button { Text = "Conectar CDP del perfil", AutoSize = true };
+        profileCdp.Click += (_, _) => owner.ConnectProfileCdp();
+        apiBar.Controls.Add(profileCdp);
         Controls.Add(events);
         Controls.Add(warning);
+        Controls.Add(apiBar);
         Controls.Add(cdpbar);
         Controls.Add(toolbar);
         Controls.Add(status);
@@ -484,7 +604,7 @@ internal sealed class DiagnosticWindow : Form
     {
         if (IsDisposed) return;
         status.Text = "Windows: " + bubble.State + " (" + bubble.Count + " muestras)" +
-                      " | CDP: " + bubble.CdpStatus +
+                      " | CDP: " + bubble.CdpStatus + " | API: " + bubble.ApiStatus +
                       (bubble.Error is null ? "" : "\n" + bubble.Error);
         var windowsLines = bubble.History.TakeLast(12).Select(x =>
             x.Utc[11..19] + " UTC | Motor: " + x.MotorProcesses +
@@ -493,6 +613,10 @@ internal sealed class DiagnosticWindow : Form
         var cdpLines = bubble.CdpHistory.TakeLast(20).Select(x =>
             x.Utc[11..19] + " UTC | " + x.Type +
             (x.HttpStatus.HasValue ? " | HTTP " + x.HttpStatus : ""));
-        events.Text = string.Join(Environment.NewLine, windowsLines.Concat(cdpLines));
+        var apiLines = bubble.ApiFindings.TakeLast(10).Select(x =>
+            x.Utc[11..19] + " UTC | API " + x.Category +
+            " " + x.Status);
+        events.Text = string.Join(Environment.NewLine,
+            windowsLines.Concat(cdpLines).Concat(apiLines));
     }
 }
