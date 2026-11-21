@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -10,7 +11,8 @@ namespace DiloakPRO.Diagnostico;
 // Raw JSON stays in RAM only until SHA-256 is calculated.
 internal sealed record LabComparisonEvent(
     string Utc, string TestId, string Result, int? HttpStatus,
-    string? ServerSha256, string? ClientSha256, string Explanation);
+    string? ServerSha256, string? ClientSha256, string Explanation,
+    string? EncryptedFileName = null, int? CapturedBytes = null);
 
 internal sealed record LabPendingResponse(
     string TestId, string ExpectedSha256, int HttpStatus);
@@ -126,7 +128,8 @@ internal sealed class LabResponseComparison
     // User-driven workflow: capture both independent SHA-256 values for
     // inspection, without issuing an automatic match/mismatch verdict.
     public static LabComparisonEvent CaptureForManualReview(LabPendingResponse expected,
-        string? browserBody, bool base64Encoded)
+        string? browserBody, bool base64Encoded,
+        Func<LabPendingResponse, byte[], string>? storeEncrypted = null)
     {
         var utc = DateTime.UtcNow.ToString("O");
         if (browserBody is null || browserBody.Length > MaxBody * 2)
@@ -150,9 +153,28 @@ internal sealed class LabResponseComparison
                 return new(utc, expected.TestId, "NO_VERIFICADO", expected.HttpStatus,
                     expected.ExpectedSha256, null, "Respuesta supera limite de laboratorio");
             var actual = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
-            return new(utc, expected.TestId, "CAPTURADO", expected.HttpStatus,
-                expected.ExpectedSha256, actual,
-                "SHA servidor/cabecera y SHA Chromium disponibles para revision manual");
+            string? savedName = null;
+            if (storeEncrypted is not null)
+            {
+                try
+                {
+                    var encryptedPath = storeEncrypted(expected, bytes);
+                    savedName = Path.GetFileName(encryptedPath);
+                    if (string.IsNullOrWhiteSpace(savedName))
+                        throw new InvalidDataException("No se genero respaldo cifrado");
+                }
+                catch (Exception)
+                {
+                    return new(utc, expected.TestId, "CAPTURADO_SIN_GUARDAR",
+                        expected.HttpStatus, expected.ExpectedSha256, actual,
+                        "El JSON se observo, pero no pudo guardarse cifrado; sin archivo original");
+                }
+            }
+            return new(utc, expected.TestId, savedName is null ? "CAPTURADO" : "GUARDADO",
+                expected.HttpStatus, expected.ExpectedSha256, actual,
+                savedName is null ? "Solo metadatos; sin copia del JSON" :
+                    "Respuesta JSON recibida por Chromium y guardada cifrada; revision manual",
+                savedName, bytes.Length);
         }
         finally
         {
