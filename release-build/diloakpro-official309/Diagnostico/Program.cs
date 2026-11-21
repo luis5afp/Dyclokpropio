@@ -39,6 +39,10 @@ internal sealed class DiagnosticBubble : Form
     private string apiStatus = "Sin consultar";
     private readonly List<ApiV2Finding> apiFindings = new();
     private bool apiBusy;
+    private string? archiveProfileId;
+    private string archiveStatus = "Sin guardar";
+    private readonly List<ArchiveOperation> operationHistory = new();
+    private DateTime nextAutoSaveUtc = DateTime.MaxValue;
     private readonly Button bubble = new()
     {
         Text = "Diagnóstico", Dock = DockStyle.Fill,
@@ -73,6 +77,11 @@ internal sealed class DiagnosticBubble : Form
             MoveNearEngine();
             if (recording && !sampling && DateTime.UtcNow >= nextSampleUtc)
                 _ = SampleAsync();
+            if (recording && history.Count > 0 && DateTime.UtcNow >= nextAutoSaveUtc)
+            {
+                nextAutoSaveUtc = DateTime.UtcNow.AddMinutes(1);
+                SaveToArchive(false);
+            }
         };
         timer.Start();
     }
@@ -80,6 +89,8 @@ internal sealed class DiagnosticBubble : Form
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         timer.Stop();
+        if (history.Count > 0 || cdpHistory.Count > 0 || apiFindings.Count > 0)
+            SaveToArchive(false);
         cdp.Dispose();
         window?.Close();
         base.OnFormClosing(e);
@@ -162,6 +173,8 @@ internal sealed class DiagnosticBubble : Form
         history.Clear();
         error = null;
         recording = true;
+        nextAutoSaveUtc = DateTime.UtcNow.AddMinutes(1);
+        LogAction("INICIAR_GRABACION", "OK");
         nextSampleUtc = DateTime.MinValue;
         UpdatePanel();
     }
@@ -169,6 +182,8 @@ internal sealed class DiagnosticBubble : Form
     internal void StopRecording()
     {
         recording = false;
+        LogAction("DETENER_GRABACION", "OK");
+        SaveToArchive(false);
         UpdatePanel();
     }
 
@@ -191,6 +206,7 @@ internal sealed class DiagnosticBubble : Form
         cdpHistory.Clear();
         cdpPort = port;
         cdpStatus = "Conectando a 127.0.0.1:" + port;
+        LogAction("SOLICITAR_CONEXION_CDP", "LOCAL");
         cdp.Start(port, entry =>
         {
             if (IsDisposed || !IsHandleCreated) return;
@@ -216,7 +232,9 @@ internal sealed class DiagnosticBubble : Form
     internal void DisconnectCdp()
     {
         cdp.Stop();
+        LogAction("DESCONECTAR_CDP", "SOLICITADO");
         cdpStatus = "Desconectando";
+        SaveToArchive(false);
         UpdatePanel();
     }
 
@@ -232,6 +250,8 @@ internal sealed class DiagnosticBubble : Form
             return;
         }
         apiBusy = true;
+        archiveProfileId = profileId;
+        LogAction("CONSULTAR_API_V2", "SOLICITADO");
         apiStatus = "Consultando API V2 de solo lectura";
         apiDebugPort = null;
         apiFindings.Clear();
@@ -244,6 +264,8 @@ internal sealed class DiagnosticBubble : Form
             apiDebugPort = result.ProfileDebugPort;
             apiStatus = apiDebugPort.HasValue ?
                 "API consultada; CDP del perfil disponible" : "API consultada; CDP no confirmado";
+            LogAction("CONSULTAR_API_V2", "COMPLETADO");
+            SaveToArchive(false);
         }
         catch (Exception ex)
         {
@@ -267,6 +289,202 @@ internal sealed class DiagnosticBubble : Form
         }
     }
 
+    private void LogAction(string action, string result)
+    {
+        operationHistory.Add(new ArchiveOperation(DateTime.UtcNow.ToString("O"),
+            action, result));
+        if (operationHistory.Count > 300) operationHistory.RemoveAt(0);
+    }
+
+    internal void SaveToArchive(bool showMessage = true)
+    {
+        try
+        {
+            var saved = ProfileArchive.SaveReport(archiveProfileId, history, cdpHistory,
+                apiFindings, operationHistory);
+            archiveStatus = "Guardado: " + Path.GetFileName(saved.JsonPath);
+            if (showMessage)
+                MessageBox.Show("Archivos TXT, JSON y SHA-256 guardados en:\n" +
+                    saved.Directory, "Almacén", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            archiveStatus = "Error al guardar (" + ex.GetType().Name + ")";
+            if (showMessage)
+                MessageBox.Show(archiveStatus, "Almacén", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+        }
+        if (!IsDisposed) UpdatePanel();
+    }
+
+    internal void OpenArchive()
+    {
+        try
+        {
+            var folder = ProfileArchive.GetProfileDirectory(archiveProfileId);
+            Directory.CreateDirectory(folder);
+            var start = new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                UseShellExecute = true
+            };
+            start.ArgumentList.Add(folder);
+            Process.Start(start);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("No se pudo abrir Almacén (" + ex.GetType().Name + ").",
+                "Almacén", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    // Only user-picked existing exports are eligible for encrypted storage.
+    // Files in live browser-profile directories are never searched or copied.
+    internal void BackupSelectedFile()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Seleccionar un archivo exportado propio para cifrar",
+            Filter = "Archivos (*.*)|*.*",
+            Multiselect = false,
+            CheckFileExists = true
+        };
+        if (dialog.ShowDialog() != DialogResult.OK) return;
+        if (MessageBox.Show(
+            "Se cifrará SOLO el archivo seleccionado, sin subirlo a Internet.\n" +
+            "No se extraerán cookies o credenciales desde Chromium. " +
+            "Utiliza exportaciones autorizadas y guarda tu contraseña aparte.\n" +
+            "¿Continuar?", "Respaldo local cifrado",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            return;
+
+        var password = AskArchivePassword("Contraseña del respaldo", true);
+        if (password is null) return;
+        try
+        {
+            var destination = SecureArchive.EncryptSelectedFile(archiveProfileId,
+                dialog.FileName, password);
+            LogAction("RESPALDO_MANUAL_CIFRADO", "OK");
+            SaveToArchive(false);
+            MessageBox.Show("Respaldo cifrado creado:\n" + destination +
+                "\nEl archivo original permanece sin cambios. " +
+                "Sin la contraseña, el respaldo no puede restaurarse.",
+                "Almacén", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            LogAction("RESPALDO_MANUAL_CIFRADO", "ERROR");
+            MessageBox.Show("No se pudo cifrar (" + ex.GetType().Name + ").",
+                "Almacén", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        finally
+        {
+            password = null;
+            if (!IsDisposed) UpdatePanel();
+        }
+    }
+
+    internal void RestoreSelectedFile()
+    {
+        using var input = new OpenFileDialog
+        {
+            Title = "Seleccionar respaldo .dlvault",
+            Filter = "Respaldo cifrado (*.dlvault)|*.dlvault",
+            CheckFileExists = true
+        };
+        if (input.ShowDialog() != DialogResult.OK) return;
+        using var output = new SaveFileDialog
+        {
+            Title = "Seleccionar destino para archivo restaurado (fuera del perfil)",
+            FileName = "respaldo-restaurado.dat",
+            Filter = "Todos los archivos (*.*)|*.*",
+            OverwritePrompt = true
+        };
+        if (output.ShowDialog() != DialogResult.OK) return;
+        if (MessageBox.Show(
+            "La restauración crea un archivo SIN CIFRAR en la ruta elegida. " +
+            "Puede contener información privada. No elijas carpetas internas de Chromium.\n" +
+            "¿Confirmar?", "Restaurar respaldo",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            return;
+        var password = AskArchivePassword("Contraseña del respaldo", false);
+        if (password is null) return;
+        try
+        {
+            SecureArchive.RestoreToSelectedFile(input.FileName, output.FileName, password);
+            LogAction("RESTAURAR_ARCHIVO_MANUAL", "OK");
+            SaveToArchive(false);
+            MessageBox.Show("Archivo restaurado en la ubicación elegida.",
+                "Almacén", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            LogAction("RESTAURAR_ARCHIVO_MANUAL", "ERROR");
+            MessageBox.Show("No se pudo restaurar (" + ex.GetType().Name + ").",
+                "Almacén", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        finally
+        {
+            password = null;
+        }
+    }
+
+    private static string? AskArchivePassword(string title, bool confirm)
+    {
+        using var form = new Form
+        {
+            Text = title, Width = 440, Height = confirm ? 230 : 190,
+            StartPosition = FormStartPosition.CenterScreen,
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            MinimizeBox = false, MaximizeBox = false
+        };
+        var label = new Label
+        {
+            Left = 15, Top = 14, Width = 400, Height = 35,
+            Text = confirm ? "Elige una contraseña robusta (mínimo 12 caracteres)." :
+                "Introduce la contraseña del respaldo."
+        };
+        var first = new TextBox
+        {
+            Left = 15, Top = 53, Width = 393, UseSystemPasswordChar = true
+        };
+        form.Controls.Add(label);
+        form.Controls.Add(first);
+        TextBox? second = null;
+        if (confirm)
+        {
+            second = new TextBox
+            {
+                Left = 15, Top = 90, Width = 393, UseSystemPasswordChar = true,
+                PlaceholderText = "Repite la contraseña"
+            };
+            form.Controls.Add(second);
+        }
+        var button = new Button
+        {
+            Text = "Aceptar", Left = 290, Top = confirm ? 137 : 96,
+            Width = 118, DialogResult = DialogResult.OK
+        };
+        form.Controls.Add(button);
+        form.AcceptButton = button;
+        var result = form.ShowDialog();
+        if (result != DialogResult.OK) return null;
+        var password = first.Text;
+        if (password.Length < 12 || (confirm && password != second?.Text))
+        {
+            MessageBox.Show("Contraseña demasiado corta o no coincide.",
+                "Almacén", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            first.Clear();
+            second?.Clear();
+            return null;
+        }
+        first.Clear();
+        second?.Clear();
+        return password;
+    }
+
+    internal string ArchiveStatus => archiveStatus;
     internal string ApiStatus => apiStatus;
     internal IReadOnlyList<ApiV2Finding> ApiFindings => apiFindings;
     internal string CdpStatus => cdpStatus;
@@ -527,8 +745,8 @@ internal sealed class DiagnosticWindow : Form
     {
         bubble = owner;
         Text = "diloakPRO 30.0.28 RC2 LAB - Diagnóstico";
-        Width = 890; Height = 540;
-        MinimumSize = new Size(790, 450);
+        Width = 980; Height = 610;
+        MinimumSize = new Size(850, 500);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(20, 32, 48);
         ForeColor = Color.White;
@@ -547,6 +765,8 @@ internal sealed class DiagnosticWindow : Form
         add("Detener", owner.StopRecording);
         add("Exportar JSON", owner.Export);
         add("Exportar TXT", owner.ExportTxt);
+        add("Guardar Almacén", () => owner.SaveToArchive());
+        add("Abrir Almacén", owner.OpenArchive);
         add("Abrir DICloak", owner.OpenMotor);
         add("Cerrar panel", Close);
         add("Salir", owner.Exit);
@@ -592,7 +812,24 @@ internal sealed class DiagnosticWindow : Form
         var profileCdp = new Button { Text = "Conectar CDP del perfil", AutoSize = true };
         profileCdp.Click += (_, _) => owner.ConnectProfileCdp();
         apiBar.Controls.Add(profileCdp);
+        var archiveBar = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top, Height = 40, Padding = new Padding(7),
+            BackColor = Color.FromArgb(29, 45, 67)
+        };
+        archiveBar.Controls.Add(new Label
+        {
+            Text = "Respaldo seguro:", AutoSize = true, ForeColor = Color.White,
+            Padding = new Padding(2, 4, 0, 0)
+        });
+        var encryptButton = new Button { Text = "Cifrar archivo seleccionado", AutoSize = true };
+        encryptButton.Click += (_, _) => owner.BackupSelectedFile();
+        archiveBar.Controls.Add(encryptButton);
+        var restoreButton = new Button { Text = "Restaurar respaldo", AutoSize = true };
+        restoreButton.Click += (_, _) => owner.RestoreSelectedFile();
+        archiveBar.Controls.Add(restoreButton);
         Controls.Add(events);
+        Controls.Add(archiveBar);
         Controls.Add(warning);
         Controls.Add(apiBar);
         Controls.Add(cdpbar);
@@ -605,6 +842,7 @@ internal sealed class DiagnosticWindow : Form
         if (IsDisposed) return;
         status.Text = "Windows: " + bubble.State + " (" + bubble.Count + " muestras)" +
                       " | CDP: " + bubble.CdpStatus + " | API: " + bubble.ApiStatus +
+                      "\nArchivo: " + bubble.ArchiveStatus +
                       (bubble.Error is null ? "" : "\n" + bubble.Error);
         var windowsLines = bubble.History.TakeLast(12).Select(x =>
             x.Utc[11..19] + " UTC | Motor: " + x.MotorProcesses +
