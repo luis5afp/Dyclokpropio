@@ -36,7 +36,8 @@ internal static class ProfileArchive
         IReadOnlyList<CdpDiagnosticEvent> cdpEvents,
         IReadOnlyList<ApiV2Finding> apiFindings,
         IReadOnlyList<ArchiveOperation> commands,
-        IReadOnlyList<LabComparisonEvent>? comparisons = null)
+        IReadOnlyList<LabComparisonEvent>? comparisons = null,
+        IReadOnlyList<LabProofAudit>? audits = null)
     {
         // Each record is a structured, hard-coded allowlist of non-secret fields.
         var folder = Path.Combine(GetProfileDirectory(profileId), "Diagnosticos");
@@ -60,6 +61,11 @@ internal static class ProfileArchive
             fingerprintApplied = "NO_VERIFICADO",
             extensionsLoaded = "NO_VERIFICADO",
             authenticatedSession = "NO_VERIFICADO",
+            independentServerProofMatched = (audits ?? Array.Empty<LabProofAudit>())
+                .Any(x => x.Result == "COINCIDE") ? "COINCIDE_EN_PRUEBA" :
+                (audits ?? Array.Empty<LabProofAudit>())
+                .Any(x => x.Result == "DIFERENTE") ? "DIFERENTE_EN_PRUEBA" :
+                "NO_VERIFICADO",
             labServerBrowserJson = (comparisons ?? Array.Empty<LabComparisonEvent>())
                 .Any(x => x.Result == "COINCIDE") ? "COINCIDE_EN_PRUEBA" :
                 (comparisons ?? Array.Empty<LabComparisonEvent>())
@@ -78,7 +84,8 @@ internal static class ProfileArchive
             cdp = cdpEvents.ToArray(),
             localApiFindings = apiFindings.ToArray(),
             commands = commands.ToArray(),
-            browserServerComparisons = (comparisons ?? Array.Empty<LabComparisonEvent>()).ToArray()
+            browserServerComparisons = (comparisons ?? Array.Empty<LabComparisonEvent>()).ToArray(),
+            independentServerProofAudits = (audits ?? Array.Empty<LabProofAudit>()).ToArray()
         };
         var json = JsonSerializer.Serialize(report, JsonOptions) + "\n";
         var txt = new StringBuilder();
@@ -103,6 +110,10 @@ internal static class ProfileArchive
             txt.AppendLine(e.Utc + " TEST=" + e.TestId + " " + e.Result +
                 " HTTP=" + e.HttpStatus + " SERVIDOR=" + e.ServerSha256 +
                 " CHROMIUM=" + e.ClientSha256);
+        txt.AppendLine("=== Pruebas independientes importadas desde servidor ===");
+        foreach (var e in audits ?? Array.Empty<LabProofAudit>())
+            txt.AppendLine(e.Utc + " TEST=" + e.TestId + " " + e.Result +
+                " SERVER=" + e.ServerSha256 + " CHROMIUM=" + e.ChromiumSha256);
         txt.AppendLine("=== Acciones propias del diagnostico (sin argumentos privados) ===");
         foreach (var e in commands)
             txt.AppendLine(e.Utc + " " + e.Action + ": " + e.Result);
