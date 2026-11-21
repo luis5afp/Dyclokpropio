@@ -27,7 +27,10 @@ internal sealed class CdpObserver : IDisposable
     internal bool ConfigureLab(string origin, Action<LabComparisonEvent> report,
         Func<LabPendingResponse, byte[], string>? storeEncrypted = null)
     {
-        if (!LabResponseComparison.TryCreate(origin, out var config))
+        LabResponseComparison? config;
+        if (string.IsNullOrWhiteSpace(origin))
+            config = LabResponseComparison.CreateAutomatic();
+        else if (!LabResponseComparison.TryCreate(origin, out config))
             return false;
         Volatile.Write(ref labOutput, report);
         Volatile.Write(ref encryptedLabStorage, storeEncrypted);
@@ -88,7 +91,8 @@ internal sealed class CdpObserver : IDisposable
         {
             using var handler = new HttpClientHandler { UseProxy = false, AllowAutoRedirect = false };
             using var http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(5) };
-            // A port must be entered manually; no port scanning and no remote hosts.
+            // The port must come from the authorized local API or user input;
+            // no port scanning and no remote hosts.
             var discoveryUrl = $"http://127.0.0.1:{port}/json/list";
             using var discovery = await http.GetAsync(discoveryUrl, token);
             if (!discovery.IsSuccessStatusCode)
