@@ -850,7 +850,7 @@ internal sealed class DiagnosticWindow : Form
         Dock = DockStyle.Bottom, Height = 80,
         Text = "CDP opcional: puerto local de depuración que hayas habilitado.\n" +
                "Solo primer target page; sin URL, cabeceras, cuerpos ni secretos.\n" +
-               "API V2: solo consultas GET; clave nunca exportada. Estado de perfil no es login.\\n" +
+               "API V2: solo consultas GET; clave nunca exportada. Estado de perfil no es login.\n" +
                "Cookies, proxy aplicado, fingerprint aplicado, extensiones reales y R4: no verificados.",
         ForeColor = Color.FromArgb(210, 220, 234),
         Padding = new Padding(12), Font = new Font("Segoe UI", 9)
@@ -1007,7 +1007,7 @@ internal sealed class DiagnosticWindow : Form
             var approval = MessageBox.Show(
                 "El diagnóstico consultará la API LOCAL de solo lectura, " +
                 "buscará perfiles abiertos y conectará CDP si ese perfil ya lo permite.\n\n" +
-                "No abre/cierra perfiles, no cambia permisos y no guarda tu clave. " +
+                "No abre/cierra perfiles ni cambia permisos. La clave se mantiene solo en memoria de esta sesión, nunca en los informes. " +
                 "No recoge contraseñas, cookies, tokens ni cuerpos HTTP.\n\n" +
                 "¿Autorizas iniciar estas consultas en tu propio DICloak?",
                 "Autorizar diagnóstico automático",
