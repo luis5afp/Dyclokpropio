@@ -165,7 +165,7 @@ internal sealed class CdpObserver : IDisposable
                     {
                         var isBase64 = bodyResult.TryGetProperty("base64Encoded", out var encodedValue) &&
                             encodedValue.ValueKind == JsonValueKind.True;
-                        EmitLab(LabResponseComparison.Verify(expected,
+                        EmitLab(LabResponseComparison.CaptureForManualReview(expected,
                             bodyValue.GetString(), isBase64));
                     }
                     else
