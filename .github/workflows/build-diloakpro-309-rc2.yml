@@ -156,7 +156,7 @@ jobs:
           @'
           Motor DICloak 3.0.9 OFICIAL e intacto.
           El acceso directo inicia diloakPRO.exe, con botón Diagnóstico flotante.
-          RC2 LAB: además de Windows, CDP local opt-in permite estados HTTP sin URLs, cabeceras, cuerpos ni secretos.
+          RC2 LAB: Windows/TCP y CDP autorizado; JSON de la ruta propia de laboratorio se conserva cifrado cuando se habilita explícitamente con contraseña.
           Sin acceso CDP previo la cobertura sigue siendo solamente procesos y TCP.
           La captura íntegra de laboratorio R4 todavía requiere integración adicional.
           Instala en carpeta RC2 LAB separada, sin reemplazar RC1, RC2 anterior ni perfiles.
