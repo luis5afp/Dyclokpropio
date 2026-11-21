@@ -1,0 +1,164 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace DiloakPRO.Diagnostico;
+
+// Privacy by design: only event categories and HTTP status codes are recorded.
+// Never persist URLs, request IDs, headers, bodies, cookies or credentials.
+internal sealed record CdpDiagnosticEvent(string Utc, string Type, int? HttpStatus, string Detail);
+
+internal sealed class CdpObserver : IDisposable
+{
+    private CancellationTokenSource? cancellation;
+    private Task? worker;
+
+    public bool IsRunning => worker is { IsCompleted: false };
+
+    public void Start(int port, Action<CdpDiagnosticEvent> report)
+    {
+        if (port < 1024 || port > 65535)
+            throw new ArgumentOutOfRangeException(nameof(port), "El puerto debe estar entre 1024 y 65535");
+        if (IsRunning)
+            throw new InvalidOperationException("CDP ya está conectado");
+        cancellation?.Dispose();
+        cancellation = new CancellationTokenSource();
+        worker = ObserveAsync(port, report, cancellation.Token);
+    }
+
+    public void Stop()
+    {
+        try { cancellation?.Cancel(); }
+        catch (ObjectDisposedException) { }
+    }
+
+    public void Dispose()
+    {
+        Stop();
+        // The cancellation token source is disposed at the next Start; the observer
+        // task may still be unwinding when the companion window closes.
+    }
+
+    private static void Emit(Action<CdpDiagnosticEvent> report, string type, int? status, string detail)
+    {
+        report(new CdpDiagnosticEvent(DateTime.UtcNow.ToString("O"), type, status, detail));
+    }
+
+    private static async Task ObserveAsync(int port, Action<CdpDiagnosticEvent> report,
+        CancellationToken token)
+    {
+        try
+        {
+            using var handler = new HttpClientHandler { UseProxy = false, AllowAutoRedirect = false };
+            using var http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(5) };
+            // A port must be entered manually; no port scanning and no remote hosts.
+            var discoveryUrl = $"http://127.0.0.1:{port}/json/list";
+            using var discovery = await http.GetAsync(discoveryUrl, token);
+            if (!discovery.IsSuccessStatusCode)
+            {
+                Emit(report, "CDP_UNAVAILABLE", (int)discovery.StatusCode,
+                    "Endpoint CDP local sin respuesta válida");
+                return;
+            }
+
+            var jsonText = await discovery.Content.ReadAsStringAsync(token);
+            if (jsonText.Length > 262144)
+                throw new InvalidDataException("Respuesta de descubrimiento demasiado grande");
+            using var targets = JsonDocument.Parse(jsonText);
+            if (targets.RootElement.ValueKind != JsonValueKind.Array)
+                throw new InvalidDataException("Lista CDP inesperada");
+
+            Uri? selected = null;
+            foreach (var item in targets.RootElement.EnumerateArray())
+            {
+                if (!item.TryGetProperty("type", out var kind) ||
+                    kind.GetString() != "page" ||
+                    !item.TryGetProperty("webSocketDebuggerUrl", out var endpoint))
+                    continue;
+                if (!Uri.TryCreate(endpoint.GetString(), UriKind.Absolute, out var uri))
+                    continue;
+                if (uri.Scheme != "ws" || uri.Host != "127.0.0.1" || uri.Port != port)
+                    continue;
+                selected = uri;
+                break;
+            }
+
+            if (selected is null)
+            {
+                Emit(report, "CDP_NO_TARGET", null,
+                    "No hay pestaña page accesible en el puerto autorizado");
+                return;
+            }
+
+            using var ws = new ClientWebSocket();
+            ws.Options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+            await ws.ConnectAsync(selected, token);
+            var command = Encoding.UTF8.GetBytes("{\"id\":1,\"method\":\"Network.enable\"}");
+            await ws.SendAsync(new ArraySegment<byte>(command), WebSocketMessageType.Text, true, token);
+            Emit(report, "CDP_CONNECTED", null,
+                "Conectado al primer target page; cobertura parcial");
+
+            var buffer = new byte[8192];
+            while (!token.IsCancellationRequested && ws.State == WebSocketState.Open)
+            {
+                using var frame = new MemoryStream();
+                WebSocketReceiveResult received;
+                do
+                {
+                    received = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+                    if (received.MessageType == WebSocketMessageType.Close)
+                        return;
+                    if (frame.Length + received.Count > 262144)
+                        throw new InvalidDataException("Evento CDP excede el límite permitido");
+                    frame.Write(buffer, 0, received.Count);
+                }
+                while (!received.EndOfMessage);
+
+                if (received.MessageType != WebSocketMessageType.Text)
+                    continue;
+                using var message = JsonDocument.Parse(frame.ToArray());
+                var root = message.RootElement;
+                if (!root.TryGetProperty("method", out var methodValue))
+                    continue;
+                var method = methodValue.GetString();
+                if (method == "Network.requestWillBeSent")
+                {
+                    Emit(report, "HTTP_REQUEST", null, "Solicitud observada sin URL ni cabeceras");
+                }
+                else if (method == "Network.responseReceived" &&
+                         root.TryGetProperty("params", out var parameters) &&
+                         parameters.TryGetProperty("response", out var response) &&
+                         response.TryGetProperty("status", out var statusValue) &&
+                         statusValue.TryGetDouble(out var statusDouble) &&
+                         statusDouble >= 100 && statusDouble <= 599)
+                {
+                    var status = (int)statusDouble;
+                    Emit(report, "HTTP_RESPONSE", status,
+                        status >= 500 ? "Respuesta de error del servidor" :
+                        status >= 400 ? "Respuesta de error del cliente" :
+                        "Respuesta HTTP observada (sin contenido)");
+                }
+                else if (method == "Network.loadingFailed")
+                {
+                    Emit(report, "HTTP_FAILED", null, "Error de carga (detalles privados omitidos)");
+                }
+            }
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            // Exception class only, never include potentially sensitive exception messages.
+            Emit(report, "CDP_ERROR", null, "CDP no disponible: " + ex.GetType().Name);
+        }
+        finally
+        {
+            Emit(report, "CDP_STOPPED", null, "Observación CDP finalizada");
+        }
+    }
+}
