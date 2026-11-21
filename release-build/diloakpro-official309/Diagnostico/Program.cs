@@ -712,7 +712,7 @@ internal sealed class DiagnosticBubble : Form
         };
         popup.Controls.Add(content);
         popup.Controls.Add(copy);
-        popup.ShowDialog(window ?? this);
+        popup.ShowDialog((IWin32Window?)window ?? this);
     }
 
     internal void RestoreSelectedFile()
