@@ -751,14 +751,14 @@ internal sealed class DiagnosticBubble : Form
             Dock = DockStyle.Bottom, Height = 38,
             Text = "Ver JSON cifrado (con contraseña)"
         };
-        view.Click += (_, _) => ShowEncryptedLabBody();
+        view.Click += (_, _) => ShowEncryptedLabBody(popup);
         popup.Controls.Add(content);
         popup.Controls.Add(copy);
         popup.Controls.Add(view);
         popup.ShowDialog((IWin32Window?)window ?? this);
     }
 
-    private void ShowEncryptedLabBody()
+    private void ShowEncryptedLabBody(IWin32Window owner)
     {
         var folder = Path.Combine(ProfileArchive.GetProfileDirectory(archiveProfileId),
             "RespaldosCifrados");
@@ -770,7 +770,7 @@ internal sealed class DiagnosticBubble : Form
             InitialDirectory = folder,
             CheckFileExists = true
         };
-        if (dialog.ShowDialog() != DialogResult.OK) return;
+        if (dialog.ShowDialog(owner) != DialogResult.OK) return;
         var password = AskArchivePassword("Contraseña de captura de laboratorio", false);
         if (password is null) return;
         try
@@ -793,7 +793,7 @@ internal sealed class DiagnosticBubble : Form
                 Font = new Font("Consolas", 10), Text = body
             };
             viewer.Controls.Add(content);
-            viewer.ShowDialog((IWin32Window?)window ?? this);
+            viewer.ShowDialog(owner);
             content.Clear();
             body = string.Empty;
         }
