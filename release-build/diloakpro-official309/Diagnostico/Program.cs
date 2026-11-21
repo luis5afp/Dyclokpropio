@@ -33,6 +33,8 @@ internal sealed class DiagnosticBubble : Form
     private readonly List<Snapshot> history = new();
     private readonly CdpObserver cdp = new();
     private readonly List<CdpDiagnosticEvent> cdpHistory = new();
+    private readonly List<LabComparisonEvent> labComparisons = new();
+    private string labComparisonStatus = "No configurada";
     private string cdpStatus = "No activado";
     private int? cdpPort;
     private int? apiDebugPort;
@@ -235,6 +237,49 @@ internal sealed class DiagnosticBubble : Form
         });
         UpdatePanel();
     }
+
+    internal void EnableLabComparison(string origin)
+    {
+        if (!LabResponseComparison.TryCreate(origin, out _))
+        {
+            labComparisonStatus = "Origen inválido: usa HTTPS propio o HTTP localhost (sin ruta)";
+            UpdatePanel();
+            return;
+        }
+        bool ready = cdp.ConfigureLab(origin, entry =>
+        {
+            if (IsDisposed || !IsHandleCreated) return;
+            try
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    if (IsDisposed) return;
+                    labComparisons.Add(entry);
+                    if (labComparisons.Count > 120) labComparisons.RemoveAt(0);
+                    labComparisonStatus = entry.Result + " (prueba " + entry.TestId + ")";
+                    UpdatePanel();
+                    SaveToArchive(false);
+                }));
+            }
+            catch (InvalidOperationException) { }
+        });
+        labComparisonStatus = ready ?
+            "Activa: solo respuestas JSON del servidor de pruebas" : "No disponible";
+        LogAction("COMPARACION_LAB", ready ? "ACTIVADA" : "ERROR");
+        UpdatePanel();
+    }
+
+    internal void DisableLabComparison()
+    {
+        cdp.StopLab();
+        labComparisonStatus = "Desactivada";
+        LogAction("COMPARACION_LAB", "DESACTIVADA");
+        SaveToArchive(false);
+        UpdatePanel();
+    }
+
+    internal string LabComparisonStatus => labComparisonStatus;
+    internal IReadOnlyList<LabComparisonEvent> LabComparisons => labComparisons;
 
     internal void DisconnectCdp()
     {
@@ -443,7 +488,7 @@ internal sealed class DiagnosticBubble : Form
         try
         {
             var saved = ProfileArchive.SaveReport(archiveProfileId, history, cdpHistory,
-                apiFindings, operationHistory);
+                apiFindings, operationHistory, labComparisons);
             archiveStatus = "Guardado: " + Path.GetFileName(saved.JsonPath);
             if (showMessage)
                 MessageBox.Show("Archivos TXT, JSON y SHA-256 guardados en:\n" +
@@ -735,6 +780,7 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                 fingerprintVerified = false,
                 extensionsVerified = false,
                 sessionAuthenticationVerified = false,
+                labServerBrowserComparisons = labComparisons.ToArray(),
                 verification = new
                 {
                     windowsProcesses = history.Count > 0 ? "OBSERVADOS" : "NO_VERIFICADO",
@@ -743,6 +789,9 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                     httpResponseMetadata = cdpHistory.Any(x => x.Type == "HTTP_RESPONSE") ?
                         "OBSERVADOS_POR_CDP" : "NO_VERIFICADO",
                     exactHttpBody = "NO_VERIFICADO",
+                    labJsonCompared = labComparisons.Any(x => x.Result == "COINCIDE") ?
+                        "COINCIDE_EN_PRUEBA" : labComparisons.Any(x => x.Result == "DIFERENTE") ?
+                        "DIFERENTE_EN_PRUEBA" : "NO_VERIFICADO",
                     cookiesApplied = "NO_VERIFICADO",
                     proxyApplied = "NO_VERIFICADO",
                     fingerprintApplied = "NO_VERIFICADO",
@@ -801,6 +850,10 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
             lines.Add("API: " + apiStatus);
             lines.AddRange(apiFindings.Select(x => x.Utc + " " + x.Category + " " +
                 x.Status + " " + x.Detail));
+            lines.Add("=== Comparación JSON servidor propio vs Chromium (sin cuerpos) ===");
+            lines.AddRange(labComparisons.Select(x => x.Utc + " PRUEBA=" + x.TestId +
+                " RESULTADO=" + x.Result + " HTTP=" + x.HttpStatus +
+                " SERVIDOR=" + x.ServerSha256 + " NAVEGADOR=" + x.ClientSha256));
             lines.Add("=== CDP primer target page ===");
             lines.AddRange(cdpHistory.Select(x => x.Utc + " " + x.Type +
                 (x.HttpStatus.HasValue ? " HTTP=" + x.HttpStatus : "")));
@@ -882,6 +935,11 @@ internal sealed class DiagnosticWindow : Form
         DropDownStyle = ComboBoxStyle.DropDownList,
         Visible = false
     };
+    private readonly TextBox labOrigin = new()
+    {
+        Width = 300,
+        PlaceholderText = "Origen de laboratorio: https://tu-servidor"
+    };
     private readonly TextBox cdpPort = new()
     {
         Width = 86,
@@ -893,8 +951,8 @@ internal sealed class DiagnosticWindow : Form
     {
         bubble = owner;
         Text = "diloakPRO 30.0.28 RC2 LAB - Diagnóstico";
-        Width = 1010; Height = 660;
-        MinimumSize = new Size(900, 550);
+        Width = 1040; Height = 710;
+        MinimumSize = new Size(920, 580);
         StartPosition = FormStartPosition.CenterScreen;
         BackColor = Color.FromArgb(20, 32, 48);
         ForeColor = Color.White;
@@ -1037,7 +1095,25 @@ internal sealed class DiagnosticWindow : Form
             autoProfileSelector.Visible = false;
         };
         autoBar.Controls.Add(revoke);
+        var labBar = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top, Height = 44, Padding = new Padding(8),
+            BackColor = Color.FromArgb(33, 61, 79)
+        };
+        labBar.Controls.Add(new Label
+        {
+            Text = "Comparar JSON laboratorio:", AutoSize = true,
+            ForeColor = Color.White, Padding = new Padding(0, 4, 0, 0)
+        });
+        labBar.Controls.Add(labOrigin);
+        var enableLab = new Button { Text = "Activar", AutoSize = true };
+        enableLab.Click += (_, _) => owner.EnableLabComparison(labOrigin.Text);
+        labBar.Controls.Add(enableLab);
+        var disableLab = new Button { Text = "Desactivar", AutoSize = true };
+        disableLab.Click += (_, _) => owner.DisableLabComparison();
+        labBar.Controls.Add(disableLab);
         Controls.Add(events);
+        Controls.Add(labBar);
         Controls.Add(autoBar);
         Controls.Add(archiveBar);
         Controls.Add(warning);
@@ -1053,6 +1129,7 @@ internal sealed class DiagnosticWindow : Form
         status.Text = "Windows: " + bubble.State + " (" + bubble.Count + " muestras)" +
                       " | CDP: " + bubble.CdpStatus + " | API: " + bubble.ApiStatus +
                       "\nAuto: " + bubble.AutoStatus +
+                      " | Laboratorio: " + bubble.LabComparisonStatus +
                       "\nArchivo: " + bubble.ArchiveStatus +
                       (bubble.Error is null ? "" : "\n" + bubble.Error);
         var windowsLines = bubble.History.TakeLast(12).Select(x =>
@@ -1062,10 +1139,13 @@ internal sealed class DiagnosticWindow : Form
         var cdpLines = bubble.CdpHistory.TakeLast(20).Select(x =>
             x.Utc[11..19] + " UTC | " + x.Type +
             (x.HttpStatus.HasValue ? " | HTTP " + x.HttpStatus : ""));
+        var labLines = bubble.LabComparisons.TakeLast(8).Select(x =>
+            x.Utc[11..19] + " UTC | LAB " + x.Result +
+            " | ID " + x.TestId);
         var apiLines = bubble.ApiFindings.TakeLast(10).Select(x =>
             x.Utc[11..19] + " UTC | API " + x.Category +
             " " + x.Status);
         events.Text = string.Join(Environment.NewLine,
-            windowsLines.Concat(cdpLines).Concat(apiLines));
+            windowsLines.Concat(cdpLines).Concat(labLines).Concat(apiLines));
     }
 }
