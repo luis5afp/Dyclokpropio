@@ -293,11 +293,15 @@ internal sealed class DiagnosticBubble : Form
         if (autoBusy || apiBusy)
             return autoCandidates.ToArray();
 
+        // Windows observations do not require vendor API authorization.
+        if (!recording)
+            StartRecording();
+
         if (!string.IsNullOrWhiteSpace(suppliedKey))
             authorizedApiKey = suppliedKey;
         if (string.IsNullOrWhiteSpace(authorizedApiKey))
         {
-            autoStatus = "Copia una vez la clave de Open API; sin ella no hay permiso";
+            autoStatus = "Windows en marcha; pega una vez la clave Open API para ampliar";
             UpdatePanel();
             return Array.Empty<string>();
         }
