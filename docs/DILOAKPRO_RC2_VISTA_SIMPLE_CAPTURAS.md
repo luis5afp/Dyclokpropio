@@ -79,8 +79,11 @@ Con un perfil de laboratorio abierto y CDP habilitado por el usuario:
    X-Diloakpro-Lab-SHA256.
 4. En **Ver evidencias**, consultar `GUARDADO`, ID, SHA-256, tamaño y nombre
    del archivo `.dlvault`. **Guardar** exporta el inventario sanitizado.
-5. Para examinar el JSON original, usar **Avanzado → Restaurar respaldo**
-   con el archivo `.dlvault`, destino elegido y la misma contraseña.
+5. Para examinar el JSON original sin crear otro archivo, pulsar
+   **Ver evidencias → Ver JSON cifrado**, elegir el `.dlvault` y poner
+   la contraseña. El contenido se muestra en una ventana temporal en memoria.
+   También puede usarse **Avanzado → Restaurar respaldo** para crear
+   una copia explícita en un destino elegido por el usuario.
 
 El respaldo puede contener campos ficticios de correo, contraseña, proxy,
 cookies, tokens y extensiones **solo si llegaron dentro del JSON de prueba**.
