@@ -1209,7 +1209,7 @@ internal sealed class DiagnosticWindow : Form
             b.Click += (_, _) => action();
             toolbar.Controls.Add(b);
         }
-        add("Iniciar captura", owner.StartRecording);
+        add("Iniciar captura", StartLabCapture);
         add("Detener", owner.StopRecording);
         add("Ver evidencias", owner.ShowEvidence);
         add("Guardar", () => owner.SaveToArchive());
@@ -1382,6 +1382,80 @@ internal sealed class DiagnosticWindow : Form
         Controls.Add(status);
     }
 
+    // Guided start: only an explicitly authorized local CDP port is used.
+    private void StartLabCapture()
+    {
+        if (owner.State.StartsWith("Grabando", StringComparison.Ordinal)) return;
+        using var setup = new Form
+        {
+            Text = "Iniciar captura del servidor de pruebas",
+            Width = 530, Height = 277,
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            StartPosition = FormStartPosition.CenterParent,
+            MinimizeBox = false, MaximizeBox = false
+        };
+        var info = new Label
+        {
+            Left = 14, Top = 13, Width = 490, Height = 44,
+            Text = "Indica tu servidor y el puerto CDP ya habilitado en el perfil de prueba. " +
+                "Solo se capturan JSON de /__diloakpro_lab__/ con datos ficticios."
+        };
+        var originLabel = new Label
+        {
+            Left = 14, Top = 64, Width = 490, Height = 20,
+            Text = "Origen de tu servidor (HTTPS o HTTP localhost)"
+        };
+        var originInput = new TextBox
+        {
+            Left = 14, Top = 85, Width = 484,
+            Text = labOrigin.Text, PlaceholderText = "https://tu-servidor"
+        };
+        var portLabel = new Label
+        {
+            Left = 14, Top = 121, Width = 484, Height = 20,
+            Text = "Puerto CDP local del perfil autorizado"
+        };
+        var portInput = new TextBox
+        {
+            Left = 14, Top = 144, Width = 165,
+            Text = cdpPort.Text, PlaceholderText = "Ejemplo: 9222"
+        };
+        var start = new Button
+        {
+            Left = 375, Top = 180, Width = 123, Height = 30,
+            Text = "Continuar", DialogResult = DialogResult.OK
+        };
+        var cancel = new Button
+        {
+            Left = 239, Top = 180, Width = 125, Height = 30,
+            Text = "Cancelar", DialogResult = DialogResult.Cancel
+        };
+        setup.Controls.AddRange(new Control[]
+        {
+            info, originLabel, originInput, portLabel, portInput, start, cancel
+        });
+        setup.AcceptButton = start;
+        setup.CancelButton = cancel;
+        if (setup.ShowDialog(this) != DialogResult.OK) return;
+        if (!LabResponseComparison.TryCreate(originInput.Text.Trim(), out _) ||
+            !int.TryParse(portInput.Text.Trim(), out var port) ||
+            port < 1024 || port > 65535)
+        {
+            MessageBox.Show("Revisa el origen del servidor y el puerto CDP. " +
+                "Para capturar el JSON real ambos son necesarios.",
+                "Captura de laboratorio", MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+            return;
+        }
+        labOrigin.Text = originInput.Text.Trim();
+        cdpPort.Text = port.ToString();
+        owner.EnableLabComparison(labOrigin.Text);
+        if (!owner.LabComparisonStatus.StartsWith("Activa:", StringComparison.Ordinal))
+            return;
+        owner.StartRecording();
+        owner.ConnectCdp(cdpPort.Text);
+    }
+
     public void RefreshFrom(DiagnosticBubble bubble)
     {
         if (IsDisposed) return;
@@ -1389,7 +1463,8 @@ internal sealed class DiagnosticWindow : Form
                       " | Navegador: " + bubble.CdpStatus +
                       "\nEvidencias de respuesta: " + bubble.LabComparisons.Count +
                       " | Servidor: " + bubble.LabProofAudits.Count +
-                      " | Archivos cifrados: " + bubble.SavedFileCount +
+                      " | JSON cifrados: " + bubble.LabComparisons.Count(x => x.EncryptedFileName != null) +
+                      " | Archivos añadidos: " + bubble.SavedFileCount +
                       "\nÚltimo guardado: " + bubble.ArchiveStatus +
                       (bubble.Error is null ? "" : "\n" + bubble.Error);
         var windowsLines = bubble.History.TakeLast(12).Select(x =>
