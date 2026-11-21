@@ -123,6 +123,54 @@ internal static class SecureArchive
         }
     }
 
+    // Password-gated, in-memory viewing of an encrypted lab JSON payload.
+    // The caller must clear the returned byte array immediately after use.
+    internal static byte[] ReadLabResponse(string encryptedFile,
+        ReadOnlySpan<char> password)
+    {
+        if (!File.Exists(encryptedFile) ||
+            !Path.GetFileName(encryptedFile).StartsWith("respuesta-lab-",
+                StringComparison.OrdinalIgnoreCase) ||
+            !encryptedFile.EndsWith(".dlvault", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("Selecciona una captura JSON de laboratorio");
+        using var stream = new FileStream(encryptedFile, FileMode.Open,
+            FileAccess.Read, FileShare.Read);
+        if (stream.Length <= 8 + 1 + 16 + 12 + 16 + 4 ||
+            stream.Length > 128 * 1024 + 8 + 1 + 16 + 12 + 16 + 4)
+            throw new InvalidDataException("Longitud de respuesta cifrada no valida");
+        using var reader = new BinaryReader(stream);
+        if (!reader.ReadBytes(8).AsSpan().SequenceEqual(Magic) ||
+            reader.ReadByte() != 1)
+            throw new InvalidDataException("Formato de captura no admitido");
+        var salt = reader.ReadBytes(16);
+        var nonce = reader.ReadBytes(12);
+        var tag = reader.ReadBytes(16);
+        var length = reader.ReadInt32();
+        if (length < 1 || length > 128 * 1024 ||
+            length != stream.Length - stream.Position)
+            throw new InvalidDataException("Tamano de captura no valido");
+        var ciphertext = reader.ReadBytes(length);
+        var plaintext = new byte[length];
+        var key = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations,
+            HashAlgorithmName.SHA256, 32);
+        try
+        {
+            using (var aes = new AesGcm(key, tag.Length))
+                aes.Decrypt(nonce, ciphertext, tag, plaintext, AssociatedData);
+            return plaintext;
+        }
+        catch
+        {
+            CryptographicOperations.ZeroMemory(plaintext);
+            throw;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(key);
+            CryptographicOperations.ZeroMemory(ciphertext);
+        }
+    }
+
     internal static void RestoreToSelectedFile(string encryptedFile, string destination,
         string password)
     {
