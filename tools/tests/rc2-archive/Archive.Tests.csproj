@@ -8,5 +8,6 @@
   <ItemGroup>
     <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/ProfileArchive.cs" Link="ProfileArchive.cs" />
     <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/SecureArchive.cs" Link="SecureArchive.cs" />
+    <Compile Include="../../../release-build/diloakpro-official309/Diagnostico/AutoDiagnosticDiscovery.cs" Link="AutoDiagnosticDiscovery.cs" />
   </ItemGroup>
 </Project>
