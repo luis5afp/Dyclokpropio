@@ -67,6 +67,29 @@ internal static class ArchiveTests
             }));
             if (lab.TryIdentifyResponse(wrongOrigin.RootElement, out _))
                 throw new Exception("Other origins must be ignored");
+            var proofPath = Path.Combine(testFolder, "sample.proof.json");
+            File.WriteAllText(proofPath, JsonSerializer.Serialize(new
+            {
+                source = "own-test-server",
+                transactionId = "aabbccddeeff001122334455",
+                responseSha256 = labSha,
+                responseBytes = Encoding.UTF8.GetByteCount(testJson),
+                responseProofHeaderIssued = true,
+                statusCode = 200
+            }));
+            var independentProof = LabServerProofAudit.Read(proofPath);
+            var tripleMatched = LabServerProofAudit.Compare(independentProof,
+                new[] { matches });
+            if (tripleMatched.Result != "COINCIDE")
+                throw new Exception("Independent server proof not matched");
+            var tripleMismatch = LabServerProofAudit.Compare(independentProof,
+                new[] { altered });
+            if (tripleMismatch.Result != "DIFERENTE")
+                throw new Exception("Independent server mismatch not detected");
+            var missingBrowser = LabServerProofAudit.Compare(independentProof,
+                Array.Empty<LabComparisonEvent>());
+            if (missingBrowser.Result != "NO_VERIFICADO")
+                throw new Exception("Missing Chromium evidence must remain unverified");
             var operation = new ArchiveOperation(DateTime.UtcNow.ToString("O"),
                 "COMPROBAR_PERFIL", "OK");
             var result = ProfileArchive.SaveReport(profileId,
@@ -76,7 +99,7 @@ internal static class ArchiveTests
                     "HTTP_RESPONSE", 200, "No response body") },
                 new[] { new ApiV2Finding(DateTime.UtcNow.ToString("O"),
                     "EXTENSIONES", "CONFIGURACION_LEIDA", "No secrets") },
-                new[] { operation }, new[] { matches, altered });
+                new[] { operation }, new[] { matches, altered }, new[] { tripleMatched });
             if (!File.Exists(result.JsonPath) || !File.Exists(result.TxtPath))
                 throw new Exception("TXT/JSON missing");
             var report = File.ReadAllText(result.JsonPath);
@@ -116,6 +139,7 @@ internal static class ArchiveTests
             if (File.ReadAllText(result.JsonPath).Contains("synthetic-value"))
                 throw new Exception("Private fixture was mixed into plain reports");
             Console.WriteLine("RC2_LAB_BROWSER_SHA256_MATCH_AND_MISMATCH=PASS");
+            Console.WriteLine("RC2_LAB_INDEPENDENT_SERVER_PROOF=PASS");
             Console.WriteLine("RC2_LAB_ORIGIN_FILTER=PASS");
             Console.WriteLine("RC2_ARCHIVE_JSON_TXT_SHA256=PASS");
             Console.WriteLine("RC2_ARCHIVE_AES256_GCM_ROUNDTRIP=PASS");
