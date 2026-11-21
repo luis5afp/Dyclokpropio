@@ -72,7 +72,7 @@ internal static class ArchiveTests
             if (File.ReadAllText(capturedRestore) != testJson)
                 throw new Exception("Stored browser JSON was modified");
             var savedChanged = LabResponseComparison.CaptureForManualReview(
-                expected, "{\\"ok\\":false}", false, (_, bytes) =>
+                expected, """{"ok":false}""", false, (_, bytes) =>
                     SecureArchive.EncryptLabResponse(profileId, bytes,
                         "test-passphrase-strong-123!".AsSpan()));
             if (savedChanged.Result != "GUARDADO" ||
