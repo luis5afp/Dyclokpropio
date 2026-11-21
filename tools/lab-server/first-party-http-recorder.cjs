@@ -13,6 +13,49 @@ const MAX_BODY = 1024 * 1024;
 const MAX_EVENTS = 30;
 const MAX_TOTAL = 12 * 1024 * 1024;
 
+// Only classifies data types and direction; never places values or unknown
+// property names in plaintext audit. Bodies remain in the encrypted fixture.
+const FIELD_CATEGORIES = Object.freeze({
+  email: /^(?:email|correo|emailaddress|mail|useremail|loginemail)$/i,
+  password: /^(?:password|passwd|pwd|contrasena|contraseña|passphrase)$/i,
+  proxy: /(?:proxy|socks|upstream)/i,
+  extension: /(?:extension|addon|plugin)/i,
+  fingerprint: /(?:fingerprint|webgl|canvas|timezone|useragent)/i,
+  cookie: /(?:cookie)/i,
+  session: /(?:session|access.?token|refresh.?token|auth|jwt)/i
+});
+function classifyJsonFields(buffer) {
+  const counts = Object.fromEntries(
+    Object.keys(FIELD_CATEGORIES).map(category => [category, 0]));
+  if (buffer.length === 0 || buffer.length > MAX_BODY)
+    return { parsed: false, categories: counts };
+  try {
+    const root = JSON.parse(buffer.toString('utf8'));
+    const stack = [{value: root, depth: 0}];
+    let visited = 0;
+    while (stack.length && visited < 2500) {
+      const {value, depth} = stack.pop();
+      if (!value || typeof value !== 'object' || depth > 12) continue;
+      visited++;
+      if (Array.isArray(value)) {
+        for (const child of value.slice(0, 100))
+          if (child && typeof child === 'object')
+            stack.push({value: child, depth: depth + 1});
+        continue;
+      }
+      for (const [key, child] of Object.entries(value).slice(0, 100)) {
+        for (const [category, pattern] of Object.entries(FIELD_CATEGORIES))
+          if (pattern.test(key)) counts[category]++;
+        if (child && typeof child === 'object')
+          stack.push({value: child, depth: depth + 1});
+      }
+    }
+    return { parsed: true, categories: counts };
+  } catch {
+    return { parsed: false, categories: counts };
+  }
+}
+
 function createFirstPartyRecorder({
   enabled = false, labPathPrefix = '/__diloakpro_lab__/',
   passphrase, directory,
@@ -122,6 +165,15 @@ function createFirstPartyRecorder({
       // HTTPS wire framing / TLS records are NOT part of the captured bytes.
       const requestSha256 = crypto.createHash('sha256').update(requestBody).digest('hex');
       const responseSha256 = crypto.createHash('sha256').update(responseBody).digest('hex');
+      const requestFieldAudit = classifyJsonFields(requestBody);
+      const responseFieldAudit = classifyJsonFields(responseBody);
+      const serverCookies = res.getHeader('set-cookie');
+      // The content of Set-Cookie is intentionally not copied into the
+      // plaintext proof or the encrypted JSON-body archive.
+      const setCookieCount = Array.isArray(serverCookies) ?
+        serverCookies.length : typeof serverCookies === 'string' ? 1 : 0;
+      const requestCookieHeaderPresent = typeof req.headers.cookie === 'string' &&
+        req.headers.cookie.length > 0;
       const stamp = new Date().toISOString().replace(/[:.]/g, '-') +
         '-' + crypto.randomBytes(4).toString('hex');
       const payload = Buffer.from(JSON.stringify({
@@ -150,6 +202,15 @@ function createFirstPartyRecorder({
         method, pathname, statusCode: res.statusCode,
         transactionId, responseProofHeaderIssued,
         requestBytes, responseBytes, requestSha256, responseSha256,
+        audit: {
+          direction: {request: 'client-to-server', response: 'server-to-client'},
+          requestJson: requestFieldAudit, responseJson: responseFieldAudit,
+          setCookieHeaderCount: setCookieCount,
+          requestCookieHeaderPresent,
+          rawCookieValuesCaptured: false,
+          rawCredentialHeadersCaptured: false,
+          proxyAndExtensionFieldsAreOnlyObservedIfPresentInJson: true
+        },
         payloadFile: vault,
         payloadEncrypted: true, transport: 'server-side-node-handler',
         meaning: 'Actual request and response at own instrumented server; not a proof of browser-applied profile state'
