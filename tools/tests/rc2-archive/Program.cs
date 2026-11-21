@@ -46,6 +46,48 @@ internal static class ArchiveTests
             if (!lab.TryIdentifyResponse(cdpEnvelope.RootElement, out var expected) ||
                 expected is null)
                 throw new Exception("Lab test response not recognized");
+            // Auto mode learns one first-party lab origin from a response
+            // carrying the existing test marker headers, not from credentials.
+            var automaticLab = LabResponseComparison.CreateAutomatic();
+            if (!automaticLab.TryIdentifyResponse(cdpEnvelope.RootElement,
+                    out var autoPending) || autoPending is null ||
+                autoPending.TestId != expected.TestId)
+                throw new Exception("Automatic lab-origin recognition failed");
+            using var otherMarkedOrigin = JsonDocument.Parse(
+                JsonSerializer.Serialize(new
+                {
+                    url = "https://other-lab.example.org/__diloakpro_lab__/echo",
+                    mimeType = "application/json", status = 200,
+                    headers = new Dictionary<string, string>
+                    {
+                        ["X-Diloakpro-Lab-Id"] = expected.TestId,
+                        ["X-Diloakpro-Lab-SHA256"] = labSha
+                    }
+                }));
+            if (automaticLab.TryIdentifyResponse(otherMarkedOrigin.RootElement, out _))
+                throw new Exception("Auto lab must lock to one detected origin");
+            var emptyAutoLab = LabResponseComparison.CreateAutomatic();
+            using var noProof = JsonDocument.Parse(JsonSerializer.Serialize(new
+            {
+                url = "https://unmarked.example.org/__diloakpro_lab__/echo",
+                mimeType = "application/json", status = 200,
+                headers = new Dictionary<string, string>()
+            }));
+            if (emptyAutoLab.TryIdentifyResponse(noProof.RootElement, out _))
+                throw new Exception("Unmarked responses must not trigger auto capture");
+            using var vendorProof = JsonDocument.Parse(JsonSerializer.Serialize(new
+            {
+                url = "https://auth.dicloak.net/__diloakpro_lab__/echo",
+                mimeType = "application/json", status = 200,
+                headers = new Dictionary<string, string>
+                {
+                    ["X-Diloakpro-Lab-Id"] = expected.TestId,
+                    ["X-Diloakpro-Lab-SHA256"] = labSha
+                }
+            }));
+            if (emptyAutoLab.TryIdentifyResponse(vendorProof.RootElement, out _))
+                throw new Exception("Vendor-origin responses must be excluded");
+
             var captured = LabResponseComparison.CaptureForManualReview(expected, testJson, false);
             if (captured.Result != "CAPTURADO" ||
                 captured.ClientSha256 != labSha ||
@@ -203,6 +245,7 @@ internal static class ArchiveTests
             Console.WriteLine("RC2_LAB_INDEPENDENT_SERVER_PROOF=PASS");
             Console.WriteLine("RC2_LAB_SAFE_FIELD_AUDIT_IMPORT=PASS");
             Console.WriteLine("RC2_LAB_ORIGIN_FILTER=PASS");
+            Console.WriteLine("RC2_LAB_AUTOMATIC_MARKER_ORIGIN_LOCK=PASS");
             Console.WriteLine("RC2_ARCHIVE_JSON_TXT_SHA256=PASS");
             Console.WriteLine("RC2_ARCHIVE_AES256_GCM_ROUNDTRIP=PASS");
             Console.WriteLine("RC2_ARCHIVE_WRONG_PASSWORD=REJECTED");
