@@ -38,6 +38,7 @@ internal sealed class DiagnosticBubble : Form
     private readonly List<LabProofAudit> labProofAudits = new();
     private readonly List<SavedFileEvidence> savedFileEvidence = new();
     private string labComparisonStatus = "No configurada";
+    private char[]? labCapturePassword; // only while explicitly enabled
     private string cdpStatus = "No activado";
     private int? cdpPort;
     private int? apiDebugPort;
@@ -104,6 +105,7 @@ internal sealed class DiagnosticBubble : Form
         authorizedApiKey = null;
         authorizedApiPort = null;
         cdp.Dispose();
+        ClearLabCapturePassword();
         window?.Close();
         base.OnFormClosing(e);
     }
@@ -200,6 +202,7 @@ internal sealed class DiagnosticBubble : Form
         recording = false;
         if (cdp.IsRunning) cdp.Stop();
         cdp.StopLab();
+        ClearLabCapturePassword();
         LogAction("DETENER_GRABACION", "OK");
         SaveToArchive(false);
         UpdatePanel();
@@ -247,6 +250,13 @@ internal sealed class DiagnosticBubble : Form
         UpdatePanel();
     }
 
+    private void ClearLabCapturePassword()
+    {
+        if (labCapturePassword is null) return;
+        Array.Clear(labCapturePassword);
+        labCapturePassword = null;
+    }
+
     internal void EnableLabComparison(string origin)
     {
         if (!LabResponseComparison.TryCreate(origin, out _))
@@ -255,6 +265,19 @@ internal sealed class DiagnosticBubble : Form
             UpdatePanel();
             return;
         }
+        if (MessageBox.Show(
+            "Solo captura respuestas JSON de rutas /__diloakpro_lab__/ del origen elegido. " +
+            "Usa exclusivamente datos desechables de tu servidor. " +
+            "El contenido se cifrará localmente y no se comparará automáticamente. " +
+            "¿Activar esta captura?", "Captura de laboratorio",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            return;
+        var password = AskArchivePassword("Contraseña para las capturas de prueba", true);
+        if (password is null) return;
+        cdp.StopLab();
+        ClearLabCapturePassword();
+        labCapturePassword = password.ToCharArray();
+        password = null;
         bool ready = cdp.ConfigureLab(origin, entry =>
         {
             if (IsDisposed || !IsHandleCreated) return;
@@ -272,9 +295,12 @@ internal sealed class DiagnosticBubble : Form
                 }));
             }
             catch (InvalidOperationException) { }
-        });
+        }, (_, body) =>
+            SecureArchive.EncryptLabResponse(archiveProfileId, body,
+                labCapturePassword ?? Array.Empty<char>()));
+        if (!ready) ClearLabCapturePassword();
         labComparisonStatus = ready ?
-            "Activa: solo respuestas JSON del servidor de pruebas" : "No disponible";
+            "Activa: JSON de prueba guardado cifrado al recibirse" : "No disponible";
         LogAction("COMPARACION_LAB", ready ? "ACTIVADA" : "ERROR");
         UpdatePanel();
     }
@@ -282,6 +308,7 @@ internal sealed class DiagnosticBubble : Form
     internal void DisableLabComparison()
     {
         cdp.StopLab();
+        ClearLabCapturePassword();
         labComparisonStatus = "Desactivada";
         LogAction("COMPARACION_LAB", "DESACTIVADA");
         SaveToArchive(false);
@@ -668,13 +695,15 @@ internal sealed class DiagnosticBubble : Form
             "CDP: " + cdpStatus + ", eventos=" + cdpHistory.Count,
             "API V2: " + apiStatus,
             "",
-            "=== Respuestas de Chromium (ID y hashes, sin cuerpo) ==="
+            "=== JSON de Chromium (referencia de cuerpo cifrado, si se obtuvo) ==="
         };
         lines.AddRange(labComparisons.Select(e =>
             e.Utc + " " + e.Result + " TEST=" + e.TestId +
             " HTTP=" + e.HttpStatus +
             " SHA_CABECERA=" + e.ServerSha256 +
-            " SHA_CHROMIUM=" + e.ClientSha256));
+            " SHA_CHROMIUM=" + e.ClientSha256 +
+            " ARCHIVO_CIFRADO=" + (e.EncryptedFileName ?? "NINGUNO") +
+            " BYTES=" + (e.CapturedBytes?.ToString() ?? "N/D")));
         lines.Add("");
         lines.Add("=== Informes importados del servidor (sin valores privados) ===");
         lines.AddRange(labProofAudits.Select(e =>
@@ -923,7 +952,7 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                 schema = 2,
                 source = "Windows OS metadata companion; not DICloak internal diagnostics",
                 originalEngineModified = false,
-                exactHttpBodyCaptured = false,
+                exactHttpBodyCaptured = labComparisons.Any(x => x.EncryptedFileName != null),
                 cookiesVerified = false,
                 proxyVerified = false,
                 fingerprintVerified = false,
@@ -939,10 +968,9 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
                         "OBSERVADAS" : "NO_VERIFICADO",
                     httpResponseMetadata = cdpHistory.Any(x => x.Type == "HTTP_RESPONSE") ?
                         "OBSERVADOS_POR_CDP" : "NO_VERIFICADO",
-                    exactHttpBody = "NO_VERIFICADO",
-                    labJsonCompared = labComparisons.Any(x => x.Result == "COINCIDE") ?
-                        "COINCIDE_EN_PRUEBA" : labComparisons.Any(x => x.Result == "DIFERENTE") ?
-                        "DIFERENTE_EN_PRUEBA" : "NO_VERIFICADO",
+                    exactHttpBody = labComparisons.Any(x => x.EncryptedFileName != null) ?
+                        "JSON_LAB_GUARDADO_CIFRADO" : "NO_VERIFICADO",
+                    labJsonCompared = "NO_SE_COMPARA_REVISION_MANUAL",
                     cookiesApplied = "NO_VERIFICADO",
                     proxyApplied = "NO_VERIFICADO",
                     fingerprintApplied = "NO_VERIFICADO",
@@ -1129,8 +1157,6 @@ internal sealed class DiagnosticWindow : Form
         add("Detener", owner.StopRecording);
         add("Ver evidencias", owner.ShowEvidence);
         add("Guardar", () => owner.SaveToArchive());
-        add("Añadir archivo", owner.BackupSelectedFile);
-        add("Abrir carpeta", owner.OpenArchive);
         var advancedToggle = new Button
         {
             Text = "Avanzado ▾", Height = 29, AutoSize = true,
@@ -1198,6 +1224,9 @@ internal sealed class DiagnosticWindow : Form
         var encryptButton = new Button { Text = "Cifrar archivo seleccionado", AutoSize = true };
         encryptButton.Click += (_, _) => owner.BackupSelectedFile();
         archiveBar.Controls.Add(encryptButton);
+        var openFolder = new Button { Text = "Abrir carpeta", AutoSize = true };
+        openFolder.Click += (_, _) => owner.OpenArchive();
+        archiveBar.Controls.Add(openFolder);
         var restoreButton = new Button { Text = "Restaurar respaldo", AutoSize = true };
         restoreButton.Click += (_, _) => owner.RestoreSelectedFile();
         archiveBar.Controls.Add(restoreButton);
@@ -1265,11 +1294,11 @@ internal sealed class DiagnosticWindow : Form
         };
         labBar.Controls.Add(new Label
         {
-            Text = "Observar JSON de prueba:", AutoSize = true,
+            Text = "Capturar JSON de prueba:", AutoSize = true,
             ForeColor = Color.White, Padding = new Padding(0, 4, 0, 0)
         });
         labBar.Controls.Add(labOrigin);
-        var enableLab = new Button { Text = "Activar", AutoSize = true };
+        var enableLab = new Button { Text = "Activar captura", AutoSize = true };
         enableLab.Click += (_, _) => owner.EnableLabComparison(labOrigin.Text);
         labBar.Controls.Add(enableLab);
         var disableLab = new Button { Text = "Desactivar", AutoSize = true };
