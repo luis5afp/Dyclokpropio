@@ -123,6 +123,43 @@ internal sealed class LabResponseComparison
         }
     }
 
+    // User-driven workflow: capture both independent SHA-256 values for
+    // inspection, without issuing an automatic match/mismatch verdict.
+    public static LabComparisonEvent CaptureForManualReview(LabPendingResponse expected,
+        string? browserBody, bool base64Encoded)
+    {
+        var utc = DateTime.UtcNow.ToString("O");
+        if (browserBody is null || browserBody.Length > MaxBody * 2)
+            return new(utc, expected.TestId, "NO_VERIFICADO", expected.HttpStatus,
+                expected.ExpectedSha256, null, "Cuerpo CDP ausente o demasiado grande");
+        byte[] bytes;
+        try
+        {
+            bytes = base64Encoded ?
+                Convert.FromBase64String(browserBody) :
+                new UTF8Encoding(false, true).GetBytes(browserBody);
+        }
+        catch (Exception ex) when (ex is FormatException or EncoderFallbackException)
+        {
+            return new(utc, expected.TestId, "NO_VERIFICADO", expected.HttpStatus,
+                expected.ExpectedSha256, null, "Respuesta CDP no decodificable");
+        }
+        try
+        {
+            if (bytes.Length > MaxBody)
+                return new(utc, expected.TestId, "NO_VERIFICADO", expected.HttpStatus,
+                    expected.ExpectedSha256, null, "Respuesta supera limite de laboratorio");
+            var actual = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+            return new(utc, expected.TestId, "CAPTURADO", expected.HttpStatus,
+                expected.ExpectedSha256, actual,
+                "SHA servidor/cabecera y SHA Chromium disponibles para revision manual");
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(bytes);
+        }
+    }
+
     public static LabComparisonEvent Unverified(LabPendingResponse expected, string explanation) =>
         new(DateTime.UtcNow.ToString("O"), expected.TestId, "NO_VERIFICADO",
             expected.HttpStatus, expected.ExpectedSha256, null, explanation);
