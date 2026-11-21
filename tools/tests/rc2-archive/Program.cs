@@ -51,6 +51,33 @@ internal static class ArchiveTests
                 captured.ClientSha256 != labSha ||
                 captured.ServerSha256 != labSha)
                 throw new Exception("Manual review capture did not retain independent hashes");
+            // Real CDP-visible test JSON must survive encrypted storage unchanged,
+            // without writing a temporary plaintext file or automatic verdict.
+            var savedCapture = LabResponseComparison.CaptureForManualReview(
+                expected, testJson, false, (_, bytes) =>
+                    SecureArchive.EncryptLabResponse(profileId, bytes,
+                        "test-passphrase-strong-123!".AsSpan()));
+            if (savedCapture.Result != "GUARDADO" ||
+                savedCapture.EncryptedFileName is null ||
+                savedCapture.CapturedBytes != Encoding.UTF8.GetByteCount(testJson))
+                throw new Exception("Encrypted lab capture was not inventoried");
+            var savedCapturePath = Path.Combine(profilePath,
+                "RespaldosCifrados", savedCapture.EncryptedFileName);
+            var sealedData = File.ReadAllBytes(savedCapturePath);
+            if (sealedData.AsSpan().IndexOf(Encoding.UTF8.GetBytes(testJson)) >= 0)
+                throw new Exception("Captured JSON leaked into ciphertext");
+            var capturedRestore = Path.Combine(testFolder, "captured-lab.json");
+            SecureArchive.RestoreToSelectedFile(savedCapturePath, capturedRestore,
+                "test-passphrase-strong-123!");
+            if (File.ReadAllText(capturedRestore) != testJson)
+                throw new Exception("Stored browser JSON was modified");
+            var savedChanged = LabResponseComparison.CaptureForManualReview(
+                expected, "{\\"ok\\":false}", false, (_, bytes) =>
+                    SecureArchive.EncryptLabResponse(profileId, bytes,
+                        "test-passphrase-strong-123!".AsSpan()));
+            if (savedChanged.Result != "GUARDADO" ||
+                savedChanged.ClientSha256 == labSha)
+                throw new Exception("Changed JSON should be stored, not auto-judged");
             var matches = LabResponseComparison.Verify(expected, testJson, false);
             if (matches.Result != "COINCIDE")
                 throw new Exception("Matching JSON bytes were not recognized");
@@ -154,6 +181,7 @@ internal static class ArchiveTests
                 throw new Exception("Round-trip contents changed");
             if (File.ReadAllText(result.JsonPath).Contains("synthetic-value"))
                 throw new Exception("Private fixture was mixed into plain reports");
+            Console.WriteLine("RC2_LAB_ENCRYPTED_BROWSER_BODY_ROUNDTRIP=PASS");
             Console.WriteLine("RC2_LAB_CAPTURE_FOR_USER_REVIEW_NO_AUTO_VERDICT=PASS");
             Console.WriteLine("RC2_LAB_BROWSER_SHA256_MATCH_AND_MISMATCH=PASS");
             Console.WriteLine("RC2_LAB_INDEPENDENT_SERVER_PROOF=PASS");
