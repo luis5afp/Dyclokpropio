@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace DiloakPRO.Diagnostico;
 
@@ -23,6 +24,49 @@ internal static class ArchiveTests
         Directory.CreateDirectory(testFolder);
         try
         {
+            var testJson = "{\"ok\":true,\"id\":7}";
+            var labSha = Convert.ToHexString(
+                SHA256.HashData(Encoding.UTF8.GetBytes(testJson))).ToLowerInvariant();
+            if (!LabResponseComparison.TryCreate("http://127.0.0.1:3000", out var lab) ||
+                lab is null)
+                throw new Exception("Expected local lab origin");
+            if (LabResponseComparison.TryCreate("https://gin-server.dicloak.net", out _))
+                throw new Exception("Vendor origin must not be allowed");
+            using var cdpEnvelope = JsonDocument.Parse(JsonSerializer.Serialize(new
+            {
+                url = "http://127.0.0.1:3000/__diloakpro_lab__/echo?tracking=ignored",
+                mimeType = "application/json",
+                status = 200,
+                headers = new Dictionary<string, string>
+                {
+                    ["X-Diloakpro-Lab-Id"] = "aabbccddeeff001122334455",
+                    ["X-Diloakpro-Lab-SHA256"] = labSha
+                }
+            }));
+            if (!lab.TryIdentifyResponse(cdpEnvelope.RootElement, out var expected) ||
+                expected is null)
+                throw new Exception("Lab test response not recognized");
+            var matches = LabResponseComparison.Verify(expected, testJson, false);
+            if (matches.Result != "COINCIDE")
+                throw new Exception("Matching JSON bytes were not recognized");
+            var altered = LabResponseComparison.Verify(expected, "{\"ok\":false}", false);
+            if (altered.Result != "DIFERENTE")
+                throw new Exception("Changed JSON bytes not detected");
+            if (LabResponseComparison.Verify(expected, Convert.ToBase64String(
+                Encoding.UTF8.GetBytes(testJson)), true).Result != "COINCIDE")
+                throw new Exception("CDP base64 response not recognized");
+            using var wrongOrigin = JsonDocument.Parse(JsonSerializer.Serialize(new
+            {
+                url = "https://other.example.invalid/__diloakpro_lab__/echo",
+                mimeType = "application/json", status = 200,
+                headers = new Dictionary<string, string>
+                {
+                    ["X-Diloakpro-Lab-Id"] = "aabbccddeeff001122334455",
+                    ["X-Diloakpro-Lab-SHA256"] = labSha
+                }
+            }));
+            if (lab.TryIdentifyResponse(wrongOrigin.RootElement, out _))
+                throw new Exception("Other origins must be ignored");
             var operation = new ArchiveOperation(DateTime.UtcNow.ToString("O"),
                 "COMPROBAR_PERFIL", "OK");
             var result = ProfileArchive.SaveReport(profileId,
@@ -32,13 +76,15 @@ internal static class ArchiveTests
                     "HTTP_RESPONSE", 200, "No response body") },
                 new[] { new ApiV2Finding(DateTime.UtcNow.ToString("O"),
                     "EXTENSIONES", "CONFIGURACION_LEIDA", "No secrets") },
-                new[] { operation });
+                new[] { operation }, new[] { matches, altered });
             if (!File.Exists(result.JsonPath) || !File.Exists(result.TxtPath))
                 throw new Exception("TXT/JSON missing");
             var report = File.ReadAllText(result.JsonPath);
             if (!report.Contains("CONFIGURACION_LEIDA") ||
                 !report.Contains("HTTP_RESPONSE") ||
-                !report.Contains("NO_VERIFICADO"))
+                !report.Contains("NO_VERIFICADO") ||
+                !report.Contains("COINCIDE") ||
+                !report.Contains("DIFERENTE"))
                 throw new Exception("Report data incomplete");
             if (ProfileArchive.IsSafeProfileId("../evil"))
                 throw new Exception("Unsafe folder name accepted");
@@ -69,6 +115,8 @@ internal static class ArchiveTests
                 throw new Exception("Round-trip contents changed");
             if (File.ReadAllText(result.JsonPath).Contains("synthetic-value"))
                 throw new Exception("Private fixture was mixed into plain reports");
+            Console.WriteLine("RC2_LAB_BROWSER_SHA256_MATCH_AND_MISMATCH=PASS");
+            Console.WriteLine("RC2_LAB_ORIGIN_FILTER=PASS");
             Console.WriteLine("RC2_ARCHIVE_JSON_TXT_SHA256=PASS");
             Console.WriteLine("RC2_ARCHIVE_AES256_GCM_ROUNDTRIP=PASS");
             Console.WriteLine("RC2_ARCHIVE_WRONG_PASSWORD=REJECTED");
