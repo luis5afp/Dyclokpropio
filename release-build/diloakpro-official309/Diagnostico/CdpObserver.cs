@@ -21,12 +21,15 @@ internal sealed class CdpObserver : IDisposable
     private Task? worker;
     private LabResponseComparison? labConfig;
     private Action<LabComparisonEvent>? labOutput;
+    private Func<LabPendingResponse, byte[], string>? encryptedLabStorage;
 
-    internal bool ConfigureLab(string origin, Action<LabComparisonEvent> report)
+    internal bool ConfigureLab(string origin, Action<LabComparisonEvent> report,
+        Func<LabPendingResponse, byte[], string>? storeEncrypted = null)
     {
         if (!LabResponseComparison.TryCreate(origin, out var config))
             return false;
         Volatile.Write(ref labOutput, report);
+        Volatile.Write(ref encryptedLabStorage, storeEncrypted);
         Volatile.Write(ref labConfig, config);
         return true;
     }
@@ -35,6 +38,7 @@ internal sealed class CdpObserver : IDisposable
     {
         Volatile.Write(ref labConfig, null);
         Volatile.Write(ref labOutput, null);
+        Volatile.Write(ref encryptedLabStorage, null);
     }
 
     private void EmitLab(LabComparisonEvent result)
@@ -166,7 +170,8 @@ internal sealed class CdpObserver : IDisposable
                         var isBase64 = bodyResult.TryGetProperty("base64Encoded", out var encodedValue) &&
                             encodedValue.ValueKind == JsonValueKind.True;
                         EmitLab(LabResponseComparison.CaptureForManualReview(expected,
-                            bodyValue.GetString(), isBase64));
+                            bodyValue.GetString(), isBase64,
+                            Volatile.Read(ref encryptedLabStorage)));
                     }
                     else
                     {
