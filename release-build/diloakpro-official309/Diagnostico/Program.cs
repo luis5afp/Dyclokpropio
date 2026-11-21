@@ -366,7 +366,7 @@ ConvertTo-Json -InputObject @{roots=$roots;desc=$desc.Count;chrom=$chrom.Count;t
             lines.AddRange(cdpHistory.Select(x => x.Utc + " " + x.Type +
                 (x.HttpStatus.HasValue ? " HTTP=" + x.HttpStatus : "")));
             File.WriteAllLines(target, lines, Encoding.UTF8);
-            MessageBox.Show("Informe TXT exportado:\\n" + target,
+            MessageBox.Show("Informe TXT exportado:\n" + target,
                 "Diagnóstico", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
@@ -413,8 +413,8 @@ internal sealed class DiagnosticWindow : Form
     private readonly Label warning = new()
     {
         Dock = DockStyle.Bottom, Height = 80,
-        Text = "CDP opcional: puerto local de depuración que hayas habilitado.\\n" +
-               "Solo primer target page; sin URL, cabeceras, cuerpos ni secretos.\\n" +
+        Text = "CDP opcional: puerto local de depuración que hayas habilitado.\n" +
+               "Solo primer target page; sin URL, cabeceras, cuerpos ni secretos.\n" +
                "No verifica sesiones, cookies, proxy, fingerprint, extensiones ni R4.",
         ForeColor = Color.FromArgb(210, 220, 234),
         Padding = new Padding(12), Font = new Font("Segoe UI", 9)
@@ -430,7 +430,7 @@ internal sealed class DiagnosticWindow : Form
     public DiagnosticWindow(DiagnosticBubble owner)
     {
         bubble = owner;
-        Text = "diloakPRO 3.0.9 - Diagnóstico";
+        Text = "diloakPRO 30.0.28 RC2 LAB - Diagnóstico";
         Width = 740; Height = 470;
         MinimumSize = new Size(650, 390);
         StartPosition = FormStartPosition.CenterScreen;
@@ -484,7 +484,7 @@ internal sealed class DiagnosticWindow : Form
         if (IsDisposed) return;
         status.Text = "Windows: " + bubble.State + " (" + bubble.Count + " muestras)" +
                       " | CDP: " + bubble.CdpStatus +
-                      (bubble.Error is null ? "" : "\\n" + bubble.Error);
+                      (bubble.Error is null ? "" : "\n" + bubble.Error);
         var windowsLines = bubble.History.TakeLast(12).Select(x =>
             x.Utc[11..19] + " UTC | Motor: " + x.MotorProcesses +
             " | Chromium: " + x.ChromiumProcesses +
