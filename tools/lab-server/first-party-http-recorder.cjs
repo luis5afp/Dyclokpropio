@@ -24,6 +24,17 @@ const FIELD_CATEGORIES = Object.freeze({
   cookie: /(?:cookie)/i,
   session: /(?:session|access.?token|refresh.?token|auth|jwt)/i
 });
+function syntheticCookieHeaders(values) {
+  const items = Array.isArray(values) ? values : typeof values === 'string' ? [values] : [];
+  return items.filter(value => typeof value === 'string' && value.length <= 1024 &&
+    /^DILOAKPRO_TEST_[A-Za-z0-9_-]{1,64}=/i.test(value.trim())).slice(0, 5);
+}
+function syntheticRequestCookies(value) {
+  if (typeof value !== 'string' || value.length > 4096) return [];
+  return value.split(';').map(chunk => chunk.trim())
+    .filter(chunk => chunk.length <= 1024 &&
+      /^DILOAKPRO_TEST_[A-Za-z0-9_-]{1,64}=/i.test(chunk)).slice(0, 5);
+}
 function classifyJsonFields(buffer) {
   const counts = Object.fromEntries(
     Object.keys(FIELD_CATEGORIES).map(category => [category, 0]));
@@ -174,13 +185,20 @@ function createFirstPartyRecorder({
         serverCookies.length : typeof serverCookies === 'string' ? 1 : 0;
       const requestCookieHeaderPresent = typeof req.headers.cookie === 'string' &&
         req.headers.cookie.length > 0;
+      // Synthetic-only cookie fixtures are inside the encrypted payload.
+      // Real session cookies and other authorization headers are excluded.
+      const labSetCookies = syntheticCookieHeaders(serverCookies);
+      const labRequestCookies = syntheticRequestCookies(req.headers.cookie);
       const stamp = new Date().toISOString().replace(/[:.]/g, '-') +
         '-' + crypto.randomBytes(4).toString('hex');
       const payload = Buffer.from(JSON.stringify({
         schema: 1, boundary: 'node-server-request-push-and-response-write-end',
         method, pathname, receivedAtUtc, finishedAtUtc: new Date().toISOString(),
         statusCode: res.statusCode, requestBodyBase64: requestBody.toString('base64'),
-        responseBodyBase64: responseBody.toString('base64')
+        responseBodyBase64: responseBody.toString('base64'),
+        syntheticOnlyHeaders: {
+          setCookie: labSetCookies, requestCookie: labRequestCookies
+        }
       }), 'utf8');
       const salt = crypto.randomBytes(16);
       const nonce = crypto.randomBytes(12);
@@ -207,7 +225,9 @@ function createFirstPartyRecorder({
           requestJson: requestFieldAudit, responseJson: responseFieldAudit,
           setCookieHeaderCount: setCookieCount,
           requestCookieHeaderPresent,
-          rawCookieValuesCaptured: false,
+          syntheticLabCookiesEncrypted: labSetCookies.length,
+          syntheticLabRequestCookiesEncrypted: labRequestCookies.length,
+          realCookieValuesCaptured: false,
           rawCredentialHeadersCaptured: false,
           proxyAndExtensionFieldsAreOnlyObservedIfPresentInJson: true
         },
