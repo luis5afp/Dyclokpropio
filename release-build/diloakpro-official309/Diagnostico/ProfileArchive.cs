@@ -12,6 +12,10 @@ namespace DiloakPRO.Diagnostico;
 // plaintext cookies, passwords, credential material or HTTP message bodies.
 internal sealed record ArchiveOperation(string Utc, string Action, string Result);
 internal sealed record ArchiveSaveResult(string Directory, string JsonPath, string TxtPath, string Sha256);
+// Only metadata about user-picked files, never original filenames or file contents.
+internal sealed record SavedFileEvidence(
+    string Utc, string Category, string EncryptedFileName, long EncryptedBytes,
+    string Source, string Verification);
 
 internal static class ProfileArchive
 {
@@ -37,7 +41,8 @@ internal static class ProfileArchive
         IReadOnlyList<ApiV2Finding> apiFindings,
         IReadOnlyList<ArchiveOperation> commands,
         IReadOnlyList<LabComparisonEvent>? comparisons = null,
-        IReadOnlyList<LabProofAudit>? audits = null)
+        IReadOnlyList<LabProofAudit>? audits = null,
+        IReadOnlyList<SavedFileEvidence>? savedFiles = null)
     {
         // Each record is a structured, hard-coded allowlist of non-secret fields.
         var folder = Path.Combine(GetProfileDirectory(profileId), "Diagnosticos");
@@ -85,7 +90,8 @@ internal static class ProfileArchive
             localApiFindings = apiFindings.ToArray(),
             commands = commands.ToArray(),
             browserServerComparisons = (comparisons ?? Array.Empty<LabComparisonEvent>()).ToArray(),
-            independentServerProofAudits = (audits ?? Array.Empty<LabProofAudit>()).ToArray()
+            independentServerProofAudits = (audits ?? Array.Empty<LabProofAudit>()).ToArray(),
+            userSelectedEncryptedFiles = (savedFiles ?? Array.Empty<SavedFileEvidence>()).ToArray()
         };
         var json = JsonSerializer.Serialize(report, JsonOptions) + "\n";
         var txt = new StringBuilder();
@@ -114,6 +120,10 @@ internal static class ProfileArchive
         foreach (var e in audits ?? Array.Empty<LabProofAudit>())
             txt.AppendLine(e.Utc + " TEST=" + e.TestId + " " + e.Result +
                 " SERVER=" + e.ServerSha256 + " CHROMIUM=" + e.ChromiumSha256);
+        txt.AppendLine("=== Archivos propios guardados manualmente (cifrados) ===");
+        foreach (var e in savedFiles ?? Array.Empty<SavedFileEvidence>())
+            txt.AppendLine(e.Utc + " " + e.Category + " " +
+                e.EncryptedFileName + " " + e.EncryptedBytes + " bytes: " + e.Verification);
         txt.AppendLine("=== Acciones propias del diagnostico (sin argumentos privados) ===");
         foreach (var e in commands)
             txt.AppendLine(e.Utc + " " + e.Action + ": " + e.Result);
