@@ -1,5 +1,36 @@
 # RC2 LAB — comparar el JSON enviado por nuestro servidor con el recibido por Chromium
 
+## Auditoría de campos del servidor (datos sintéticos)
+
+El capturador Node de laboratorio audita **dos direcciones diferentes**:
+- `client-to-server`: campos JSON de solicitudes, por ejemplo correo o contraseña
+  de prueba enviados en el formulario de inicio de sesión;
+- `server-to-client`: campos JSON de respuestas, como email, configuración de
+  proxy, extensiones o fingerprint, **solo cuando realmente estén presentes**.
+
+En `*.proof.json` se guarda la **cantidad de propiedades** por categoría
+(`email`, `password`, `proxy`, `extension`, `fingerprint`, `cookie`,
+`session`), nunca el valor de esos campos. Eso es una detección por nombre
+de propiedad, no una certificación de que la configuración se aplicó.
+
+También se guarda `setCookieHeaderCount`, la cantidad de cabeceras
+`Set-Cookie` emitidas por el servidor, y si llegó una cabecera `Cookie`
+del navegador. Sus valores reales **no** se exportan. Solo las cookies
+**ficticias** cuyo nombre empieza por `DILOAKPRO_TEST_` se incluyen,
+con límite estricto de tamaño, dentro del `*.dplabsrv` cifrado.
+Las contraseñas, tokens o cookies de autenticación reales nunca deben usarse
+en esas rutas de prueba.
+
+El contenido JSON de las rutas permitidas permanece cifrado en `*.dplabsrv`
+y puede inspeccionarse con una contraseña de laboratorio. No publiques ese
+archivo ni su contraseña; evita colocar datos reales en los JSON de prueba.
+
+**Limitaciones técnicas:** proxy y extensiones pueden estar configurados
+localmente y no viajar como JSON HTTP. El servidor generalmente recibe
+contraseñas para autenticación; enviarlas en respuestas sería una exposición
+de seguridad. El auditor muestra **lo efectivamente presente**, no inventa
+valores ausentes.
+
 ## Objetivo
 La pregunta correcta no es «¿hubo actividad TCP?», sino «¿el mismo JSON que nuestro
 servidor escribió llegó intacto al Chromium del perfil de prueba?».
