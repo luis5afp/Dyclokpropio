@@ -260,14 +260,17 @@ internal sealed class DiagnosticBubble : Form
 
     internal void EnableLabComparison(string origin)
     {
-        if (!LabResponseComparison.TryCreate(origin, out _))
+        bool autoDetectOrigin = string.IsNullOrWhiteSpace(origin);
+        if (!autoDetectOrigin && !LabResponseComparison.TryCreate(origin, out _))
         {
             labComparisonStatus = "Origen inválido: usa HTTPS propio o HTTP localhost (sin ruta)";
             UpdatePanel();
             return;
         }
         if (MessageBox.Show(
-            "Solo captura respuestas JSON de rutas /__diloakpro_lab__/ del origen elegido. " +
+            "Solo captura respuestas JSON de /__diloakpro_lab__/ con prueba identificada. " +
+            (autoDetectOrigin ? "Detectará el origen del servidor automáticamente. " :
+                "Se limitará al origen que elegiste. ") +
             "Usa exclusivamente datos desechables de tu servidor. " +
             "El contenido se cifrará localmente y no se comparará automáticamente. " +
             "¿Activar esta captura?", "Captura de laboratorio",
@@ -301,7 +304,8 @@ internal sealed class DiagnosticBubble : Form
                 labCapturePassword ?? Array.Empty<char>()));
         if (!ready) ClearLabCapturePassword();
         labComparisonStatus = ready ?
-            "Activa: JSON de prueba guardado cifrado al recibirse" : "No disponible";
+            (autoDetectOrigin ? "Activa: esperando JSON marcado por el servidor propio" :
+                "Activa: JSON de prueba guardado cifrado al recibirse") : "No disponible";
         LogAction("CAPTURA_LAB", ready ? "ACTIVADA" : "ERROR");
         UpdatePanel();
     }
@@ -556,6 +560,14 @@ internal sealed class DiagnosticBubble : Form
     }
 
     internal string AutoStatus => autoStatus;
+    internal bool HasAuthorizedApiKey => !string.IsNullOrWhiteSpace(authorizedApiKey);
+    internal bool HasKnownAuthorizedDebugPort => apiDebugPort.HasValue;
+    internal bool ConnectKnownAuthorizedDebugPort()
+    {
+        if (!apiDebugPort.HasValue) return false;
+        if (!cdp.IsRunning) ConnectProfileCdp();
+        return true;
+    }
 
     internal void ConnectProfileCdp()
     {
@@ -1382,78 +1394,128 @@ internal sealed class DiagnosticWindow : Form
         Controls.Add(status);
     }
 
-    // Guided start: only an explicitly authorized local CDP port is used.
-    private void StartLabCapture()
+    // One-click capture: use an already-authorized local API key to discover
+    // the running profile and its CDP port. Auto-detect the first marked lab
+    // origin from actual Chromium responses; never scan ports or browser secrets.
+    private async void StartLabCapture()
     {
         if (bubble.State.StartsWith("Grabando", StringComparison.Ordinal)) return;
-        using var setup = new Form
-        {
-            Text = "Iniciar captura del servidor de pruebas",
-            Width = 530, Height = 277,
-            FormBorderStyle = FormBorderStyle.FixedDialog,
-            StartPosition = FormStartPosition.CenterParent,
-            MinimizeBox = false, MaximizeBox = false
-        };
-        var info = new Label
-        {
-            Left = 14, Top = 13, Width = 490, Height = 44,
-            Text = "Indica tu servidor y el puerto CDP ya habilitado en el perfil de prueba. " +
-                "Solo se capturan JSON de /__diloakpro_lab__/ con datos ficticios."
-        };
-        var originLabel = new Label
-        {
-            Left = 14, Top = 64, Width = 490, Height = 20,
-            Text = "Origen de tu servidor (HTTPS o HTTP localhost)"
-        };
-        var originInput = new TextBox
-        {
-            Left = 14, Top = 85, Width = 484,
-            Text = labOrigin.Text, PlaceholderText = "https://tu-servidor"
-        };
-        var portLabel = new Label
-        {
-            Left = 14, Top = 121, Width = 484, Height = 20,
-            Text = "Puerto CDP local del perfil autorizado"
-        };
-        var portInput = new TextBox
-        {
-            Left = 14, Top = 144, Width = 165,
-            Text = cdpPort.Text, PlaceholderText = "Ejemplo: 9222"
-        };
-        var start = new Button
-        {
-            Left = 375, Top = 180, Width = 123, Height = 30,
-            Text = "Continuar", DialogResult = DialogResult.OK
-        };
-        var cancel = new Button
-        {
-            Left = 239, Top = 180, Width = 125, Height = 30,
-            Text = "Cancelar", DialogResult = DialogResult.Cancel
-        };
-        setup.Controls.AddRange(new Control[]
-        {
-            info, originLabel, originInput, portLabel, portInput, start, cancel
-        });
-        setup.AcceptButton = start;
-        setup.CancelButton = cancel;
-        if (setup.ShowDialog(this) != DialogResult.OK) return;
-        if (!LabResponseComparison.TryCreate(originInput.Text.Trim(), out _) ||
-            !int.TryParse(portInput.Text.Trim(), out var port) ||
-            port < 1024 || port > 65535)
-        {
-            MessageBox.Show("Revisa el origen del servidor y el puerto CDP. " +
-                "Para capturar el JSON real ambos son necesarios.",
-                "Captura de laboratorio", MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-            return;
-        }
-        labOrigin.Text = originInput.Text.Trim();
-        cdpPort.Text = port.ToString();
-        bubble.EnableLabComparison(labOrigin.Text);
+
+        // Explicit scope approval is requested inside EnableLabComparison.
+        // Blank origin enables strict lab-marker based autodetection.
+        bubble.EnableLabComparison("");
         if (!bubble.LabComparisonStatus.StartsWith("Activa:", StringComparison.Ordinal))
             return;
-        bubble.StartRecording();
-        bubble.ConnectCdp(cdpPort.Text);
+
+        try
+        {
+            // If the user already authorized a port in this session, reuse it.
+            if (!bubble.HasAuthorizedApiKey && bubble.HasKnownAuthorizedDebugPort)
+            {
+                bubble.StartRecording();
+                bubble.ConnectKnownAuthorizedDebugPort();
+                return;
+            }
+
+            var key = apiKey.Text;
+            apiKey.Clear();
+            if (!bubble.HasAuthorizedApiKey && string.IsNullOrWhiteSpace(key))
+            {
+                // Logging into a website does not grant access to its local
+                // automation API; the user must supply their key once.
+                using var keyDialog = new Form
+                {
+                    Text = "Autorizar diagnóstico local (una sola vez por sesión)",
+                    Width = 510, Height = 220,
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    StartPosition = FormStartPosition.CenterParent,
+                    MinimizeBox = false, MaximizeBox = false
+                };
+                var info = new Label
+                {
+                    Left = 14, Top = 14, Width = 468, Height = 58,
+                    Text = "Para encontrar el perfil y conectar su CDP sin escribir puertos, " +
+                        "introduce la clave Open API local de DICloak. " +
+                        "La sesión web abierta no proporciona ese permiso."
+                };
+                var keyInput = new TextBox
+                {
+                    Left = 14, Top = 78, Width = 465,
+                    UseSystemPasswordChar = true,
+                    PlaceholderText = "Clave Open API (solo en memoria)"
+                };
+                var start = new Button
+                {
+                    Text = "Continuar", DialogResult = DialogResult.OK,
+                    Left = 355, Top = 117, Width = 123, Height = 30
+                };
+                var cancel = new Button
+                {
+                    Text = "Cancelar", DialogResult = DialogResult.Cancel,
+                    Left = 215, Top = 117, Width = 125, Height = 30
+                };
+                keyDialog.Controls.AddRange(new Control[] { info, keyInput, start, cancel });
+                keyDialog.AcceptButton = start;
+                keyDialog.CancelButton = cancel;
+                if (keyDialog.ShowDialog(this) != DialogResult.OK ||
+                    string.IsNullOrWhiteSpace(keyInput.Text))
+                {
+                    bubble.DisableLabComparison();
+                    return;
+                }
+                key = keyInput.Text;
+                keyInput.Clear();
+            }
+
+            var profiles = await bubble.AutomaticDiagnosticAsync(
+                "", key ?? "", profileId.Text.Trim());
+
+            if (profiles.Count > 1 && !IsDisposed)
+            {
+                // Never arbitrarily attach to another open profile.
+                using var pick = new Form
+                {
+                    Text = "Seleccionar perfil de prueba",
+                    Width = 400, Height = 175,
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    StartPosition = FormStartPosition.CenterParent
+                };
+                var choice = new ComboBox
+                {
+                    Left = 16, Top = 22, Width = 347,
+                    DropDownStyle = ComboBoxStyle.DropDownList
+                };
+                choice.Items.AddRange(profiles.Cast<object>().ToArray());
+                choice.SelectedIndex = 0;
+                var approve = new Button
+                {
+                    Text = "Usar perfil", Left = 236, Top = 65,
+                    Width = 127, DialogResult = DialogResult.OK
+                };
+                pick.Controls.Add(choice);
+                pick.Controls.Add(approve);
+                pick.AcceptButton = approve;
+                if (pick.ShowDialog(this) == DialogResult.OK &&
+                    choice.SelectedItem is string id)
+                    await bubble.AutomaticDiagnosticAsync("", "", id);
+            }
+
+            if (!IsDisposed && bubble.CdpStatus == "No activado")
+                MessageBox.Show(
+                    "Se inició la observación básica, pero no se pudo conectar " +
+                    "un navegador mediante la API autorizada. " +
+                    bubble.AutoStatus +
+                    "\nNo se capturará contenido HTTP hasta obtener acceso CDP oficial.",
+                    "Captura de laboratorio", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            bubble.DisableLabComparison();
+            MessageBox.Show("No se pudo iniciar la captura de laboratorio (" +
+                ex.GetType().Name + ").", "Captura de laboratorio",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
     }
 
     public void RefreshFrom(DiagnosticBubble bubble)
