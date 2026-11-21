@@ -12,6 +12,7 @@ on:
       - 'release-build/diloakpro-official309/**'
       - 'tools/inspect-dicloak-309.py'
       - 'tools/tests/rc2-archive/**'
+      - 'tools/lab-server/**'
   workflow_dispatch:
 
 permissions:
@@ -28,6 +29,11 @@ jobs:
         run: |
           dotnet run -c Release --project tools/tests/rc2-archive/Archive.Tests.csproj
           if ($LASTEXITCODE -ne 0) { throw 'Archive tests failed; block Windows installer' }
+      - name: Compare real request/response on first-party synthetic server
+        shell: pwsh
+        run: |
+          node tools/lab-server/test-first-party-http-recorder.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'First-party lab comparison failed' }
       - name: Fetch official authenticated 3.0.9 installer with pinned SHA-256
         shell: pwsh
         run: |
