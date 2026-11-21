@@ -11,6 +11,7 @@ on:
       - 'release-build/diloakpro-official309/installer-rc2.nsh'
       - 'release-build/diloakpro-official309/**'
       - 'tools/inspect-dicloak-309.py'
+      - 'tools/tests/rc2-archive/**'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +23,11 @@ jobs:
     timeout-minutes: 100
     steps:
       - uses: actions/checkout@v4
+      - name: RC2 archive safety tests (synthetic data only)
+        shell: pwsh
+        run: |
+          dotnet run -c Release --project tools/tests/rc2-archive/Archive.Tests.csproj
+          if ($LASTEXITCODE -ne 0) { throw 'Archive tests failed; block Windows installer' }
       - name: Fetch official authenticated 3.0.9 installer with pinned SHA-256
         shell: pwsh
         run: |
