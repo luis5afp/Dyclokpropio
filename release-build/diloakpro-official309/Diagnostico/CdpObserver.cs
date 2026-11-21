@@ -76,7 +76,7 @@ internal sealed class CdpObserver : IDisposable
         report(new CdpDiagnosticEvent(DateTime.UtcNow.ToString("O"), type, status, detail));
     }
 
-    private static async Task ObserveAsync(int port, Action<CdpDiagnosticEvent> report,
+    private async Task ObserveAsync(int port, Action<CdpDiagnosticEvent> report,
         CancellationToken token)
     {
         try
