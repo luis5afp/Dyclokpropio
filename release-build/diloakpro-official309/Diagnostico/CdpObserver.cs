@@ -101,8 +101,8 @@ internal sealed class CdpObserver : IDisposable
             await ws.ConnectAsync(selected, token);
             var command = Encoding.UTF8.GetBytes("{\"id\":1,\"method\":\"Network.enable\"}");
             await ws.SendAsync(new ArraySegment<byte>(command), WebSocketMessageType.Text, true, token);
-            Emit(report, "CDP_CONNECTED", null,
-                "Conectado al primer target page; cobertura parcial");
+            Emit(report, "CDP_ATTACHED", null,
+                "WebSocket conectado al primer target page; esperando Network.enable");
 
             var buffer = new byte[8192];
             while (!token.IsCancellationRequested && ws.State == WebSocketState.Open)
@@ -124,6 +124,20 @@ internal sealed class CdpObserver : IDisposable
                     continue;
                 using var message = JsonDocument.Parse(frame.ToArray());
                 var root = message.RootElement;
+                if (root.TryGetProperty("id", out var responseId) &&
+                    responseId.ValueKind == JsonValueKind.Number &&
+                    responseId.TryGetInt32(out var id) && id == 1)
+                {
+                    if (root.TryGetProperty("error", out _))
+                    {
+                        Emit(report, "CDP_ENABLE_FAILED", null,
+                            "El target rechazó Network.enable");
+                        return;
+                    }
+                    Emit(report, "CDP_NETWORK_ENABLED", null,
+                        "Network.enable confirmado; primer target page solamente");
+                    continue;
+                }
                 if (!root.TryGetProperty("method", out var methodValue))
                     continue;
                 var method = methodValue.GetString();
