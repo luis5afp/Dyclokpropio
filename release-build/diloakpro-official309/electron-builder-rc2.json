@@ -1,0 +1,34 @@
+{
+  "appId": "com.diloakpro.official309.rc2.lab",
+  "productName": "diloakPRO Motor 3.0.9 RC2 LAB",
+  "artifactName": "diloakPRO_30.0.28_RC2_LAB_win_x64.exe",
+  "electronVersion": "31.7.7",
+  "directories": {
+    "output": "out"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "executableName": "DICloak",
+    "signAndEditExecutable": false,
+    "requestedExecutionLevel": "asInvoker"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowElevation": false,
+    "selectPerMachineByDefault": false,
+    "allowToChangeInstallationDirectory": false,
+    "createDesktopShortcut": false,
+    "createStartMenuShortcut": false,
+    "deleteAppDataOnUninstall": false,
+    "runAfterFinish": false,
+    "include": "installer-rc2.nsh"
+  }
+}
