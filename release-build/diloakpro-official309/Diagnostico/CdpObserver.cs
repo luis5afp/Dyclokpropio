@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace DiloakPRO.Diagnostico;
 
-// Privacy by design: only event categories and HTTP status codes are recorded.
-// Never persist URLs, request IDs, headers, bodies, cookies or credentials.
+// Outside the explicitly allowlisted lab route, only event categories and HTTP
+// status codes are recorded. Lab JSON bodies may be stored ONLY when a user
+// enables password-protected local capture; no URLs or secrets enter plain logs.
 internal sealed record CdpDiagnosticEvent(string Utc, string Type, int? HttpStatus, string Detail);
 
 internal sealed class CdpObserver : IDisposable
