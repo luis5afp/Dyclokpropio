@@ -51,11 +51,12 @@ internal static class ApiV2Probe
                     return null;
                 }
                 // Do not buffer large private API responses.
-                await response.Content.LoadIntoBufferAsync(1024 * 1024, token);
+                await response.Content.LoadIntoBufferAsync(1024 * 1024);
                 using var stream = await response.Content.ReadAsStreamAsync(token);
                 var doc = await JsonDocument.ParseAsync(stream,
                     new JsonDocumentOptions { MaxDepth = 20 }, token);
                 if (!doc.RootElement.TryGetProperty("code", out var code) ||
+                    code.ValueKind != JsonValueKind.Number ||
                     !code.TryGetInt32(out var numericCode) || numericCode != 0 ||
                     !doc.RootElement.TryGetProperty("data", out _))
                 {
