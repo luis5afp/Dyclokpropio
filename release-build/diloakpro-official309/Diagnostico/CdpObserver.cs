@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -18,6 +19,30 @@ internal sealed class CdpObserver : IDisposable
 {
     private CancellationTokenSource? cancellation;
     private Task? worker;
+    private LabResponseComparison? labConfig;
+    private Action<LabComparisonEvent>? labOutput;
+
+    internal bool ConfigureLab(string origin, Action<LabComparisonEvent> report)
+    {
+        if (!LabResponseComparison.TryCreate(origin, out var config))
+            return false;
+        Volatile.Write(ref labOutput, report);
+        Volatile.Write(ref labConfig, config);
+        return true;
+    }
+
+    internal void StopLab()
+    {
+        Volatile.Write(ref labConfig, null);
+        Volatile.Write(ref labOutput, null);
+    }
+
+    private void EmitLab(LabComparisonEvent result)
+    {
+        if (Volatile.Read(ref labConfig) is null) return;
+        var listener = Volatile.Read(ref labOutput);
+        try { listener?.Invoke(result); } catch { }
+    }
 
     public bool IsRunning => worker is { IsCompleted: false };
 
@@ -41,6 +66,7 @@ internal sealed class CdpObserver : IDisposable
     public void Dispose()
     {
         Stop();
+        StopLab();
         // The cancellation token source is disposed at the next Start; the observer
         // task may still be unwinding when the companion window closes.
     }
@@ -104,6 +130,9 @@ internal sealed class CdpObserver : IDisposable
             Emit(report, "CDP_ATTACHED", null,
                 "WebSocket conectado al primer target page; esperando Network.enable");
 
+            var requestsForLab = new Dictionary<string, LabPendingResponse>();
+            var bodyCommands = new Dictionary<int, LabPendingResponse>();
+            var nextBodyCommandId = 100;
             var buffer = new byte[8192];
             while (!token.IsCancellationRequested && ws.State == WebSocketState.Open)
             {
@@ -124,6 +153,28 @@ internal sealed class CdpObserver : IDisposable
                     continue;
                 using var message = JsonDocument.Parse(frame.ToArray());
                 var root = message.RootElement;
+                if (root.TryGetProperty("id", out var browserCommandId) &&
+                    browserCommandId.ValueKind == JsonValueKind.Number &&
+                    browserCommandId.TryGetInt32(out var bodyCommandId) &&
+                    bodyCommands.Remove(bodyCommandId, out var expected))
+                {
+                    if (root.TryGetProperty("result", out var bodyResult) &&
+                        bodyResult.ValueKind == JsonValueKind.Object &&
+                        bodyResult.TryGetProperty("body", out var bodyValue) &&
+                        bodyValue.ValueKind == JsonValueKind.String)
+                    {
+                        var isBase64 = bodyResult.TryGetProperty("base64Encoded", out var encodedValue) &&
+                            encodedValue.ValueKind == JsonValueKind.True;
+                        EmitLab(LabResponseComparison.Verify(expected,
+                            bodyValue.GetString(), isBase64));
+                    }
+                    else
+                    {
+                        EmitLab(LabResponseComparison.Unverified(expected,
+                            "Chromium no entregó el cuerpo de prueba solicitado"));
+                    }
+                    continue;
+                }
                 if (root.TryGetProperty("id", out var responseId) &&
                     responseId.ValueKind == JsonValueKind.Number &&
                     responseId.TryGetInt32(out var id) && id == 1)
@@ -141,6 +192,58 @@ internal sealed class CdpObserver : IDisposable
                 if (!root.TryGetProperty("method", out var methodValue))
                     continue;
                 var method = methodValue.GetString();
+                if (Volatile.Read(ref labConfig) is { } comparison &&
+                    root.TryGetProperty("params", out var labParams) &&
+                    labParams.ValueKind == JsonValueKind.Object)
+                {
+                    if (method == "Network.responseReceived" &&
+                        labParams.TryGetProperty("requestId", out var labRequestId) &&
+                        labRequestId.ValueKind == JsonValueKind.String &&
+                        labParams.TryGetProperty("response", out var labResponse) &&
+                        comparison.TryIdentifyResponse(labResponse, out var pendingResponse) &&
+                        pendingResponse is not null &&
+                        requestsForLab.Count < 40)
+                    {
+                        requestsForLab[labRequestId.GetString()!] = pendingResponse;
+                    }
+                    else if (method == "Network.loadingFinished" &&
+                        labParams.TryGetProperty("requestId", out var finishedId) &&
+                        finishedId.ValueKind == JsonValueKind.String &&
+                        requestsForLab.Remove(finishedId.GetString()!, out var expectedResponse))
+                    {
+                        // Network.getResponseBody is read-only. It does not
+                        // modify, pause, replay or replace any browser traffic.
+                        var encodedLengthOk = !labParams.TryGetProperty("encodedDataLength", out var lengthValue) ||
+                            (lengthValue.TryGetDouble(out var dataLength) && dataLength <= 131072);
+                        if (!encodedLengthOk || bodyCommands.Count >= 40)
+                        {
+                            EmitLab(LabResponseComparison.Unverified(expectedResponse,
+                                "Límite de tamaño o comandos CDP concurrentes"));
+                        }
+                        else
+                        {
+                            var cmdId = nextBodyCommandId++;
+                            var messageJson = JsonSerializer.Serialize(new
+                            {
+                                id = cmdId,
+                                method = "Network.getResponseBody",
+                                @params = new { requestId = finishedId.GetString() }
+                            });
+                            var cmdBytes = Encoding.UTF8.GetBytes(messageJson);
+                            bodyCommands[cmdId] = expectedResponse;
+                            await ws.SendAsync(new ArraySegment<byte>(cmdBytes),
+                                WebSocketMessageType.Text, true, token);
+                        }
+                    }
+                    else if (method == "Network.loadingFailed" &&
+                        labParams.TryGetProperty("requestId", out var failedId) &&
+                        failedId.ValueKind == JsonValueKind.String &&
+                        requestsForLab.Remove(failedId.GetString()!, out var failedExpected))
+                    {
+                        EmitLab(LabResponseComparison.Unverified(failedExpected,
+                            "Chromium informó que la respuesta no terminó de cargar"));
+                    }
+                }
                 if (method == "Network.requestWillBeSent")
                 {
                     Emit(report, "HTTP_REQUEST", null, "Solicitud observada sin URL ni cabeceras");
