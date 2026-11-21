@@ -9,7 +9,7 @@ contra su servidor es **manual**; diloakPRO no declara `COINCIDE` o
 
 | Botón | Acción real |
 |---|---|
-| **Iniciar captura** | Comienza muestreo Windows/TCP; para cuerpos JSON, habilitar CDP y el origen propio en Avanzado |
+| **Iniciar captura** | Abre un asistente con origen del servidor y puerto CDP autorizado; tras el consentimiento inicia Windows, CDP y captura JSON propia |
 | **Detener** | Detiene muestras Windows y guarda diagnóstico |
 | **Ver evidencias** | Lista el estado, los hashes y el nombre del respaldo cifrado de cada respuesta de laboratorio |
 | **Guardar** | Genera JSON, TXT y SHA-256 del diagnóstico |
@@ -69,10 +69,11 @@ controles originales en **Avanzado**, pero no abarrotan la vista principal.
 
 Con un perfil de laboratorio abierto y CDP habilitado por el usuario:
 
-1. En **Avanzado**, conectar CDP al perfil autorizado y configurar el
-   origen HTTPS del servidor propio (HTTP solo en localhost).
-2. Pulsar **Activar captura**, confirmar que son datos desechables y
-   establecer una contraseña local de al menos 12 caracteres.
+1. Pulsar **Iniciar captura**, indicar el origen HTTPS del servidor
+   propio (HTTP solo en localhost) y el puerto CDP local ya autorizado.
+   También se puede configurar manualmente en **Avanzado**.
+2. Confirmar que son datos desechables y establecer una contraseña local
+   de al menos 12 caracteres. La captura se inicia con ese consentimiento.
 3. En el navegador, navegar a la ruta del servidor
    `/__diloakpro_lab__/` instrumentada por el servidor propio. El navegador
    debe recibir una respuesta JSON con las cabeceras X-Diloakpro-Lab-Id y
@@ -95,3 +96,7 @@ tráfico de terceros ni se altera el motor DICloak 3.0.9.
 Si el navegador no entrega el cuerpo, el sistema registra NO_VERIFICADO.
 Si el cuerpo se observa pero falla el cifrado, registra
 CAPTURADO_SIN_GUARDAR. Nunca declara que los datos coinciden con el servidor.
+
+La compilación y la prueba end-to-end en el perfil real del usuario deben
+verificarse por separado; haber añadido código no equivale a confirmar
+que el navegador del usuario entregó el cuerpo por CDP.
