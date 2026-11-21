@@ -46,6 +46,8 @@ function createFirstPartyRecorder({
     const requestChunks = [], responseChunks = [];
     let requestBytes = 0, responseBytes = 0, invalid = false;
     let reqEnded = false, resFinished = false, saved = false;
+    const transactionId = crypto.randomBytes(12).toString('hex');
+    let responseWrites = 0, responseProofHeaderIssued = false;
     const originalPush = req.push;
     const originalWrite = res.write;
     const originalEnd = res.end;
@@ -72,13 +74,31 @@ function createFirstPartyRecorder({
       return originalPush.apply(this, arguments);
     };
     res.write = function(chunk, encoding) {
+      responseWrites++;
       try { add(responseChunks, chunk, encoding, false); }
       catch { invalid = true; }
       return originalWrite.apply(this, arguments);
     };
     res.end = function(chunk, encoding) {
-      try { add(responseChunks, chunk, encoding, false); }
-      catch { invalid = true; }
+      try {
+        add(responseChunks, chunk, encoding, false);
+        const type = String(res.getHeader('content-type') || '').toLowerCase();
+        const contentEncoding = res.getHeader('content-encoding');
+        // Only uncompressed, one-shot, small JSON test responses can be compared
+        // with the decoded body returned by Chromium Network.getResponseBody.
+        if (!invalid && !res.headersSent && responseWrites === 0 &&
+            responseBytes > 0 && responseBytes <= 128 * 1024 &&
+            type.startsWith('application/json') &&
+            (contentEncoding == null || String(contentEncoding).toLowerCase() === 'identity')) {
+          const bytes = Buffer.concat(responseChunks, responseBytes);
+          const digest = crypto.createHash('sha256').update(bytes).digest('hex');
+          bytes.fill(0);
+          res.setHeader('X-Diloakpro-Lab-Id', transactionId);
+          res.setHeader('X-Diloakpro-Lab-SHA256', digest);
+          res.setHeader('Cache-Control', 'no-store');
+          responseProofHeaderIssued = true;
+        }
+      } catch { invalid = true; }
       return originalEnd.apply(this, arguments);
     };
 
@@ -128,6 +148,7 @@ function createFirstPartyRecorder({
       const proof = {
         schema: 1, source: 'own-test-server', capturedAtUtc: receivedAtUtc,
         method, pathname, statusCode: res.statusCode,
+        transactionId, responseProofHeaderIssued,
         requestBytes, responseBytes, requestSha256, responseSha256,
         payloadFile: vault,
         payloadEncrypted: true, transport: 'server-side-node-handler',
