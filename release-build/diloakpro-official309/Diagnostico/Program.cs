@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -745,9 +746,64 @@ internal sealed class DiagnosticBubble : Form
             try { Clipboard.SetText(content.Text); }
             catch { MessageBox.Show("No se pudo copiar.", "Evidencias"); }
         };
+        var view = new Button
+        {
+            Dock = DockStyle.Bottom, Height = 38,
+            Text = "Ver JSON cifrado (con contraseña)"
+        };
+        view.Click += (_, _) => ShowEncryptedLabBody();
         popup.Controls.Add(content);
         popup.Controls.Add(copy);
+        popup.Controls.Add(view);
         popup.ShowDialog((IWin32Window?)window ?? this);
+    }
+
+    private void ShowEncryptedLabBody()
+    {
+        var folder = Path.Combine(ProfileArchive.GetProfileDirectory(archiveProfileId),
+            "RespaldosCifrados");
+        Directory.CreateDirectory(folder);
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Elige un JSON de laboratorio capturado",
+            Filter = "Captura cifrada (respuesta-lab-*.dlvault)|respuesta-lab-*.dlvault",
+            InitialDirectory = folder,
+            CheckFileExists = true
+        };
+        if (dialog.ShowDialog() != DialogResult.OK) return;
+        var password = AskArchivePassword("Contraseña de captura de laboratorio", false);
+        if (password is null) return;
+        try
+        {
+            var plaintext = SecureArchive.ReadLabResponse(dialog.FileName,
+                password.AsSpan());
+            string body;
+            try { body = new UTF8Encoding(false, true).GetString(plaintext); }
+            finally { CryptographicOperations.ZeroMemory(plaintext); }
+            using var viewer = new Form
+            {
+                Text = "JSON de laboratorio - vista temporal en memoria",
+                Width = 860, Height = 590,
+                StartPosition = FormStartPosition.CenterParent
+            };
+            var content = new TextBox
+            {
+                Dock = DockStyle.Fill, Multiline = true, ReadOnly = true,
+                ScrollBars = ScrollBars.Both, WordWrap = false,
+                Font = new Font("Consolas", 10), Text = body
+            };
+            viewer.Controls.Add(content);
+            viewer.ShowDialog((IWin32Window?)window ?? this);
+            content.Clear();
+            body = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("No se pudo abrir JSON cifrado (" +
+                ex.GetType().Name + ").", "Captura de laboratorio",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        finally { password = null; }
     }
 
     internal void RestoreSelectedFile()
