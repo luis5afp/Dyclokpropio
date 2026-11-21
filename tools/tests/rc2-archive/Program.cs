@@ -46,6 +46,11 @@ internal static class ArchiveTests
             if (!lab.TryIdentifyResponse(cdpEnvelope.RootElement, out var expected) ||
                 expected is null)
                 throw new Exception("Lab test response not recognized");
+            var captured = LabResponseComparison.CaptureForManualReview(expected, testJson, false);
+            if (captured.Result != "CAPTURADO" ||
+                captured.ClientSha256 != labSha ||
+                captured.ServerSha256 != labSha)
+                throw new Exception("Manual review capture did not retain independent hashes");
             var matches = LabResponseComparison.Verify(expected, testJson, false);
             if (matches.Result != "COINCIDE")
                 throw new Exception("Matching JSON bytes were not recognized");
@@ -149,6 +154,7 @@ internal static class ArchiveTests
                 throw new Exception("Round-trip contents changed");
             if (File.ReadAllText(result.JsonPath).Contains("synthetic-value"))
                 throw new Exception("Private fixture was mixed into plain reports");
+            Console.WriteLine("RC2_LAB_CAPTURE_FOR_USER_REVIEW_NO_AUTO_VERDICT=PASS");
             Console.WriteLine("RC2_LAB_BROWSER_SHA256_MATCH_AND_MISMATCH=PASS");
             Console.WriteLine("RC2_LAB_INDEPENDENT_SERVER_PROOF=PASS");
             Console.WriteLine("RC2_LAB_SAFE_FIELD_AUDIT_IMPORT=PASS");
